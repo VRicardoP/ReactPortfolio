@@ -1,0 +1,249 @@
+/* Ventana flotante base */
+.floating-window {
+  position: fixed;
+  border: 4px solid #00ffff;
+  border-radius: 10px;
+  background-color: rgba(0, 255, 255, 0.05);
+  backdrop-filter: blur(1px);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* NO aplicar transición a position y size por defecto */
+.floating-window:not(.dragging):not(.resizing) {
+  transition: all 0.3s ease;
+}
+
+/* Cuando se está arrastrando o redimensionando, sin transición */
+.floating-window.dragging,
+.floating-window.resizing {
+  transition: none !important;
+}
+
+.floating-window:hover {
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
+  border-color: rgba(0, 255, 255, 0.9);
+}
+
+/* Header de la ventana */
+.window-header {
+  border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: grab;
+  user-select: none;
+}
+
+.window-header:active {
+  cursor: grabbing;
+}
+
+/* Título */
+.window-title {
+  flex-grow: 1;
+  font-size: 20px;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  text-align: center;
+  font-weight: bold;
+  order: 2;
+}
+
+/* Controles (botones) */
+.window-controls {
+  display: flex;
+  gap: 6px;
+  order: 1;
+}
+
+.control-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.control-btn:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+.control-minimize {
+  background-color: #8A2BE2;
+}
+
+.control-minimize:hover {
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+}
+
+.control-maximize {
+  background-color: #FFCC00;
+}
+
+.control-maximize:hover {
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.8);
+}
+
+/* Contenido de la ventana */
+.window-content {
+  flex: 1;
+  padding: 20px;
+  color: #D3D3D3;
+  text-shadow: 0 0 10px rgba(211, 211, 211, 0.3);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Scrollbar personalizada */
+.window-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.window-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.window-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 255, 255, 0.5);
+  border-radius: 3px;
+}
+
+.window-content::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 255, 255, 0.7);
+}
+
+/* Estado minimizado */
+.window-collapsed {
+  width: 180px !important;
+  height: 40px !important;
+  border-radius: 20px;
+  background-color: rgba(0, 255, 255, 0.1) !important;
+  cursor: pointer;
+}
+
+.window-collapsed .window-header {
+  border-bottom: none;
+  height: 100%;
+  padding: 0 15px;
+  cursor: pointer;
+}
+
+.window-collapsed .window-title {
+  font-size: 16px;
+}
+
+.window-collapsed .window-content {
+  display: none;
+}
+
+.window-collapsed:hover {
+  background-color: rgba(0, 255, 255, 0.2) !important;
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Estado maximizado */
+.window-maximized {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background-color: rgba(0, 0, 0, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* Resize handles */
+.resize-handle {
+  position: absolute;
+  background-color: transparent;
+  z-index: 10;
+}
+
+.resize-handle-n {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 7px;
+  cursor: ns-resize;
+}
+
+.resize-handle-s {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 7px;
+  cursor: ns-resize;
+}
+
+.resize-handle-e {
+  top: 0;
+  right: 0;
+  width: 7px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+.resize-handle-w {
+  top: 0;
+  left: 0;
+  width: 7px;
+  height: 100%;
+  cursor: ew-resize;
+}
+
+.resize-handle-ne {
+  top: 0;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  cursor: nesw-resize;
+}
+
+.resize-handle-nw {
+  top: 0;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  cursor: nwse-resize;
+}
+
+.resize-handle-se {
+  bottom: 0;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  cursor: nwse-resize;
+}
+
+.resize-handle-sw {
+  bottom: 0;
+  left: 0;
+  width: 15px;
+  height: 15px;
+  cursor: nesw-resize;
+}
+
+.resize-handle:hover::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+/* Ocultar handles cuando minimizada o maximizada */
+.window-collapsed .resize-handle,
+.window-maximized .resize-handle {
+  display: none;
+}
