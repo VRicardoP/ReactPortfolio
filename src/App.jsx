@@ -1,10 +1,18 @@
 import RainEffect from './components/Background/RainEffect';
-import FloatingWindow from './components/Windows/FloatingWindow';
 import WelcomeWindow from './components/Windows/WelcomeWindow';
+import ProfileWindow from './components/Windows/ProfileWindow';
+import ContactWindow from './components/Windows/ContactWindow';
+import LanguagesWindow from './components/Windows/LanguagesWindow';
+import SoftSkillsWindow from './components/Windows/SoftSkillsWindow';
+import TechSkillsWindow from './components/Windows/TechSkillsWindow';
+import EducationWindow from './components/Windows/EducationWindow';
+import PortfolioWindow from './components/Windows/PortfolioWindow';
+import ExperienceWindow from './components/Windows/ExperienceWindow';
 import { WindowProvider } from './context/WindowContext';
 import useTypewriter from './hooks/useTypewriter';
 import usePortfolioData from './hooks/usePortfolioData';
 import './styles/base.css';
+import './styles/windows-content.css';
 
 function App() {
   const { data: portfolioData, loading, error } = usePortfolioData();
@@ -49,20 +57,15 @@ function App() {
       {/* Ventana de Bienvenida */}
       <WelcomeWindow portfolioData={portfolioData} />
 
-      {/* Ventana de prueba (la quitaremos en Fase 3) */}
-      <FloatingWindow
-        id="test-window"
-        title="Test Window"
-        initialPosition={{ x: 150, y: 150 }}
-        initialSize={{ width: 400, height: 300 }}
-      >
-        <h2>Datos cargados desde JSON</h2>
-        <p><strong>Nombre:</strong> {portfolioData.name}</p>
-        <p><strong>Email:</strong> {portfolioData.email}</p>
-        <p><strong>Ubicación:</strong> {portfolioData.location}</p>
-        <p><strong>Experiencias:</strong> {portfolioData.experience.length}</p>
-        <p><strong>Skills técnicas:</strong> {Object.keys(portfolioData.techSkills).length} categorías</p>
-      </FloatingWindow>
+      {/* Ventanas del Portfolio */}
+      <ProfileWindow data={portfolioData} initialPosition={{ x: 100, y: 120 }} />
+      <SoftSkillsWindow data={portfolioData} initialPosition={{ x: 150, y: 140 }} />
+      <EducationWindow data={portfolioData} initialPosition={{ x: 200, y: 160 }} />
+      <ExperienceWindow data={portfolioData} initialPosition={{ x: 250, y: 180 }} />
+      <LanguagesWindow data={portfolioData} initialPosition={{ x: 300, y: 200 }} />
+      <TechSkillsWindow data={portfolioData} initialPosition={{ x: 350, y: 220 }} />
+      <PortfolioWindow data={portfolioData} initialPosition={{ x: 400, y: 240 }} />
+      <ContactWindow data={portfolioData} initialPosition={{ x: 450, y: 260 }} />
     </WindowProvider>
   );
 }
