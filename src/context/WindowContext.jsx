@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback } from 'react';
+import { showToast } from '../components/UI/Toast';
 
 const WindowContext = createContext();
 
@@ -57,25 +58,24 @@ export const WindowProvider = ({ children }) => {
             const window = prev[windowId];
             if (!window) return prev;
 
-            // Si está maximizada, primero desmaxinimizar
-            if (window.isMaximized) {
-                return {
-                    ...prev,
-                    [windowId]: {
-                        ...window,
-                        isMaximized: false,
-                        isMinimized: true
-                    }
-                };
-            }
-
-            return {
+            const newState = {
                 ...prev,
                 [windowId]: {
                     ...window,
-                    isMinimized: !window.isMinimized
+                    isMinimized: !window.isMinimized,
+                    isMaximized: window.isMaximized && window.isMinimized ? false : window.isMaximized
                 }
             };
+
+            // Mostrar toast
+            const windowTitle = windowId.replace('-window', '').replace(/-/g, ' ');
+            if (!window.isMinimized) {
+                showToast(`${windowTitle} minimized`);
+            } else {
+                showToast(`${windowTitle} restored`);
+            }
+
+            return newState;
         });
     }, []);
 
@@ -96,13 +96,23 @@ export const WindowProvider = ({ children }) => {
                 };
             }
 
-            return {
+            const newState = {
                 ...prev,
                 [windowId]: {
                     ...window,
                     isMaximized: !window.isMaximized
                 }
             };
+
+            // Mostrar toast
+            const windowTitle = windowId.replace('-window', '').replace(/-/g, ' ');
+            if (!window.isMaximized) {
+                showToast(`${windowTitle} maximized`);
+            } else {
+                showToast(`${windowTitle} restored`);
+            }
+
+            return newState;
         });
     }, []);
 
