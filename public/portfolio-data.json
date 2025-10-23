@@ -1,0 +1,206 @@
+{
+    "name": "Vicente Ricardo Pau Valero",
+    "title": "Full Stack Developer & System Administrator",
+    "email": "vicente.pau@hotmail.com",
+    "location": "Valencia, Spain",
+    "profile": {
+        "description": "By vocation, I started as a programmer; however, professionally, I manage networks and IT systems (Windows, Linux, and Mac). I am continuously training in programming to stay current, and I have gained extensive experience working as a System Administrator in data centers supporting environments with over 1,000 terminals, such as hospitals or supermarket chains like Mercadona. I am responsible for system maintenance, administration, and security, which provides me with broad knowledge to handle any organizational needs connected to IT systems."
+    },
+    "softSkills": [
+        "Committed",
+        "Critical thinking",
+        "Integrity",
+        "Empathy",
+        "Fearless in conflict",
+        "Desire to learn",
+        "Teamwork",
+        "Initiative",
+        "Stress management",
+        "Adaptability",
+        "Problem-solving",
+        "Communication",
+        "Motivated"
+    ],
+    "education": [
+        {
+            "title": "Bachelor's Degree in Web Application Development",
+            "institution": "Currently pursuing",
+            "date": "",
+            "description": "Multiplatform Application Development focus"
+        },
+        {
+            "title": "Bootcamp React",
+            "institution": "Geekshubs",
+            "date": "2023",
+            "description": "Topics covered: Linux, Python, Java, HTML5, CSS3, SQL, XML, Database Design, Virtualization, Git, JavaScript, Node.js, PHP, Odoo, Network Administration"
+        },
+        {
+            "title": "Management Informatics",
+            "institution": "Polytechnic University of Valencia",
+            "date": "2003 - 2005",
+            "description": ""
+        },
+        {
+            "title": "Server Administration Course",
+            "institution": "",
+            "date": "2002 – 2003",
+            "description": ""
+        },
+        {
+            "title": "Multimedia, Video Editing, and Web Design Course",
+            "institution": "",
+            "date": "2000 - 2001",
+            "description": ""
+        },
+        {
+            "title": "Specialist Technician in Management Informatics",
+            "institution": "",
+            "date": "1997 – 2000",
+            "description": ""
+        }
+    ],
+    "experience": [
+        {
+            "title": "Technical Support Specialist",
+            "company": "Centro Gestión Red Arterias — Telefónica / Department of Health",
+            "location": "Valencia",
+            "date": "2020–2021",
+            "description": "Support for hospitals and health centers within the Department of Sanitation in Alicante, Castellón, and Valencia. Ticket management via custom applications, email, Jira, and Confluence. Management of Routers, Firewalls, and VPNs Cisco and Fortigate. Use of communication tools like Microsoft Teams."
+        },
+        {
+            "title": "Support Specialist",
+            "company": "DHL Supply Chain",
+            "location": "Valencia",
+            "date": "2020–2021",
+            "description": "Remote support for Ford European LLP users in Spain, Germany, England, and Hungary. Management of Active Directory user permissions. Resolving VPN and remote access issues. Basic management of European plant databases. Ticketing (Jira) and remote communication channels (Cisco, Teams). Remote administration of virtualized environments in India."
+        },
+        {
+            "title": "Support Helpdesk Technician",
+            "company": "Tecnocom / Ford",
+            "location": "Valencia",
+            "date": "2016",
+            "description": "Data Center operator and administrator for Ford's engine plant. Backup oversight and automated system installations. System updates and upgrades. Remote virtualization management (ESXi, Windows, Linux)."
+        },
+        {
+            "title": "Systems Administrator",
+            "company": "Postres Romar",
+            "location": "Valencia",
+            "date": "2016–2018",
+            "description": "Responsible for security systems implementation (Cisco, Sophos). Supporting Java development. Management of Microsoft databases. Redesign and deployment of a new data center, increasing performance by 60%. Backup management with Synology systems. Deployment and maintenance of Windows and Linux systems. Virtualization installations (ESXi, Windows, Linux). VPN and Active Directory administration."
+        }
+    ],
+    "languages": [
+        {
+            "language": "Spanish",
+            "level": "Native"
+        },
+        {
+            "language": "English",
+            "level": "Advanced / Bilingual"
+        },
+        {
+            "language": "Italian",
+            "level": "Beginner"
+        }
+    ],
+    "techSkills": {
+        "frontend": [
+            {
+                "name": "HTML5 / CSS3",
+                "level": 98
+            },
+            {
+                "name": "JavaScript / TypeScript",
+                "level": 95
+            },
+            {
+                "name": "React / Vue.js",
+                "level": 90
+            },
+            {
+                "name": "Three.js / WebGL",
+                "level": 85
+            }
+        ],
+        "backend": [
+            {
+                "name": "Node.js / Express",
+                "level": 88
+            },
+            {
+                "name": "Python / Django",
+                "level": 80
+            },
+            {
+                "name": "GraphQL / REST",
+                "level": 85
+            }
+        ],
+        "databases": [
+            {
+                "name": "MongoDB",
+                "level": 92
+            },
+            {
+                "name": "PostgreSQL",
+                "level": 85
+            },
+            {
+                "name": "Redis",
+                "level": 75
+            }
+        ],
+        "others": [
+            {
+                "name": "Git / GitHub",
+                "level": 95
+            },
+            {
+                "name": "Docker / Kubernetes",
+                "level": 80
+            },
+            {
+                "name": "AWS / Azure",
+                "level": 82
+            },
+            {
+                "name": "VMWare / ESXi",
+                "level": 90
+            },
+            {
+                "name": "Windows Server / Linux",
+                "level": 95
+            },
+            {
+                "name": "Network Security (Cisco, Sophos)",
+                "level": 88
+            }
+        ]
+    },
+    "portfolio": [
+        {
+            "title": "Cyberpunk Dashboard",
+            "tech": "Three.js / WebGL / React",
+            "description": "Panel de control con visualizaciones de datos en tiempo real con estética cyberpunk."
+        },
+        {
+            "title": "Neural Network Visualizer",
+            "tech": "D3.js / TensorFlow.js",
+            "description": "Herramienta interactiva para visualizar y entender redes neuronales."
+        },
+        {
+            "title": "Data Flow",
+            "tech": "WebGL / Canvas / Vue.js",
+            "description": "Visualización de flujo de datos con partículas interactivas."
+        }
+    ],
+    "contact": {
+        "message": "¿Interesado en colaborar en un proyecto? Contáctame vía email:",
+        "social": {
+            "linkedin": "",
+            "github": "",
+            "twitter": "",
+            "instagram": ""
+        }
+    }
+}
