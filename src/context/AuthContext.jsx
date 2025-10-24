@@ -28,35 +28,25 @@ export const AuthProvider = ({ children }) => {
     // Login
     const login = useCallback(async (username, password) => {
         try {
-            // Aquí conectarías con tu API real
-            // Por ahora simulamos:
-            const BACKEND_URL = 'http://127.0.0.1:8000';
-            const response = await fetch(`${BACKEND_URL}/api/v1/auth/token`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    username,
-                    password
-                })
-            });
+            // --- SIMULACIÓN DE LOGIN ---
+            // Comprobamos credenciales predefinidas para la simulación.
+            // Usuario: admin, Contraseña: password
+            if (username === 'admin' && password === 'password') {
+                // Simulamos una respuesta exitosa de la API.
+                const fakeToken = 'fake-jwt-token-for-simulation';
+                const tokenType = 'bearer';
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.detail || 'Login failed');
+                localStorage.setItem('accessToken', fakeToken);
+                localStorage.setItem('tokenType', tokenType);
+
+                setToken(fakeToken);
+                setIsAuthenticated(true);
+
+                return { success: true };
+            } else {
+                // Simulamos un error de autenticación si las credenciales no coinciden.
+                throw new Error('Invalid username or password');
             }
-
-            const data = await response.json();
-            const accessToken = data.access_token;
-
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('tokenType', data.token_type || 'bearer');
-
-            setToken(accessToken);
-            setIsAuthenticated(true);
-
-            return { success: true };
         } catch (error) {
             console.error('Login error:', error);
             return {
