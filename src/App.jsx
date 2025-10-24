@@ -33,7 +33,7 @@ function PortfolioContent({ portfolioData }) {
   ];
 
   // Hook para la animación cascada → menú (4 segundos después de cargar)
-  useWindowLayout(portfolioWindowIds, 4000);
+  useWindowLayout(portfolioWindowIds, 500);
 
   return (
     <>
