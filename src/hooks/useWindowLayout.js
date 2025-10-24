@@ -1,14 +1,24 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useWindowContext } from '../context/WindowContext';
 import { showToast } from '../components/UI/Toast';
 
 const useWindowLayout = (windowIds, delay = 3000) => {
   const { windows, toggleMinimize, updatePosition } = useWindowContext();
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    // Esperar a que todas las ventanas estén registradas
+    // No animar si ya se hizo
+    if (hasAnimated.current) return;
+
+    // Esperar a que TODAS las ventanas estén registradas
     const allRegistered = windowIds.every(id => windows[id]);
-    if (!allRegistered) return;
+    if (!allRegistered) {
+      console.log('Esperando a que se registren todas las ventanas...',
+        windowIds.filter(id => !windows[id]));
+      return;
+    }
+
+    console.log('Todas las ventanas registradas. Iniciando animación en', delay, 'ms');
 
     // Después del delay, minimizar y posicionar en menú
     const timer = setTimeout(() => {
@@ -36,6 +46,7 @@ const useWindowLayout = (windowIds, delay = 3000) => {
             // Toast solo para la última ventana
             if (index === windowIds.length - 1) {
               showToast('Click on any window to explore!', 3000);
+              hasAnimated.current = true;
             }
           }, 500);
         }, index * 100);

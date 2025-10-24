@@ -49,7 +49,7 @@ const ChatWindow = ({ data, initialPosition }) => {
     return (
         <FloatingWindow
             id="chat-window"
-            title="Kusanagi - AI Assistant"
+            title="Kusanagi AI"
             initialPosition={initialPosition}
             initialSize={{ width: 400, height: 500 }}
         >
