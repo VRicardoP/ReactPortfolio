@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useRef } from 'react';
 import { showToast } from '../components/UI/Toast';
 
 const WindowContext = createContext();
@@ -14,6 +14,7 @@ export const useWindowContext = () => {
 export const WindowProvider = ({ children }) => {
     const [windows, setWindows] = useState({});
     const [highestZIndex, setHighestZIndex] = useState(100);
+    const toastTimeoutRef = useRef({}); // Para evitar toasts duplicados
 
     // Registrar una nueva ventana
     const registerWindow = useCallback((windowId, initialState = {}) => {
@@ -52,32 +53,56 @@ export const WindowProvider = ({ children }) => {
         }));
     }, [highestZIndex]);
 
+    // Función auxiliar para mostrar toast sin duplicados
+    const showWindowToast = useCallback((windowId, message) => {
+        // Cancelar toast anterior si existe
+        if (toastTimeoutRef.current[windowId]) {
+            clearTimeout(toastTimeoutRef.current[windowId]);
+        }
+
+        // Mostrar nuevo toast
+        showToast(message, 2000);
+
+        // Guardar referencia del timeout
+        toastTimeoutRef.current[windowId] = setTimeout(() => {
+            delete toastTimeoutRef.current[windowId];
+        }, 2000);
+    }, []);
+
     // Toggle minimizar
     const toggleMinimize = useCallback((windowId) => {
         setWindows(prev => {
             const window = prev[windowId];
             if (!window) return prev;
 
+            const newIsMinimized = !window.isMinimized;
+
             const newState = {
                 ...prev,
                 [windowId]: {
                     ...window,
-                    isMinimized: !window.isMinimized,
-                    isMaximized: window.isMaximized && window.isMinimized ? false : window.isMaximized
+                    isMinimized: newIsMinimized,
+                    isMaximized: window.isMaximized && newIsMinimized ? false : window.isMaximized
                 }
             };
 
-            // Mostrar toast
-            const windowTitle = windowId.replace('-window', '').replace(/-/g, ' ');
-            if (!window.isMinimized) {
-                showToast(`${windowTitle} minimized`);
+            // Mostrar toast solo una vez
+            const windowTitle = windowId
+                .replace('-window', '')
+                .replace(/-/g, ' ')
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+
+            if (newIsMinimized) {
+                showWindowToast(windowId, `${windowTitle} minimized`);
             } else {
-                showToast(`${windowTitle} restored`);
+                showWindowToast(windowId, `${windowTitle} restored`);
             }
 
             return newState;
         });
-    }, []);
+    }, [showWindowToast]);
 
     // Toggle maximizar
     const toggleMaximize = useCallback((windowId) => {
@@ -96,25 +121,33 @@ export const WindowProvider = ({ children }) => {
                 };
             }
 
+            const newIsMaximized = !window.isMaximized;
+
             const newState = {
                 ...prev,
                 [windowId]: {
                     ...window,
-                    isMaximized: !window.isMaximized
+                    isMaximized: newIsMaximized
                 }
             };
 
-            // Mostrar toast
-            const windowTitle = windowId.replace('-window', '').replace(/-/g, ' ');
-            if (!window.isMaximized) {
-                showToast(`${windowTitle} maximized`);
+            // Mostrar toast solo una vez
+            const windowTitle = windowId
+                .replace('-window', '')
+                .replace(/-/g, ' ')
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+
+            if (newIsMaximized) {
+                showWindowToast(windowId, `${windowTitle} maximized`);
             } else {
-                showToast(`${windowTitle} restored`);
+                showWindowToast(windowId, `${windowTitle} restored`);
             }
 
             return newState;
         });
-    }, []);
+    }, [showWindowToast]);
 
     // Actualizar posición
     const updatePosition = useCallback((windowId, position) => {

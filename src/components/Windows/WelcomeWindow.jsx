@@ -33,7 +33,7 @@ const WelcomeWindow = ({ portfolioData }) => {
                             <li><span className="icon">🖱️</span> <strong>Arrastrar:</strong> Haz clic en la barra superior de cualquier ventana y muévela</li>
                             <li><span className="icon">↔️</span> <strong>Redimensionar:</strong> Arrastra desde los bordes y esquinas</li>
                             <li><span className="icon purple-dot"></span> <strong>Minimizar:</strong> Click en el botón morado (izquierda)</li>
-                            <li><span className="icon yellow-dot"></span> <strong>Maximizar:</strong> Click en el botón amarillo (derecha)</li>
+                            <li><span className="icon yellow-dot"></span> <strong>Maximizar:</strong> Click en el botón amarillo (derecha). Un segundo Click amplia a pantalla completa</li>
                         </ul>
                     </div>
 

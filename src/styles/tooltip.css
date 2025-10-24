@@ -1,0 +1,89 @@
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.cyberpunk-tooltip {
+  position: absolute;
+  z-index: 10001;
+  pointer-events: none;
+  animation: tooltip-fade-in 0.2s ease;
+}
+
+@keyframes tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Posiciones del tooltip */
+.tooltip-top {
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-bottom {
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-left {
+  right: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tooltip-right {
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tooltip-content {
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.95);
+  border: 2px solid #00ffff;
+  border-radius: 4px;
+  padding: 6px 12px;
+  color: #00ffff;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  white-space: nowrap;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.8);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.tooltip-glow {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 5px;
+  animation: tooltip-glow-pulse 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes tooltip-glow-pulse {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+  }
+
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+  }
+}

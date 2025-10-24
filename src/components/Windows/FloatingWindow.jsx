@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useWindowContext } from '../../context/WindowContext';
 import useDraggable from '../../hooks/useDraggable';
 import useResizable from '../../hooks/useResizable';
+import Tooltip from '../UI/Tooltip';
 import '../../styles/floating-window.css';
 
 const FloatingWindow = ({
@@ -83,22 +84,24 @@ const FloatingWindow = ({
                 onMouseDown={handleDragStart}
             >
                 <div className="window-controls">
-                    <button
-                        className="control-btn control-minimize"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            toggleMinimize(id);
-                        }}
-                        title="Minimizar"
-                    />
-                    <button
-                        className="control-btn control-maximize"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            toggleMaximize(id);
-                        }}
-                        title="Maximizar"
-                    />
+                    <Tooltip text="Minimize" position="bottom">
+                        <button
+                            className="control-btn control-minimize"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                toggleMinimize(id);
+                            }}
+                        />
+                    </Tooltip>
+                    <Tooltip text="Maximize" position="bottom">
+                        <button
+                            className="control-btn control-maximize"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                toggleMaximize(id);
+                            }}
+                        />
+                    </Tooltip>
                 </div>
                 <div className="window-title">{title}</div>
             </div>
