@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import RainEffect from '../components/Background/RainEffect';
 import '../styles/login.css';
@@ -17,12 +17,25 @@ const LoginPage = () => {
         setError('');
         setLoading(true);
 
+        // Validaciones básicas
+        if (!username.trim()) {
+            setError('Username is required');
+            setLoading(false);
+            return;
+        }
+
+        if (!password.trim()) {
+            setError('Password is required');
+            setLoading(false);
+            return;
+        }
+
         const result = await login(username, password);
 
         if (result.success) {
             navigate('/dashboard');
         } else {
-            setError(result.error);
+            setError(result.error || 'Invalid credentials');
         }
 
         setLoading(false);
@@ -34,6 +47,14 @@ const LoginPage = () => {
 
             <div className="login-container">
                 <h1>Dashboard Access</h1>
+                <p style={{
+                    color: '#8b949e',
+                    fontSize: '14px',
+                    marginBottom: '20px',
+                    textAlign: 'center'
+                }}>
+                    Enter your credentials to access analytics
+                </p>
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -42,8 +63,8 @@ const LoginPage = () => {
                             placeholder="Username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            required
                             disabled={loading}
+                            autoComplete="username"
                         />
                     </div>
 
@@ -53,8 +74,8 @@ const LoginPage = () => {
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            required
                             disabled={loading}
+                            autoComplete="current-password"
                         />
                     </div>
 
@@ -63,7 +84,27 @@ const LoginPage = () => {
                     </button>
                 </form>
 
-                {error && <div className="error-message">{error}</div>}
+                {error && (
+                    <div className="error-message">
+                        ⚠️ {error}
+                    </div>
+                )}
+
+                <div style={{
+                    marginTop: '20px',
+                    textAlign: 'center',
+                    fontSize: '14px'
+                }}>
+                    <Link
+                        to="/"
+                        style={{
+                            color: '#00ffff',
+                            textDecoration: 'none'
+                        }}
+                    >
+                        ← Back to Portfolio
+                    </Link>
+                </div>
             </div>
         </div>
     );

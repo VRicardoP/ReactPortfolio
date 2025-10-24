@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 
 const AuthContext = createContext();
 
+const BACKEND_URL = 'http://127.0.0.1:8000';
+
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
@@ -25,28 +27,37 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    // Login
+    // Login real con el backend
     const login = useCallback(async (username, password) => {
         try {
-            // --- SIMULACIÓN DE LOGIN ---
-            // Comprobamos credenciales predefinidas para la simulación.
-            // Usuario: admin, Contraseña: password
-            if (username === 'admin' && password === 'password') {
-                // Simulamos una respuesta exitosa de la API.
-                const fakeToken = 'fake-jwt-token-for-simulation';
-                const tokenType = 'bearer';
+            // Crear FormData para el endpoint OAuth2
+            const formData = new URLSearchParams();
+            formData.append('username', username);
+            formData.append('password', password);
 
-                localStorage.setItem('accessToken', fakeToken);
-                localStorage.setItem('tokenType', tokenType);
+            const response = await fetch(`${BACKEND_URL}/api/v1/auth/token`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData.toString()
+            });
 
-                setToken(fakeToken);
-                setIsAuthenticated(true);
-
-                return { success: true };
-            } else {
-                // Simulamos un error de autenticación si las credenciales no coinciden.
-                throw new Error('Invalid username or password');
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.detail || 'Authentication failed');
             }
+
+            const data = await response.json();
+
+            // Guardar tokens
+            localStorage.setItem('accessToken', data.access_token);
+            localStorage.setItem('tokenType', data.token_type);
+
+            setToken(data.access_token);
+            setIsAuthenticated(true);
+
+            return { success: true };
         } catch (error) {
             console.error('Login error:', error);
             return {
@@ -81,6 +92,11 @@ export const AuthProvider = ({ children }) => {
         if (response.status === 401) {
             logout();
             throw new Error('Session expired');
+        }
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({}));
+            throw new Error(error.detail || 'Request failed');
         }
 
         return response;

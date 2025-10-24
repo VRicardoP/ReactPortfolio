@@ -16,39 +16,54 @@ export const useDashboardData = () => {
     const loadData = async () => {
       try {
         setLoading(true);
+        setError(null);
 
-        // Cargar estadísticas generales
-        const statsResponse = await authenticatedFetch(
-          `${BACKEND_URL}/api/v1/analytics/stats?days=30`
-        );
-        const statsData = await statsResponse.json();
+        // Intentar cargar todos los datos en paralelo
+        const promises = [
+          // Estadísticas generales
+          authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/stats?days=30`)
+            .then(res => res.json())
+            .catch(err => {
+              console.error('Error loading stats:', err);
+              return null;
+            }),
+
+          // Datos del mapa
+          authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/map-data`)
+            .then(res => res.json())
+            .catch(err => {
+              console.error('Error loading map data:', err);
+              return [];
+            }),
+
+          // Datos de Jobicy
+          authenticatedFetch(`${BACKEND_URL}/api/v1/jobicy-jobs/tech-jobs-by-country`)
+            .then(res => res.json())
+            .catch(err => {
+              console.error('Error loading Jobicy data:', err);
+              return null;
+            }),
+
+          // Datos de Remotive
+          authenticatedFetch(`${BACKEND_URL}/api/v1/remotive-jobs/by-tag`)
+            .then(res => res.json())
+            .catch(err => {
+              console.error('Error loading Remotive data:', err);
+              return null;
+            })
+        ];
+
+        const [statsData, mapDataPoints, jobicyJson, remotiveJson] = await Promise.all(promises);
+
         setStats(statsData);
-
-        // Cargar datos del mapa
-        const mapResponse = await authenticatedFetch(
-          `${BACKEND_URL}/api/v1/analytics/map-data`
-        );
-        const mapDataPoints = await mapResponse.json();
         setMapData(mapDataPoints);
-
-        // Cargar datos de Jobicy
-        const jobicyResponse = await authenticatedFetch(
-          `${BACKEND_URL}/api/v1/jobicy-jobs/tech-jobs-by-country`
-        );
-        const jobicyJson = await jobicyResponse.json();
         setJobicyData(jobicyJson);
-
-        // Cargar datos de Remotive
-        const remotiveResponse = await authenticatedFetch(
-          `${BACKEND_URL}/api/v1/remotive-jobs/by-tag`
-        );
-        const remotiveJson = await remotiveResponse.json();
         setRemotiveData(remotiveJson);
 
         setLoading(false);
       } catch (err) {
         console.error('Error loading dashboard data:', err);
-        setError(err.message);
+        setError(err.message || 'Failed to load dashboard data');
         setLoading(false);
       }
     };

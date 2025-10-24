@@ -82,6 +82,19 @@ const DashboardPage = () => {
                         <span className="terminal-cursor"></span>
                     </h1>
                 </div>
+                <div style={{
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    textAlign: 'center',
+                    color: '#00ffff',
+                    fontFamily: 'Courier New',
+                    zIndex: 100
+                }}>
+                    <div style={{ fontSize: '48px', marginBottom: '20px' }}>⏳</div>
+                    <p style={{ fontSize: '18px' }}>Fetching analytics data...</p>
+                </div>
             </>
         );
     }
@@ -113,13 +126,47 @@ const DashboardPage = () => {
                     textAlign: 'center',
                     color: '#ff6b6b',
                     fontFamily: 'Courier New',
-                    zIndex: 100
+                    zIndex: 100,
+                    maxWidth: '600px',
+                    padding: '30px',
+                    background: 'rgba(0, 0, 0, 0.9)',
+                    border: '2px solid #ff6b6b',
+                    borderRadius: '8px'
                 }}>
-                    <h2>Failed to load dashboard data</h2>
-                    <p>{error}</p>
-                    <p style={{ fontSize: '14px', marginTop: '20px', color: '#D3D3D3' }}>
-                        Make sure the backend is running at http://127.0.0.1:8000
-                    </p>
+                    <h2 style={{ marginTop: 0 }}>❌ Failed to load dashboard data</h2>
+                    <p style={{ fontSize: '16px', margin: '20px 0' }}>{error}</p>
+                    <div style={{
+                        fontSize: '14px',
+                        marginTop: '30px',
+                        padding: '15px',
+                        background: 'rgba(255, 107, 107, 0.1)',
+                        borderRadius: '4px',
+                        color: '#D3D3D3'
+                    }}>
+                        <strong>Troubleshooting:</strong>
+                        <ul style={{ textAlign: 'left', marginTop: '10px' }}>
+                            <li>Check backend is running at http://127.0.0.1:8000</li>
+                            <li>Verify you're logged in with valid credentials</li>
+                            <li>Check browser console for detailed errors</li>
+                            <li>Ensure CORS is properly configured on backend</li>
+                        </ul>
+                    </div>
+                    <button
+                        onClick={() => window.location.reload()}
+                        style={{
+                            marginTop: '20px',
+                            padding: '10px 20px',
+                            background: '#00ffff',
+                            color: '#000',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontFamily: 'Courier New',
+                            fontWeight: 'bold'
+                        }}
+                    >
+                        Retry
+                    </button>
                 </div>
             </>
         );
