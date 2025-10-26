@@ -11,7 +11,13 @@ const ChatWindow = ({ data, initialPosition }) => {
     ]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [error, setError] = useState(null);
     const messagesEndRef = useRef(null);
+    const inputRef = useRef(null);
+
+    // Configuración de la API del backend
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+    const CHAT_ENDPOINT = `${API_BASE_URL}/api/v1/chat/send`;
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -21,29 +27,80 @@ const ChatWindow = ({ data, initialPosition }) => {
         scrollToBottom();
     }, [messages]);
 
+    // Efecto para mantener el foco cuando cambia isTyping
+    useEffect(() => {
+        if (!isTyping && inputRef.current) {
+            // Usar requestAnimationFrame para asegurar que el DOM se haya actualizado
+            requestAnimationFrame(() => {
+                inputRef.current?.focus();
+            });
+        }
+    }, [isTyping]);
+
     const handleSend = async () => {
-        if (!input.trim()) return;
+        if (!input.trim() || isTyping) return;
 
         const userMessage = input.trim();
         setInput('');
+        setError(null);
 
         // Añadir mensaje del usuario
         setMessages(prev => [...prev, { type: 'user', text: userMessage }]);
         setIsTyping(true);
 
-        // Simular respuesta del bot (aquí conectarías con tu API)
-        setTimeout(() => {
-            const botResponse = generateBotResponse(userMessage, data);
-            setMessages(prev => [...prev, { type: 'bot', text: botResponse }]);
+        try {
+            // Llamada al backend
+            const response = await fetch(CHAT_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: userMessage
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // Añadir respuesta del bot
+            setMessages(prev => [...prev, {
+                type: 'bot',
+                text: data.response
+            }]);
+
+        } catch (error) {
+            console.error('Error sending message:', error);
+            setError('Sorry, I encountered an error. Please try again.');
+
+            // Añadir mensaje de error
+            setMessages(prev => [...prev, {
+                type: 'bot',
+                text: 'Sorry, I encountered an error connecting to the server. Please try again in a moment.'
+            }]);
+        } finally {
             setIsTyping(false);
-        }, 1000);
+        }
     };
 
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
+    const handleKeyDown = (e) => {
+        // Solo procesar Enter cuando no está escribiendo
+        if (e.key === 'Enter' && !e.shiftKey && !isTyping) {
             e.preventDefault();
+            e.stopPropagation();
             handleSend();
+            // Prevenir que el evento llegue a otros handlers
+            return false;
         }
+    };
+
+    // Handler alternativo para el botón
+    const handleButtonClick = (e) => {
+        e.preventDefault();
+        handleSend();
     };
 
     return (
@@ -65,53 +122,40 @@ const ChatWindow = ({ data, initialPosition }) => {
                             <p>Kusanagi is typing...</p>
                         </div>
                     )}
+                    {error && (
+                        <div className="chat-error">
+                            {error}
+                        </div>
+                    )}
                     <div ref={messagesEndRef} />
                 </div>
 
                 <div className="chat-input-area">
                     <input
+                        ref={inputRef}
                         type="text"
                         className="chat-input"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        onKeyPress={handleKeyPress}
+                        onKeyDown={handleKeyDown}
                         placeholder="Ask me anything..."
+                        disabled={isTyping}
+                        autoFocus
+                        autoComplete="off"
                     />
-                    <button className="chat-send-btn" onClick={handleSend}>
+                    <button
+                        className="chat-send-btn"
+                        onClick={handleButtonClick}
+                        onMouseDown={(e) => e.preventDefault()}
+                        disabled={isTyping || !input.trim()}
+                        type="button"
+                    >
                         Send
                     </button>
                 </div>
             </div>
         </FloatingWindow>
     );
-};
-
-// Función simple para generar respuestas (puedes conectar con tu backend)
-const generateBotResponse = (message, data) => {
-    const lowerMsg = message.toLowerCase();
-
-    if (lowerMsg.includes('experience') || lowerMsg.includes('work')) {
-        return `${data.name} has ${data.experience.length} professional experiences listed, including roles at ${data.experience[0]?.company}. Would you like details about a specific position?`;
-    }
-
-    if (lowerMsg.includes('skill') || lowerMsg.includes('technology')) {
-        const totalSkills = Object.values(data.techSkills).flat().length;
-        return `${data.name} has expertise in ${totalSkills} technologies across frontend, backend, databases, and system administration. Any specific technology you'd like to know about?`;
-    }
-
-    if (lowerMsg.includes('education') || lowerMsg.includes('study')) {
-        return `${data.name} has ${data.education.length} educational entries, including ${data.education[0]?.title}. The focus is on web development and system administration.`;
-    }
-
-    if (lowerMsg.includes('contact') || lowerMsg.includes('email')) {
-        return `You can reach ${data.name} at ${data.email}. Feel free to send a message!`;
-    }
-
-    if (lowerMsg.includes('hello') || lowerMsg.includes('hi')) {
-        return `Hello! I'm here to help you learn more about ${data.name}'s professional background. What would you like to know?`;
-    }
-
-    return `That's an interesting question! I can tell you about ${data.name}'s experience, skills, education, or contact information. What interests you most?`;
 };
 
 export default ChatWindow;
