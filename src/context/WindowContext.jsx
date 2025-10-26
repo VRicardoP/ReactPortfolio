@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useRef } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useMemo } from 'react';
 import { showToast } from '../components/UI/Toast';
 
 const WindowContext = createContext();
@@ -14,24 +14,42 @@ export const useWindowContext = () => {
 export const WindowProvider = ({ children }) => {
     const [windows, setWindows] = useState({});
     const [highestZIndex, setHighestZIndex] = useState(100);
-    const toastTimeoutRef = useRef({}); // Para evitar toasts duplicados
+    const toastTimeoutRef = useRef({});
 
-    // Registrar una nueva ventana
-    const registerWindow = useCallback((windowId, initialState = {}) => {
-        setWindows(prev => ({
-            ...prev,
-            [windowId]: {
-                isMinimized: initialState.isMinimized || false,
-                isMaximized: initialState.isMaximized || false,
-                position: initialState.position || { x: 100, y: 100 },
-                size: initialState.size || { width: 400, height: 300 },
-                zIndex: initialState.zIndex || 100,
-                ...initialState
-            }
-        }));
+    // Función auxiliar para mostrar toast sin duplicados - MEMOIZADA
+    const showWindowToast = useCallback((windowId, message) => {
+        if (toastTimeoutRef.current[windowId]) {
+            clearTimeout(toastTimeoutRef.current[windowId]);
+        }
+
+        showToast(message, 2000);
+
+        toastTimeoutRef.current[windowId] = setTimeout(() => {
+            delete toastTimeoutRef.current[windowId];
+        }, 2000);
     }, []);
 
-    // Desregistrar ventana
+    // Registrar una nueva ventana - OPTIMIZADO
+    const registerWindow = useCallback((windowId, initialState = {}) => {
+        setWindows(prev => {
+            // Evitar registrar si ya existe
+            if (prev[windowId]) return prev;
+
+            return {
+                ...prev,
+                [windowId]: {
+                    isMinimized: initialState.isMinimized || false,
+                    isMaximized: initialState.isMaximized || false,
+                    position: initialState.position || { x: 100, y: 100 },
+                    size: initialState.size || { width: 400, height: 300 },
+                    zIndex: initialState.zIndex || 100,
+                    ...initialState
+                }
+            };
+        });
+    }, []);
+
+    // Desregistrar ventana - OPTIMIZADO
     const unregisterWindow = useCallback((windowId) => {
         setWindows(prev => {
             const newWindows = { ...prev };
@@ -40,36 +58,35 @@ export const WindowProvider = ({ children }) => {
         });
     }, []);
 
-    // Traer ventana al frente
+    // Traer ventana al frente - OPTIMIZADO Y CORREGIDO
     const bringToFront = useCallback((windowId) => {
-        const newZIndex = highestZIndex + 1;
-        setHighestZIndex(newZIndex);
-        setWindows(prev => ({
-            ...prev,
-            [windowId]: {
-                ...prev[windowId],
-                zIndex: newZIndex
-            }
-        }));
-    }, [highestZIndex]);
+        setHighestZIndex(prev => {
+            const newZIndex = prev + 1;
 
-    // Función auxiliar para mostrar toast sin duplicados
-    const showWindowToast = useCallback((windowId, message) => {
-        // Cancelar toast anterior si existe
-        if (toastTimeoutRef.current[windowId]) {
-            clearTimeout(toastTimeoutRef.current[windowId]);
-        }
+            setWindows(prevWindows => {
+                const currentWindow = prevWindows[windowId];
+                if (!currentWindow) return prevWindows;
 
-        // Mostrar nuevo toast
-        showToast(message, 2000);
+                // Verificar si ya está al frente
+                const maxZ = Math.max(...Object.values(prevWindows).map(w => w.zIndex));
+                if (currentWindow.zIndex === maxZ && maxZ >= newZIndex - 1) {
+                    return prevWindows;
+                }
 
-        // Guardar referencia del timeout
-        toastTimeoutRef.current[windowId] = setTimeout(() => {
-            delete toastTimeoutRef.current[windowId];
-        }, 2000);
+                return {
+                    ...prevWindows,
+                    [windowId]: {
+                        ...currentWindow,
+                        zIndex: newZIndex
+                    }
+                };
+            });
+
+            return newZIndex;
+        });
     }, []);
 
-    // Toggle minimizar
+    // Toggle minimizar - OPTIMIZADO
     const toggleMinimize = useCallback((windowId) => {
         setWindows(prev => {
             const window = prev[windowId];
@@ -86,7 +103,6 @@ export const WindowProvider = ({ children }) => {
                 }
             };
 
-            // Mostrar toast solo una vez
             const windowTitle = windowId
                 .replace('-window', '')
                 .replace(/-/g, ' ')
@@ -104,13 +120,12 @@ export const WindowProvider = ({ children }) => {
         });
     }, [showWindowToast]);
 
-    // Toggle maximizar
+    // Toggle maximizar - OPTIMIZADO
     const toggleMaximize = useCallback((windowId) => {
         setWindows(prev => {
             const window = prev[windowId];
             if (!window) return prev;
 
-            // Si está minimizada, primero restaurar
             if (window.isMinimized) {
                 return {
                     ...prev,
@@ -131,7 +146,6 @@ export const WindowProvider = ({ children }) => {
                 }
             };
 
-            // Mostrar toast solo una vez
             const windowTitle = windowId
                 .replace('-window', '')
                 .replace(/-/g, ' ')
@@ -149,29 +163,50 @@ export const WindowProvider = ({ children }) => {
         });
     }, [showWindowToast]);
 
-    // Actualizar posición
+    // Actualizar posición - OPTIMIZADO
     const updatePosition = useCallback((windowId, position) => {
-        setWindows(prev => ({
-            ...prev,
-            [windowId]: {
-                ...prev[windowId],
-                position
+        setWindows(prev => {
+            const window = prev[windowId];
+            if (!window) return prev;
+
+            // No actualizar si la posición es la misma
+            if (window.position.x === position.x && window.position.y === position.y) {
+                return prev;
             }
-        }));
+
+            return {
+                ...prev,
+                [windowId]: {
+                    ...window,
+                    position
+                }
+            };
+        });
     }, []);
 
-    // Actualizar tamaño
+    // Actualizar tamaño - OPTIMIZADO
     const updateSize = useCallback((windowId, size) => {
-        setWindows(prev => ({
-            ...prev,
-            [windowId]: {
-                ...prev[windowId],
-                size
+        setWindows(prev => {
+            const window = prev[windowId];
+            if (!window) return prev;
+
+            // No actualizar si el tamaño es el mismo
+            if (window.size.width === size.width && window.size.height === size.height) {
+                return prev;
             }
-        }));
+
+            return {
+                ...prev,
+                [windowId]: {
+                    ...window,
+                    size
+                }
+            };
+        });
     }, []);
 
-    const value = {
+    // Memoizar el value para evitar re-renders innecesarios
+    const value = useMemo(() => ({
         windows,
         registerWindow,
         unregisterWindow,
@@ -180,7 +215,16 @@ export const WindowProvider = ({ children }) => {
         toggleMaximize,
         updatePosition,
         updateSize
-    };
+    }), [
+        windows,
+        registerWindow,
+        unregisterWindow,
+        bringToFront,
+        toggleMinimize,
+        toggleMaximize,
+        updatePosition,
+        updateSize
+    ]);
 
     return (
         <WindowContext.Provider value={value}>

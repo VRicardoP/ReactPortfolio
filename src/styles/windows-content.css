@@ -302,3 +302,480 @@
   line-height: 1.5;
   color: #D3D3D3;
 }
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+
+  .profile-description,
+  .contact-message,
+  .skills-description {
+    font-size: 15px;
+  }
+
+  .contact-email {
+    font-size: 17px;
+  }
+
+  .portfolio-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .experience-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+/* Tablets pequeñas y móviles grandes (481px - 768px) */
+@media (max-width: 768px) {
+
+  .profile-content,
+  .languages-content,
+  .tech-skills-content,
+  .education-content {
+    gap: 15px;
+  }
+
+  .profile-description {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .profile-contact p {
+    font-size: 14px;
+  }
+
+  /* Contact */
+  .contact-message {
+    font-size: 14px;
+  }
+
+  .contact-email {
+    font-size: 16px;
+  }
+
+  .contact-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+
+  /* Languages */
+  .language-item {
+    padding: 10px;
+  }
+
+  .language-name {
+    font-size: 16px;
+  }
+
+  .language-level {
+    font-size: 14px;
+  }
+
+  /* Soft Skills */
+  .skills-description {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Tech Skills */
+  .category-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .skill-name {
+    font-size: 14px;
+  }
+
+  .skill-bar {
+    height: 7px;
+  }
+
+  /* Education */
+  .education-title {
+    font-size: 16px;
+  }
+
+  .education-institution {
+    font-size: 14px;
+  }
+
+  .education-date {
+    font-size: 13px;
+  }
+
+  .education-description {
+    font-size: 14px;
+  }
+
+  /* Portfolio */
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .portfolio-item {
+    padding: 12px;
+  }
+
+  .portfolio-title {
+    font-size: 16px;
+  }
+
+  .portfolio-tech,
+  .portfolio-description {
+    font-size: 13px;
+  }
+
+  /* Experience */
+  .experience-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .experience-item {
+    padding: 12px;
+  }
+
+  .experience-title {
+    font-size: 15px;
+  }
+
+  .experience-company {
+    font-size: 14px;
+  }
+
+  .experience-location {
+    font-size: 13px;
+  }
+
+  .experience-date {
+    font-size: 12px;
+  }
+
+  .experience-description {
+    font-size: 13px;
+  }
+}
+
+/* Móviles (320px - 480px) */
+@media (max-width: 480px) {
+
+  .profile-content,
+  .languages-content,
+  .tech-skills-content,
+  .education-content {
+    gap: 12px;
+  }
+
+  .profile-description {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .profile-contact {
+    padding-top: 12px;
+    gap: 6px;
+  }
+
+  .profile-contact p {
+    font-size: 13px;
+  }
+
+  /* Contact */
+  .contact-content {
+    gap: 12px;
+  }
+
+  .contact-message {
+    font-size: 13px;
+  }
+
+  .contact-email {
+    font-size: 15px;
+  }
+
+  .contact-icons {
+    gap: 8px;
+  }
+
+  .contact-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  /* Languages */
+  .language-item {
+    padding: 8px;
+  }
+
+  .language-name {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .language-level {
+    font-size: 13px;
+  }
+
+  /* Soft Skills */
+  .skills-description {
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 10px;
+  }
+
+  /* Tech Skills */
+  .skill-category {
+    margin-bottom: 12px;
+  }
+
+  .category-title {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  .skill-item {
+    margin-bottom: 10px;
+  }
+
+  .skill-name {
+    font-size: 13px;
+    margin-bottom: 3px;
+  }
+
+  .skill-bar {
+    height: 6px;
+  }
+
+  /* Education */
+  .education-item {
+    padding-bottom: 12px;
+  }
+
+  .education-title {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .education-institution {
+    font-size: 13px;
+  }
+
+  .education-date {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .education-description {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  /* Portfolio */
+  .portfolio-grid {
+    gap: 10px;
+  }
+
+  .portfolio-item {
+    padding: 10px;
+  }
+
+  .portfolio-item:hover {
+    transform: translateY(-2px);
+  }
+
+  .portfolio-title {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .portfolio-tech {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .portfolio-description {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* Experience */
+  .experience-grid {
+    gap: 10px;
+  }
+
+  .experience-item {
+    padding: 10px;
+  }
+
+  .experience-title {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .experience-company {
+    font-size: 13px;
+  }
+
+  .experience-location {
+    font-size: 12px;
+  }
+
+  .experience-date {
+    font-size: 11px;
+    margin: 6px 0;
+  }
+
+  .experience-description {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+
+/* Móviles muy pequeños (< 320px) */
+@media (max-width: 320px) {
+
+  .profile-description,
+  .contact-message,
+  .skills-description {
+    font-size: 12px;
+  }
+
+  .contact-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .category-title {
+    font-size: 14px;
+  }
+
+  .skill-name {
+    font-size: 12px;
+  }
+
+  .portfolio-title,
+  .education-title,
+  .experience-title {
+    font-size: 14px;
+  }
+
+  .portfolio-tech,
+  .portfolio-description,
+  .experience-description {
+    font-size: 11px;
+  }
+}
+
+/* Orientación horizontal en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+
+  .profile-content,
+  .languages-content,
+  .tech-skills-content,
+  .education-content {
+    gap: 10px;
+  }
+
+  .education-item,
+  .skill-category {
+    margin-bottom: 10px;
+  }
+
+  .portfolio-grid,
+  .experience-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+/* Dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+  .contact-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .portfolio-item,
+  .experience-item {
+    padding: 14px;
+  }
+
+  /* Aumentar área de toque para hover effects */
+  .portfolio-item:active {
+    background: rgba(0, 255, 255, 0.15);
+    transform: scale(0.98);
+  }
+
+  .experience-item:active {
+    background: rgba(0, 255, 255, 0.15);
+  }
+}
+
+/* Pantallas grandes (> 1440px) */
+@media (min-width: 1440px) {
+
+  .profile-description,
+  .contact-message {
+    font-size: 18px;
+  }
+
+  .contact-email {
+    font-size: 20px;
+  }
+
+  .contact-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .language-name {
+    font-size: 20px;
+  }
+
+  .language-level {
+    font-size: 18px;
+  }
+
+  .skills-description {
+    font-size: 18px;
+  }
+
+  .category-title {
+    font-size: 20px;
+  }
+
+  .skill-name {
+    font-size: 18px;
+  }
+
+  .skill-bar {
+    height: 10px;
+  }
+
+  .education-title {
+    font-size: 20px;
+  }
+
+  .education-institution {
+    font-size: 18px;
+  }
+
+  .education-description {
+    font-size: 17px;
+  }
+
+  .portfolio-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .experience-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}

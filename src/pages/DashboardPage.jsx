@@ -1,20 +1,49 @@
+import { lazy, Suspense, memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useDashboardData } from '../hooks/useDashboardData';
 import RainEffect from '../components/Background/RainEffect';
 import { WindowProvider } from '../context/WindowContext';
 import Toast from '../components/UI/Toast';
-import StatsWindow from '../components/Dashboard/StatsWindow';
-import MapWindow from '../components/Dashboard/MapWindow';
-import JobicyWindow from '../components/Dashboard/JobicyWindow';
-import RemotiveWindow from '../components/Dashboard/RemotiveWindow';
-import RecentVisitorsWindow from '../components/Dashboard/RecentVisitorsWindow';
 import useTypewriter from '../hooks/useTypewriter';
 import useWindowLayout from '../hooks/useWindowLayout';
 import '../styles/dashboard.css';
 
-// Componente que contiene las ventanas dentro del WindowProvider
-function DashboardContent({ stats, mapData, jobicyData, remotiveData }) {
+// Lazy loading de componentes del Dashboard
+const StatsWindow = lazy(() => import('../components/Dashboard/StatsWindow'));
+const MapWindow = lazy(() => import('../components/Dashboard/MapWindow'));
+const JobicyWindow = lazy(() => import('../components/Dashboard/JobicyWindow'));
+const RemotiveWindow = lazy(() => import('../components/Dashboard/RemotiveWindow'));
+const RecentVisitorsWindow = lazy(() => import('../components/Dashboard/RecentVisitorsWindow'));
+
+// Loading component memoizado
+const DashboardLoader = memo(() => (
+    <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        color: '#00ffff',
+        fontFamily: 'Courier New',
+        fontSize: '14px'
+    }}>
+        <div style={{ textAlign: 'center' }}>
+            <div style={{
+                fontSize: '24px',
+                marginBottom: '10px',
+                animation: 'pulse 1.5s infinite'
+            }}>
+                📊
+            </div>
+            Loading dashboard...
+        </div>
+    </div>
+));
+
+DashboardLoader.displayName = 'DashboardLoader';
+
+// Componente que contiene las ventanas dentro del WindowProvider - MEMOIZADO
+const DashboardContent = memo(({ stats, mapData, jobicyData, remotiveData }) => {
     const dashboardWindowIds = [
         'stats-window',
         'recent-visitors-window',
@@ -23,11 +52,10 @@ function DashboardContent({ stats, mapData, jobicyData, remotiveData }) {
         'remotive-window'
     ];
 
-    // Animación cascada → menú después de 3 segundos
     useWindowLayout(dashboardWindowIds, 3000);
 
     return (
-        <>
+        <Suspense fallback={<DashboardLoader />}>
             <StatsWindow
                 data={stats}
                 initialPosition={{ x: 100, y: 120 }}
@@ -52,9 +80,11 @@ function DashboardContent({ stats, mapData, jobicyData, remotiveData }) {
                 data={remotiveData}
                 initialPosition={{ x: 220, y: 160 }}
             />
-        </>
+        </Suspense>
     );
-}
+});
+
+DashboardContent.displayName = 'DashboardContent';
 
 const DashboardPage = () => {
     const { logout } = useAuth();
@@ -62,14 +92,15 @@ const DashboardPage = () => {
     const typedText = useTypewriter('Dashboard > Analytics', 100);
     const { stats, mapData, jobicyData, remotiveData, loading, error } = useDashboardData();
 
-    const handleLogout = () => {
+    // Memoizar handlers
+    const handleLogout = useCallback(() => {
         logout();
         navigate('/login');
-    };
+    }, [logout, navigate]);
 
-    const handleGoHome = () => {
+    const handleGoHome = useCallback(() => {
         navigate('/');
-    };
+    }, [navigate]);
 
     // Estado de carga
     if (loading) {
@@ -127,7 +158,7 @@ const DashboardPage = () => {
                     color: '#ff6b6b',
                     fontFamily: 'Courier New',
                     zIndex: 100,
-                    maxWidth: '600px',
+                    maxWidth: '90%',
                     padding: '30px',
                     background: 'rgba(0, 0, 0, 0.9)',
                     border: '2px solid #ff6b6b',
@@ -175,10 +206,8 @@ const DashboardPage = () => {
     // Dashboard completo con datos cargados
     return (
         <>
-            {/* Efecto de lluvia de fondo */}
             <RainEffect />
 
-            {/* Header con título y navegación */}
             <div className="dashboard-header">
                 <h1 className="main-title">
                     <span className="typewriter-container">{typedText}</span>
@@ -195,10 +224,8 @@ const DashboardPage = () => {
                 </div>
             </div>
 
-            {/* Sistema de notificaciones */}
             <Toast />
 
-            {/* WindowProvider envuelve las ventanas del dashboard */}
             <WindowProvider>
                 <DashboardContent
                     stats={stats}

@@ -32,13 +32,14 @@ const FloatingWindow = ({
             position: initialPosition,
             size: initialSize,
             isMinimized: false,
-            isMaximized: false
+            isMaximized: false,
+            zIndex: 100
         });
 
         return () => unregisterWindow(id);
     }, [id, registerWindow, unregisterWindow]);
 
-    // Hooks para drag y resize (pasamos windowRef)
+    // Hooks para drag y resize
     const { handleMouseDown: handleDragStart } = useDraggable(
         windowRef,
         windowState?.isMinimized,
@@ -52,8 +53,28 @@ const FloatingWindow = ({
         windowState?.isMinimized,
         windowState?.isMaximized,
         (size) => updateSize(id, size),
-        (pos) => updatePosition(id, pos)
+        (pos) => updatePosition(id, pos),
+        () => bringToFront(id)
     );
+
+    // Traer al frente al hacer click en cualquier parte de la ventana
+    const handleWindowClick = (e) => {
+        // Evitar si es un click en los botones de control
+        if (e.target.classList.contains('control-btn')) {
+            return;
+        }
+        bringToFront(id);
+    };
+
+    // Traer al frente cuando se restaura desde minimizado
+    const handleToggleMinimize = (e) => {
+        e.stopPropagation();
+        toggleMinimize(id);
+        // Traer al frente después de restaurar
+        if (windowState?.isMinimized) {
+            setTimeout(() => bringToFront(id), 100);
+        }
+    };
 
     if (!windowState) return null;
 
@@ -64,7 +85,7 @@ const FloatingWindow = ({
         top: `${position.y}px`,
         width: isMinimized ? '180px' : isMaximized ? '100vw' : `${size.width}px`,
         height: isMinimized ? '40px' : isMaximized ? '100vh' : `${size.height}px`,
-        zIndex
+        zIndex: zIndex
     };
 
     const windowClasses = [
@@ -78,6 +99,8 @@ const FloatingWindow = ({
             ref={windowRef}
             className={windowClasses}
             style={windowStyle}
+            onMouseDown={handleWindowClick}
+            onClick={handleWindowClick}
         >
             <div
                 className="window-header"
@@ -87,10 +110,7 @@ const FloatingWindow = ({
                     <Tooltip text="Minimize" position="bottom">
                         <button
                             className="control-btn control-minimize"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                toggleMinimize(id);
-                            }}
+                            onClick={handleToggleMinimize}
                         />
                     </Tooltip>
                     <Tooltip text="Maximize" position="bottom">
@@ -99,6 +119,8 @@ const FloatingWindow = ({
                             onClick={(e) => {
                                 e.stopPropagation();
                                 toggleMaximize(id);
+                                // Traer al frente al maximizar
+                                setTimeout(() => bringToFront(id), 100);
                             }}
                         />
                     </Tooltip>

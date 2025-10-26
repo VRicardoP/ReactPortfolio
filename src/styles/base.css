@@ -40,6 +40,8 @@ canvas {
   user-select: none;
   pointer-events: none;
   font-family: 'Courier New', monospace;
+  max-width: 90%;
+  text-align: center;
 }
 
 /* Cursor parpadeante tipo terminal */
@@ -74,4 +76,204 @@ canvas {
   display: inline-block;
   color: #00ffff;
   font-family: 'Courier New', monospace;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablets y pantallas medianas (768px - 1024px) */
+@media (max-width: 1024px) {
+  .main-title {
+    font-size: 32px;
+    top: 20px;
+  }
+}
+
+/* Tablets pequeñas y móviles grandes (481px - 768px) */
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 24px;
+    top: 15px;
+    max-width: 85%;
+  }
+
+  .terminal-cursor {
+    width: 2px;
+  }
+
+  /* Ajustar ventanas flotantes */
+  .floating-window {
+    max-width: 95vw !important;
+    max-height: 85vh !important;
+  }
+
+  .floating-window .window-content {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .floating-window .window-title {
+    font-size: 16px;
+  }
+
+  /* Grid responsivo */
+  .experience-grid,
+  .portfolio-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stats-container {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Móviles (320px - 480px) */
+@media (max-width: 480px) {
+  .main-title {
+    font-size: 18px;
+    top: 10px;
+    padding: 0 10px;
+  }
+
+  .typewriter-container {
+    font-size: 16px;
+  }
+
+  .terminal-cursor {
+    width: 2px;
+    height: 0.9em;
+  }
+
+  /* Ventanas flotantes en móvil */
+  .floating-window {
+    max-width: 98vw !important;
+    max-height: 90vh !important;
+    min-width: 280px !important;
+  }
+
+  .floating-window .window-header {
+    padding: 6px 8px;
+  }
+
+  .floating-window .window-content {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .floating-window .window-title {
+    font-size: 14px;
+  }
+
+  .control-btn {
+    width: 10px;
+    height: 10px;
+  }
+
+  /* Ajustar posición inicial en móvil */
+  .floating-window[style*="left"] {
+    left: 5vw !important;
+  }
+
+  .floating-window[style*="top"] {
+    top: 80px !important;
+  }
+
+  /* Chat en móvil */
+  .chat-input {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .chat-send-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .chat-message {
+    max-width: 90%;
+    font-size: 13px;
+  }
+}
+
+/* Móviles muy pequeños (< 320px) */
+@media (max-width: 320px) {
+  .main-title {
+    font-size: 16px;
+  }
+
+  .floating-window {
+    min-width: 260px !important;
+  }
+
+  .floating-window .window-content {
+    font-size: 12px;
+  }
+}
+
+/* Orientación horizontal en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .main-title {
+    font-size: 18px;
+    top: 5px;
+  }
+
+  .floating-window {
+    max-height: 80vh !important;
+  }
+
+  .floating-window .window-content {
+    padding: 8px;
+  }
+}
+
+/* Pantallas grandes (> 1440px) */
+@media (min-width: 1440px) {
+  .main-title {
+    font-size: 48px;
+  }
+
+  .floating-window .window-content {
+    font-size: 16px;
+  }
+}
+
+/* Modo táctil (touch devices) */
+@media (hover: none) and (pointer: coarse) {
+  .control-btn {
+    width: 14px;
+    height: 14px;
+  }
+
+  .floating-window .window-header {
+    padding: 10px;
+  }
+
+  /* Aumentar área de toque */
+  .resize-handle {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .resize-handle-n,
+  .resize-handle-s {
+    height: 12px !important;
+  }
+
+  .resize-handle-e,
+  .resize-handle-w {
+    width: 12px !important;
+  }
+}
+
+/* Preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .terminal-cursor {
+    animation: none;
+    opacity: 1;
+  }
 }

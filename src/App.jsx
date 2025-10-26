@@ -1,14 +1,5 @@
+import { lazy, Suspense, memo } from 'react';
 import RainEffect from './components/Background/RainEffect';
-import WelcomeWindow from './components/Windows/WelcomeWindow';
-import ProfileWindow from './components/Windows/ProfileWindow';
-import ContactWindow from './components/Windows/ContactWindow';
-import LanguagesWindow from './components/Windows/LanguagesWindow';
-import SoftSkillsWindow from './components/Windows/SoftSkillsWindow';
-import TechSkillsWindow from './components/Windows/TechSkillsWindow';
-import EducationWindow from './components/Windows/EducationWindow';
-import PortfolioWindow from './components/Windows/PortfolioWindow';
-import ExperienceWindow from './components/Windows/ExperienceWindow';
-import ChatWindow from './components/Windows/ChatWindow';
 import Toast from './components/UI/Toast';
 import { WindowProvider } from './context/WindowContext';
 import useTypewriter from './hooks/useTypewriter';
@@ -17,9 +8,46 @@ import useWindowLayout from './hooks/useWindowLayout';
 import './styles/base.css';
 import './styles/windows-content.css';
 
-// Componente interno que usa el WindowContext
-function PortfolioContent({ portfolioData }) {
-  // IDs de las ventanas del portfolio (excluyendo welcome)
+// Lazy loading de todos los componentes de ventanas
+const WelcomeWindow = lazy(() => import('./components/Windows/WelcomeWindow'));
+const ProfileWindow = lazy(() => import('./components/Windows/ProfileWindow'));
+const ContactWindow = lazy(() => import('./components/Windows/ContactWindow'));
+const LanguagesWindow = lazy(() => import('./components/Windows/LanguagesWindow'));
+const SoftSkillsWindow = lazy(() => import('./components/Windows/SoftSkillsWindow'));
+const TechSkillsWindow = lazy(() => import('./components/Windows/TechSkillsWindow'));
+const EducationWindow = lazy(() => import('./components/Windows/EducationWindow'));
+const PortfolioWindow = lazy(() => import('./components/Windows/PortfolioWindow'));
+const ExperienceWindow = lazy(() => import('./components/Windows/ExperienceWindow'));
+const ChatWindow = lazy(() => import('./components/Windows/ChatWindow'));
+
+// Loading component optimizado
+const WindowLoader = memo(() => (
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    color: '#00ffff',
+    fontFamily: 'Courier New',
+    fontSize: '14px'
+  }}>
+    <div style={{ textAlign: 'center' }}>
+      <div style={{
+        fontSize: '24px',
+        marginBottom: '10px',
+        animation: 'pulse 1.5s infinite'
+      }}>
+        ⏳
+      </div>
+      Loading...
+    </div>
+  </div>
+));
+
+WindowLoader.displayName = 'WindowLoader';
+
+// Componente interno que usa el WindowContext - MEMOIZADO
+const PortfolioContent = memo(({ portfolioData }) => {
   const portfolioWindowIds = [
     'profile-window',
     'soft-skills-window',
@@ -32,15 +60,12 @@ function PortfolioContent({ portfolioData }) {
     'chat-window'
   ];
 
-  // Hook para la animación cascada → menú (4 segundos después de cargar)
   useWindowLayout(portfolioWindowIds, 500);
 
   return (
-    <>
-      {/* Ventana de Bienvenida (permanece centrada, no se minimiza) */}
+    <Suspense fallback={<WindowLoader />}>
       <WelcomeWindow portfolioData={portfolioData} />
 
-      {/* Ventanas del Portfolio (se minimizan automáticamente después de 4s) */}
       <ProfileWindow
         data={portfolioData}
         initialPosition={{ x: 100, y: 120 }}
@@ -85,9 +110,11 @@ function PortfolioContent({ portfolioData }) {
         data={portfolioData}
         initialPosition={{ x: 500, y: 280 }}
       />
-    </>
+    </Suspense>
   );
-}
+});
+
+PortfolioContent.displayName = 'PortfolioContent';
 
 function App() {
   const { data: portfolioData, loading, error } = usePortfolioData();
@@ -127,7 +154,9 @@ function App() {
           fontFamily: 'Courier New',
           fontSize: '16px',
           textAlign: 'center',
-          zIndex: 1000
+          zIndex: 1000,
+          padding: '20px',
+          maxWidth: '90%'
         }}>
           <p>Failed to load portfolio data.</p>
           <p>Please check that portfolio-data.json exists in the public folder.</p>
@@ -138,19 +167,15 @@ function App() {
 
   return (
     <>
-      {/* Efecto de lluvia de fondo */}
       <RainEffect />
 
-      {/* Título principal con efecto typewriter */}
       <h1 className="main-title">
         <span className="typewriter-container">{typedText}</span>
         <span className="terminal-cursor"></span>
       </h1>
 
-      {/* Sistema de notificaciones Toast */}
       <Toast />
 
-      {/* WindowProvider envuelve solo las ventanas */}
       <WindowProvider>
         <PortfolioContent portfolioData={portfolioData} />
       </WindowProvider>

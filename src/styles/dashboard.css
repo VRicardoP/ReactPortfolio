@@ -170,3 +170,293 @@
 .visitors-table tbody tr:nth-child(even):hover {
   background: rgba(0, 255, 255, 0.08);
 }
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+  .dashboard-nav {
+    top: 15px;
+    right: 15px;
+    gap: 8px;
+  }
+
+  .nav-button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .stats-container {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+  }
+
+  .visitors-table {
+    font-size: 12px;
+  }
+
+  .visitors-table th,
+  .visitors-table td {
+    padding: 8px 6px;
+  }
+}
+
+/* Tablets pequeñas y móviles grandes (481px - 768px) */
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 15px 10px;
+  }
+
+  .dashboard-nav {
+    top: 10px;
+    right: 10px;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .nav-button {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .stats-container {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 12px;
+  }
+
+  .stat-card h3 {
+    font-size: 12px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .top-list li {
+    padding: 6px 0;
+    font-size: 13px;
+  }
+
+  /* Tabla de visitantes responsive */
+  .visitors-table {
+    font-size: 11px;
+  }
+
+  .visitors-table th,
+  .visitors-table td {
+    padding: 6px 4px;
+  }
+
+  /* Ocultar columnas menos importantes en móvil */
+  .visitors-table th:last-child,
+  .visitors-table td:last-child {
+    display: none;
+  }
+
+  /* Leaflet en tablets */
+  .leaflet-popup-content {
+    font-size: 12px !important;
+  }
+}
+
+/* Móviles (320px - 480px) */
+@media (max-width: 480px) {
+  .dashboard-header {
+    padding: 10px 5px;
+  }
+
+  .dashboard-nav {
+    top: 8px;
+    right: 8px;
+    gap: 5px;
+  }
+
+  .nav-button {
+    padding: 6px 12px;
+    font-size: 11px;
+    border-width: 1px;
+  }
+
+  .stats-container {
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 10px;
+  }
+
+  .stat-card h3 {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+  }
+
+  .top-list li {
+    padding: 5px 0;
+    font-size: 12px;
+  }
+
+  /* Tabla de visitantes en móvil */
+  .visitors-table {
+    font-size: 10px;
+  }
+
+  .visitors-table th,
+  .visitors-table td {
+    padding: 4px 2px;
+  }
+
+  .visitors-table th {
+    font-size: 10px;
+  }
+
+  /* Ocultar más columnas en móvil pequeño */
+  .visitors-table th:nth-child(4),
+  .visitors-table td:nth-child(4),
+  .visitors-table th:nth-child(5),
+  .visitors-table td:nth-child(5) {
+    display: none;
+  }
+
+  /* Ajustar tabla para scroll horizontal si es necesario */
+  .visitors-table-container {
+    overflow-x: auto;
+  }
+
+  /* Leaflet en móvil */
+  .leaflet-popup-content {
+    font-size: 11px !important;
+    max-width: 180px !important;
+  }
+
+  .leaflet-popup-content strong {
+    font-size: 12px;
+  }
+
+  /* Controles del mapa más grandes */
+  .leaflet-control-zoom a {
+    width: 35px !important;
+    height: 35px !important;
+    line-height: 35px !important;
+    font-size: 18px !important;
+  }
+}
+
+/* Móviles muy pequeños (< 320px) */
+@media (max-width: 320px) {
+  .dashboard-nav {
+    top: 5px;
+    right: 5px;
+  }
+
+  .nav-button {
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+
+  .stat-card {
+    padding: 8px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+  }
+
+  .visitors-table {
+    font-size: 9px;
+  }
+
+  .visitors-table th,
+  .visitors-table td {
+    padding: 3px 2px;
+  }
+}
+
+/* Orientación horizontal en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .dashboard-nav {
+    flex-direction: row;
+    gap: 5px;
+  }
+
+  .nav-button {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .stats-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+  .nav-button {
+    padding: 12px 20px;
+    min-height: 40px;
+  }
+
+  .nav-button:active {
+    transform: scale(0.95);
+  }
+
+  /* Tabla con mejor área de toque */
+  .visitors-table td {
+    padding: 10px 6px;
+  }
+}
+
+/* Pantallas grandes (> 1440px) */
+@media (min-width: 1440px) {
+  .dashboard-header {
+    padding: 30px;
+  }
+
+  .dashboard-nav {
+    top: 30px;
+    right: 30px;
+    gap: 15px;
+  }
+
+  .nav-button {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+
+  .stats-container {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .stat-card {
+    padding: 20px;
+  }
+
+  .stat-card h3 {
+    font-size: 16px;
+  }
+
+  .stat-value {
+    font-size: 36px;
+  }
+
+  .visitors-table {
+    font-size: 14px;
+  }
+
+  .visitors-table th,
+  .visitors-table td {
+    padding: 14px 10px;
+  }
+}

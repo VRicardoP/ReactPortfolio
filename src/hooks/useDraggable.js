@@ -64,7 +64,10 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange, onB
     // Solo arrastrar con click izquierdo
     if (e.button !== 0) return;
 
-    // Traer al frente
+    // No arrastrar si es un botón de control
+    if (e.target.classList.contains('control-btn')) return;
+
+    // IMPORTANTE: Traer al frente INMEDIATAMENTE al empezar a arrastrar
     onBringToFront();
 
     const dragState = dragStateRef.current;
