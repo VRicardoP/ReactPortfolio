@@ -9,14 +9,14 @@ import useTypewriter from '../hooks/useTypewriter';
 import useWindowLayout from '../hooks/useWindowLayout';
 import '../styles/dashboard.css';
 
-// Lazy loading de componentes del Dashboard
+// cargo los componentes solo cuando hacen falta para que vaya mas rapido
 const StatsWindow = lazy(() => import('../components/Dashboard/StatsWindow'));
 const MapWindow = lazy(() => import('../components/Dashboard/MapWindow'));
 const JobicyWindow = lazy(() => import('../components/Dashboard/JobicyWindow'));
 const RemotiveWindow = lazy(() => import('../components/Dashboard/RemotiveWindow'));
 const RecentVisitorsWindow = lazy(() => import('../components/Dashboard/RecentVisitorsWindow'));
 
-// Loading component memoizado
+// lo que se ve mientras carga el dashboard
 const DashboardLoader = memo(() => (
     <div style={{
         display: 'flex',
@@ -42,7 +42,7 @@ const DashboardLoader = memo(() => (
 
 DashboardLoader.displayName = 'DashboardLoader';
 
-// Componente que contiene las ventanas dentro del WindowProvider - MEMOIZADO
+// aqui estan todas las ventanas del dashboard
 const DashboardContent = memo(({ stats, mapData, jobicyData, remotiveData }) => {
     const dashboardWindowIds = [
         'stats-window',
@@ -92,7 +92,7 @@ const DashboardPage = () => {
     const typedText = useTypewriter('Dashboard > Analytics', 100);
     const { stats, mapData, jobicyData, remotiveData, loading, error } = useDashboardData();
 
-    // Memoizar handlers
+    // funciones para los botones
     const handleLogout = useCallback(() => {
         logout();
         navigate('/login');
@@ -102,7 +102,7 @@ const DashboardPage = () => {
         navigate('/');
     }, [navigate]);
 
-    // Estado de carga
+    // mientras carga los datos muestro esto
     if (loading) {
         return (
             <>
@@ -130,7 +130,7 @@ const DashboardPage = () => {
         );
     }
 
-    // Estado de error
+    // si hay algun problema muestro este error
     if (error) {
         return (
             <>
@@ -176,7 +176,7 @@ const DashboardPage = () => {
                     }}>
                         <strong>Troubleshooting:</strong>
                         <ul style={{ textAlign: 'left', marginTop: '10px' }}>
-                            <li>Check backend is running at http://127.0.0.1:8000</li>
+                            <li>Check backend is running at http://127.0.0.1:8001</li>
                             <li>Verify you're logged in with valid credentials</li>
                             <li>Check browser console for detailed errors</li>
                             <li>Ensure CORS is properly configured on backend</li>
@@ -203,7 +203,7 @@ const DashboardPage = () => {
         );
     }
 
-    // Dashboard completo con datos cargados
+    // cuando todo esta listo muestro el dashboard completo
     return (
         <>
             <RainEffect />

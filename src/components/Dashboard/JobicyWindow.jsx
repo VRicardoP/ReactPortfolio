@@ -50,13 +50,7 @@ const JobicyWindow = memo(({ data, initialPosition }) => {
                 display: false
             },
             title: {
-                display: true,
-                text: `Remote Jobs (Jobicy)${data?.metadata?.total_jobs ? ` - ${data.metadata.total_jobs} total` : ''}`,
-                color: '#00ffff',
-                font: {
-                    size: 16,
-                    family: 'Courier New'
-                }
+                display: false
             },
             tooltip: {
                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -121,23 +115,8 @@ const JobicyWindow = memo(({ data, initialPosition }) => {
             initialPosition={initialPosition}
             initialSize={{ width: 550, height: 450 }}
         >
-            <div style={{ height: '100%', width: '100%', padding: '10px' }}>
+            <div style={{ height: '100%', width: '100%' }}>
                 <Bar data={chartData} options={options} />
-                <p style={{
-                    textAlign: 'center',
-                    marginTop: '10px',
-                    fontSize: '12px',
-                    color: '#D3D3D3'
-                }}>
-                    Source: <a
-                        href="https://jobicy.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: '#00ffff' }}
-                    >
-                        Jobicy.com
-                    </a>
-                </p>
             </div>
         </FloatingWindow>
     );

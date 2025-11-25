@@ -8,7 +8,7 @@ import useWindowLayout from './hooks/useWindowLayout';
 import './styles/base.css';
 import './styles/windows-content.css';
 
-// Lazy loading de todos los componentes de ventanas
+// cargo las ventanas solo cuando se necesitan para que la pagina cargue mas rapido
 const WelcomeWindow = lazy(() => import('./components/Windows/WelcomeWindow'));
 const ProfileWindow = lazy(() => import('./components/Windows/ProfileWindow'));
 const ContactWindow = lazy(() => import('./components/Windows/ContactWindow'));
@@ -20,7 +20,7 @@ const PortfolioWindow = lazy(() => import('./components/Windows/PortfolioWindow'
 const ExperienceWindow = lazy(() => import('./components/Windows/ExperienceWindow'));
 const ChatWindow = lazy(() => import('./components/Windows/ChatWindow'));
 
-// Loading component optimizado
+// esto es lo que se muestra mientras carga una ventana
 const WindowLoader = memo(() => (
   <div style={{
     display: 'flex',
@@ -46,7 +46,7 @@ const WindowLoader = memo(() => (
 
 WindowLoader.displayName = 'WindowLoader';
 
-// Componente interno que usa el WindowContext - MEMOIZADO
+// este componente tiene todas las ventanas del portfolio
 const PortfolioContent = memo(({ portfolioData }) => {
   const portfolioWindowIds = [
     'profile-window',
@@ -123,7 +123,7 @@ function App() {
     100
   );
 
-  // Estado de carga
+  // mientras carga los datos muestro un mensaje
   if (loading) {
     return (
       <>
@@ -136,7 +136,7 @@ function App() {
     );
   }
 
-  // Estado de error
+  // si algo sale mal muestro el error
   if (error) {
     return (
       <>

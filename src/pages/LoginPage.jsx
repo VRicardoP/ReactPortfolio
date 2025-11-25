@@ -17,7 +17,7 @@ const LoginPage = () => {
         setError('');
         setLoading(true);
 
-        // Validaciones básicas
+        // compruebo que hayan escrito algo
         if (!username.trim()) {
             setError('Username is required');
             setLoading(false);

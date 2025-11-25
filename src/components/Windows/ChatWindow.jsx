@@ -15,8 +15,8 @@ const ChatWindow = ({ data, initialPosition }) => {
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
 
-    // Configuración de la API del backend
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+    // la url del servidor donde esta el chatbot
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
     const CHAT_ENDPOINT = `${API_BASE_URL}/api/v1/chat/send`;
 
     const scrollToBottom = () => {
@@ -27,10 +27,10 @@ const ChatWindow = ({ data, initialPosition }) => {
         scrollToBottom();
     }, [messages]);
 
-    // Efecto para mantener el foco cuando cambia isTyping
+    // cuando el bot termina de escribir vuelvo a poner el cursor en el input
     useEffect(() => {
         if (!isTyping && inputRef.current) {
-            // Usar requestAnimationFrame para asegurar que el DOM se haya actualizado
+            // espero un poco a que se actualice la pantalla
             requestAnimationFrame(() => {
                 inputRef.current?.focus();
             });
@@ -44,12 +44,12 @@ const ChatWindow = ({ data, initialPosition }) => {
         setInput('');
         setError(null);
 
-        // Añadir mensaje del usuario
+        // pongo el mensaje del usuario en la lista
         setMessages(prev => [...prev, { type: 'user', text: userMessage }]);
         setIsTyping(true);
 
         try {
-            // Llamada al backend
+            // envio el mensaje al servidor
             const response = await fetch(CHAT_ENDPOINT, {
                 method: 'POST',
                 headers: {
@@ -66,7 +66,7 @@ const ChatWindow = ({ data, initialPosition }) => {
 
             const data = await response.json();
 
-            // Añadir respuesta del bot
+            // cuando responde el servidor muestro lo que dijo el bot
             setMessages(prev => [...prev, {
                 type: 'bot',
                 text: data.response
@@ -76,7 +76,7 @@ const ChatWindow = ({ data, initialPosition }) => {
             console.error('Error sending message:', error);
             setError('Sorry, I encountered an error. Please try again.');
 
-            // Añadir mensaje de error
+            // si falla muestro un mensaje de que algo salio mal
             setMessages(prev => [...prev, {
                 type: 'bot',
                 text: 'Sorry, I encountered an error connecting to the server. Please try again in a moment.'
@@ -87,17 +87,17 @@ const ChatWindow = ({ data, initialPosition }) => {
     };
 
     const handleKeyDown = (e) => {
-        // Solo procesar Enter cuando no está escribiendo
+        // si pulso enter y el bot no esta escribiendo envio el mensaje
         if (e.key === 'Enter' && !e.shiftKey && !isTyping) {
             e.preventDefault();
             e.stopPropagation();
             handleSend();
-            // Prevenir que el evento llegue a otros handlers
+            // para que no haga otras cosas raras
             return false;
         }
     };
 
-    // Handler alternativo para el botón
+    // cuando le dan click al boton de enviar
     const handleButtonClick = (e) => {
         e.preventDefault();
         handleSend();

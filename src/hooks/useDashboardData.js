@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-const BACKEND_URL = 'http://127.0.0.1:8000';
+const BACKEND_URL = 'http://127.0.0.1:8001';
 
 export const useDashboardData = () => {
   const { authenticatedFetch } = useAuth();
@@ -18,9 +18,9 @@ export const useDashboardData = () => {
         setLoading(true);
         setError(null);
 
-        // Intentar cargar todos los datos en paralelo
+        // cargo todo a la vez para que vaya mas rapido
         const promises = [
-          // Estadísticas generales
+          // las estadisticas de visitas
           authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/stats?days=30`)
             .then(res => res.json())
             .catch(err => {
@@ -28,7 +28,7 @@ export const useDashboardData = () => {
               return null;
             }),
 
-          // Datos del mapa
+          // los puntos para el mapa de visitantes
           authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/map-data`)
             .then(res => res.json())
             .catch(err => {
@@ -36,7 +36,7 @@ export const useDashboardData = () => {
               return [];
             }),
 
-          // Datos de Jobicy
+          // trabajos de la api de jobicy
           authenticatedFetch(`${BACKEND_URL}/api/v1/jobicy-jobs/tech-jobs-by-country`)
             .then(res => res.json())
             .catch(err => {
@@ -44,7 +44,7 @@ export const useDashboardData = () => {
               return null;
             }),
 
-          // Datos de Remotive
+          // trabajos de la api de remotive
           authenticatedFetch(`${BACKEND_URL}/api/v1/remotive-jobs/by-tag`)
             .then(res => res.json())
             .catch(err => {

@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 
 const AuthContext = createContext();
 
-const BACKEND_URL = 'http://127.0.0.1:8000';
+const BACKEND_URL = 'http://127.0.0.1:8001';
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    // Verificar token al cargar
+    // cuando carga la pagina miro si ya hay un token guardado
     useEffect(() => {
         const storedToken = localStorage.getItem('accessToken');
         if (storedToken) {
@@ -27,10 +27,10 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    // Login real con el backend
+    // funcion para iniciar sesion
     const login = useCallback(async (username, password) => {
         try {
-            // Crear FormData para el endpoint OAuth2
+            // preparo los datos para enviarlos al servidor
             const formData = new URLSearchParams();
             formData.append('username', username);
             formData.append('password', password);
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
 
             const data = await response.json();
 
-            // Guardar tokens
+            // guardo el token para no tener que volver a hacer login
             localStorage.setItem('accessToken', data.access_token);
             localStorage.setItem('tokenType', data.token_type);
 
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    // Logout
+    // cerrar sesion y borrar todo
     const logout = useCallback(() => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('tokenType');
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
     }, []);
 
-    // Fetch autenticado
+    // para hacer peticiones al servidor con el token
     const authenticatedFetch = useCallback(async (url, options = {}) => {
         if (!token) {
             throw new Error('No authentication token');

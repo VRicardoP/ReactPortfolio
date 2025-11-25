@@ -29,7 +29,7 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
 
     const direction = resizeState.direction;
 
-    // Resize horizontal
+    // si arrastro a la derecha o izquierda
     if (direction.includes('e')) {
       newWidth = Math.max(resizeState.startWidth + deltaX, minWidth);
     } else if (direction.includes('w')) {
@@ -40,7 +40,7 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
       }
     }
 
-    // Resize vertical
+    // si arrastro arriba o abajo
     if (direction.includes('s')) {
       newHeight = Math.max(resizeState.startHeight + deltaY, minHeight);
     } else if (direction.includes('n')) {
@@ -51,7 +51,7 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
       }
     }
 
-    // Actualizar DOM directamente (sin re-render)
+    // cambio el tamaño directamente para que sea fluido
     if (windowRef.current) {
       windowRef.current.style.width = `${newWidth}px`;
       windowRef.current.style.height = `${newHeight}px`;
@@ -59,7 +59,7 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
       windowRef.current.style.top = `${newY}px`;
     }
 
-    // Guardar valores finales
+    // guardo el tamaño final
     resizeState.finalWidth = newWidth;
     resizeState.finalHeight = newHeight;
     resizeState.finalX = newX;
@@ -72,12 +72,12 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
 
     resizeState.isResizing = false;
 
-    // Remover clase resizing
+    // quito el estilo de redimensionar
     if (windowRef.current) {
       windowRef.current.classList.remove('resizing');
     }
 
-    // Actualizar Context con valores finales
+    // guardo el nuevo tamaño en el estado
     if (resizeState.finalWidth !== undefined) {
       onSizeChange({
         width: resizeState.finalWidth,
@@ -118,7 +118,7 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
       resizeState.startPosX = rect.left;
       resizeState.startPosY = rect.top;
 
-      // Añadir clase resizing para desactivar transiciones
+      // pongo una clase para que no haga animaciones raras
       windowRef.current.classList.add('resizing');
     }
 

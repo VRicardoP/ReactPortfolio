@@ -3,10 +3,10 @@ import '../../styles/toast.css';
 
 let toastId = 0;
 const toastListeners = new Set();
-const activeToasts = new Map(); // Para evitar duplicados
+const activeToasts = new Map(); // aqui guardo los toasts que ya estan activos
 
 export const showToast = (message, duration = 3000) => {
-    // Evitar duplicados del mismo mensaje
+    // si ya hay un toast con este mensaje no lo muestro otra vez
     if (activeToasts.has(message)) {
         return;
     }
@@ -31,7 +31,7 @@ const Toast = () => {
         const listener = (toast) => {
             if (toast.visible) {
                 setToasts(prev => {
-                    // Evitar añadir si ya existe
+                    // compruebo que no este repetido
                     if (prev.find(t => t.id === toast.id)) {
                         return prev;
                     }

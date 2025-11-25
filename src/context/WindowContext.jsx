@@ -16,7 +16,7 @@ export const WindowProvider = ({ children }) => {
     const [highestZIndex, setHighestZIndex] = useState(100);
     const toastTimeoutRef = useRef({});
 
-    // Función auxiliar para mostrar toast sin duplicados - MEMOIZADA
+    // para mostrar notificaciones sin que se repitan
     const showWindowToast = useCallback((windowId, message) => {
         if (toastTimeoutRef.current[windowId]) {
             clearTimeout(toastTimeoutRef.current[windowId]);
@@ -29,10 +29,10 @@ export const WindowProvider = ({ children }) => {
         }, 2000);
     }, []);
 
-    // Registrar una nueva ventana - OPTIMIZADO
+    // cuando creo una ventana nueva la guardo aqui
     const registerWindow = useCallback((windowId, initialState = {}) => {
         setWindows(prev => {
-            // Evitar registrar si ya existe
+            // si ya existe no la vuelvo a crear
             if (prev[windowId]) return prev;
 
             return {
@@ -49,7 +49,7 @@ export const WindowProvider = ({ children }) => {
         });
     }, []);
 
-    // Desregistrar ventana - OPTIMIZADO
+    // cuando cierro una ventana la quito de la lista
     const unregisterWindow = useCallback((windowId) => {
         setWindows(prev => {
             const newWindows = { ...prev };
@@ -58,7 +58,7 @@ export const WindowProvider = ({ children }) => {
         });
     }, []);
 
-    // Traer ventana al frente - OPTIMIZADO Y CORREGIDO
+    // pongo una ventana delante de todas las demas
     const bringToFront = useCallback((windowId) => {
         setHighestZIndex(prev => {
             const newZIndex = prev + 1;
@@ -67,7 +67,7 @@ export const WindowProvider = ({ children }) => {
                 const currentWindow = prevWindows[windowId];
                 if (!currentWindow) return prevWindows;
 
-                // Verificar si ya está al frente
+                // miro si ya esta delante para no hacer nada
                 const maxZ = Math.max(...Object.values(prevWindows).map(w => w.zIndex));
                 if (currentWindow.zIndex === maxZ && maxZ >= newZIndex - 1) {
                     return prevWindows;
@@ -86,7 +86,7 @@ export const WindowProvider = ({ children }) => {
         });
     }, []);
 
-    // Toggle minimizar - OPTIMIZADO
+    // para minimizar o restaurar una ventana
     const toggleMinimize = useCallback((windowId) => {
         setWindows(prev => {
             const window = prev[windowId];
@@ -120,7 +120,7 @@ export const WindowProvider = ({ children }) => {
         });
     }, [showWindowToast]);
 
-    // Toggle maximizar - OPTIMIZADO
+    // para poner la ventana en pantalla completa o quitarla
     const toggleMaximize = useCallback((windowId) => {
         setWindows(prev => {
             const window = prev[windowId];
@@ -163,13 +163,13 @@ export const WindowProvider = ({ children }) => {
         });
     }, [showWindowToast]);
 
-    // Actualizar posición - OPTIMIZADO
+    // guardo donde esta la ventana cuando la muevo
     const updatePosition = useCallback((windowId, position) => {
         setWindows(prev => {
             const window = prev[windowId];
             if (!window) return prev;
 
-            // No actualizar si la posición es la misma
+            // si no se movio no hago nada
             if (window.position.x === position.x && window.position.y === position.y) {
                 return prev;
             }
@@ -184,13 +184,13 @@ export const WindowProvider = ({ children }) => {
         });
     }, []);
 
-    // Actualizar tamaño - OPTIMIZADO
+    // guardo el tamaño nuevo cuando cambio el tamaño de la ventana
     const updateSize = useCallback((windowId, size) => {
         setWindows(prev => {
             const window = prev[windowId];
             if (!window) return prev;
 
-            // No actualizar si el tamaño es el mismo
+            // si el tamaño es igual no hago nada
             if (window.size.width === size.width && window.size.height === size.height) {
                 return prev;
             }
@@ -205,7 +205,7 @@ export const WindowProvider = ({ children }) => {
         });
     }, []);
 
-    // Memoizar el value para evitar re-renders innecesarios
+    // junto todo para que los componentes puedan usarlo
     const value = useMemo(() => ({
         windows,
         registerWindow,

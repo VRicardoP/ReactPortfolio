@@ -26,7 +26,7 @@ const FloatingWindow = ({
 
     const windowState = windows[id];
 
-    // Registrar ventana al montar
+    // cuando se crea la ventana la registro en el sistema
     useEffect(() => {
         registerWindow(id, {
             position: initialPosition,
@@ -39,7 +39,7 @@ const FloatingWindow = ({
         return () => unregisterWindow(id);
     }, [id, registerWindow, unregisterWindow]);
 
-    // Hooks para drag y resize
+    // esto permite arrastrar y cambiar el tamaño de la ventana
     const { handleMouseDown: handleDragStart } = useDraggable(
         windowRef,
         windowState?.isMinimized,
@@ -57,20 +57,20 @@ const FloatingWindow = ({
         () => bringToFront(id)
     );
 
-    // Traer al frente al hacer click en cualquier parte de la ventana
+    // si hago click en la ventana la pongo delante de las demas
     const handleWindowClick = (e) => {
-        // Evitar si es un click en los botones de control
+        // si es un boton de minimizar o maximizar no hago nada aqui
         if (e.target.classList.contains('control-btn')) {
             return;
         }
         bringToFront(id);
     };
 
-    // Traer al frente cuando se restaura desde minimizado
+    // cuando minimizo o restauro la ventana
     const handleToggleMinimize = (e) => {
         e.stopPropagation();
         toggleMinimize(id);
-        // Traer al frente después de restaurar
+        // si estaba minimizada la pongo delante al restaurarla
         if (windowState?.isMinimized) {
             setTimeout(() => bringToFront(id), 100);
         }
@@ -119,7 +119,7 @@ const FloatingWindow = ({
                             onClick={(e) => {
                                 e.stopPropagation();
                                 toggleMaximize(id);
-                                // Traer al frente al maximizar
+                                // la pongo delante cuando la maximizo
                                 setTimeout(() => bringToFront(id), 100);
                             }}
                         />
@@ -134,7 +134,7 @@ const FloatingWindow = ({
                         {children}
                     </div>
 
-                    {/* Resize handles */}
+                    {/* los bordes para cambiar el tamaño */}
                     {!isMaximized && (
                         <>
                             <div className="resize-handle resize-handle-n" onMouseDown={(e) => handleResizeStart(e, 'n')} />
