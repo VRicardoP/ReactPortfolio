@@ -30,6 +30,7 @@ const RainEffect = () => {
         renderer.setSize(innerWidth, innerHeight);
 
         // pongo el canvas en toda la pantalla de fondo
+        renderer.domElement.className = 'rain-canvas';
         renderer.domElement.style.position = 'fixed';
         renderer.domElement.style.top = '0';
         renderer.domElement.style.left = '0';
@@ -176,7 +177,7 @@ const RainEffect = () => {
         };
     }, []);
 
-    return <div ref={mountRef} style={{ width: '100%', height: '100%' }} />;
+    return <div ref={mountRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />;
 };
 
 export default RainEffect;

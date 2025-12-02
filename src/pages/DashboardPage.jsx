@@ -12,9 +12,12 @@ import '../styles/dashboard.css';
 // cargo los componentes solo cuando hacen falta para que vaya mas rapido
 const StatsWindow = lazy(() => import('../components/Dashboard/StatsWindow'));
 const MapWindow = lazy(() => import('../components/Dashboard/MapWindow'));
-const JobicyWindow = lazy(() => import('../components/Dashboard/JobicyWindow'));
-const RemotiveWindow = lazy(() => import('../components/Dashboard/RemotiveWindow'));
+const ChatAnalyticsWindow = lazy(() => import('../components/Dashboard/ChatAnalyticsWindow'));
 const RecentVisitorsWindow = lazy(() => import('../components/Dashboard/RecentVisitorsWindow'));
+const JobBoardWindow = lazy(() => import('../components/Dashboard/JobBoardWindow'));
+const RemotiveJobBoardWindow = lazy(() => import('../components/Dashboard/RemotiveJobBoardWindow'));
+const ArbeitnowJobBoardWindow = lazy(() => import('../components/Dashboard/ArbeitnowJobBoardWindow'));
+const JsearchJobBoardWindow = lazy(() => import('../components/Dashboard/JsearchJobBoardWindow'));
 
 // lo que se ve mientras carga el dashboard
 const DashboardLoader = memo(() => (
@@ -43,13 +46,16 @@ const DashboardLoader = memo(() => (
 DashboardLoader.displayName = 'DashboardLoader';
 
 // aqui estan todas las ventanas del dashboard
-const DashboardContent = memo(({ stats, mapData, jobicyData, remotiveData }) => {
+const DashboardContent = memo(({ stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs }) => {
     const dashboardWindowIds = [
         'stats-window',
         'recent-visitors-window',
         'map-window',
-        'jobicy-window',
-        'remotive-window'
+        'chat-analytics-window',
+        'jobboard-window',
+        'remotive-jobboard-window',
+        'arbeitnow-jobboard-window',
+        'jsearch-jobboard-window'
     ];
 
     useWindowLayout(dashboardWindowIds, 3000);
@@ -71,14 +77,29 @@ const DashboardContent = memo(({ stats, mapData, jobicyData, remotiveData }) => 
                 initialPosition={{ x: 160, y: 140 }}
             />
 
-            <JobicyWindow
-                data={jobicyData}
+            <ChatAnalyticsWindow
+                data={chatAnalytics}
                 initialPosition={{ x: 190, y: 150 }}
             />
 
-            <RemotiveWindow
-                data={remotiveData}
+            <JobBoardWindow
+                data={recentJobs}
                 initialPosition={{ x: 220, y: 160 }}
+            />
+
+            <RemotiveJobBoardWindow
+                data={remotiveRecentJobs}
+                initialPosition={{ x: 250, y: 170 }}
+            />
+
+            <ArbeitnowJobBoardWindow
+                data={arbeitnowRecentJobs}
+                initialPosition={{ x: 280, y: 180 }}
+            />
+
+            <JsearchJobBoardWindow
+                data={jsearchRecentJobs}
+                initialPosition={{ x: 310, y: 190 }}
             />
         </Suspense>
     );
@@ -90,7 +111,7 @@ const DashboardPage = () => {
     const { logout } = useAuth();
     const navigate = useNavigate();
     const typedText = useTypewriter('Dashboard > Analytics', 100);
-    const { stats, mapData, jobicyData, remotiveData, loading, error } = useDashboardData();
+    const { stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, loading, error } = useDashboardData();
 
     // funciones para los botones
     const handleLogout = useCallback(() => {
@@ -230,8 +251,11 @@ const DashboardPage = () => {
                 <DashboardContent
                     stats={stats}
                     mapData={mapData}
-                    jobicyData={jobicyData}
-                    remotiveData={remotiveData}
+                    chatAnalytics={chatAnalytics}
+                    recentJobs={recentJobs}
+                    remotiveRecentJobs={remotiveRecentJobs}
+                    arbeitnowRecentJobs={arbeitnowRecentJobs}
+                    jsearchRecentJobs={jsearchRecentJobs}
                 />
             </WindowProvider>
         </>

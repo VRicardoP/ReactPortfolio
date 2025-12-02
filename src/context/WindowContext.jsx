@@ -163,6 +163,47 @@ export const WindowProvider = ({ children }) => {
         });
     }, [showWindowToast]);
 
+    // ajusta la ventana al tamaño optimo para mostrar todo el contenido
+    const fitToContent = useCallback((windowId, contentSize) => {
+        setWindows(prev => {
+            const window = prev[windowId];
+            if (!window) return prev;
+
+            // añado padding para el header y bordes
+            const headerHeight = 40;
+            const padding = 20;
+            const maxWidth = globalThis.innerWidth * 0.9;
+            const maxHeight = globalThis.innerHeight * 0.85;
+
+            const optimalWidth = Math.min(Math.max(contentSize.width + padding, 300), maxWidth);
+            const optimalHeight = Math.min(Math.max(contentSize.height + headerHeight + padding, 200), maxHeight);
+
+            // centro la ventana en la pantalla
+            const centerX = Math.max(20, (globalThis.innerWidth - optimalWidth) / 2);
+            const centerY = Math.max(80, (globalThis.innerHeight - optimalHeight) / 2);
+
+            const windowTitle = windowId
+                .replace('-window', '')
+                .replace(/-/g, ' ')
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+
+            showWindowToast(windowId, `${windowTitle} fitted to content`);
+
+            return {
+                ...prev,
+                [windowId]: {
+                    ...window,
+                    isMinimized: false,
+                    isMaximized: false,
+                    size: { width: optimalWidth, height: optimalHeight },
+                    position: { x: centerX, y: centerY }
+                }
+            };
+        });
+    }, [showWindowToast]);
+
     // guardo donde esta la ventana cuando la muevo
     const updatePosition = useCallback((windowId, position) => {
         setWindows(prev => {
@@ -213,6 +254,7 @@ export const WindowProvider = ({ children }) => {
         bringToFront,
         toggleMinimize,
         toggleMaximize,
+        fitToContent,
         updatePosition,
         updateSize
     }), [
@@ -222,6 +264,7 @@ export const WindowProvider = ({ children }) => {
         bringToFront,
         toggleMinimize,
         toggleMaximize,
+        fitToContent,
         updatePosition,
         updateSize
     ]);

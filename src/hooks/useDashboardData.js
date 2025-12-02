@@ -7,8 +7,11 @@ export const useDashboardData = () => {
   const { authenticatedFetch } = useAuth();
   const [stats, setStats] = useState(null);
   const [mapData, setMapData] = useState(null);
-  const [jobicyData, setJobicyData] = useState(null);
-  const [remotiveData, setRemotiveData] = useState(null);
+  const [chatAnalytics, setChatAnalytics] = useState(null);
+  const [recentJobs, setRecentJobs] = useState(null);
+  const [remotiveRecentJobs, setRemotiveRecentJobs] = useState(null);
+  const [arbeitnowRecentJobs, setArbeitnowRecentJobs] = useState(null);
+  const [jsearchRecentJobs, setJsearchRecentJobs] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -36,29 +39,62 @@ export const useDashboardData = () => {
               return [];
             }),
 
-          // trabajos de la api de jobicy
-          authenticatedFetch(`${BACKEND_URL}/api/v1/jobicy-jobs/tech-jobs-by-country`)
+          // estadisticas del chatbot
+          authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/chat/full-stats`)
+            .then(res => {
+              if (!res.ok) {
+                console.warn('Chat analytics not available (status:', res.status, ')');
+                return { general: null, top_questions: [], timeline_daily: [], by_country: [] };
+              }
+              return res.json();
+            })
+            .catch(err => {
+              console.warn('Chat analytics endpoint not ready:', err.message);
+              return { general: null, top_questions: [], timeline_daily: [], by_country: [] };
+            }),
+
+          // trabajos recientes de jobicy para el job board
+          authenticatedFetch(`${BACKEND_URL}/api/v1/jobicy-jobs/recent-jobs`)
             .then(res => res.json())
             .catch(err => {
-              console.error('Error loading Jobicy data:', err);
+              console.error('Error loading recent jobs:', err);
               return null;
             }),
 
-          // trabajos de la api de remotive
-          authenticatedFetch(`${BACKEND_URL}/api/v1/remotive-jobs/by-tag`)
+          // trabajos recientes de remotive para el job board
+          authenticatedFetch(`${BACKEND_URL}/api/v1/remotive-jobs/recent`)
             .then(res => res.json())
             .catch(err => {
-              console.error('Error loading Remotive data:', err);
+              console.error('Error loading Remotive recent jobs:', err);
+              return null;
+            }),
+
+          // trabajos recientes de arbeitnow para el job board
+          authenticatedFetch(`${BACKEND_URL}/api/v1/arbeitnow-jobs/recent`)
+            .then(res => res.json())
+            .catch(err => {
+              console.error('Error loading Arbeitnow recent jobs:', err);
+              return null;
+            }),
+
+          // trabajos recientes de jsearch para el job board
+          authenticatedFetch(`${BACKEND_URL}/api/v1/jsearch-jobs/recent`)
+            .then(res => res.json())
+            .catch(err => {
+              console.error('Error loading JSearch recent jobs:', err);
               return null;
             })
         ];
 
-        const [statsData, mapDataPoints, jobicyJson, remotiveJson] = await Promise.all(promises);
+        const [statsData, mapDataPoints, chatAnalyticsJson, recentJobsJson, remotiveRecentJson, arbeitnowRecentJson, jsearchRecentJson] = await Promise.all(promises);
 
         setStats(statsData);
         setMapData(mapDataPoints);
-        setJobicyData(jobicyJson);
-        setRemotiveData(remotiveJson);
+        setChatAnalytics(chatAnalyticsJson);
+        setRecentJobs(recentJobsJson);
+        setRemotiveRecentJobs(remotiveRecentJson);
+        setArbeitnowRecentJobs(arbeitnowRecentJson);
+        setJsearchRecentJobs(jsearchRecentJson);
 
         setLoading(false);
       } catch (err) {
@@ -71,5 +107,5 @@ export const useDashboardData = () => {
     loadData();
   }, [authenticatedFetch]);
 
-  return { stats, mapData, jobicyData, remotiveData, loading, error };
+  return { stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, loading, error };
 };

@@ -1,6 +1,18 @@
+import { useState, useCallback } from 'react';
 import FloatingWindow from './FloatingWindow';
 
 const ContactWindow = ({ data, initialPosition }) => {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopyEmail = useCallback(() => {
+        if (data?.email) {
+            navigator.clipboard.writeText(data.email).then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            });
+        }
+    }, [data?.email]);
+
     if (!data) return null;
 
     return (
@@ -8,7 +20,7 @@ const ContactWindow = ({ data, initialPosition }) => {
             id="contact-window"
             title="Contact"
             initialPosition={initialPosition}
-            initialSize={{ width: 350, height: 280 }}
+            initialSize={{ width: 350, height: 220 }}
         >
             <div className="contact-content">
                 <p className="contact-message">{data.contact.message}</p>
@@ -16,20 +28,12 @@ const ContactWindow = ({ data, initialPosition }) => {
                     <strong>{data.email}</strong>
                 </div>
 
-                <div className="contact-icons">
-                    <div className="contact-icon" title="LinkedIn">
-                        <span>in</span>
-                    </div>
-                    <div className="contact-icon" title="GitHub">
-                        <span>gh</span>
-                    </div>
-                    <div className="contact-icon" title="Twitter">
-                        <span>tw</span>
-                    </div>
-                    <div className="contact-icon" title="Instagram">
-                        <span>ig</span>
-                    </div>
-                </div>
+                <button
+                    className={`contact-copy-btn ${copied ? 'copied' : ''}`}
+                    onClick={handleCopyEmail}
+                >
+                    {copied ? 'Copied!' : 'Copy Email'}
+                </button>
             </div>
         </FloatingWindow>
     );

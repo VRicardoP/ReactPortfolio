@@ -417,6 +417,474 @@
   }
 }
 
+/* ===== JOB BOARD WINDOW ===== */
+.jobboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 12px;
+}
+
+.jobboard-empty,
+.jobboard-no-results {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #D3D3D3;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+.jobboard-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.jobboard-search {
+  flex: 1;
+  min-width: 150px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 255, 255, 0.4);
+  border-radius: 4px;
+  color: #D3D3D3;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.jobboard-search:focus {
+  border-color: #00ffff;
+}
+
+.jobboard-search::placeholder {
+  color: rgba(211, 211, 211, 0.5);
+}
+
+.jobboard-select {
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 255, 255, 0.4);
+  border-radius: 4px;
+  color: #D3D3D3;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+}
+
+.jobboard-select:focus {
+  border-color: #00ffff;
+}
+
+.jobboard-select option {
+  background: #0a1929;
+  color: #D3D3D3;
+}
+
+.jobboard-clear-btn {
+  padding: 8px 16px;
+  background: rgba(255, 107, 107, 0.2);
+  border: 1px solid #ff6b6b;
+  border-radius: 4px;
+  color: #ff6b6b;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.jobboard-clear-btn:hover {
+  background: rgba(255, 107, 107, 0.3);
+}
+
+.jobboard-count {
+  font-size: 12px;
+  color: rgba(0, 255, 255, 0.7);
+  font-family: 'Courier New', monospace;
+}
+
+.jobboard-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 5px;
+}
+
+.jobboard-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.jobboard-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.jobboard-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 255, 0.4);
+  border-radius: 3px;
+}
+
+.jobboard-card {
+  background: rgba(0, 255, 255, 0.03);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+  transition: all 0.2s;
+}
+
+.jobboard-card:hover {
+  background: rgba(0, 255, 255, 0.06);
+  border-color: rgba(0, 255, 255, 0.4);
+}
+
+.jobboard-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.jobboard-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+  color: #00ffff;
+  font-family: 'Courier New', monospace;
+  line-height: 1.3;
+}
+
+.jobboard-type {
+  font-size: 10px;
+  padding: 3px 8px;
+  background: rgba(0, 255, 255, 0.15);
+  border-radius: 3px;
+  color: #00ffff;
+  white-space: nowrap;
+  font-family: 'Courier New', monospace;
+}
+
+.jobboard-company {
+  font-size: 13px;
+  color: #ffffff;
+  margin-bottom: 8px;
+  font-family: 'Courier New', monospace;
+}
+
+.jobboard-meta {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+}
+
+.jobboard-country {
+  color: #D3D3D3;
+}
+
+.jobboard-country::before {
+  content: '📍 ';
+}
+
+.jobboard-industry {
+  color: rgba(211, 211, 211, 0.7);
+}
+
+.jobboard-industry::before {
+  content: '🏢 ';
+}
+
+.jobboard-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.jobboard-skill-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 3px;
+  color: #00ffff;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.jobboard-skill-tag:hover {
+  background: rgba(0, 255, 255, 0.2);
+  border-color: #00ffff;
+}
+
+.jobboard-skill-more {
+  font-size: 11px;
+  padding: 3px 8px;
+  color: rgba(211, 211, 211, 0.6);
+  font-family: 'Courier New', monospace;
+}
+
+.jobboard-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.jobboard-date {
+  font-size: 11px;
+  color: rgba(211, 211, 211, 0.6);
+  font-family: 'Courier New', monospace;
+}
+
+.jobboard-apply-btn {
+  padding: 6px 16px;
+  background: #00ffff;
+  border: none;
+  border-radius: 4px;
+  color: #000;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.jobboard-apply-btn:hover {
+  background: #00e5e5;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Job Board Responsive */
+@media (max-width: 768px) {
+  .jobboard-filters {
+    flex-direction: column;
+  }
+
+  .jobboard-search {
+    width: 100%;
+  }
+
+  .jobboard-select {
+    width: 100%;
+  }
+
+  .jobboard-card-header {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .jobboard-type {
+    align-self: flex-start;
+  }
+
+  .jobboard-meta {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .jobboard-title {
+    font-size: 13px;
+  }
+
+  .jobboard-company {
+    font-size: 12px;
+  }
+
+  .jobboard-skill-tag {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+}
+
+/* ===== REMOTIVE JOB BOARD - Color diferente ===== */
+.remotive-card {
+  border-color: rgba(138, 43, 226, 0.3);
+}
+
+.remotive-card:hover {
+  background: rgba(138, 43, 226, 0.06);
+  border-color: rgba(138, 43, 226, 0.5);
+}
+
+.remotive-card .jobboard-title {
+  color: #9b59b6;
+}
+
+.remotive-card .jobboard-type {
+  background: rgba(138, 43, 226, 0.15);
+  color: #9b59b6;
+}
+
+.remotive-tag {
+  background: rgba(138, 43, 226, 0.1);
+  border-color: rgba(138, 43, 226, 0.3);
+  color: #9b59b6;
+}
+
+.remotive-tag:hover {
+  background: rgba(138, 43, 226, 0.2);
+  border-color: #9b59b6;
+}
+
+.remotive-apply {
+  background: #9b59b6;
+}
+
+.remotive-apply:hover {
+  background: #8e44ad;
+  box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+}
+
+/* ===== ARBEITNOW JOB BOARD - Color naranja/dorado ===== */
+.arbeitnow-card {
+  border-color: rgba(230, 126, 34, 0.3);
+}
+
+.arbeitnow-card:hover {
+  background: rgba(230, 126, 34, 0.06);
+  border-color: rgba(230, 126, 34, 0.5);
+}
+
+.arbeitnow-card .jobboard-title {
+  color: #e67e22;
+}
+
+.arbeitnow-card .jobboard-type {
+  background: rgba(230, 126, 34, 0.15);
+  color: #e67e22;
+}
+
+.arbeitnow-remote {
+  background: rgba(46, 204, 113, 0.15) !important;
+  color: #2ecc71 !important;
+}
+
+.arbeitnow-onsite {
+  background: rgba(230, 126, 34, 0.15) !important;
+  color: #e67e22 !important;
+}
+
+.arbeitnow-tag {
+  background: rgba(230, 126, 34, 0.1);
+  border-color: rgba(230, 126, 34, 0.3);
+  color: #e67e22;
+}
+
+.arbeitnow-tag:hover {
+  background: rgba(230, 126, 34, 0.2);
+  border-color: #e67e22;
+}
+
+.arbeitnow-apply {
+  background: #e67e22;
+}
+
+.arbeitnow-apply:hover {
+  background: #d35400;
+  box-shadow: 0 0 10px rgba(230, 126, 34, 0.5);
+}
+
+/* ===== JSEARCH JOB BOARD - Color azul LinkedIn ===== */
+.jsearch-card {
+  border-color: rgba(10, 102, 194, 0.3);
+}
+
+.jsearch-card:hover {
+  background: rgba(10, 102, 194, 0.06);
+  border-color: rgba(10, 102, 194, 0.5);
+}
+
+.jsearch-card .jobboard-title {
+  color: #0a66c2;
+}
+
+.jsearch-card .jobboard-type {
+  background: rgba(10, 102, 194, 0.15);
+  color: #0a66c2;
+}
+
+.jsearch-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.jsearch-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.jsearch-remote {
+  background: rgba(46, 204, 113, 0.15) !important;
+  color: #2ecc71 !important;
+}
+
+.jsearch-onsite {
+  background: rgba(10, 102, 194, 0.15) !important;
+  color: #0a66c2 !important;
+}
+
+.jsearch-salary {
+  font-size: 12px;
+  color: #2ecc71;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.jsearch-salary::before {
+  content: '💰 ';
+}
+
+.jsearch-source {
+  margin-bottom: 8px;
+}
+
+.jsearch-source-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  background: rgba(10, 102, 194, 0.1);
+  border: 1px solid rgba(10, 102, 194, 0.3);
+  border-radius: 10px;
+  color: #0a66c2;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.jsearch-source-tag:hover {
+  background: rgba(10, 102, 194, 0.2);
+  border-color: #0a66c2;
+}
+
+.jsearch-apply {
+  background: #0a66c2;
+}
+
+.jsearch-apply:hover {
+  background: #004182;
+  box-shadow: 0 0 10px rgba(10, 102, 194, 0.5);
+}
+
 /* Pantallas grandes (> 1440px) */
 @media (min-width: 1440px) {
   .dashboard-header {

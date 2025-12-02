@@ -45,30 +45,31 @@
   margin: 10px 0;
 }
 
-.contact-icons {
-  display: flex;
-  justify-content: space-around;
+.contact-copy-btn {
   margin-top: auto;
-}
-
-.contact-icon {
-  width: 40px;
-  height: 40px;
-  background: rgba(0, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  align-self: center;
+  padding: 8px 20px;
+  background: transparent;
+  border: 1px solid #00ffff;
+  border-radius: 20px;
+  color: #00ffff;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-weight: bold;
-  color: #00ffff;
 }
 
-.contact-icon:hover {
-  background: rgba(0, 255, 255, 0.4);
-  transform: scale(1.1);
+.contact-copy-btn:hover {
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.contact-copy-btn.copied {
+  background: transparent;
+  border-color: #00ff00;
+  color: #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
 }
 
 /* Languages Window */
@@ -355,10 +356,9 @@
     font-size: 16px;
   }
 
-  .contact-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 13px;
+  .contact-copy-btn {
+    padding: 7px 18px;
+    font-size: 12px;
   }
 
   /* Languages */
@@ -498,14 +498,9 @@
     font-size: 15px;
   }
 
-  .contact-icons {
-    gap: 8px;
-  }
-
-  .contact-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 12px;
+  .contact-copy-btn {
+    padding: 6px 16px;
+    font-size: 11px;
   }
 
   /* Languages */
@@ -646,10 +641,9 @@
     font-size: 12px;
   }
 
-  .contact-icon {
-    width: 28px;
-    height: 28px;
-    font-size: 11px;
+  .contact-copy-btn {
+    padding: 5px 14px;
+    font-size: 10px;
   }
 
   .category-title {
@@ -697,9 +691,9 @@
 
 /* Dispositivos táctiles */
 @media (hover: none) and (pointer: coarse) {
-  .contact-icon {
-    width: 44px;
-    height: 44px;
+  .contact-copy-btn {
+    padding: 10px 22px;
+    min-height: 40px;
   }
 
   .portfolio-item,
@@ -730,9 +724,9 @@
     font-size: 20px;
   }
 
-  .contact-icon {
-    width: 48px;
-    height: 48px;
+  .contact-copy-btn {
+    padding: 10px 24px;
+    font-size: 14px;
   }
 
   .language-name {

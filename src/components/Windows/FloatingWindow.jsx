@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useWindowContext } from '../../context/WindowContext';
 import useDraggable from '../../hooks/useDraggable';
 import useResizable from '../../hooks/useResizable';
@@ -13,6 +13,7 @@ const FloatingWindow = ({
     initialSize = { width: 400, height: 300 }
 }) => {
     const windowRef = useRef(null);
+    const contentRef = useRef(null);
     const {
         windows,
         registerWindow,
@@ -20,6 +21,7 @@ const FloatingWindow = ({
         bringToFront,
         toggleMinimize,
         toggleMaximize,
+        fitToContent,
         updatePosition,
         updateSize
     } = useWindowContext();
@@ -76,6 +78,21 @@ const FloatingWindow = ({
         }
     };
 
+    // cuando maximizo desde minimizado, ajusto al contenido
+    const handleToggleMaximize = useCallback((e) => {
+        e.stopPropagation();
+
+        // si esta minimizado, ajusto al tamaño optimo del contenido
+        if (windowState?.isMinimized) {
+            // uso el tamaño inicial como referencia para el contenido
+            fitToContent(id, { width: initialSize.width, height: initialSize.height });
+        } else {
+            toggleMaximize(id);
+        }
+
+        setTimeout(() => bringToFront(id), 100);
+    }, [windowState?.isMinimized, id, fitToContent, initialSize, toggleMaximize, bringToFront]);
+
     if (!windowState) return null;
 
     const { position, size, zIndex, isMinimized, isMaximized } = windowState;
@@ -113,15 +130,10 @@ const FloatingWindow = ({
                             onClick={handleToggleMinimize}
                         />
                     </Tooltip>
-                    <Tooltip text="Maximize" position="bottom">
+                    <Tooltip text={isMinimized ? "Fit to content" : "Maximize"} position="bottom">
                         <button
                             className="control-btn control-maximize"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                toggleMaximize(id);
-                                // la pongo delante cuando la maximizo
-                                setTimeout(() => bringToFront(id), 100);
-                            }}
+                            onClick={handleToggleMaximize}
                         />
                     </Tooltip>
                 </div>
@@ -130,7 +142,7 @@ const FloatingWindow = ({
 
             {!isMinimized && (
                 <>
-                    <div className="window-content">
+                    <div className="window-content" ref={contentRef}>
                         {children}
                     </div>
 
