@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { useTheme } from '../../context/ThemeContext';
 
 const RainEffect = () => {
     const mountRef = useRef(null);
     const animationIdRef = useRef(null);
+    const { theme } = useTheme();
 
     useEffect(() => {
         if (!mountRef.current) return;
@@ -82,8 +84,11 @@ const RainEffect = () => {
 
         rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
+        // convertir color del tema a hexadecimal para THREE.js
+        const themeColor = new THREE.Color(theme.primary);
+
         const rainMaterial = new THREE.LineBasicMaterial({
-            color: 0x00ffff,
+            color: themeColor,
             transparent: true,
             opacity: 0.6,
             linewidth: 1
@@ -175,7 +180,7 @@ const RainEffect = () => {
             floorGeometry.dispose();
             floorMaterial.dispose();
         };
-    }, []);
+    }, [theme]);
 
     return <div ref={mountRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />;
 };

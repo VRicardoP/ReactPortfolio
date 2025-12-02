@@ -1,6 +1,7 @@
 import { lazy, Suspense, memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { useDashboardData } from '../hooks/useDashboardData';
 import RainEffect from '../components/Background/RainEffect';
 import { WindowProvider } from '../context/WindowContext';
@@ -109,6 +110,7 @@ DashboardContent.displayName = 'DashboardContent';
 
 const DashboardPage = () => {
     const { logout } = useAuth();
+    const { theme, cycleTheme, themeName } = useTheme();
     const navigate = useNavigate();
     const typedText = useTypewriter('Dashboard > Analytics', 100);
     const { stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, loading, error } = useDashboardData();
@@ -236,6 +238,18 @@ const DashboardPage = () => {
                 </h1>
 
                 <div className="dashboard-nav">
+                    <button
+                        onClick={cycleTheme}
+                        className="nav-button theme-button"
+                        title={`Theme: ${theme.name}`}
+                        style={{
+                            backgroundColor: theme.primary,
+                            color: '#000',
+                            border: `1px solid ${theme.primary}`
+                        }}
+                    >
+                        {themeName === 'cyan' ? '🔵' : themeName === 'silver' ? '⚪' : '🟠'} Theme
+                    </button>
                     <button onClick={handleGoHome} className="nav-button">
                         ← Portfolio
                     </button>

@@ -11,6 +11,7 @@ import {
     Legend
 } from 'chart.js';
 import FloatingWindow from '../Windows/FloatingWindow';
+import { useTheme } from '../../context/ThemeContext';
 
 ChartJS.register(
     CategoryScale,
@@ -24,6 +25,7 @@ ChartJS.register(
 
 const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
     const [activeTab, setActiveTab] = useState('overview');
+    const { theme } = useTheme();
 
     const stats = useMemo(() => {
         if (!data?.general) return null;
@@ -46,12 +48,12 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
             datasets: [{
                 label: 'Preguntas por día',
                 data: timeline.map(d => d.count),
-                backgroundColor: 'rgba(0, 255, 255, 0.6)',
-                borderColor: 'rgba(0, 255, 255, 1)',
+                backgroundColor: `rgba(${theme.primaryRgb}, 0.6)`,
+                borderColor: theme.primary,
                 borderWidth: 1
             }]
         };
-    }, [data]);
+    }, [data, theme]);
 
     const countryData = useMemo(() => {
         if (!data?.by_country || data.by_country.length === 0) return null;
@@ -60,78 +62,108 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
             labels: countries.map(c => c.country || 'Desconocido'),
             datasets: [{
                 data: countries.map(c => c.count),
-                backgroundColor: [
-                    'rgba(0, 255, 255, 0.8)',
-                    'rgba(0, 200, 200, 0.8)',
-                    'rgba(0, 150, 150, 0.8)',
-                    'rgba(0, 100, 100, 0.8)',
-                    'rgba(0, 50, 50, 0.8)'
-                ],
-                borderColor: 'rgba(0, 255, 255, 1)',
+                backgroundColor: theme.chartColors,
+                borderColor: theme.primary,
                 borderWidth: 1
             }]
         };
-    }, [data]);
+    }, [data, theme]);
 
-    const chartOptions = {
+    const chartOptions = useMemo(() => ({
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: { display: false },
             tooltip: {
                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                titleColor: '#00ffff',
-                bodyColor: '#D3D3D3',
-                borderColor: '#00ffff',
+                titleColor: theme.primary,
+                bodyColor: theme.text,
+                borderColor: theme.primary,
                 borderWidth: 1
             }
         },
         scales: {
             x: {
-                grid: { color: 'rgba(0, 255, 255, 0.1)' },
-                ticks: { color: '#D3D3D3', font: { family: 'Courier New', size: 10 } }
+                grid: { color: `rgba(${theme.primaryRgb}, 0.1)` },
+                ticks: { color: theme.text, font: { family: 'Courier New', size: 10 } }
             },
             y: {
                 beginAtZero: true,
-                grid: { color: 'rgba(0, 255, 255, 0.1)' },
-                ticks: { color: '#D3D3D3', font: { family: 'Courier New' } }
+                grid: { color: `rgba(${theme.primaryRgb}, 0.1)` },
+                ticks: { color: theme.text, font: { family: 'Courier New' } }
             }
         }
-    };
+    }), [theme]);
 
-    const doughnutOptions = {
+    const doughnutOptions = useMemo(() => ({
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: 'right',
                 labels: {
-                    color: '#D3D3D3',
+                    color: theme.text,
                     font: { family: 'Courier New', size: 10 },
                     boxWidth: 12
                 }
             },
             tooltip: {
                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                titleColor: '#00ffff',
-                bodyColor: '#D3D3D3',
-                borderColor: '#00ffff',
+                titleColor: theme.primary,
+                bodyColor: theme.text,
+                borderColor: theme.primary,
                 borderWidth: 1
             }
         }
-    };
+    }), [theme]);
 
     const tabStyle = (isActive) => ({
         padding: '6px 12px',
-        background: isActive ? 'rgba(0, 255, 255, 0.2)' : 'transparent',
-        border: `1px solid ${isActive ? '#00ffff' : 'rgba(0, 255, 255, 0.3)'}`,
-        color: isActive ? '#00ffff' : '#D3D3D3',
+        background: isActive ? `rgba(${theme.primaryRgb}, 0.2)` : 'transparent',
+        border: `1px solid ${isActive ? theme.primary : theme.border}`,
+        color: isActive ? theme.primary : theme.text,
         cursor: 'pointer',
         fontFamily: 'Courier New',
         fontSize: '11px',
         borderRadius: '4px',
         transition: 'all 0.2s'
     });
+
+    const statCardStyle = {
+        background: theme.backgroundLight,
+        border: `1px solid ${theme.border}`,
+        borderRadius: '6px',
+        padding: '12px',
+        textAlign: 'center'
+    };
+
+    const statLabelStyle = {
+        color: theme.text,
+        fontSize: '10px',
+        fontFamily: 'Courier New',
+        textTransform: 'uppercase',
+        marginBottom: '5px'
+    };
+
+    const statValueStyle = {
+        color: theme.primary,
+        fontSize: '20px',
+        fontFamily: 'Courier New',
+        fontWeight: 'bold'
+    };
+
+    const questionItemStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        padding: '8px 10px',
+        background: theme.backgroundLight,
+        border: `1px solid ${theme.borderLight}`,
+        borderRadius: '4px',
+        marginBottom: '6px',
+        fontFamily: 'Courier New',
+        fontSize: '11px',
+        color: theme.text
+    };
 
     // mostrar la ventana incluso si no hay datos, con valores por defecto
     const hasData = data && (data.general || (data.top_questions && data.top_questions.length > 0) || (data.timeline_daily && data.timeline_daily.length > 0));
@@ -146,12 +178,12 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {!hasData && (
                     <div style={{
-                        background: 'rgba(255, 200, 0, 0.1)',
-                        border: '1px solid rgba(255, 200, 0, 0.3)',
+                        background: `rgba(${theme.primaryRgb}, 0.1)`,
+                        border: `1px solid ${theme.border}`,
                         borderRadius: '4px',
                         padding: '8px 12px',
                         fontSize: '11px',
-                        color: '#ffcc00',
+                        color: theme.warning,
                         fontFamily: 'Courier New'
                     }}>
                         Esperando preguntas de reclutadores en el chatbot...
@@ -208,23 +240,23 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
 
                     {activeTab === 'questions' && (
                         <div style={{ padding: '5px' }}>
-                            <div style={{ fontSize: '11px', color: '#00ffff', marginBottom: '10px', fontFamily: 'Courier New' }}>
+                            <div style={{ fontSize: '11px', color: theme.primary, marginBottom: '10px', fontFamily: 'Courier New' }}>
                                 Preguntas más frecuentes de reclutadores:
                             </div>
                             {topQuestions.length > 0 ? (
                                 <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                                     {topQuestions.map((q, i) => (
                                         <li key={i} style={questionItemStyle}>
-                                            <span style={{ color: '#00ffff', marginRight: '8px' }}>#{i + 1}</span>
+                                            <span style={{ color: theme.primary, marginRight: '8px' }}>#{i + 1}</span>
                                             <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                                 {q.question}
                                             </span>
-                                            <span style={{ color: '#00ffff', marginLeft: '8px' }}>x{q.count}</span>
+                                            <span style={{ color: theme.primary, marginLeft: '8px' }}>x{q.count}</span>
                                         </li>
                                     ))}
                                 </ul>
                             ) : (
-                                <div style={{ color: '#D3D3D3', textAlign: 'center', padding: '20px' }}>
+                                <div style={{ color: theme.text, textAlign: 'center', padding: '20px' }}>
                                     No hay preguntas registradas aún
                                 </div>
                             )}
@@ -236,7 +268,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
                             {dailyTimeline ? (
                                 <Bar data={dailyTimeline} options={chartOptions} />
                             ) : (
-                                <div style={{ color: '#D3D3D3', textAlign: 'center', padding: '20px' }}>
+                                <div style={{ color: theme.text, textAlign: 'center', padding: '20px' }}>
                                     No hay datos de timeline disponibles
                                 </div>
                             )}
@@ -248,7 +280,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
                             {countryData ? (
                                 <Doughnut data={countryData} options={doughnutOptions} />
                             ) : (
-                                <div style={{ color: '#D3D3D3', textAlign: 'center', padding: '20px' }}>
+                                <div style={{ color: theme.text, textAlign: 'center', padding: '20px' }}>
                                     No hay datos de países disponibles
                                 </div>
                             )}
@@ -259,42 +291,6 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
         </FloatingWindow>
     );
 });
-
-const statCardStyle = {
-    background: 'rgba(0, 255, 255, 0.05)',
-    border: '1px solid rgba(0, 255, 255, 0.3)',
-    borderRadius: '6px',
-    padding: '12px',
-    textAlign: 'center'
-};
-
-const statLabelStyle = {
-    color: '#D3D3D3',
-    fontSize: '10px',
-    fontFamily: 'Courier New',
-    textTransform: 'uppercase',
-    marginBottom: '5px'
-};
-
-const statValueStyle = {
-    color: '#00ffff',
-    fontSize: '20px',
-    fontFamily: 'Courier New',
-    fontWeight: 'bold'
-};
-
-const questionItemStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '8px 10px',
-    background: 'rgba(0, 255, 255, 0.05)',
-    border: '1px solid rgba(0, 255, 255, 0.2)',
-    borderRadius: '4px',
-    marginBottom: '6px',
-    fontFamily: 'Courier New',
-    fontSize: '11px',
-    color: '#D3D3D3'
-};
 
 ChatAnalyticsWindow.displayName = 'ChatAnalyticsWindow';
 
