@@ -82,6 +82,13 @@ export const ThemeProvider = ({ children }) => {
         return saved && themes[saved] ? saved : 'cyan';
     });
 
+    const [backgroundEffect, setBackgroundEffect] = useState(() => {
+        // recuperar efecto de fondo guardado en localStorage
+        const saved = localStorage.getItem('portfolio-background');
+        const validEffects = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
+        return validEffects.includes(saved) ? saved : 'rain';
+    });
+
     const theme = useMemo(() => themes[themeName], [themeName]);
 
     const setTheme = (name) => {
@@ -96,6 +103,15 @@ export const ThemeProvider = ({ children }) => {
         const currentIndex = themeNames.indexOf(themeName);
         const nextIndex = (currentIndex + 1) % themeNames.length;
         setTheme(themeNames[nextIndex]);
+    };
+
+    const cycleBackground = () => {
+        const effects = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
+        const currentIndex = effects.indexOf(backgroundEffect);
+        const nextIndex = (currentIndex + 1) % effects.length;
+        const newEffect = effects[nextIndex];
+        setBackgroundEffect(newEffect);
+        localStorage.setItem('portfolio-background', newEffect);
     };
 
     // aplicar variables CSS globales cuando cambia el tema
@@ -114,8 +130,10 @@ export const ThemeProvider = ({ children }) => {
         themeName,
         setTheme,
         cycleTheme,
+        backgroundEffect,
+        cycleBackground,
         availableThemes: Object.keys(themes).map(key => ({ key, name: themes[key].name }))
-    }), [theme, themeName]);
+    }), [theme, themeName, backgroundEffect]);
 
     return (
         <ThemeContext.Provider value={value}>

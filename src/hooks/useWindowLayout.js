@@ -17,7 +17,7 @@ const useWindowLayout = (windowIds, delay = 3000) => {
     const menuWidth = Math.min(screenWidth * 0.85, windowIds.length * itemWidth);
     const startX = Math.max(10, (screenWidth - menuWidth) / 2);
     const itemSpacing = menuWidth / windowIds.length;
-    const menuY = isMobile ? 70 : 100;
+    const menuY = isMobile ? 70 : 125;
 
     windowIds.forEach((windowId, index) => {
       const position = {

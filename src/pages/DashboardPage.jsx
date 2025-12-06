@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useDashboardData } from '../hooks/useDashboardData';
-import RainEffect from '../components/Background/RainEffect';
+import BackgroundEffect from '../components/Background/BackgroundEffect';
 import { WindowProvider } from '../context/WindowContext';
 import Toast from '../components/UI/Toast';
 import useTypewriter from '../hooks/useTypewriter';
@@ -110,7 +110,7 @@ DashboardContent.displayName = 'DashboardContent';
 
 const DashboardPage = () => {
     const { logout } = useAuth();
-    const { theme, cycleTheme, themeName } = useTheme();
+    const { theme, cycleTheme, themeName, backgroundEffect, cycleBackground } = useTheme();
     const navigate = useNavigate();
     const typedText = useTypewriter('Dashboard > Analytics', 100);
     const { stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, loading, error } = useDashboardData();
@@ -129,7 +129,7 @@ const DashboardPage = () => {
     if (loading) {
         return (
             <>
-                <RainEffect />
+                <BackgroundEffect />
                 <div className="dashboard-header">
                     <h1 className="main-title">
                         <span className="typewriter-container">Loading dashboard...</span>
@@ -157,7 +157,7 @@ const DashboardPage = () => {
     if (error) {
         return (
             <>
-                <RainEffect />
+                <BackgroundEffect />
                 <div className="dashboard-header">
                     <h1 className="main-title">
                         <span className="typewriter-container">Dashboard Error</span>
@@ -229,7 +229,7 @@ const DashboardPage = () => {
     // cuando todo esta listo muestro el dashboard completo
     return (
         <>
-            <RainEffect />
+            <BackgroundEffect />
 
             <div className="dashboard-header">
                 <h1 className="main-title">
@@ -249,6 +249,18 @@ const DashboardPage = () => {
                         }}
                     >
                         {themeName === 'cyan' ? '🔵' : themeName === 'silver' ? '⚪' : '🟠'} Theme
+                    </button>
+                    <button
+                        onClick={cycleBackground}
+                        className="nav-button theme-button"
+                        title={`Background: ${backgroundEffect}`}
+                        style={{
+                            backgroundColor: 'transparent',
+                            color: theme.primary,
+                            border: `1px solid ${theme.primary}`
+                        }}
+                    >
+                        {backgroundEffect === 'rain' ? '🌧️' : backgroundEffect === 'parallax' ? '✨' : backgroundEffect === 'matrix' ? '🟩' : backgroundEffect === 'lensflare' ? '🌟' : backgroundEffect === 'cube' ? '🧊' : '💨'} {backgroundEffect === 'rain' ? 'Rain' : backgroundEffect === 'parallax' ? 'Parallax' : backgroundEffect === 'matrix' ? 'Matrix' : backgroundEffect === 'lensflare' ? 'Lensflare' : backgroundEffect === 'cube' ? 'Cube' : 'Smoke'}
                     </button>
                     <button onClick={handleGoHome} className="nav-button">
                         ← Portfolio

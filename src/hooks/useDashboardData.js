@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-const BACKEND_URL = 'http://127.0.0.1:8001';
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8001';
 
 export const useDashboardData = () => {
   const { authenticatedFetch } = useAuth();

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import RainEffect from '../components/Background/RainEffect';
+import BackgroundEffect from '../components/Background/BackgroundEffect';
 import '../styles/login.css';
 
 const LoginPage = () => {
@@ -43,7 +43,7 @@ const LoginPage = () => {
 
     return (
         <div className="login-page">
-            <RainEffect />
+            <BackgroundEffect />
 
             <div className="login-container">
                 <h1>Dashboard Access</h1>

@@ -1,10 +1,11 @@
 import { lazy, Suspense, memo } from 'react';
-import RainEffect from './components/Background/RainEffect';
+import BackgroundEffect from './components/Background/BackgroundEffect';
 import Toast from './components/UI/Toast';
 import { WindowProvider } from './context/WindowContext';
 import useTypewriter from './hooks/useTypewriter';
 import usePortfolioData from './hooks/usePortfolioData';
 import useWindowLayout from './hooks/useWindowLayout';
+import useVisitorTracking from './hooks/useVisitorTracking';
 import './styles/base.css';
 import './styles/windows-content.css';
 
@@ -117,6 +118,9 @@ const PortfolioContent = memo(({ portfolioData }) => {
 PortfolioContent.displayName = 'PortfolioContent';
 
 function App() {
+  // registro la visita del usuario
+  useVisitorTracking();
+
   const { data: portfolioData, loading, error } = usePortfolioData();
   const typedText = useTypewriter(
     portfolioData ? `${portfolioData.name} > Portfolio` : 'Loading...',
@@ -127,7 +131,7 @@ function App() {
   if (loading) {
     return (
       <>
-        <RainEffect />
+        <BackgroundEffect />
         <h1 className="main-title">
           <span className="typewriter-container">Loading portfolio...</span>
           <span className="terminal-cursor"></span>
@@ -140,7 +144,7 @@ function App() {
   if (error) {
     return (
       <>
-        <RainEffect />
+        <BackgroundEffect />
         <h1 className="main-title">
           <span className="typewriter-container">Error loading data</span>
           <span className="terminal-cursor"></span>
@@ -167,7 +171,7 @@ function App() {
 
   return (
     <>
-      <RainEffect />
+      <BackgroundEffect />
 
       <h1 className="main-title">
         <span className="typewriter-container">{typedText}</span>

@@ -51,31 +51,12 @@ const MapResizeHandler = () => {
 };
 
 const MapWindow = memo(({ data, initialPosition }) => {
+    // si no hay datos uso un array vacio
+    const markers = data || [];
 
-    if (!data || data.length === 0) {
-        return (
-            <FloatingWindow
-                id="map-window"
-                title="Visitors Map"
-                initialPosition={initialPosition}
-                initialSize={{ width: 600, height: 450 }}
-            >
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100%',
-                    color: '#D3D3D3'
-                }}>
-                    No geolocation data available
-                </div>
-            </FloatingWindow>
-        );
-    }
-
-    // pongo el mapa centrado en el primer visitante
-    const center = data.length > 0
-        ? [data[0].latitude || 20, data[0].longitude || 0]
+    // centro el mapa en el primer visitante o en una vista global
+    const center = markers.length > 0 && markers[0].latitude && markers[0].longitude
+        ? [markers[0].latitude, markers[0].longitude]
         : [20, 0];
 
     return (
@@ -103,7 +84,7 @@ const MapWindow = memo(({ data, initialPosition }) => {
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
 
-                    {data.map((point, index) => {
+                    {markers.map((point, index) => {
                         if (!point.latitude || !point.longitude) return null;
 
                         return (
