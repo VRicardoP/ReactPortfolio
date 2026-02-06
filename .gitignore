@@ -25,3 +25,4 @@ dist-ssr
 
 # Carpetas de dependencias (muy importante)
 node_modules/
+.env
