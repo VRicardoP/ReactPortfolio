@@ -1,4 +1,5 @@
 import { memo, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -26,6 +27,7 @@ ChartJS.register(
 const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const { theme } = useTheme();
+    const { t } = useTranslation();
 
     const stats = useMemo(() => {
         if (!data?.general) return null;
@@ -43,23 +45,23 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
         return {
             labels: timeline.map(d => {
                 const date = new Date(d.period);
-                return date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' });
+                return date.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric' });
             }),
             datasets: [{
-                label: 'Preguntas por día',
+                label: t('dashboard.chatAnalytics.questionsPerDay'),
                 data: timeline.map(d => d.count),
                 backgroundColor: `rgba(${theme.primaryRgb}, 0.6)`,
                 borderColor: theme.primary,
                 borderWidth: 1
             }]
         };
-    }, [data, theme]);
+    }, [data, theme, t]);
 
     const countryData = useMemo(() => {
         if (!data?.by_country || data.by_country.length === 0) return null;
         const countries = data.by_country.slice(0, 5);
         return {
-            labels: countries.map(c => c.country || 'Desconocido'),
+            labels: countries.map(c => c.country || t('dashboard.chatAnalytics.unknown')),
             datasets: [{
                 data: countries.map(c => c.count),
                 backgroundColor: theme.chartColors,
@@ -67,7 +69,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
                 borderWidth: 1
             }]
         };
-    }, [data, theme]);
+    }, [data, theme, t]);
 
     const chartOptions = useMemo(() => ({
         responsive: true,
@@ -165,13 +167,12 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
         color: theme.text
     };
 
-    // show the window even if there's no data, with default values
     const hasData = data && (data.general || (data.top_questions && data.top_questions.length > 0) || (data.timeline_daily && data.timeline_daily.length > 0));
 
     return (
         <FloatingWindow
             id="chat-analytics-window"
-            title="Chat Analytics - Recruiter Insights"
+            title={t('dashboard.chatAnalytics.title')}
             initialPosition={initialPosition}
             initialSize={{ width: 550, height: 500 }}
         >
@@ -186,21 +187,21 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
                         color: theme.warning,
                         fontFamily: 'Courier New'
                     }}>
-                        Esperando preguntas de reclutadores en el chatbot...
+                        {t('dashboard.chatAnalytics.waitingForQuestions')}
                     </div>
                 )}
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     <button style={tabStyle(activeTab === 'overview')} onClick={() => setActiveTab('overview')}>
-                        Overview
+                        {t('dashboard.chatAnalytics.tabOverview')}
                     </button>
                     <button style={tabStyle(activeTab === 'questions')} onClick={() => setActiveTab('questions')}>
-                        Top Questions
+                        {t('dashboard.chatAnalytics.tabQuestions')}
                     </button>
                     <button style={tabStyle(activeTab === 'timeline')} onClick={() => setActiveTab('timeline')}>
-                        Timeline
+                        {t('dashboard.chatAnalytics.tabTimeline')}
                     </button>
                     <button style={tabStyle(activeTab === 'countries')} onClick={() => setActiveTab('countries')}>
-                        By Country
+                        {t('dashboard.chatAnalytics.tabCountries')}
                     </button>
                 </div>
 
@@ -208,31 +209,31 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
                     {activeTab === 'overview' && (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', padding: '5px' }}>
                             <div style={statCardStyle}>
-                                <div style={statLabelStyle}>Total Preguntas</div>
+                                <div style={statLabelStyle}>{t('dashboard.chatAnalytics.totalQuestions')}</div>
                                 <div style={statValueStyle}>{stats?.total_questions || 0}</div>
                             </div>
                             <div style={statCardStyle}>
-                                <div style={statLabelStyle}>Tasa de Éxito</div>
+                                <div style={statLabelStyle}>{t('dashboard.chatAnalytics.successRate')}</div>
                                 <div style={statValueStyle}>
                                     {stats?.success_rate != null ? `${stats.success_rate.toFixed(1)}%` : 'N/A'}
                                 </div>
                             </div>
                             <div style={statCardStyle}>
-                                <div style={statLabelStyle}>Tiempo Resp. Promedio</div>
+                                <div style={statLabelStyle}>{t('dashboard.chatAnalytics.avgResponseTime')}</div>
                                 <div style={statValueStyle}>
                                     {stats?.avg_response_time_ms ? `${stats.avg_response_time_ms.toFixed(0)}ms` : 'N/A'}
                                 </div>
                             </div>
                             <div style={statCardStyle}>
-                                <div style={statLabelStyle}>Preguntas Hoy</div>
+                                <div style={statLabelStyle}>{t('dashboard.chatAnalytics.questionsToday')}</div>
                                 <div style={statValueStyle}>{stats?.questions_today || 0}</div>
                             </div>
                             <div style={statCardStyle}>
-                                <div style={statLabelStyle}>Esta Semana</div>
+                                <div style={statLabelStyle}>{t('dashboard.chatAnalytics.thisWeek')}</div>
                                 <div style={statValueStyle}>{stats?.questions_this_week || 0}</div>
                             </div>
                             <div style={statCardStyle}>
-                                <div style={statLabelStyle}>Este Mes</div>
+                                <div style={statLabelStyle}>{t('dashboard.chatAnalytics.thisMonth')}</div>
                                 <div style={statValueStyle}>{stats?.questions_this_month || 0}</div>
                             </div>
                         </div>
@@ -241,7 +242,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
                     {activeTab === 'questions' && (
                         <div style={{ padding: '5px' }}>
                             <div style={{ fontSize: '11px', color: theme.primary, marginBottom: '10px', fontFamily: 'Courier New' }}>
-                                Preguntas más frecuentes de reclutadores:
+                                {t('dashboard.chatAnalytics.mostFrequentQuestions')}
                             </div>
                             {topQuestions.length > 0 ? (
                                 <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
@@ -257,7 +258,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
                                 </ul>
                             ) : (
                                 <div style={{ color: theme.text, textAlign: 'center', padding: '20px' }}>
-                                    No hay preguntas registradas aún
+                                    {t('dashboard.chatAnalytics.noQuestionsYet')}
                                 </div>
                             )}
                         </div>
@@ -269,7 +270,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
                                 <Bar data={dailyTimeline} options={chartOptions} />
                             ) : (
                                 <div style={{ color: theme.text, textAlign: 'center', padding: '20px' }}>
-                                    No hay datos de timeline disponibles
+                                    {t('dashboard.chatAnalytics.noTimelineData')}
                                 </div>
                             )}
                         </div>
@@ -281,7 +282,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
                                 <Doughnut data={countryData} options={doughnutOptions} />
                             ) : (
                                 <div style={{ color: theme.text, textAlign: 'center', padding: '20px' }}>
-                                    No hay datos de países disponibles
+                                    {t('dashboard.chatAnalytics.noCountryData')}
                                 </div>
                             )}
                         </div>

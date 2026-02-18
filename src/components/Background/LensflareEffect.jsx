@@ -212,6 +212,8 @@ const LensflareEffect = () => {
 
         animate();
 
+        const mountNode = mountRef.current;
+
         // cleanup when the component unmounts
         return () => {
             document.removeEventListener('mousemove', onMouseMove);
@@ -224,8 +226,8 @@ const LensflareEffect = () => {
                 cancelAnimationFrame(animationIdRef.current);
             }
 
-            if (mountRef.current && renderer.domElement) {
-                mountRef.current.removeChild(renderer.domElement);
+            if (mountNode && renderer.domElement) {
+                mountNode.removeChild(renderer.domElement);
             }
 
             renderer.dispose();

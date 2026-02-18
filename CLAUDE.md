@@ -9,18 +9,19 @@ src/
   components/
     Background/     — 6 visual effects (Rain, Matrix, Parallax, Lensflare, Cube, Smoke)
     Dashboard/      — 8 admin dashboard windows (Stats, Map, ChatAnalytics, RecentVisitors, 4 job boards)
-    Windows/        — 10 portfolio windows (Welcome, Profile, Education, Experience, etc.)
+    Windows/        — 11 portfolio windows (Welcome, Profile, Education, Experience, etc. + Terminal easter egg)
     UI/             — Toast, Tooltip
     ErrorBoundary.jsx
     ProtectedRoute.jsx
   hooks/
-    usePortfolioData.js    — Fetches /portfolio-data.json (static, no backend)
-    useDashboardData.js    — Parallel-fetches all dashboard API endpoints
-    useDraggable.js        — Mouse drag for FloatingWindow
-    useResizable.js        — 8-direction resize for FloatingWindow
-    useTypewriter.js       — Character-by-character animation
-    useVisitorTracking.js  — POSTs to /analytics/track once per session
-    useWindowLayout.js     — Positions windows in a row on mount
+    usePortfolioData.js       — Fetches /portfolio-data.json (static, no backend)
+    useDashboardData.js       — Parallel-fetches all dashboard API endpoints (returns warnings for failed sources)
+    useSSENotifications.js    — Fetch-based SSE with Bearer token auth for real-time dashboard notifications
+    useDraggable.js           — Mouse drag for FloatingWindow
+    useResizable.js           — 8-direction resize for FloatingWindow
+    useTypewriter.js          — Character-by-character animation
+    useVisitorTracking.js     — POSTs to /analytics/track once per session
+    useWindowLayout.js        — Positions windows in a row on mount
   context/
     AuthContext.jsx    — JWT auth, login/logout, authenticatedFetch (auto-logout on 401)
     WindowContext.jsx  — Global window state (position, size, z-index, minimize/maximize)
@@ -66,7 +67,7 @@ Imported by: `AuthContext.jsx`, `useDashboardData.js`, `useVisitorTracking.js`
 ### i18n
 Use `const { t } = useTranslation()` then `t('key')` for translatable text.
 Locale files: `src/i18n/locales/en.json` and `es.json`.
-Keys: `welcome.*`, `chat.*`, `contact.*`, `skills.*`, `windows.*`, `app.*`, `error.*`, `login.*`, `dashboard.*`
+Keys: `welcome.*`, `chat.*`, `contact.*`, `skills.*`, `windows.*`, `app.*`, `error.*`, `login.*`, `dashboard.*`, `terminal.*`
 
 ### Code Splitting (vite.config.js)
 Manual chunks: `vendor-react`, `vendor-three`, `vendor-particles`, `vendor-charts`, `vendor-maps`
@@ -83,6 +84,14 @@ npx vitest run       # single run
 npx vitest           # watch mode
 ```
 
+## Easter Egg
+- Ctrl+ñ toggles the Terminal window (`TerminalWindow.jsx`)
+- Commands: help, about, skills, experience, education, ls, cat <file>, whoami, ping, sudo hire_me, history, clear
+- Fake filesystem maps filenames to portfolio data commands
+- All strings are i18n-ready via `terminal.*` keys
+
 ## Notes
+- AuthContext validates JWT `exp` claim on mount, auto-clears expired tokens
+- useDashboardData returns `warnings` array for failed API sources (no longer silently swallows errors)
 - All previous known gaps (i18n in dashboard, centralized backend URL) have been resolved
 - See root `DEUDA_TECNICA.md` for resolved technical debt details

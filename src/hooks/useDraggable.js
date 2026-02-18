@@ -92,10 +92,11 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange, onB
   }, [isMaximized, onBringToFront, windowRef, handleMouseMove, handleMouseUp]);
 
   useEffect(() => {
+    const dragState = dragStateRef.current;
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
-      dragStateRef.current.isDragging = false;
+      dragState.isDragging = false;
     };
   }, [handleMouseMove, handleMouseUp]);
 

@@ -155,6 +155,8 @@ const RainEffect = () => {
         // start the animation
         animate();
 
+        const mountNode = mountRef.current;
+
         // when the component unmounts clean up everything
         return () => {
             document.removeEventListener('mousemove', onMouseMove);
@@ -164,8 +166,8 @@ const RainEffect = () => {
                 cancelAnimationFrame(animationIdRef.current);
             }
 
-            if (mountRef.current && renderer.domElement) {
-                mountRef.current.removeChild(renderer.domElement);
+            if (mountNode && renderer.domElement) {
+                mountNode.removeChild(renderer.domElement);
             }
 
             renderer.dispose();

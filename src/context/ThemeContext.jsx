@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 // definition of available themes
 const themes = {
@@ -91,28 +91,28 @@ export const ThemeProvider = ({ children }) => {
 
     const theme = useMemo(() => themes[themeName], [themeName]);
 
-    const setTheme = (name) => {
+    const setTheme = useCallback((name) => {
         if (themes[name]) {
             setThemeName(name);
             localStorage.setItem('portfolio-theme', name);
         }
-    };
+    }, []);
 
-    const cycleTheme = () => {
+    const cycleTheme = useCallback(() => {
         const themeNames = Object.keys(themes);
         const currentIndex = themeNames.indexOf(themeName);
         const nextIndex = (currentIndex + 1) % themeNames.length;
         setTheme(themeNames[nextIndex]);
-    };
+    }, [themeName, setTheme]);
 
-    const cycleBackground = () => {
+    const cycleBackground = useCallback(() => {
         const effects = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
         const currentIndex = effects.indexOf(backgroundEffect);
         const nextIndex = (currentIndex + 1) % effects.length;
         const newEffect = effects[nextIndex];
         setBackgroundEffect(newEffect);
         localStorage.setItem('portfolio-background', newEffect);
-    };
+    }, [backgroundEffect]);
 
     // apply global CSS variables when the theme changes
     useEffect(() => {
@@ -133,7 +133,7 @@ export const ThemeProvider = ({ children }) => {
         backgroundEffect,
         cycleBackground,
         availableThemes: Object.keys(themes).map(key => ({ key, name: themes[key].name }))
-    }), [theme, themeName, backgroundEffect]);
+    }), [theme, themeName, setTheme, backgroundEffect, cycleTheme, cycleBackground]);
 
     return (
         <ThemeContext.Provider value={value}>
@@ -142,6 +142,7 @@ export const ThemeProvider = ({ children }) => {
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = () => {
     const context = useContext(ThemeContext);
     if (!context) {

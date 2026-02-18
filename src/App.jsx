@@ -1,4 +1,4 @@
-import { lazy, Suspense, memo } from 'react';
+import { lazy, Suspense, memo, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import BackgroundEffect from './components/Background/BackgroundEffect';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -22,6 +22,7 @@ const EducationWindow = lazy(() => import('./components/Windows/EducationWindow'
 const PortfolioWindow = lazy(() => import('./components/Windows/PortfolioWindow'));
 const ExperienceWindow = lazy(() => import('./components/Windows/ExperienceWindow'));
 const ChatWindow = lazy(() => import('./components/Windows/ChatWindow'));
+const TerminalWindow = lazy(() => import('./components/Windows/TerminalWindow'));
 
 // this is what is shown while a window is loading
 const WindowLoader = memo(() => (
@@ -51,6 +52,8 @@ WindowLoader.displayName = 'WindowLoader';
 
 // this component contains all the portfolio windows
 const PortfolioContent = memo(({ portfolioData }) => {
+  const [showTerminal, setShowTerminal] = useState(false);
+
   const portfolioWindowIds = [
     'profile-window',
     'soft-skills-window',
@@ -65,7 +68,21 @@ const PortfolioContent = memo(({ portfolioData }) => {
 
   useWindowLayout(portfolioWindowIds, 500);
 
+  // Ctrl+ñ toggles the terminal easter egg
+  const handleKeyDown = useCallback((e) => {
+    if (e.ctrlKey && e.key === 'ñ') {
+      e.preventDefault();
+      setShowTerminal(prev => !prev);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
   return (
+    <>
     <Suspense fallback={<WindowLoader />}>
       <WelcomeWindow portfolioData={portfolioData} />
 
@@ -114,6 +131,17 @@ const PortfolioContent = memo(({ portfolioData }) => {
         initialPosition={{ x: 500, y: 280 }}
       />
     </Suspense>
+
+    {showTerminal && (
+      <Suspense fallback={<WindowLoader />}>
+        <TerminalWindow
+          portfolioData={portfolioData}
+          initialPosition={{ x: 150, y: 150 }}
+          onClose={() => setShowTerminal(false)}
+        />
+      </Suspense>
+    )}
+    </>
   );
 });
 

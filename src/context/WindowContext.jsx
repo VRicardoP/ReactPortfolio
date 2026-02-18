@@ -3,6 +3,7 @@ import { showToast } from '../components/UI/Toast';
 
 const WindowContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useWindowContext = () => {
     const context = useContext(WindowContext);
     if (!context) {
@@ -13,7 +14,7 @@ export const useWindowContext = () => {
 
 export const WindowProvider = ({ children }) => {
     const [windows, setWindows] = useState({});
-    const [highestZIndex, setHighestZIndex] = useState(100);
+    const [, setHighestZIndex] = useState(100);
     const toastTimeoutRef = useRef({});
 
     // to show notifications without duplicates

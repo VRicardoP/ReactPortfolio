@@ -55,7 +55,7 @@ const MapWindow = memo(({ data, initialPosition }) => {
     const markers = data || [];
 
     // center the map on the first visitor or on a global view
-    const center = markers.length > 0 && markers[0].latitude && markers[0].longitude
+    const center = markers.length > 0 && markers[0].latitude != null && markers[0].longitude != null
         ? [markers[0].latitude, markers[0].longitude]
         : [20, 0];
 
@@ -85,7 +85,7 @@ const MapWindow = memo(({ data, initialPosition }) => {
                     />
 
                     {markers.map((point, index) => {
-                        if (!point.latitude || !point.longitude) return null;
+                        if (point.latitude == null || point.longitude == null) return null;
 
                         return (
                             <Marker

@@ -127,10 +127,11 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
   }, [isMinimized, isMaximized, windowRef, handleResizeMove, handleResizeEnd]);
 
   useEffect(() => {
+    const resizeState = resizeStateRef.current;
     return () => {
       document.removeEventListener('mousemove', handleResizeMove);
       document.removeEventListener('mouseup', handleResizeEnd);
-      resizeStateRef.current.isResizing = false;
+      resizeState.isResizing = false;
     };
   }, [handleResizeMove, handleResizeEnd]);
 

@@ -113,40 +113,48 @@
                 "level": 95
             },
             {
-                "name": "React / Vue.js",
-                "level": 90
+                "name": "React / Vite",
+                "level": 92
             },
             {
                 "name": "Three.js / WebGL",
                 "level": 85
+            },
+            {
+                "name": "i18n / Accessibility",
+                "level": 80
             }
         ],
         "backend": [
+            {
+                "name": "Python / FastAPI",
+                "level": 90
+            },
             {
                 "name": "Node.js / Express",
                 "level": 88
             },
             {
-                "name": "Python / Django",
-                "level": 80
+                "name": "SQLAlchemy / Alembic",
+                "level": 85
             },
             {
-                "name": "GraphQL / REST",
-                "level": 85
+                "name": "REST API Design",
+                "level": 90
             }
         ],
         "databases": [
             {
-                "name": "MongoDB",
-                "level": 92
+                "name": "PostgreSQL",
+                "level": 90
             },
             {
-                "name": "PostgreSQL",
+                "name": "MongoDB",
                 "level": 85
             },
             {
                 "name": "Redis",
-                "level": 75
+                "level": 78
             }
         ],
         "others": [
@@ -155,8 +163,8 @@
                 "level": 95
             },
             {
-                "name": "Docker / Kubernetes",
-                "level": 80
+                "name": "Docker / Docker Compose",
+                "level": 85
             },
             {
                 "name": "AWS / Azure",
@@ -173,6 +181,10 @@
             {
                 "name": "Network Security (Cisco, Sophos)",
                 "level": 88
+            },
+            {
+                "name": "CI/CD / Testing",
+                "level": 82
             }
         ]
     },

@@ -97,6 +97,8 @@ const SmokeEffect = () => {
 
         animate();
 
+        const mountNode = mountRef.current;
+
         // cleanup when the component unmounts
         return () => {
             window.removeEventListener('resize', onWindowResize);
@@ -105,8 +107,8 @@ const SmokeEffect = () => {
                 cancelAnimationFrame(animationIdRef.current);
             }
 
-            if (mountRef.current && renderer.domElement) {
-                mountRef.current.removeChild(renderer.domElement);
+            if (mountNode && renderer.domElement) {
+                mountNode.removeChild(renderer.domElement);
             }
 
             renderer.dispose();

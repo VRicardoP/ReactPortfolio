@@ -1,0 +1,142 @@
+.terminal-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #0a0a0a;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #00ff00;
+}
+
+.terminal-output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  min-height: 0;
+}
+
+.terminal-output::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terminal-output::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.terminal-output::-webkit-scrollbar-thumb {
+  background: #00ff0044;
+  border-radius: 3px;
+}
+
+.terminal-output::-webkit-scrollbar-thumb:hover {
+  background: #00ff0088;
+}
+
+.terminal-line {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.terminal-line--command {
+  color: #00ffff;
+}
+
+.terminal-line--error {
+  color: #ff4444;
+}
+
+.terminal-line--success {
+  color: #00ff00;
+}
+
+.terminal-line--info {
+  color: #888;
+}
+
+.terminal-line--highlight {
+  color: #ffff00;
+}
+
+.terminal-line--ascii {
+  color: #ff00ff;
+  line-height: 1.15;
+}
+
+.terminal-input-row {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-top: 1px solid #00ff0033;
+  background: #0d0d0d;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.terminal-prompt {
+  color: #00ff00;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #00ffff;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  caret-color: #00ff00;
+  padding: 0;
+}
+
+.terminal-input::placeholder {
+  color: #00ff0044;
+}
+
+.terminal-skill-bar {
+  display: inline-block;
+  height: 10px;
+  background: #00ff00;
+  border-radius: 2px;
+  margin-right: 6px;
+  vertical-align: middle;
+  box-shadow: 0 0 4px #00ff0066;
+}
+
+.terminal-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 4px 0;
+}
+
+.terminal-table td {
+  padding: 2px 12px 2px 0;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.terminal-table td:first-child {
+  color: #00ffff;
+}
+
+/* Scanline effect for extra retro feel */
+.terminal-body::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  z-index: 1;
+}

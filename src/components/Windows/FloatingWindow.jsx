@@ -28,7 +28,7 @@ const FloatingWindow = ({
 
     const windowState = windows[id];
 
-    // when the window is created register it in the system
+    // when the window is created register it in the system (runs once on mount)
     useEffect(() => {
         registerWindow(id, {
             position: initialPosition,
@@ -39,6 +39,7 @@ const FloatingWindow = ({
         });
 
         return () => unregisterWindow(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, registerWindow, unregisterWindow]);
 
     // stable callback references to prevent re-renders from killing drag/resize listeners

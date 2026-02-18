@@ -5,6 +5,7 @@ let toastId = 0;
 const toastListeners = new Set();
 const activeToasts = new Map(); // here I store the toasts that are already active
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const showToast = (message, duration = 3000) => {
     // if there's already a toast with this message don't show it again
     if (activeToasts.has(message)) {

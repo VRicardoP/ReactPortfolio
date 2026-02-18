@@ -4,12 +4,26 @@ import { BACKEND_URL } from '../config/api';
 
 const AuthContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
         throw new Error('useAuth must be used within AuthProvider');
     }
     return context;
+};
+
+const isTokenExpired = (token) => {
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return false;
+        const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(atob(base64));
+        if (!payload.exp) return false;
+        return payload.exp * 1000 < Date.now();
+    } catch {
+        return false;
+    }
 };
 
 export const AuthProvider = ({ children }) => {
@@ -20,9 +34,12 @@ export const AuthProvider = ({ children }) => {
     // when the page loads check if there's already a saved token
     useEffect(() => {
         const storedToken = localStorage.getItem('accessToken');
-        if (storedToken) {
+        if (storedToken && !isTokenExpired(storedToken)) {
             setToken(storedToken);
             setIsAuthenticated(true);
+        } else if (storedToken) {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('tokenType');
         }
         setLoading(false);
     }, []);

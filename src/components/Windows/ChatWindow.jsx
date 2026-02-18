@@ -70,7 +70,7 @@ const ChatWindow = ({ data, initialPosition }) => {
                 text: respData.response
             }]);
 
-        } catch (err) {
+        } catch {
             setError(t('chat.errorMessage'));
 
             setMessages(prev => [...prev, {
