@@ -10,14 +10,14 @@ body {
   box-sizing: border-box;
 }
 
-/* Canvas Three.js fijo en fondo */
+/* Three.js canvas fixed in background */
 #root {
   width: 100%;
   height: 100vh;
   position: relative;
 }
 
-/* Solo el canvas del efecto de lluvia (Three.js) debe ser fixed */
+/* Only the rain effect canvas (Three.js) should be fixed */
 canvas.rain-canvas {
   position: fixed !important;
   top: 0 !important;
@@ -27,7 +27,7 @@ canvas.rain-canvas {
   z-index: -1 !important;
 }
 
-/* Resetear estilos para canvas de Chart.js dentro de ventanas */
+/* Reset styles for Chart.js canvas inside windows */
 .floating-window canvas {
   position: relative !important;
   top: auto !important;
@@ -37,7 +37,7 @@ canvas.rain-canvas {
   z-index: auto !important;
 }
 
-/* Título principal del portfolio */
+/* Portfolio main title */
 .main-title {
   position: fixed;
   top: 30px;
@@ -55,7 +55,7 @@ canvas.rain-canvas {
   text-align: center;
 }
 
-/* Cursor parpadeante tipo terminal */
+/* Blinking terminal cursor */
 .terminal-cursor {
   display: inline-block;
   width: 3px;
@@ -66,7 +66,7 @@ canvas.rain-canvas {
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
 }
 
-/* Animación del cursor parpadeante */
+/* Blinking cursor animation */
 @keyframes blink {
 
   0%,
@@ -80,7 +80,7 @@ canvas.rain-canvas {
   }
 }
 
-/* Contenedor para el efecto de máquina de escribir */
+/* Container for the typewriter effect */
 .typewriter-container {
   overflow: hidden;
   white-space: nowrap;
@@ -91,7 +91,7 @@ canvas.rain-canvas {
 
 /* ===== RESPONSIVE DESIGN ===== */
 
-/* Tablets y pantallas medianas (768px - 1024px) */
+/* Tablets and medium screens (768px - 1024px) */
 @media (max-width: 1024px) {
   .main-title {
     font-size: 32px;
@@ -99,7 +99,7 @@ canvas.rain-canvas {
   }
 }
 
-/* Tablets pequeñas y móviles grandes (481px - 768px) */
+/* Small tablets and large mobile (481px - 768px) */
 @media (max-width: 768px) {
   .main-title {
     font-size: 24px;
@@ -111,7 +111,7 @@ canvas.rain-canvas {
     width: 2px;
   }
 
-  /* Ajustar ventanas flotantes */
+  /* Adjust floating windows */
   .floating-window {
     max-width: 95vw !important;
     max-height: 85vh !important;
@@ -126,7 +126,7 @@ canvas.rain-canvas {
     font-size: 16px;
   }
 
-  /* Grid responsivo */
+  /* Responsive grid */
   .experience-grid,
   .portfolio-grid {
     grid-template-columns: 1fr !important;
@@ -137,7 +137,7 @@ canvas.rain-canvas {
   }
 }
 
-/* Móviles (320px - 480px) */
+/* Mobile (320px - 480px) */
 @media (max-width: 480px) {
   .main-title {
     font-size: 18px;
@@ -154,7 +154,7 @@ canvas.rain-canvas {
     height: 0.9em;
   }
 
-  /* Ventanas flotantes en móvil */
+  /* Floating windows on mobile */
   .floating-window {
     max-width: 98vw !important;
     max-height: 90vh !important;
@@ -179,7 +179,7 @@ canvas.rain-canvas {
     height: 10px;
   }
 
-  /* Ajustar posición inicial en móvil */
+  /* Adjust initial position on mobile */
   .floating-window[style*="left"] {
     left: 5vw !important;
   }
@@ -188,7 +188,7 @@ canvas.rain-canvas {
     top: 80px !important;
   }
 
-  /* Chat en móvil */
+  /* Chat on mobile */
   .chat-input {
     font-size: 13px;
     padding: 8px;
@@ -205,7 +205,7 @@ canvas.rain-canvas {
   }
 }
 
-/* Móviles muy pequeños (< 320px) */
+/* Very small mobile (< 320px) */
 @media (max-width: 320px) {
   .main-title {
     font-size: 16px;
@@ -220,7 +220,7 @@ canvas.rain-canvas {
   }
 }
 
-/* Orientación horizontal en móviles */
+/* Landscape orientation on mobile */
 @media (max-height: 500px) and (orientation: landscape) {
   .main-title {
     font-size: 18px;
@@ -236,7 +236,7 @@ canvas.rain-canvas {
   }
 }
 
-/* Pantallas grandes (> 1440px) */
+/* Large screens (> 1440px) */
 @media (min-width: 1440px) {
   .main-title {
     font-size: 48px;
@@ -247,7 +247,7 @@ canvas.rain-canvas {
   }
 }
 
-/* Modo táctil (touch devices) */
+/* Touch mode (touch devices) */
 @media (hover: none) and (pointer: coarse) {
   .control-btn {
     width: 14px;
@@ -258,7 +258,7 @@ canvas.rain-canvas {
     padding: 10px;
   }
 
-  /* Aumentar área de toque */
+  /* Increase touch area */
   .resize-handle {
     width: 15px !important;
     height: 15px !important;
@@ -275,7 +275,7 @@ canvas.rain-canvas {
   }
 }
 
-/* Preferencia de movimiento reducido */
+/* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

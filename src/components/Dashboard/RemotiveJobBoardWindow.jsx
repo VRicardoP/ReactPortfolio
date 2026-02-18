@@ -9,7 +9,7 @@ const RemotiveJobBoardWindow = memo(({ data, initialPosition }) => {
         search: ''
     });
 
-    // extraer opciones unicas para los filtros
+    // extract unique options for the filters
     const filterOptions = useMemo(() => {
         if (!data?.data) return { locations: [], tags: [], categories: [] };
 
@@ -32,7 +32,7 @@ const RemotiveJobBoardWindow = memo(({ data, initialPosition }) => {
         };
     }, [data]);
 
-    // filtrar trabajos segun los filtros activos
+    // filter jobs according to active filters
     const filteredJobs = useMemo(() => {
         if (!data?.data) return [];
 
@@ -81,7 +81,7 @@ const RemotiveJobBoardWindow = memo(({ data, initialPosition }) => {
             initialSize={{ width: 700, height: 550 }}
         >
             <div className="jobboard-container">
-                {/* filtros */}
+                {/* filters */}
                 <div className="jobboard-filters">
                     <input
                         type="text"
@@ -131,12 +131,12 @@ const RemotiveJobBoardWindow = memo(({ data, initialPosition }) => {
                     )}
                 </div>
 
-                {/* contador de resultados */}
+                {/* results counter */}
                 <div className="jobboard-count">
                     Showing {filteredJobs.length} of {data.data.length} jobs
                 </div>
 
-                {/* lista de trabajos */}
+                {/* job list */}
                 <div className="jobboard-list">
                     {filteredJobs.length === 0 ? (
                         <div className="jobboard-no-results">

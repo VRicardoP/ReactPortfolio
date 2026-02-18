@@ -31,26 +31,26 @@ const CubeEffect = () => {
 
         mountRef.current.appendChild(renderer.domElement);
 
-        // escena y camara
+        // scene and camera
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000a0b);
 
         const camera = new THREE.PerspectiveCamera(35, innerWidth / innerHeight, 0.1, 100);
         camera.position.set(0, -1.7, 8);
 
-        // clock para las animaciones
+        // clock for animations
         const clock = new THREE.Clock();
 
-        // cargo las texturas desde las URLs originales
+        // load textures from the original URLs
         const textureLoader = new THREE.TextureLoader();
         const matcapTexture = textureLoader.load(
-            'https://images.unsplash.com/photo-1626908013943-df94de54984c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=512&q=80'
+            '/textures/cube-matcap.jpg'
         );
         const envTexture = textureLoader.load(
-            'https://images.unsplash.com/photo-1536566482680-fca31930a0bd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=512&q=80'
+            '/textures/cube-env.jpg'
         );
 
-        // cubo con bordes redondeados - material igual al original
+        // cube with rounded edges - material same as the original
         const cubeGeometry = new RoundedBoxGeometry(1, 1, 1, 5, 0.05);
         const cubeMaterial = new THREE.MeshMatcapMaterial({
             color: 0xffffff,
@@ -60,7 +60,7 @@ const CubeEffect = () => {
         const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
         scene.add(cube);
 
-        // barras de luz alrededor del cubo - verticales en circulo
+        // light bars around the cube - vertical in a circle
         const lightBars = [];
         const barMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
@@ -69,7 +69,7 @@ const CubeEffect = () => {
             const barGeometry = new THREE.CapsuleGeometry(0.02, barLength, 5, 16);
             const bar = new THREE.Mesh(barGeometry, barMaterial);
 
-            // posicion en circulo como el original
+            // position in circle like the original
             const amp = 1;
             bar.position.y = -Math.random() * (amp / 2) + Math.random() * (amp / 2);
             bar.position.x = -Math.sin(i * 0.3) * Math.PI;
@@ -79,11 +79,11 @@ const CubeEffect = () => {
             lightBars.push({ mesh: bar, geometry: barGeometry });
         }
 
-        // velocidades como en el original
+        // speeds like in the original
         const sceneSpeed = 0.2;
-        const objectSpeed = 0; // en el original es 0 por defecto
+        const objectSpeed = 0; // in the original it's 0 by default
 
-        // OrbitControls como en el original
+        // OrbitControls like in the original
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.target.set(0, 0, 0);
         controls.rotateSpeed = 0.9;
@@ -92,16 +92,16 @@ const CubeEffect = () => {
         controls.dampingFactor = 0.02;
         controls.update();
 
-        // bucle de animacion
+        // animation loop
         const animate = () => {
             animationIdRef.current = requestAnimationFrame(animate);
 
             const elapsed = clock.getElapsedTime();
 
-            // roto la escena automaticamente
+            // rotate the scene automatically
             scene.rotation.y = elapsed * sceneSpeed;
 
-            // roto y muevo el cubo (objectSpeed es 0 por defecto)
+            // rotate and move the cube (objectSpeed is 0 by default)
             cube.rotation.y = -elapsed * objectSpeed;
             cube.rotation.z = elapsed * objectSpeed;
             cube.rotation.x = elapsed * objectSpeed;
@@ -114,7 +114,7 @@ const CubeEffect = () => {
             renderer.render(scene, camera);
         };
 
-        // cuando cambia el tamaño de la ventana
+        // when the window size changes
         const onWindowResize = () => {
             const width = window.innerWidth;
             const height = window.innerHeight;
@@ -126,7 +126,7 @@ const CubeEffect = () => {
 
         animate();
 
-        // limpieza cuando se desmonta el componente
+        // cleanup when the component unmounts
         return () => {
             window.removeEventListener('resize', onWindowResize);
 

@@ -1,12 +1,14 @@
+import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
 const SoftSkillsWindow = ({ data, initialPosition }) => {
+    const { t } = useTranslation();
     if (!data) return null;
 
     return (
         <FloatingWindow
             id="soft-skills-window"
-            title="Soft Skills"
+            title={t('windows.softSkills')}
             initialPosition={initialPosition}
             initialSize={{ width: 400, height: 300 }}
         >

@@ -15,9 +15,7 @@ const ParallaxEffect = () => {
         });
     }, []);
 
-    const particlesLoaded = useCallback(async (container) => {
-        console.log('Particles loaded:', container);
-    }, []);
+    const particlesLoaded = useCallback(async () => {}, []);
 
     const options = {
         fullScreen: {

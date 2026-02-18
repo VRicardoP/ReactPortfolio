@@ -165,7 +165,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
         color: theme.text
     };
 
-    // mostrar la ventana incluso si no hay datos, con valores por defecto
+    // show the window even if there's no data, with default values
     const hasData = data && (data.general || (data.top_questions && data.top_questions.length > 0) || (data.timeline_daily && data.timeline_daily.length > 0));
 
     return (

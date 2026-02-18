@@ -15,7 +15,6 @@ const usePortfolioData = () => {
         const jsonData = await response.json();
         setData(jsonData);
       } catch (err) {
-        console.error('Error loading portfolio data:', err);
         setError(err.message);
       } finally {
         setLoading(false);

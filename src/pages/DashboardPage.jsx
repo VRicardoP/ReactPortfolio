@@ -1,5 +1,6 @@
 import { lazy, Suspense, memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useDashboardData } from '../hooks/useDashboardData';
@@ -10,7 +11,7 @@ import useTypewriter from '../hooks/useTypewriter';
 import useWindowLayout from '../hooks/useWindowLayout';
 import '../styles/dashboard.css';
 
-// cargo los componentes solo cuando hacen falta para que vaya mas rapido
+// lazy load components only when needed so it's faster
 const StatsWindow = lazy(() => import('../components/Dashboard/StatsWindow'));
 const MapWindow = lazy(() => import('../components/Dashboard/MapWindow'));
 const ChatAnalyticsWindow = lazy(() => import('../components/Dashboard/ChatAnalyticsWindow'));
@@ -20,7 +21,7 @@ const RemotiveJobBoardWindow = lazy(() => import('../components/Dashboard/Remoti
 const ArbeitnowJobBoardWindow = lazy(() => import('../components/Dashboard/ArbeitnowJobBoardWindow'));
 const JsearchJobBoardWindow = lazy(() => import('../components/Dashboard/JsearchJobBoardWindow'));
 
-// lo que se ve mientras carga el dashboard
+// what is shown while the dashboard is loading
 const DashboardLoader = memo(() => (
     <div style={{
         display: 'flex',
@@ -46,7 +47,7 @@ const DashboardLoader = memo(() => (
 
 DashboardLoader.displayName = 'DashboardLoader';
 
-// aqui estan todas las ventanas del dashboard
+// here are all the dashboard windows
 const DashboardContent = memo(({ stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs }) => {
     const dashboardWindowIds = [
         'stats-window',
@@ -108,14 +109,33 @@ const DashboardContent = memo(({ stats, mapData, chatAnalytics, recentJobs, remo
 
 DashboardContent.displayName = 'DashboardContent';
 
+const BACKGROUND_LABELS = {
+    rain: 'bgRain',
+    parallax: 'bgParallax',
+    matrix: 'bgMatrix',
+    lensflare: 'bgLensflare',
+    cube: 'bgCube',
+    smoke: 'bgSmoke',
+};
+
+const BACKGROUND_EMOJIS = {
+    rain: '🌧️',
+    parallax: '✨',
+    matrix: '🟩',
+    lensflare: '🌟',
+    cube: '🧊',
+    smoke: '💨',
+};
+
 const DashboardPage = () => {
+    const { t } = useTranslation();
     const { logout } = useAuth();
     const { theme, cycleTheme, themeName, backgroundEffect, cycleBackground } = useTheme();
     const navigate = useNavigate();
-    const typedText = useTypewriter('Dashboard > Analytics', 100);
+    const typedText = useTypewriter(t('dashboard.title'), 100);
     const { stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, loading, error } = useDashboardData();
 
-    // funciones para los botones
+    // functions for the buttons
     const handleLogout = useCallback(() => {
         logout();
         navigate('/login');
@@ -125,14 +145,14 @@ const DashboardPage = () => {
         navigate('/');
     }, [navigate]);
 
-    // mientras carga los datos muestro esto
+    // while loading data show this
     if (loading) {
         return (
             <>
                 <BackgroundEffect />
                 <div className="dashboard-header">
                     <h1 className="main-title">
-                        <span className="typewriter-container">Loading dashboard...</span>
+                        <span className="typewriter-container">{t('dashboard.loading')}</span>
                         <span className="terminal-cursor"></span>
                     </h1>
                 </div>
@@ -147,28 +167,28 @@ const DashboardPage = () => {
                     zIndex: 100
                 }}>
                     <div style={{ fontSize: '48px', marginBottom: '20px' }}>⏳</div>
-                    <p style={{ fontSize: '18px' }}>Fetching analytics data...</p>
+                    <p style={{ fontSize: '18px' }}>{t('dashboard.fetchingData')}</p>
                 </div>
             </>
         );
     }
 
-    // si hay algun problema muestro este error
+    // if there's a problem show this error
     if (error) {
         return (
             <>
                 <BackgroundEffect />
                 <div className="dashboard-header">
                     <h1 className="main-title">
-                        <span className="typewriter-container">Dashboard Error</span>
+                        <span className="typewriter-container">{t('dashboard.error')}</span>
                         <span className="terminal-cursor"></span>
                     </h1>
                     <div className="dashboard-nav">
                         <button onClick={handleGoHome} className="nav-button">
-                            ← Portfolio
+                            {t('dashboard.backToPortfolio')}
                         </button>
                         <button onClick={handleLogout} className="nav-button logout">
-                            Logout
+                            {t('dashboard.logout')}
                         </button>
                     </div>
                 </div>
@@ -187,7 +207,7 @@ const DashboardPage = () => {
                     border: '2px solid #ff6b6b',
                     borderRadius: '8px'
                 }}>
-                    <h2 style={{ marginTop: 0 }}>❌ Failed to load dashboard data</h2>
+                    <h2 style={{ marginTop: 0 }}>{t('dashboard.failedToLoad')}</h2>
                     <p style={{ fontSize: '16px', margin: '20px 0' }}>{error}</p>
                     <div style={{
                         fontSize: '14px',
@@ -197,12 +217,12 @@ const DashboardPage = () => {
                         borderRadius: '4px',
                         color: '#D3D3D3'
                     }}>
-                        <strong>Troubleshooting:</strong>
+                        <strong>{t('dashboard.troubleshooting')}</strong>
                         <ul style={{ textAlign: 'left', marginTop: '10px' }}>
-                            <li>Check backend is running at http://127.0.0.1:8001</li>
-                            <li>Verify you're logged in with valid credentials</li>
-                            <li>Check browser console for detailed errors</li>
-                            <li>Ensure CORS is properly configured on backend</li>
+                            <li>{t('dashboard.checkBackend')}</li>
+                            <li>{t('dashboard.checkCredentials')}</li>
+                            <li>{t('dashboard.checkConsole')}</li>
+                            <li>{t('dashboard.checkCors')}</li>
                         </ul>
                     </div>
                     <button
@@ -219,14 +239,17 @@ const DashboardPage = () => {
                             fontWeight: 'bold'
                         }}
                     >
-                        Retry
+                        {t('dashboard.retry')}
                     </button>
                 </div>
             </>
         );
     }
 
-    // cuando todo esta listo muestro el dashboard completo
+    const bgKey = BACKGROUND_LABELS[backgroundEffect] || 'bgRain';
+    const bgEmoji = BACKGROUND_EMOJIS[backgroundEffect] || '🌧️';
+
+    // when everything is ready show the complete dashboard
     return (
         <>
             <BackgroundEffect />
@@ -241,32 +264,32 @@ const DashboardPage = () => {
                     <button
                         onClick={cycleTheme}
                         className="nav-button theme-button"
-                        title={`Theme: ${theme.name}`}
+                        title={`${t('dashboard.theme')}: ${theme.name}`}
                         style={{
                             backgroundColor: theme.primary,
                             color: '#000',
                             border: `1px solid ${theme.primary}`
                         }}
                     >
-                        {themeName === 'cyan' ? '🔵' : themeName === 'silver' ? '⚪' : '🟠'} Theme
+                        {themeName === 'cyan' ? '🔵' : themeName === 'silver' ? '⚪' : '🟠'} {t('dashboard.theme')}
                     </button>
                     <button
                         onClick={cycleBackground}
                         className="nav-button theme-button"
-                        title={`Background: ${backgroundEffect}`}
+                        title={`${t(`dashboard.${bgKey}`)}`}
                         style={{
                             backgroundColor: 'transparent',
                             color: theme.primary,
                             border: `1px solid ${theme.primary}`
                         }}
                     >
-                        {backgroundEffect === 'rain' ? '🌧️' : backgroundEffect === 'parallax' ? '✨' : backgroundEffect === 'matrix' ? '🟩' : backgroundEffect === 'lensflare' ? '🌟' : backgroundEffect === 'cube' ? '🧊' : '💨'} {backgroundEffect === 'rain' ? 'Rain' : backgroundEffect === 'parallax' ? 'Parallax' : backgroundEffect === 'matrix' ? 'Matrix' : backgroundEffect === 'lensflare' ? 'Lensflare' : backgroundEffect === 'cube' ? 'Cube' : 'Smoke'}
+                        {bgEmoji} {t(`dashboard.${bgKey}`)}
                     </button>
                     <button onClick={handleGoHome} className="nav-button">
-                        ← Portfolio
+                        {t('dashboard.backToPortfolio')}
                     </button>
                     <button onClick={handleLogout} className="nav-button logout">
-                        Logout
+                        {t('dashboard.logout')}
                     </button>
                 </div>
             </div>

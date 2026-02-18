@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 
 const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPositionChange) => {
   const resizeStateRef = useRef({
@@ -29,7 +29,7 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
 
     const direction = resizeState.direction;
 
-    // si arrastro a la derecha o izquierda
+    // if dragging right or left
     if (direction.includes('e')) {
       newWidth = Math.max(resizeState.startWidth + deltaX, minWidth);
     } else if (direction.includes('w')) {
@@ -40,7 +40,7 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
       }
     }
 
-    // si arrastro arriba o abajo
+    // if dragging up or down
     if (direction.includes('s')) {
       newHeight = Math.max(resizeState.startHeight + deltaY, minHeight);
     } else if (direction.includes('n')) {
@@ -51,7 +51,7 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
       }
     }
 
-    // cambio el tamaño directamente para que sea fluido
+    // change the size directly so it feels smooth
     if (windowRef.current) {
       windowRef.current.style.width = `${newWidth}px`;
       windowRef.current.style.height = `${newHeight}px`;
@@ -59,7 +59,7 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
       windowRef.current.style.top = `${newY}px`;
     }
 
-    // guardo el tamaño final
+    // save the final size
     resizeState.finalWidth = newWidth;
     resizeState.finalHeight = newHeight;
     resizeState.finalX = newX;
@@ -72,12 +72,12 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
 
     resizeState.isResizing = false;
 
-    // quito el estilo de redimensionar
+    // remove the resizing style
     if (windowRef.current) {
       windowRef.current.classList.remove('resizing');
     }
 
-    // guardo el nuevo tamaño en el estado
+    // save the new size in state
     if (resizeState.finalWidth !== undefined) {
       onSizeChange({
         width: resizeState.finalWidth,
@@ -118,13 +118,21 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
       resizeState.startPosX = rect.left;
       resizeState.startPosY = rect.top;
 
-      // pongo una clase para que no haga animaciones raras
+      // add a class to prevent weird animations
       windowRef.current.classList.add('resizing');
     }
 
     document.addEventListener('mousemove', handleResizeMove);
     document.addEventListener('mouseup', handleResizeEnd);
   }, [isMinimized, isMaximized, windowRef, handleResizeMove, handleResizeEnd]);
+
+  useEffect(() => {
+    return () => {
+      document.removeEventListener('mousemove', handleResizeMove);
+      document.removeEventListener('mouseup', handleResizeEnd);
+      resizeStateRef.current.isResizing = false;
+    };
+  }, [handleResizeMove, handleResizeEnd]);
 
   return {
     handleResizeStart,

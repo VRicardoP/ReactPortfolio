@@ -7,12 +7,12 @@ const useWindowLayout = (windowIds, delay = 3000) => {
   const hasAnimated = useRef(false);
   const timeoutRef = useRef(null);
 
-  // la funcion que hace la animacion de minimizar las ventanas
+  // the function that animates minimizing the windows
   const animateWindows = useCallback(() => {
     const screenWidth = window.innerWidth;
     const isMobile = screenWidth <= 768;
 
-    // calculo el tamaño dependiendo de si es movil o no
+    // calculate the size depending on whether it's mobile or not
     const itemWidth = isMobile ? 140 : 200;
     const menuWidth = Math.min(screenWidth * 0.85, windowIds.length * itemWidth);
     const startX = Math.max(10, (screenWidth - menuWidth) / 2);
@@ -41,21 +41,21 @@ const useWindowLayout = (windowIds, delay = 3000) => {
   }, [windowIds, toggleMinimize, updatePosition]);
 
   useEffect(() => {
-    // si ya hice la animacion no la repito
+    // if I already did the animation don't repeat it
     if (hasAnimated.current) return;
 
-    // espero a que todas las ventanas esten listas
+    // wait for all windows to be ready
     const allRegistered = windowIds.every(id => windows[id]);
     if (!allRegistered) {
       return;
     }
 
-    // borro el temporizador anterior si habia uno
+    // clear the previous timer if there was one
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    // despues de un rato minimizo todas las ventanas
+    // after a while minimize all windows
     timeoutRef.current = setTimeout(animateWindows, delay);
 
     return () => {
@@ -65,12 +65,12 @@ const useWindowLayout = (windowIds, delay = 3000) => {
     };
   }, [windows, windowIds, delay, animateWindows]);
 
-  // si cambia el tamaño de la pantalla recoloco las ventanas
+  // if the screen size changes reposition the windows
   useEffect(() => {
     if (!hasAnimated.current) return;
 
     const handleResize = () => {
-      // muevo las ventanas minimizadas a su nueva posicion
+      // move minimized windows to their new position
       const screenWidth = window.innerWidth;
       const isMobile = screenWidth <= 768;
       const itemWidth = isMobile ? 140 : 200;

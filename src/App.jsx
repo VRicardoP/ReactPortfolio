@@ -1,5 +1,7 @@
 import { lazy, Suspense, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import BackgroundEffect from './components/Background/BackgroundEffect';
+import ErrorBoundary from './components/ErrorBoundary';
 import Toast from './components/UI/Toast';
 import { WindowProvider } from './context/WindowContext';
 import useTypewriter from './hooks/useTypewriter';
@@ -9,7 +11,7 @@ import useVisitorTracking from './hooks/useVisitorTracking';
 import './styles/base.css';
 import './styles/windows-content.css';
 
-// cargo las ventanas solo cuando se necesitan para que la pagina cargue mas rapido
+// lazy load windows only when needed so the page loads faster
 const WelcomeWindow = lazy(() => import('./components/Windows/WelcomeWindow'));
 const ProfileWindow = lazy(() => import('./components/Windows/ProfileWindow'));
 const ContactWindow = lazy(() => import('./components/Windows/ContactWindow'));
@@ -21,7 +23,7 @@ const PortfolioWindow = lazy(() => import('./components/Windows/PortfolioWindow'
 const ExperienceWindow = lazy(() => import('./components/Windows/ExperienceWindow'));
 const ChatWindow = lazy(() => import('./components/Windows/ChatWindow'));
 
-// esto es lo que se muestra mientras carga una ventana
+// this is what is shown while a window is loading
 const WindowLoader = memo(() => (
   <div style={{
     display: 'flex',
@@ -47,7 +49,7 @@ const WindowLoader = memo(() => (
 
 WindowLoader.displayName = 'WindowLoader';
 
-// este componente tiene todas las ventanas del portfolio
+// this component contains all the portfolio windows
 const PortfolioContent = memo(({ portfolioData }) => {
   const portfolioWindowIds = [
     'profile-window',
@@ -118,35 +120,37 @@ const PortfolioContent = memo(({ portfolioData }) => {
 PortfolioContent.displayName = 'PortfolioContent';
 
 function App() {
-  // registro la visita del usuario
+  const { t } = useTranslation();
+
+  // track the user's visit
   useVisitorTracking();
 
   const { data: portfolioData, loading, error } = usePortfolioData();
   const typedText = useTypewriter(
-    portfolioData ? `${portfolioData.name} > Portfolio` : 'Loading...',
+    portfolioData ? `${portfolioData.name} > Portfolio` : t('app.loading'),
     100
   );
 
-  // mientras carga los datos muestro un mensaje
+  // while loading data show a message
   if (loading) {
     return (
       <>
-        <BackgroundEffect />
+        <ErrorBoundary fallback={null}><BackgroundEffect /></ErrorBoundary>
         <h1 className="main-title">
-          <span className="typewriter-container">Loading portfolio...</span>
+          <span className="typewriter-container">{t('app.loadingPortfolio')}</span>
           <span className="terminal-cursor"></span>
         </h1>
       </>
     );
   }
 
-  // si algo sale mal muestro el error
+  // if something goes wrong show the error
   if (error) {
     return (
       <>
-        <BackgroundEffect />
+        <ErrorBoundary fallback={null}><BackgroundEffect /></ErrorBoundary>
         <h1 className="main-title">
-          <span className="typewriter-container">Error loading data</span>
+          <span className="typewriter-container">{t('app.errorLoadingData')}</span>
           <span className="terminal-cursor"></span>
         </h1>
         <div style={{
@@ -162,8 +166,8 @@ function App() {
           padding: '20px',
           maxWidth: '90%'
         }}>
-          <p>Failed to load portfolio data.</p>
-          <p>Please check that portfolio-data.json exists in the public folder.</p>
+          <p>{t('app.failedToLoad')}</p>
+          <p>{t('app.checkJson')}</p>
         </div>
       </>
     );

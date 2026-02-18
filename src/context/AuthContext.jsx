@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
-const AuthContext = createContext();
+import { BACKEND_URL } from '../config/api';
 
-const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8001';
+const AuthContext = createContext();
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    // cuando carga la pagina miro si ya hay un token guardado
+    // when the page loads check if there's already a saved token
     useEffect(() => {
         const storedToken = localStorage.getItem('accessToken');
         if (storedToken) {
@@ -27,10 +27,10 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    // funcion para iniciar sesion
+    // function to log in
     const login = useCallback(async (username, password) => {
         try {
-            // preparo los datos para enviarlos al servidor
+            // prepare the data to send to the server
             const formData = new URLSearchParams();
             formData.append('username', username);
             formData.append('password', password);
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
 
             const data = await response.json();
 
-            // guardo el token para no tener que volver a hacer login
+            // save the token so we don't have to log in again
             localStorage.setItem('accessToken', data.access_token);
             localStorage.setItem('tokenType', data.token_type);
 
@@ -59,7 +59,6 @@ export const AuthProvider = ({ children }) => {
 
             return { success: true };
         } catch (error) {
-            console.error('Login error:', error);
             return {
                 success: false,
                 error: error.message || 'Authentication failed'
@@ -67,7 +66,7 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    // cerrar sesion y borrar todo
+    // log out and clear everything
     const logout = useCallback(() => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('tokenType');
@@ -75,7 +74,7 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
     }, []);
 
-    // para hacer peticiones al servidor con el token
+    // to make requests to the server with the token
     const authenticatedFetch = useCallback(async (url, options = {}) => {
         if (!token) {
             throw new Error('No authentication token');

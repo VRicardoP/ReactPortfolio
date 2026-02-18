@@ -28,7 +28,7 @@ const FloatingWindow = ({
 
     const windowState = windows[id];
 
-    // cuando se crea la ventana la registro en el sistema
+    // when the window is created register it in the system
     useEffect(() => {
         registerWindow(id, {
             position: initialPosition,
@@ -41,50 +41,54 @@ const FloatingWindow = ({
         return () => unregisterWindow(id);
     }, [id, registerWindow, unregisterWindow]);
 
-    // esto permite arrastrar y cambiar el tamaño de la ventana
+    // stable callback references to prevent re-renders from killing drag/resize listeners
+    const handlePositionChange = useCallback((pos) => updatePosition(id, pos), [id, updatePosition]);
+    const handleSizeChange = useCallback((size) => updateSize(id, size), [id, updateSize]);
+    const handleBringToFront = useCallback(() => bringToFront(id), [id, bringToFront]);
+
+    // this allows dragging and resizing the window
     const { handleMouseDown: handleDragStart } = useDraggable(
         windowRef,
         windowState?.isMinimized,
         windowState?.isMaximized,
-        (pos) => updatePosition(id, pos),
-        () => bringToFront(id)
+        handlePositionChange,
+        handleBringToFront
     );
 
     const { handleResizeStart } = useResizable(
         windowRef,
         windowState?.isMinimized,
         windowState?.isMaximized,
-        (size) => updateSize(id, size),
-        (pos) => updatePosition(id, pos),
-        () => bringToFront(id)
+        handleSizeChange,
+        handlePositionChange
     );
 
-    // si hago click en la ventana la pongo delante de las demas
+    // if I click on the window bring it to the front
     const handleWindowClick = (e) => {
-        // si es un boton de minimizar o maximizar no hago nada aqui
+        // if it's a minimize or maximize button don't do anything here
         if (e.target.classList.contains('control-btn')) {
             return;
         }
         bringToFront(id);
     };
 
-    // cuando minimizo o restauro la ventana
+    // when I minimize or restore the window
     const handleToggleMinimize = (e) => {
         e.stopPropagation();
         toggleMinimize(id);
-        // si estaba minimizada la pongo delante al restaurarla
+        // if it was minimized bring it to front when restoring
         if (windowState?.isMinimized) {
             setTimeout(() => bringToFront(id), 100);
         }
     };
 
-    // cuando maximizo desde minimizado, ajusto al contenido
+    // when maximizing from minimized, fit to content
     const handleToggleMaximize = useCallback((e) => {
         e.stopPropagation();
 
-        // si esta minimizado, ajusto al tamaño optimo del contenido
+        // if minimized, fit to optimal content size
         if (windowState?.isMinimized) {
-            // uso el tamaño inicial como referencia para el contenido
+            // use the initial size as reference for the content
             fitToContent(id, { width: initialSize.width, height: initialSize.height });
         } else {
             toggleMaximize(id);
@@ -146,7 +150,7 @@ const FloatingWindow = ({
                         {children}
                     </div>
 
-                    {/* los bordes para cambiar el tamaño */}
+                    {/* borders for resizing */}
                     {!isMaximized && (
                         <>
                             <div className="resize-handle resize-handle-n" onMouseDown={(e) => handleResizeStart(e, 'n')} />

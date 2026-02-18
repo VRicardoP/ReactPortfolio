@@ -10,20 +10,18 @@ const RainEffect = () => {
     useEffect(() => {
         if (!mountRef.current) return;
 
-        console.log('Inicializando RainEffect...');
-
         const { innerWidth, innerHeight } = window;
 
-        // creo el mundo 3d
+        // create the 3D world
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000000);
 
-        // la camara desde donde vemos todo
+        // the camera from where we see everything
         const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 1000);
         camera.position.set(0, 50, 100);
         camera.lookAt(0, 0, 0);
 
-        // esto dibuja todo en la pantalla
+        // this draws everything on the screen
         const renderer = new THREE.WebGLRenderer({
             antialias: true,
             alpha: false
@@ -31,7 +29,7 @@ const RainEffect = () => {
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(innerWidth, innerHeight);
 
-        // pongo el canvas en toda la pantalla de fondo
+        // place the canvas fullscreen in the background
         renderer.domElement.className = 'rain-canvas';
         renderer.domElement.style.position = 'fixed';
         renderer.domElement.style.top = '0';
@@ -41,18 +39,17 @@ const RainEffect = () => {
         renderer.domElement.style.zIndex = '-1';
 
         mountRef.current.appendChild(renderer.domElement);
-        console.log('Canvas añadido al DOM');
 
-        // una luz general para que se vea algo
+        // an ambient light so something is visible
         const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
         scene.add(ambientLight);
 
-        // una luz que viene de un lado
+        // a light coming from one side
         const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
         directionalLight.position.set(50, 100, 50);
         scene.add(directionalLight);
 
-        // el suelo negro donde caen las gotas
+        // the black floor where the drops fall
         const floorGeometry = new THREE.PlaneGeometry(500, 500);
         floorGeometry.rotateX(-Math.PI / 2);
         const floorMaterial = new THREE.MeshBasicMaterial({
@@ -63,28 +60,28 @@ const RainEffect = () => {
         floor.position.y = 0;
         scene.add(floor);
 
-        // creo muchas gotas de lluvia usando lineas
+        // create many raindrops using lines
         const rainCount = 3000;
         const rainGeometry = new THREE.BufferGeometry();
         const positions = [];
         const velocities = [];
 
         for (let i = 0; i < rainCount; i++) {
-            // donde empieza cada gota
+            // where each drop starts
             const x = (Math.random() - 0.5) * 400;
             const y = Math.random() * 150;
             const z = (Math.random() - 0.5) * 400;
 
-            // cada gota es una linea vertical pequeña
+            // each drop is a small vertical line
             positions.push(x, y, z);
-            positions.push(x, y - 2, z); // lo largo de la gota
+            positions.push(x, y - 2, z); // the length of the drop
 
-            velocities.push(Math.random() * 0.5 + 0.5); // lo rapido que cae
+            velocities.push(Math.random() * 0.5 + 0.5); // how fast it falls
         }
 
         rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-        // convertir color del tema a hexadecimal para THREE.js
+        // convert theme color to hexadecimal for THREE.js
         const themeColor = new THREE.Color(theme.primary);
 
         const rainMaterial = new THREE.LineBasicMaterial({
@@ -96,9 +93,8 @@ const RainEffect = () => {
 
         const rain = new THREE.LineSegments(rainGeometry, rainMaterial);
         scene.add(rain);
-        console.log('Lluvia añadida a la escena');
 
-        // para mover la camara con el raton
+        // to move the camera with the mouse
         let mouseX = 0;
         let targetRotationY = 0;
         let currentRotationY = 0;
@@ -109,22 +105,22 @@ const RainEffect = () => {
         };
         document.addEventListener('mousemove', onMouseMove);
 
-        // el bucle que hace que todo se mueva
+        // the loop that makes everything move
         const animate = () => {
             animationIdRef.current = requestAnimationFrame(animate);
 
             const positions = rain.geometry.attributes.position.array;
 
-            // muevo cada gota hacia abajo
+            // move each drop downward
             for (let i = 0; i < rainCount; i++) {
-                const i6 = i * 6; // cada gota tiene 6 numeros para su posicion
+                const i6 = i * 6; // each drop has 6 numbers for its position
                 const velocity = velocities[i];
 
-                // bajo la gota un poquito
+                // move the drop down a little
                 positions[i6 + 1] -= velocity * 0.5;
                 positions[i6 + 4] -= velocity * 0.5;
 
-                // si toca el suelo la vuelvo a poner arriba
+                // if it hits the ground put it back at the top
                 if (positions[i6 + 1] < 0) {
                     positions[i6 + 1] = 150;
                     positions[i6 + 4] = 150 - 2;
@@ -137,7 +133,7 @@ const RainEffect = () => {
 
             rain.geometry.attributes.position.needsUpdate = true;
 
-            // muevo la camara suavemente con el raton
+            // smoothly move the camera with the mouse
             currentRotationY += (targetRotationY - currentRotationY) * 0.05;
             camera.position.x = Math.sin(currentRotationY) * 100;
             camera.position.z = Math.cos(currentRotationY) * 100;
@@ -146,7 +142,7 @@ const RainEffect = () => {
             renderer.render(scene, camera);
         };
 
-        // cuando cambio el tamaño de la ventana ajusto la camara
+        // when I resize the window adjust the camera
         const onWindowResize = () => {
             const width = window.innerWidth;
             const height = window.innerHeight;
@@ -156,13 +152,11 @@ const RainEffect = () => {
         };
         window.addEventListener('resize', onWindowResize);
 
-        // arranco la animacion
+        // start the animation
         animate();
-        console.log('Animación iniciada');
 
-        // cuando se cierra el componente limpio todo
+        // when the component unmounts clean up everything
         return () => {
-            console.log('Limpiando RainEffect...');
             document.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('resize', onWindowResize);
 

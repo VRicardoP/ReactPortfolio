@@ -12,7 +12,7 @@ const MatrixEffect = () => {
 
         const ctx = canvas.getContext('2d');
 
-        // ajustar canvas al tamaño de la ventana
+        // adjust canvas to window size
         const resize = () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -20,25 +20,25 @@ const MatrixEffect = () => {
         resize();
         window.addEventListener('resize', resize);
 
-        // caracteres para el efecto matrix (katakana + numeros + simbolos)
+        // characters for the matrix effect (katakana + numbers + symbols)
         const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%^&*()';
         const charArray = chars.split('');
 
         const fontSize = 14;
         const columns = Math.floor(canvas.width / fontSize);
-        const trailLength = 20; // numero de caracteres en la estela
+        const trailLength = 20; // number of characters in the trail
 
-        // posicion Y de cada columna (donde cae cada gota)
+        // Y position of each column (where each drop falls)
         const drops = Array(columns).fill(1);
 
-        // velocidad aleatoria para cada columna (reducida a un cuarto)
+        // random speed for each column (reduced to a quarter)
         const speeds = Array(columns).fill(0).map(() => (Math.random() * 0.5 + 0.5) * 0.25);
 
-        // almacenar los caracteres de cada columna con su posicion y caracter
+        // store the characters of each column with their position and character
         const trails = Array(columns).fill(null).map(() => []);
 
         const draw = () => {
-            // limpiar completamente el canvas
+            // completely clear the canvas
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -48,34 +48,34 @@ const MatrixEffect = () => {
                 const x = i * fontSize;
                 const currentY = Math.floor(drops[i]);
 
-                // añadir nuevo caracter si se ha movido una posicion
+                // add new character if it has moved one position
                 if (trails[i].length === 0 || currentY > trails[i][trails[i].length - 1].y) {
                     const char = charArray[Math.floor(Math.random() * charArray.length)];
                     trails[i].push({ y: currentY, char });
 
-                    // mantener solo los ultimos trailLength caracteres
+                    // keep only the last trailLength characters
                     if (trails[i].length > trailLength) {
                         trails[i].shift();
                     }
                 }
 
-                // dibujar la estela con degradado de opacidad
+                // draw the trail with opacity gradient
                 for (let j = 0; j < trails[i].length; j++) {
                     const trail = trails[i][j];
-                    const opacity = (j + 1) / trails[i].length; // mas opaco hacia abajo
+                    const opacity = (j + 1) / trails[i].length; // more opaque towards the bottom
 
                     ctx.fillStyle = theme.primary;
                     ctx.globalAlpha = opacity;
                     ctx.fillText(trail.char, x, trail.y * fontSize);
                 }
 
-                // cuando llega abajo o aleatoriamente, reiniciar arriba
+                // when it reaches the bottom or randomly, reset to the top
                 if (currentY * fontSize > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0;
                     trails[i] = [];
                 }
 
-                // mover hacia abajo segun su velocidad
+                // move down according to its speed
                 drops[i] += speeds[i];
             }
 

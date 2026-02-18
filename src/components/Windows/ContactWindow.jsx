@@ -1,8 +1,10 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
 const ContactWindow = ({ data, initialPosition }) => {
     const [copied, setCopied] = useState(false);
+    const { t } = useTranslation();
 
     const handleCopyEmail = useCallback(() => {
         if (data?.email) {
@@ -18,7 +20,7 @@ const ContactWindow = ({ data, initialPosition }) => {
     return (
         <FloatingWindow
             id="contact-window"
-            title="Contact"
+            title={t('windows.contact')}
             initialPosition={initialPosition}
             initialSize={{ width: 350, height: 220 }}
         >
@@ -32,7 +34,7 @@ const ContactWindow = ({ data, initialPosition }) => {
                     className={`contact-copy-btn ${copied ? 'copied' : ''}`}
                     onClick={handleCopyEmail}
                 >
-                    {copied ? 'Copied!' : 'Copy Email'}
+                    {copied ? t('contact.copied') : t('contact.copyEmail')}
                 </button>
             </div>
         </FloatingWindow>

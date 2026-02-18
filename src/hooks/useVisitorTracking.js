@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
+import { BACKEND_URL } from '../config/api';
 
-const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8001';
-
-// este hook registra la visita del usuario en el backend
+// this hook tracks the user's visit in the backend
 const useVisitorTracking = () => {
     useEffect(() => {
         const trackVisit = async () => {
             try {
-                // solo registro una vez por sesion
+                // only track once per session
                 const alreadyTracked = sessionStorage.getItem('visit_tracked');
                 if (alreadyTracked) {
                     return;
@@ -25,10 +24,10 @@ const useVisitorTracking = () => {
                     })
                 });
 
-                // marco que ya se registro esta sesion
+                // mark that this session has already been tracked
                 sessionStorage.setItem('visit_tracked', 'true');
             } catch (error) {
-                // si falla el tracking no pasa nada, no quiero romper la pagina
+                // if tracking fails it's fine, don't want to break the page
                 console.warn('Failed to track visit:', error.message);
             }
         };

@@ -1,0 +1,94 @@
+{
+  "welcome": {
+    "title": "Welcome - {{name}}",
+    "greeting": "Hi! I'm {{name}}",
+    "intro": "Welcome to my interactive portfolio.",
+    "description": "This website simulates a desktop environment where you can explore my professional experience and skills.",
+    "howToNavigate": "How to navigate:",
+    "drag": "Drag:",
+    "dragDesc": "Click the top bar of any window and move it",
+    "resize": "Resize:",
+    "resizeDesc": "Drag from edges and corners",
+    "minimize": "Minimize:",
+    "minimizeDesc": "Click the purple button (left)",
+    "maximize": "Maximize:",
+    "maximizeDesc": "Click the yellow button (right). A second click expands to full screen",
+    "tip": "Tip:",
+    "tipText": "Explore the different windows to learn more about my experience, skills, and projects.",
+    "gotIt": "Got it, let's go! \u2192"
+  },
+  "chat": {
+    "greeting": "Hi there! I'm Kusanagi! Do you have any questions about {{name}}?",
+    "typing": "Kusanagi is typing...",
+    "placeholder": "Ask me anything...",
+    "send": "Send",
+    "errorMessage": "Sorry, I encountered an error. Please try again.",
+    "errorConnection": "Sorry, I encountered an error connecting to the server. Please try again in a moment."
+  },
+  "contact": {
+    "copyEmail": "Copy Email",
+    "copied": "Copied!"
+  },
+  "skills": {
+    "frontend": "FRONTEND",
+    "backend": "BACKEND",
+    "databases": "DATABASES",
+    "others": "OTHERS"
+  },
+  "windows": {
+    "profile": "Profile",
+    "experience": "Experience",
+    "education": "Education",
+    "techSkills": "Tech Skills",
+    "softSkills": "Soft Skills",
+    "languages": "Languages",
+    "portfolio": "Portfolio",
+    "contact": "Contact",
+    "chat": "Kusanagi AI"
+  },
+  "app": {
+    "loading": "Loading...",
+    "loadingPortfolio": "Loading portfolio...",
+    "errorLoadingData": "Error loading data",
+    "failedToLoad": "Failed to load portfolio data.",
+    "checkJson": "Please check that portfolio-data.json exists in the public folder."
+  },
+  "error": {
+    "somethingWrong": "Something went wrong.",
+    "tryAgain": "Try Again"
+  },
+  "dashboard": {
+    "title": "Dashboard > Analytics",
+    "loading": "Loading dashboard...",
+    "fetchingData": "Fetching analytics data...",
+    "error": "Dashboard Error",
+    "failedToLoad": "Failed to load dashboard data",
+    "troubleshooting": "Troubleshooting:",
+    "checkBackend": "Check backend is running",
+    "checkCredentials": "Verify you're logged in with valid credentials",
+    "checkConsole": "Check browser console for detailed errors",
+    "checkCors": "Ensure CORS is properly configured on backend",
+    "retry": "Retry",
+    "backToPortfolio": "\u2190 Portfolio",
+    "logout": "Logout",
+    "theme": "Theme",
+    "bgRain": "Rain",
+    "bgParallax": "Parallax",
+    "bgMatrix": "Matrix",
+    "bgLensflare": "Lensflare",
+    "bgCube": "Cube",
+    "bgSmoke": "Smoke"
+  },
+  "login": {
+    "title": "Dashboard Access",
+    "subtitle": "Enter your credentials to access analytics",
+    "usernamePlaceholder": "Username",
+    "passwordPlaceholder": "Password",
+    "usernameRequired": "Username is required",
+    "passwordRequired": "Password is required",
+    "invalidCredentials": "Invalid credentials",
+    "authenticating": "Authenticating...",
+    "login": "Login",
+    "backToPortfolio": "\u2190 Back to Portfolio"
+  }
+}

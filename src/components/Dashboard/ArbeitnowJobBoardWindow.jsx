@@ -10,7 +10,7 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
         search: ''
     });
 
-    // extraer opciones unicas para los filtros
+    // extract unique options for the filters
     const filterOptions = useMemo(() => {
         if (!data?.data) return { locations: [], tags: [], jobTypes: [] };
 
@@ -35,7 +35,7 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
         };
     }, [data]);
 
-    // filtrar trabajos segun los filtros activos
+    // filter jobs according to active filters
     const filteredJobs = useMemo(() => {
         if (!data?.data) return [];
 
@@ -64,7 +64,7 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
 
     const hasActiveFilters = filters.location || filters.tag || filters.jobType || filters.remote || filters.search;
 
-    // formatear fecha desde timestamp unix
+    // format date from unix timestamp
     const formatDate = (timestamp) => {
         if (!timestamp) return '';
         return new Date(timestamp * 1000).toLocaleDateString();
@@ -93,7 +93,7 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
             initialSize={{ width: 700, height: 550 }}
         >
             <div className="jobboard-container">
-                {/* filtros */}
+                {/* filters */}
                 <div className="jobboard-filters">
                     <input
                         type="text"
@@ -142,12 +142,12 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
                     )}
                 </div>
 
-                {/* contador de resultados */}
+                {/* results counter */}
                 <div className="jobboard-count">
                     Showing {filteredJobs.length} of {data.data.length} jobs
                 </div>
 
-                {/* lista de trabajos */}
+                {/* job list */}
                 <div className="jobboard-list">
                     {filteredJobs.length === 0 ? (
                         <div className="jobboard-no-results">

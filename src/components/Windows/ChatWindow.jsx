@@ -1,12 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 import '../../styles/chat.css';
 
+const MAX_MESSAGE_LENGTH = 500;
+
 const ChatWindow = ({ data, initialPosition }) => {
+    const { t } = useTranslation();
     const [messages, setMessages] = useState([
         {
             type: 'bot',
-            text: `¡Hi there! I'm Kusanagi! Do you have any questions about ${data?.name || 'this portfolio'}?`
+            text: t('chat.greeting', { name: data?.name || 'this portfolio' })
         }
     ]);
     const [input, setInput] = useState('');
@@ -15,8 +19,7 @@ const ChatWindow = ({ data, initialPosition }) => {
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
 
-    // la url del servidor donde esta el chatbot
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001';
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8001';
     const CHAT_ENDPOINT = `${API_BASE_URL}/api/v1/chat/send`;
 
     const scrollToBottom = () => {
@@ -27,10 +30,8 @@ const ChatWindow = ({ data, initialPosition }) => {
         scrollToBottom();
     }, [messages]);
 
-    // cuando el bot termina de escribir vuelvo a poner el cursor en el input
     useEffect(() => {
         if (!isTyping && inputRef.current) {
-            // espero un poco a que se actualice la pantalla
             requestAnimationFrame(() => {
                 inputRef.current?.focus();
             });
@@ -44,12 +45,10 @@ const ChatWindow = ({ data, initialPosition }) => {
         setInput('');
         setError(null);
 
-        // pongo el mensaje del usuario en la lista
         setMessages(prev => [...prev, { type: 'user', text: userMessage }]);
         setIsTyping(true);
 
         try {
-            // envio el mensaje al servidor
             const response = await fetch(CHAT_ENDPOINT, {
                 method: 'POST',
                 headers: {
@@ -64,22 +63,19 @@ const ChatWindow = ({ data, initialPosition }) => {
                 throw new Error(`Server error: ${response.status}`);
             }
 
-            const data = await response.json();
+            const respData = await response.json();
 
-            // cuando responde el servidor muestro lo que dijo el bot
             setMessages(prev => [...prev, {
                 type: 'bot',
-                text: data.response
+                text: respData.response
             }]);
 
-        } catch (error) {
-            console.error('Error sending message:', error);
-            setError('Sorry, I encountered an error. Please try again.');
+        } catch (err) {
+            setError(t('chat.errorMessage'));
 
-            // si falla muestro un mensaje de que algo salio mal
             setMessages(prev => [...prev, {
                 type: 'bot',
-                text: 'Sorry, I encountered an error connecting to the server. Please try again in a moment.'
+                text: t('chat.errorConnection')
             }]);
         } finally {
             setIsTyping(false);
@@ -87,17 +83,14 @@ const ChatWindow = ({ data, initialPosition }) => {
     };
 
     const handleKeyDown = (e) => {
-        // si pulso enter y el bot no esta escribiendo envio el mensaje
         if (e.key === 'Enter' && !e.shiftKey && !isTyping) {
             e.preventDefault();
             e.stopPropagation();
             handleSend();
-            // para que no haga otras cosas raras
             return false;
         }
     };
 
-    // cuando le dan click al boton de enviar
     const handleButtonClick = (e) => {
         e.preventDefault();
         handleSend();
@@ -106,7 +99,7 @@ const ChatWindow = ({ data, initialPosition }) => {
     return (
         <FloatingWindow
             id="chat-window"
-            title="Kusanagi AI"
+            title={t('windows.chat')}
             initialPosition={initialPosition}
             initialSize={{ width: 400, height: 500 }}
         >
@@ -119,7 +112,7 @@ const ChatWindow = ({ data, initialPosition }) => {
                     ))}
                     {isTyping && (
                         <div className="chat-message bot-message typing">
-                            <p>Kusanagi is typing...</p>
+                            <p>{t('chat.typing')}</p>
                         </div>
                     )}
                     {error && (
@@ -136,13 +129,26 @@ const ChatWindow = ({ data, initialPosition }) => {
                         type="text"
                         className="chat-input"
                         value={input}
-                        onChange={(e) => setInput(e.target.value)}
+                        onChange={(e) => setInput(e.target.value.slice(0, MAX_MESSAGE_LENGTH))}
+                        maxLength={MAX_MESSAGE_LENGTH}
                         onKeyDown={handleKeyDown}
-                        placeholder="Ask me anything..."
+                        placeholder={t('chat.placeholder')}
                         disabled={isTyping}
                         autoFocus
                         autoComplete="off"
                     />
+                    {input.length > 0 && (
+                        <span className="chat-char-count" style={{
+                            fontSize: '10px',
+                            color: input.length >= MAX_MESSAGE_LENGTH ? '#ff6b6b' : '#888',
+                            position: 'absolute',
+                            right: '70px',
+                            bottom: '14px',
+                            fontFamily: 'Courier New',
+                        }}>
+                            {input.length}/{MAX_MESSAGE_LENGTH}
+                        </span>
+                    )}
                     <button
                         className="chat-send-btn"
                         onClick={handleButtonClick}
@@ -150,7 +156,7 @@ const ChatWindow = ({ data, initialPosition }) => {
                         disabled={isTyping || !input.trim()}
                         type="button"
                     >
-                        Send
+                        {t('chat.send')}
                     </button>
                 </div>
             </div>

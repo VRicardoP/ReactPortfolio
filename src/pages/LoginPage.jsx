@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import BackgroundEffect from '../components/Background/BackgroundEffect';
 import '../styles/login.css';
@@ -11,21 +12,21 @@ const LoginPage = () => {
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
 
-        // compruebo que hayan escrito algo
         if (!username.trim()) {
-            setError('Username is required');
+            setError(t('login.usernameRequired'));
             setLoading(false);
             return;
         }
 
         if (!password.trim()) {
-            setError('Password is required');
+            setError(t('login.passwordRequired'));
             setLoading(false);
             return;
         }
@@ -35,7 +36,7 @@ const LoginPage = () => {
         if (result.success) {
             navigate('/dashboard');
         } else {
-            setError(result.error || 'Invalid credentials');
+            setError(result.error || t('login.invalidCredentials'));
         }
 
         setLoading(false);
@@ -46,21 +47,21 @@ const LoginPage = () => {
             <BackgroundEffect />
 
             <div className="login-container">
-                <h1>Dashboard Access</h1>
+                <h1>{t('login.title')}</h1>
                 <p style={{
                     color: '#8b949e',
                     fontSize: '14px',
                     marginBottom: '20px',
                     textAlign: 'center'
                 }}>
-                    Enter your credentials to access analytics
+                    {t('login.subtitle')}
                 </p>
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <input
                             type="text"
-                            placeholder="Username"
+                            placeholder={t('login.usernamePlaceholder')}
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             disabled={loading}
@@ -71,7 +72,7 @@ const LoginPage = () => {
                     <div className="form-group">
                         <input
                             type="password"
-                            placeholder="Password"
+                            placeholder={t('login.passwordPlaceholder')}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             disabled={loading}
@@ -80,7 +81,7 @@ const LoginPage = () => {
                     </div>
 
                     <button type="submit" disabled={loading}>
-                        {loading ? 'Authenticating...' : 'Login'}
+                        {loading ? t('login.authenticating') : t('login.login')}
                     </button>
                 </form>
 
@@ -102,7 +103,7 @@ const LoginPage = () => {
                             textDecoration: 'none'
                         }}
                     >
-                        ← Back to Portfolio
+                        {t('login.backToPortfolio')}
                     </Link>
                 </div>
             </div>

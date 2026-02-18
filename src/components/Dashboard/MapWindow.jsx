@@ -4,41 +4,41 @@ import FloatingWindow from '../Windows/FloatingWindow';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// esto arregla un bug con los iconos del mapa en react
+// this fixes a bug with map icons in react
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    iconRetinaUrl: '/leaflet/marker-icon-2x.png',
+    iconUrl: '/leaflet/marker-icon.png',
+    shadowUrl: '/leaflet/marker-shadow.png',
 });
 
-// este componente hace que el mapa se vea bien cuando cambio el tamaño de la ventana
+// this component makes the map look good when the window is resized
 const MapResizeHandler = () => {
     const map = useMap();
 
     useEffect(() => {
-        // le digo al mapa que recalcule su tamaño
+        // tell the map to recalculate its size
         const handleResize = () => {
             setTimeout(() => {
                 map.invalidateSize();
             }, 100);
         };
 
-        // lo hago nada mas cargar
+        // do it right after loading
         handleResize();
 
-        // vigilo si el contenedor cambia de tamaño
+        // watch if the container changes size
         const resizeObserver = new ResizeObserver(() => {
             handleResize();
         });
 
-        // empiezo a vigilar el contenedor
+        // start watching the container
         const container = map.getContainer();
         if (container && container.parentElement) {
             resizeObserver.observe(container.parentElement);
         }
 
-        // tambien vigilo si cambia el tamaño de la pantalla
+        // also watch if the screen size changes
         window.addEventListener('resize', handleResize);
 
         return () => {
@@ -51,10 +51,10 @@ const MapResizeHandler = () => {
 };
 
 const MapWindow = memo(({ data, initialPosition }) => {
-    // si no hay datos uso un array vacio
+    // if there's no data use an empty array
     const markers = data || [];
 
-    // centro el mapa en el primer visitante o en una vista global
+    // center the map on the first visitor or on a global view
     const center = markers.length > 0 && markers[0].latitude && markers[0].longitude
         ? [markers[0].latitude, markers[0].longitude]
         : [20, 0];

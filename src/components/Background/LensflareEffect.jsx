@@ -13,16 +13,16 @@ const LensflareEffect = () => {
 
         const { innerWidth, innerHeight } = window;
 
-        // creo la escena con fondo oscuro y niebla como el original
+        // create the scene with dark background and fog like the original
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000000);
         scene.fog = new THREE.Fog(0x000000, 2500, 10000);
 
-        // la camara
+        // the camera
         const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 1, 15000);
         camera.position.set(0, 0, 250);
 
-        // el renderer
+        // the renderer
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(innerWidth, innerHeight);
@@ -36,7 +36,7 @@ const LensflareEffect = () => {
 
         mountRef.current.appendChild(renderer.domElement);
 
-        // creo los cubos flotantes como en el original
+        // create the floating cubes like in the original
         const boxGeometry = new THREE.BoxGeometry(250, 250, 250);
         const boxMaterial = new THREE.MeshPhongMaterial({
             color: 0xc9a868,
@@ -57,12 +57,12 @@ const LensflareEffect = () => {
             scene.add(mesh);
         }
 
-        // luz direccional para iluminar los cubos
+        // directional light to illuminate the cubes
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.15);
         dirLight.position.set(0, -1, 0).normalize();
         scene.add(dirLight);
 
-        // funcion para crear las texturas de lensflare proceduralmente
+        // function to create lensflare textures procedurally
         const createFlareTexture = (size, type) => {
             const canvas = document.createElement('canvas');
             canvas.width = size;
@@ -74,7 +74,7 @@ const LensflareEffect = () => {
             const radius = size / 2;
 
             if (type === 'main') {
-                // textura principal del destello - brillo intenso central
+                // main flare texture - intense central glow
                 const grd = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
                 grd.addColorStop(0, 'rgba(255, 255, 255, 1)');
                 grd.addColorStop(0.05, 'rgba(255, 255, 220, 0.9)');
@@ -85,7 +85,7 @@ const LensflareEffect = () => {
                 ctx.fillStyle = grd;
                 ctx.fillRect(0, 0, size, size);
             } else {
-                // halos secundarios
+                // secondary halos
                 const grd = ctx.createRadialGradient(centerX, centerY, radius * 0.7, centerX, centerY, radius);
                 grd.addColorStop(0, 'rgba(255, 200, 100, 0)');
                 grd.addColorStop(0.5, 'rgba(255, 180, 80, 0.15)');
@@ -100,7 +100,7 @@ const LensflareEffect = () => {
 
         const textureFlare0 = createFlareTexture(512, 'main');
 
-        // funcion para añadir luces con lensflare
+        // function to add lights with lensflare
         const addLight = (h, s, l, x, y, z) => {
             const light = new THREE.PointLight(0xffffff, 1.5, 2000, 0);
             light.color.setHSL(h, s, l);
@@ -114,23 +114,23 @@ const LensflareEffect = () => {
             return light;
         };
 
-        // añado las luces - una principal naranja/amarilla y otras de colores
+        // add the lights - one main orange/yellow and others with various colors
         addLight(0.08, 0.9, 0.5, 0, 0, -1000);
         addLight(0.55, 0.8, 0.5, 2000, 1000, -3000);
         addLight(0.995, 0.8, 0.5, -2000, -1000, -2000);
 
-        // control de la camara
-        let mouseX = 0; // normalizado -1 a 1
-        let mouseY = 0; // normalizado -1 a 1
+        // camera control
+        let mouseX = 0; // normalized -1 to 1
+        let mouseY = 0; // normalized -1 to 1
         let moveForward = false;
         let moveBackward = false;
 
-        // direccion hacia donde mira la camara (relativa a su posicion)
+        // direction where the camera looks (relative to its position)
         const cameraDirection = new THREE.Vector3(0, 0, -1);
         const cameraUp = new THREE.Vector3(0, 1, 0);
 
         const onMouseMove = (event) => {
-            // normalizo entre -1 y 1 (0 en el centro)
+            // normalize between -1 and 1 (0 at the center)
             mouseX = (event.clientX / window.innerWidth) * 2 - 1;
             mouseY = (event.clientY / window.innerHeight) * 2 - 1;
         };
@@ -151,7 +151,7 @@ const LensflareEffect = () => {
             }
         };
 
-        // evitar el menu contextual del click derecho
+        // prevent the right-click context menu
         const onContextMenu = (event) => {
             event.preventDefault();
         };
@@ -161,29 +161,29 @@ const LensflareEffect = () => {
         document.addEventListener('mouseup', onMouseUp);
         document.addEventListener('contextmenu', onContextMenu);
 
-        // bucle de animacion
+        // animation loop
         const animate = () => {
             animationIdRef.current = requestAnimationFrame(animate);
 
-            // calculo la velocidad de rotacion basada en la distancia del centro
-            // mas lejos del centro = mas rapido, en el centro = estatico
+            // calculate rotation speed based on distance from center
+            // farther from center = faster, at center = static
             const rotationSpeed = 0.03;
-            const rotationX = -mouseX * Math.abs(mouseX) * rotationSpeed; // yaw (izq/der)
-            const rotationY = -mouseY * Math.abs(mouseY) * rotationSpeed; // pitch (arr/aba)
+            const rotationX = -mouseX * Math.abs(mouseX) * rotationSpeed; // yaw (left/right)
+            const rotationY = -mouseY * Math.abs(mouseY) * rotationSpeed; // pitch (up/down)
 
-            // roto la direccion de la camara horizontalmente (yaw)
+            // rotate the camera direction horizontally (yaw)
             cameraDirection.applyAxisAngle(cameraUp, rotationX);
 
-            // roto la direccion de la camara verticalmente (pitch)
-            // calculo el eje perpendicular para el pitch
+            // rotate the camera direction vertically (pitch)
+            // calculate the perpendicular axis for pitch
             const rightAxis = new THREE.Vector3();
             rightAxis.crossVectors(cameraDirection, cameraUp).normalize();
             cameraDirection.applyAxisAngle(rightAxis, rotationY);
 
-            // normalizo la direccion
+            // normalize the direction
             cameraDirection.normalize();
 
-            // movimiento hacia adelante/atras con los botones del raton
+            // forward/backward movement with mouse buttons
             const moveSpeed = 50;
             if (moveForward) {
                 camera.position.addScaledVector(cameraDirection, moveSpeed);
@@ -192,7 +192,7 @@ const LensflareEffect = () => {
                 camera.position.addScaledVector(cameraDirection, -moveSpeed);
             }
 
-            // la camara mira en la direccion calculada
+            // the camera looks in the calculated direction
             const lookAtPoint = new THREE.Vector3();
             lookAtPoint.copy(camera.position).add(cameraDirection);
             camera.lookAt(lookAtPoint);
@@ -200,7 +200,7 @@ const LensflareEffect = () => {
             renderer.render(scene, camera);
         };
 
-        // cuando cambia el tamaño de la ventana
+        // when the window size changes
         const onWindowResize = () => {
             const width = window.innerWidth;
             const height = window.innerHeight;
@@ -212,7 +212,7 @@ const LensflareEffect = () => {
 
         animate();
 
-        // limpieza cuando se desmonta el componente
+        // cleanup when the component unmounts
         return () => {
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mousedown', onMouseDown);

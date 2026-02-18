@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
-// definicion de los temas disponibles
+// definition of available themes
 const themes = {
     cyan: {
         name: 'Cyan',
@@ -77,13 +77,13 @@ const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
     const [themeName, setThemeName] = useState(() => {
-        // recuperar tema guardado en localStorage
+        // retrieve saved theme from localStorage
         const saved = localStorage.getItem('portfolio-theme');
         return saved && themes[saved] ? saved : 'cyan';
     });
 
     const [backgroundEffect, setBackgroundEffect] = useState(() => {
-        // recuperar efecto de fondo guardado en localStorage
+        // retrieve saved background effect from localStorage
         const saved = localStorage.getItem('portfolio-background');
         const validEffects = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
         return validEffects.includes(saved) ? saved : 'rain';
@@ -114,7 +114,7 @@ export const ThemeProvider = ({ children }) => {
         localStorage.setItem('portfolio-background', newEffect);
     };
 
-    // aplicar variables CSS globales cuando cambia el tema
+    // apply global CSS variables when the theme changes
     useEffect(() => {
         const root = document.documentElement;
         root.style.setProperty('--theme-primary', theme.primary);

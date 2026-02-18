@@ -1,6 +1,8 @@
+import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
 const TechSkillsWindow = ({ data, initialPosition }) => {
+    const { t } = useTranslation();
     if (!data) return null;
 
     const renderSkillCategory = (title, skills) => (
@@ -23,15 +25,15 @@ const TechSkillsWindow = ({ data, initialPosition }) => {
     return (
         <FloatingWindow
             id="tech-skills-window"
-            title="Tech Skills"
+            title={t('windows.techSkills')}
             initialPosition={initialPosition}
             initialSize={{ width: 450, height: 500 }}
         >
             <div className="tech-skills-content">
-                {renderSkillCategory('FRONTEND', data.techSkills.frontend)}
-                {renderSkillCategory('BACKEND', data.techSkills.backend)}
-                {renderSkillCategory('DATABASES', data.techSkills.databases)}
-                {renderSkillCategory('OTHERS', data.techSkills.others)}
+                {renderSkillCategory(t('skills.frontend'), data.techSkills.frontend)}
+                {renderSkillCategory(t('skills.backend'), data.techSkills.backend)}
+                {renderSkillCategory(t('skills.databases'), data.techSkills.databases)}
+                {renderSkillCategory(t('skills.others'), data.techSkills.others)}
             </div>
         </FloatingWindow>
     );

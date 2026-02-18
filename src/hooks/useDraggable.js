@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 
 const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange, onBringToFront) => {
   const dragStateRef = useRef({
@@ -19,20 +19,20 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange, onB
     const newX = dragState.startPosX + deltaX;
     const newY = dragState.startPosY + deltaY;
 
-    // no dejo que se salga de la pantalla
+    // don't let it go off screen
     const maxX = window.innerWidth - 200;
     const maxY = window.innerHeight - 100;
 
     const clampedX = Math.max(0, Math.min(newX, maxX));
     const clampedY = Math.max(0, Math.min(newY, maxY));
 
-    // muevo la ventana directamente para que sea mas fluido
+    // move the window directly so it feels smoother
     if (windowRef.current) {
       windowRef.current.style.left = `${clampedX}px`;
       windowRef.current.style.top = `${clampedY}px`;
     }
 
-    // guardo donde quedo para despues
+    // save where it ended up for later
     dragState.finalX = clampedX;
     dragState.finalY = clampedY;
   }, [windowRef]);
@@ -43,12 +43,12 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange, onB
 
     dragState.isDragging = false;
 
-    // quito el estilo de arrastre
+    // remove the dragging style
     if (windowRef.current) {
       windowRef.current.classList.remove('dragging');
     }
 
-    // ahora si guardo la posicion final
+    // now save the final position
     if (dragState.finalX !== undefined && dragState.finalY !== undefined) {
       onPositionChange({ x: dragState.finalX, y: dragState.finalY });
     }
@@ -58,16 +58,16 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange, onB
   }, [handleMouseMove, onPositionChange, windowRef]);
 
   const handleMouseDown = useCallback((e) => {
-    // si esta maximizada no se puede mover
+    // if it's maximized it can't be moved
     if (isMaximized) return;
 
-    // solo funciona con el click izquierdo
+    // only works with left click
     if (e.button !== 0) return;
 
-    // si es un boton de minimizar o maximizar no arrastro
+    // if it's a minimize or maximize button don't drag
     if (e.target.classList.contains('control-btn')) return;
 
-    // pongo la ventana delante cuando empiezo a arrastrar
+    // bring the window to front when I start dragging
     onBringToFront();
 
     const dragState = dragStateRef.current;
@@ -75,13 +75,13 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange, onB
     dragState.startX = e.clientX;
     dragState.startY = e.clientY;
 
-    // miro donde esta la ventana ahora
+    // check where the window is now
     if (windowRef.current) {
       const rect = windowRef.current.getBoundingClientRect();
       dragState.startPosX = rect.left;
       dragState.startPosY = rect.top;
 
-      // pongo una clase para que no haga animaciones raras
+      // add a class to prevent weird animations
       windowRef.current.classList.add('dragging');
     }
 
@@ -90,6 +90,14 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange, onB
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   }, [isMaximized, onBringToFront, windowRef, handleMouseMove, handleMouseUp]);
+
+  useEffect(() => {
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      dragStateRef.current.isDragging = false;
+    };
+  }, [handleMouseMove, handleMouseUp]);
 
   return {
     handleMouseDown,

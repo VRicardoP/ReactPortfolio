@@ -154,7 +154,7 @@
   }
 }
 
-/* Tablets pequeñas y móviles grandes (481px - 768px) */
+/* Small tablets and large mobile (481px - 768px) */
 @media (max-width: 768px) {
   .chat-messages {
     padding: 10px;
@@ -192,7 +192,7 @@
   }
 }
 
-/* Móviles (320px - 480px) */
+/* Mobile (320px - 480px) */
 @media (max-width: 480px) {
   .chat-container {
     padding: 0;
@@ -240,7 +240,7 @@
   }
 }
 
-/* Móviles muy pequeños (< 320px) */
+/* Very small mobile (< 320px) */
 @media (max-width: 320px) {
   .chat-messages {
     padding: 6px;
@@ -266,7 +266,7 @@
   }
 }
 
-/* Orientación horizontal en móviles */
+/* Landscape orientation on mobile */
 @media (max-height: 500px) and (orientation: landscape) {
   .chat-messages {
     padding: 8px;
@@ -289,12 +289,12 @@
   }
 }
 
-/* Dispositivos táctiles */
+/* Touch devices */
 @media (hover: none) and (pointer: coarse) {
   .chat-input {
     padding: 12px;
     font-size: 16px;
-    /* Evitar zoom en iOS */
+    /* Prevent zoom on iOS */
     min-height: 44px;
   }
 
@@ -314,7 +314,7 @@
   }
 }
 
-/* Pantallas grandes (> 1440px) */
+/* Large screens (> 1440px) */
 @media (min-width: 1440px) {
   .chat-messages {
     padding: 18px;
@@ -340,7 +340,7 @@
   }
 }
 
-/* Preferencia de movimiento reducido */
+/* Reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   .bot-message.typing {
     animation: none;

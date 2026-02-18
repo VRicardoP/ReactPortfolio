@@ -166,10 +166,10 @@ Este frontend se conecta a un backend en FastAPI que gestiona:
 
 ## Variables de entorno
 
-Archivo `.env`:
+See `.env.example` for reference. Create a `.env` file:
 
 ```
-VITE_API_BASE_URL=http://localhost:8001
+VITE_API_BASE_URL=http://127.0.0.1:8001
 ```
 
-Si no se configura, usa localhost:8001 por defecto.
+If not configured, defaults to `http://127.0.0.1:8001`.

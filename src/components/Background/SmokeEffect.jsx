@@ -27,28 +27,28 @@ const SmokeEffect = () => {
 
         mountRef.current.appendChild(renderer.domElement);
 
-        // clock para delta time
+        // clock for delta time
         const clock = new THREE.Clock();
 
-        // escena y camara
+        // scene and camera
         const scene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 1, 10000);
         camera.position.z = 1000;
         scene.add(camera);
 
-        // luz direccional como en el original
+        // directional light like in the original
         const light = new THREE.DirectionalLight(0xffffff, 0.5);
         light.position.set(-1, 0, 1);
         scene.add(light);
 
-        // cargo la textura de humo desde la URL original
+        // load the smoke texture from the original URL
         const textureLoader = new THREE.TextureLoader();
         const smokeTexture = textureLoader.load(
-            'https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png'
+            '/textures/smoke.png'
         );
 
-        // material del humo - igual que el original
+        // smoke material - same as the original
         const smokeMaterial = new THREE.MeshLambertMaterial({
             color: 0x00dddd,
             map: smokeTexture,
@@ -58,7 +58,7 @@ const SmokeEffect = () => {
         const smokeGeo = new THREE.PlaneGeometry(300, 300);
         const smokeParticles = [];
 
-        // creo 150 particulas de humo como en el original
+        // create 150 smoke particles like in the original
         for (let p = 0; p < 150; p++) {
             const particle = new THREE.Mesh(smokeGeo, smokeMaterial);
             particle.position.set(
@@ -71,13 +71,13 @@ const SmokeEffect = () => {
             smokeParticles.push(particle);
         }
 
-        // bucle de animacion
+        // animation loop
         const animate = () => {
             animationIdRef.current = requestAnimationFrame(animate);
 
             const delta = clock.getDelta();
 
-            // roto las particulas de humo como en el original
+            // rotate smoke particles like in the original
             for (let sp = smokeParticles.length - 1; sp >= 0; sp--) {
                 smokeParticles[sp].rotation.z += delta * 0.2;
             }
@@ -85,7 +85,7 @@ const SmokeEffect = () => {
             renderer.render(scene, camera);
         };
 
-        // cuando cambia el tamaño de la ventana
+        // when the window size changes
         const onWindowResize = () => {
             const width = window.innerWidth;
             const height = window.innerHeight;
@@ -97,7 +97,7 @@ const SmokeEffect = () => {
 
         animate();
 
-        // limpieza cuando se desmonta el componente
+        // cleanup when the component unmounts
         return () => {
             window.removeEventListener('resize', onWindowResize);
 

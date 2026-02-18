@@ -1,12 +1,14 @@
+import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
 const EducationWindow = ({ data, initialPosition }) => {
+    const { t } = useTranslation();
     if (!data) return null;
 
     return (
         <FloatingWindow
             id="education-window"
-            title="Education"
+            title={t('windows.education')}
             initialPosition={initialPosition}
             initialSize={{ width: 450, height: 500 }}
         >

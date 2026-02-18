@@ -1,12 +1,14 @@
+import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
 const ExperienceWindow = ({ data, initialPosition }) => {
+    const { t } = useTranslation();
     if (!data) return null;
 
     return (
         <FloatingWindow
             id="experience-window"
-            title="Experience"
+            title={t('windows.experience')}
             initialPosition={initialPosition}
             initialSize={{ width: 600, height: 500 }}
         >

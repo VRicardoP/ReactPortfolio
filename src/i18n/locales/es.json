@@ -1,0 +1,94 @@
+{
+  "welcome": {
+    "title": "Bienvenido - {{name}}",
+    "greeting": "\u00a1Hola! Soy {{name}}",
+    "intro": "Bienvenido a mi portfolio interactivo.",
+    "description": "Esta web simula un entorno de escritorio donde puedes explorar mi experiencia profesional y habilidades.",
+    "howToNavigate": "C\u00f3mo navegar:",
+    "drag": "Arrastrar:",
+    "dragDesc": "Haz clic en la barra superior de cualquier ventana y mu\u00e9vela",
+    "resize": "Redimensionar:",
+    "resizeDesc": "Arrastra desde los bordes y esquinas",
+    "minimize": "Minimizar:",
+    "minimizeDesc": "Click en el bot\u00f3n morado (izquierda)",
+    "maximize": "Maximizar:",
+    "maximizeDesc": "Click en el bot\u00f3n amarillo (derecha). Un segundo click ampl\u00eda a pantalla completa",
+    "tip": "Tip:",
+    "tipText": "Explora las diferentes ventanas para conocer m\u00e1s sobre mi experiencia, habilidades y proyectos.",
+    "gotIt": "Entendido, \u00a1empecemos! \u2192"
+  },
+  "chat": {
+    "greeting": "\u00a1Hola! \u00a1Soy Kusanagi! \u00bfTienes alguna pregunta sobre {{name}}?",
+    "typing": "Kusanagi est\u00e1 escribiendo...",
+    "placeholder": "Preg\u00fantame lo que quieras...",
+    "send": "Enviar",
+    "errorMessage": "Lo siento, ocurri\u00f3 un error. Int\u00e9ntalo de nuevo.",
+    "errorConnection": "Lo siento, ocurri\u00f3 un error al conectar con el servidor. Int\u00e9ntalo de nuevo en un momento."
+  },
+  "contact": {
+    "copyEmail": "Copiar Email",
+    "copied": "\u00a1Copiado!"
+  },
+  "skills": {
+    "frontend": "FRONTEND",
+    "backend": "BACKEND",
+    "databases": "BASES DE DATOS",
+    "others": "OTROS"
+  },
+  "windows": {
+    "profile": "Perfil",
+    "experience": "Experiencia",
+    "education": "Educaci\u00f3n",
+    "techSkills": "Habilidades T\u00e9cnicas",
+    "softSkills": "Habilidades Blandas",
+    "languages": "Idiomas",
+    "portfolio": "Portfolio",
+    "contact": "Contacto",
+    "chat": "Kusanagi AI"
+  },
+  "app": {
+    "loading": "Cargando...",
+    "loadingPortfolio": "Cargando portfolio...",
+    "errorLoadingData": "Error al cargar datos",
+    "failedToLoad": "No se pudieron cargar los datos del portfolio.",
+    "checkJson": "Verifica que portfolio-data.json existe en la carpeta public."
+  },
+  "error": {
+    "somethingWrong": "Algo sali\u00f3 mal.",
+    "tryAgain": "Intentar de nuevo"
+  },
+  "dashboard": {
+    "title": "Dashboard > Anal\u00edticas",
+    "loading": "Cargando dashboard...",
+    "fetchingData": "Obteniendo datos de anal\u00edticas...",
+    "error": "Error en el Dashboard",
+    "failedToLoad": "Error al cargar los datos del dashboard",
+    "troubleshooting": "Soluci\u00f3n de problemas:",
+    "checkBackend": "Comprueba que el backend est\u00e9 funcionando",
+    "checkCredentials": "Verifica que has iniciado sesi\u00f3n con credenciales v\u00e1lidas",
+    "checkConsole": "Revisa la consola del navegador para m\u00e1s detalles",
+    "checkCors": "Aseg\u00farate de que CORS est\u00e9 correctamente configurado en el backend",
+    "retry": "Reintentar",
+    "backToPortfolio": "\u2190 Portfolio",
+    "logout": "Cerrar sesi\u00f3n",
+    "theme": "Tema",
+    "bgRain": "Lluvia",
+    "bgParallax": "Parallax",
+    "bgMatrix": "Matrix",
+    "bgLensflare": "Destello",
+    "bgCube": "Cubo",
+    "bgSmoke": "Humo"
+  },
+  "login": {
+    "title": "Acceso al Dashboard",
+    "subtitle": "Introduce tus credenciales para acceder a las anal\u00edticas",
+    "usernamePlaceholder": "Usuario",
+    "passwordPlaceholder": "Contrase\u00f1a",
+    "usernameRequired": "El usuario es obligatorio",
+    "passwordRequired": "La contrase\u00f1a es obligatoria",
+    "invalidCredentials": "Credenciales inv\u00e1lidas",
+    "authenticating": "Autenticando...",
+    "login": "Iniciar sesi\u00f3n",
+    "backToPortfolio": "\u2190 Volver al Portfolio"
+  }
+}

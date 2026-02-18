@@ -11,7 +11,7 @@ const JsearchJobBoardWindow = memo(({ data, initialPosition }) => {
         search: ''
     });
 
-    // normalizar los datos - puede venir como data.data o directamente como array
+    // normalize the data - can come as data.data or directly as an array
     const jobs = useMemo(() => {
         if (!data) return [];
         if (Array.isArray(data)) return data;
@@ -20,7 +20,7 @@ const JsearchJobBoardWindow = memo(({ data, initialPosition }) => {
         return [];
     }, [data]);
 
-    // extraer opciones unicas para los filtros
+    // extract unique options for the filters
     const filterOptions = useMemo(() => {
         if (jobs.length === 0) return { locations: [], employers: [], employmentTypes: [], sources: [] };
 
@@ -30,7 +30,7 @@ const JsearchJobBoardWindow = memo(({ data, initialPosition }) => {
         const sources = new Set();
 
         jobs.forEach(job => {
-            // soportar ambos formatos de campo (job_city o city)
+            // support both field formats (job_city or city)
             const city = job.job_city || job.city;
             const employer = job.employer_name || job.employer;
             const empType = job.job_employment_type || job.employment_type;
@@ -50,12 +50,12 @@ const JsearchJobBoardWindow = memo(({ data, initialPosition }) => {
         };
     }, [jobs]);
 
-    // filtrar trabajos segun los filtros activos
+    // filter jobs according to active filters
     const filteredJobs = useMemo(() => {
         if (jobs.length === 0) return [];
 
         return jobs.filter(job => {
-            // soportar ambos formatos de campo
+            // support both field formats
             const city = job.job_city || job.city;
             const employer = job.employer_name || job.employer;
             const empType = job.job_employment_type || job.employment_type;
@@ -88,7 +88,7 @@ const JsearchJobBoardWindow = memo(({ data, initialPosition }) => {
 
     const hasActiveFilters = filters.location || filters.employer || filters.employmentType || filters.remote || filters.source || filters.search;
 
-    // formatear salario
+    // format salary
     const formatSalary = (job) => {
         const minSalary = job.job_min_salary || job.min_salary;
         const maxSalary = job.job_max_salary || job.max_salary;
@@ -129,7 +129,7 @@ const JsearchJobBoardWindow = memo(({ data, initialPosition }) => {
             initialSize={{ width: 720, height: 580 }}
         >
             <div className="jobboard-container">
-                {/* filtros */}
+                {/* filters */}
                 <div className="jobboard-filters">
                     <input
                         type="text"
@@ -178,12 +178,12 @@ const JsearchJobBoardWindow = memo(({ data, initialPosition }) => {
                     )}
                 </div>
 
-                {/* contador de resultados */}
+                {/* results counter */}
                 <div className="jobboard-count">
                     Showing {filteredJobs.length} of {jobs.length} jobs
                 </div>
 
-                {/* lista de trabajos */}
+                {/* job list */}
                 <div className="jobboard-list">
                     {filteredJobs.length === 0 ? (
                         <div className="jobboard-no-results">
@@ -191,7 +191,7 @@ const JsearchJobBoardWindow = memo(({ data, initialPosition }) => {
                         </div>
                     ) : (
                         filteredJobs.map(job => {
-                            // soportar ambos formatos de campo
+                            // support both field formats
                             const jobTitle = job.job_title || job.title;
                             const employerName = job.employer_name || job.employer;
                             const employerLogo = job.employer_logo;

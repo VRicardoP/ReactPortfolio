@@ -1,12 +1,14 @@
+import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
 const LanguagesWindow = ({ data, initialPosition }) => {
+    const { t } = useTranslation();
     if (!data) return null;
 
     return (
         <FloatingWindow
             id="languages-window"
-            title="Languages"
+            title={t('windows.languages')}
             initialPosition={initialPosition}
             initialSize={{ width: 300, height: 250 }}
         >
