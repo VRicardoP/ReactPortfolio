@@ -5,14 +5,17 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
+    chunkSizeWarningLimit: 700, // Three.js core is ~600KB, lazy-loaded
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-three': ['three'],
-          'vendor-particles': ['@tsparticles/engine', '@tsparticles/react', '@tsparticles/slim'],
-          'vendor-charts': ['chart.js', 'react-chartjs-2'],
-          'vendor-maps': ['leaflet', 'react-leaflet'],
+        manualChunks(id) {
+          if (id.includes('node_modules/three/')) return 'vendor-three';
+          if (id.includes('node_modules/react-dom/')) return 'vendor-react';
+          if (id.includes('node_modules/react-router-dom/')) return 'vendor-react';
+          if (id.includes('node_modules/react/')) return 'vendor-react';
+          if (id.includes('node_modules/@tsparticles/') || id.includes('node_modules/tsparticles')) return 'vendor-particles';
+          if (id.includes('node_modules/chart.js/') || id.includes('node_modules/react-chartjs-2/')) return 'vendor-charts';
+          if (id.includes('node_modules/leaflet/') || id.includes('node_modules/react-leaflet/')) return 'vendor-maps';
         },
       },
     },

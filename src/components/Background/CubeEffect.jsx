@@ -2,12 +2,10 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { useTheme } from '../../context/ThemeContext';
 
 const CubeEffect = () => {
     const mountRef = useRef(null);
     const animationIdRef = useRef(null);
-    const { theme } = useTheme();
 
     useEffect(() => {
         if (!mountRef.current) return;
@@ -149,9 +147,10 @@ const CubeEffect = () => {
             barMaterial.dispose();
             lightBars.forEach(bar => bar.geometry.dispose());
         };
-    }, [theme]);
+    }, []);
 
-    return <div ref={mountRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%' }} />;
+    // Note: pointerEvents 'none' also disables OrbitControls interaction, acceptable for a background effect
+    return <div ref={mountRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />;
 };
 
 export default CubeEffect;

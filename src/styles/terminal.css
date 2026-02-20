@@ -5,7 +5,7 @@
   background: #0a0a0a;
   font-family: 'Courier New', monospace;
   font-size: 13px;
-  color: #00ff00;
+  color: #39ff14;
 }
 
 .terminal-output {
@@ -24,12 +24,12 @@
 }
 
 .terminal-output::-webkit-scrollbar-thumb {
-  background: #00ff0044;
+  background: #39ff1444;
   border-radius: 3px;
 }
 
 .terminal-output::-webkit-scrollbar-thumb:hover {
-  background: #00ff0088;
+  background: #39ff1488;
 }
 
 .terminal-line {
@@ -48,7 +48,7 @@
 }
 
 .terminal-line--success {
-  color: #00ff00;
+  color: #39ff14;
 }
 
 .terminal-line--info {
@@ -68,14 +68,14 @@
   display: flex;
   align-items: center;
   padding: 6px 10px;
-  border-top: 1px solid #00ff0033;
+  border-top: 1px solid #39ff1433;
   background: #0d0d0d;
   gap: 6px;
   flex-shrink: 0;
 }
 
 .terminal-prompt {
-  color: #00ff00;
+  color: #39ff14;
   white-space: nowrap;
   user-select: none;
 }
@@ -88,22 +88,22 @@
   color: #00ffff;
   font-family: 'Courier New', monospace;
   font-size: 13px;
-  caret-color: #00ff00;
+  caret-color: #39ff14;
   padding: 0;
 }
 
 .terminal-input::placeholder {
-  color: #00ff0044;
+  color: #39ff1444;
 }
 
 .terminal-skill-bar {
   display: inline-block;
   height: 10px;
-  background: #00ff00;
+  background: #39ff14;
   border-radius: 2px;
   margin-right: 6px;
   vertical-align: middle;
-  box-shadow: 0 0 4px #00ff0066;
+  box-shadow: 0 0 4px #39ff1466;
 }
 
 .terminal-table {
@@ -114,7 +114,7 @@
 
 .terminal-table td {
   padding: 2px 12px 2px 0;
-  color: #00ff00;
+  color: #39ff14;
   font-family: 'Courier New', monospace;
   font-size: 13px;
 }

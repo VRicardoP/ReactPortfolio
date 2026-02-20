@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BACKEND_URL } from '../../config/api';
 import FloatingWindow from './FloatingWindow';
 import '../../styles/chat.css';
 
@@ -19,8 +20,7 @@ const ChatWindow = ({ data, initialPosition }) => {
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
 
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8001';
-    const CHAT_ENDPOINT = `${API_BASE_URL}/api/v1/chat/send`;
+    const CHAT_ENDPOINT = `${BACKEND_URL}/api/v1/chat/send`;
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

@@ -14,7 +14,7 @@
     "maximize": "Maximizar:",
     "maximizeDesc": "Click en el bot\u00f3n amarillo (derecha). Un segundo click ampl\u00eda a pantalla completa",
     "tip": "Tip:",
-    "tipText": "Explora las diferentes ventanas para conocer m\u00e1s sobre mi experiencia, habilidades y proyectos.",
+    "tipText": "Explora las diferentes ventanas para conocer m\u00e1s sobre mi experiencia, habilidades y proyectos. Usuarios avanzados: prueba Ctrl+` para una sorpresa.",
     "gotIt": "Entendido, \u00a1empecemos! \u2192"
   },
   "chat": {
@@ -33,7 +33,20 @@
     "frontend": "FRONTEND",
     "backend": "BACKEND",
     "databases": "BASES DE DATOS",
-    "others": "OTROS"
+    "others": "OTROS",
+    "viewBars": "Barras",
+    "viewRadar": "Radar"
+  },
+  "profile": {
+    "yearsExp": "20+ a\u00f1os",
+    "locations": "Espa\u00f1a + UK",
+    "bilingual": "Biling\u00fce",
+    "roles": "8 puestos",
+    "recruiterView": "Vista Recruiter",
+    "normalView": "Perfil Completo",
+    "downloadCV": "Descargar CV",
+    "exportJSON": "JSON Resume",
+    "exportPDF": "Imprimir PDF"
   },
   "windows": {
     "profile": "Perfil",
@@ -43,8 +56,10 @@
     "softSkills": "Habilidades Blandas",
     "languages": "Idiomas",
     "portfolio": "Portfolio",
+    "achievements": "Logros",
     "contact": "Contacto",
-    "chat": "Kusanagi AI"
+    "chat": "Kusanagi AI",
+    "fitMatrix": "Matriz de Habilidades"
   },
   "app": {
     "loading": "Cargando...",
@@ -78,25 +93,160 @@
     "bgLensflare": "Destello",
     "bgCube": "Cubo",
     "bgSmoke": "Humo",
+    "stats": {
+      "title": "Estad\u00edsticas Generales",
+      "loading": "Cargando estad\u00edsticas...",
+      "totalVisitors": "Visitantes Totales",
+      "uniqueCountries": "Pa\u00edses \u00danicos",
+      "uniqueCities": "Ciudades \u00danicas",
+      "topCountries": "Pa\u00edses Principales"
+    },
+    "recentVisitors": {
+      "title": "Visitantes Recientes",
+      "noData": "Sin datos de visitantes recientes",
+      "columns": {
+        "timestamp": "Fecha y Hora",
+        "country": "Pa\u00eds",
+        "city": "Ciudad",
+        "ip": "IP",
+        "userAgent": "Agente de Usuario"
+      }
+    },
+    "map": {
+      "title": "Mapa de Visitantes"
+    },
+    "jobBoard": {
+      "searchPlaceholder": "Buscar empleos...",
+      "allCountries": "Todos los Pa\u00edses",
+      "allSkills": "Todas las Habilidades",
+      "allLocations": "Todas las Ubicaciones",
+      "allCategories": "Todas las Categor\u00edas",
+      "allTags": "Todas las Etiquetas",
+      "allTypes": "Todos los Tipos",
+      "allCities": "Todas las Ciudades",
+      "allSources": "Todas las Fuentes",
+      "remote": "Remoto",
+      "onsite": "Presencial",
+      "apply": "Aplicar",
+      "noJobs": "No hay empleos disponibles en este momento",
+      "noMatch": "Ning\u00fan empleo coincide con tus filtros",
+      "clear": "Limpiar",
+      "showing": "Mostrando {{from}}-{{to}} de {{total}} empleos",
+      "recently": "Recientemente",
+      "sortNewest": "M\u00e1s recientes",
+      "sortOldest": "M\u00e1s antiguos",
+      "sortCompany": "Empresa A-Z",
+      "sortTitle": "T\u00edtulo A-Z",
+      "prev": "Ant",
+      "next": "Sig",
+      "page": "P\u00e1g {{page}} de {{pages}}",
+      "sortMatch": "Mejor coincidencia",
+      "match": "{{score}}% coincidencia",
+      "bookmark": "Guardar",
+      "unbookmark": "Quitar guardado"
+    },
+    "bookmarks": {
+      "title": "Empleos Guardados",
+      "empty": "No hay empleos guardados. Haz clic en la estrella de cualquier empleo para guardarlo.",
+      "remove": "Quitar"
+    },
+    "jobAnalytics": {
+      "title": "Anal\u00edticas del Mercado Laboral",
+      "tabSkills": "Top Skills",
+      "tabRemote": "Remoto vs Presencial",
+      "tabSources": "Por Fuente",
+      "topSkills": "Skills M\u00e1s Demandadas",
+      "remoteRatio": "Remoto vs Presencial",
+      "jobsBySource": "Empleos por Fuente",
+      "noData": "No hay datos de empleos para anal\u00edticas"
+    },
     "chatAnalytics": {
-      "title": "Analíticas del Chat - Reclutadores",
-      "questionsPerDay": "Preguntas por día",
+      "title": "Anal\u00edticas del Chat - Reclutadores",
+      "questionsPerDay": "Preguntas por d\u00eda",
       "unknown": "Desconocido",
       "waitingForQuestions": "Esperando preguntas de reclutadores en el chatbot...",
       "tabOverview": "Vista General",
-      "tabQuestions": "Más Preguntadas",
-      "tabTimeline": "Cronología",
-      "tabCountries": "Por País",
+      "tabQuestions": "M\u00e1s Preguntadas",
+      "tabTimeline": "Cronolog\u00eda",
+      "tabCountries": "Por Pa\u00eds",
       "totalQuestions": "Total Preguntas",
-      "successRate": "Tasa de Éxito",
+      "successRate": "Tasa de \u00c9xito",
       "avgResponseTime": "Tiempo Resp. Promedio",
       "questionsToday": "Preguntas Hoy",
       "thisWeek": "Esta Semana",
       "thisMonth": "Este Mes",
-      "mostFrequentQuestions": "Preguntas más frecuentes de reclutadores:",
-      "noQuestionsYet": "No hay preguntas registradas aún",
+      "mostFrequentQuestions": "Preguntas m\u00e1s frecuentes de reclutadores:",
+      "noQuestionsYet": "No hay preguntas registradas a\u00fan",
       "noTimelineData": "No hay datos de timeline disponibles",
-      "noCountryData": "No hay datos de países disponibles"
+      "noCountryData": "No hay datos de pa\u00edses disponibles"
+    },
+    "unified": {
+      "title": "B\u00fasqueda Unificada de Empleos",
+      "searchPlaceholder": "Buscar en todas las fuentes de empleo...",
+      "noResults": "Sin resultados. Prueba una b\u00fasqueda diferente.",
+      "loading": "Buscando...",
+      "allSources": "Todas las Fuentes",
+      "prev": "Ant",
+      "next": "Sig"
+    },
+    "kanban": {
+      "title": "Pipeline de Aplicaciones",
+      "saved": "Guardados",
+      "applied": "Aplicados",
+      "phoneScreen": "Entrevista Tel.",
+      "technical": "T\u00e9cnica",
+      "offer": "Oferta",
+      "rejected": "Rechazados",
+      "addNote": "A\u00f1adir nota...",
+      "followUp": "Seguimiento",
+      "empty": "Sin aplicaciones a\u00fan. Guarda empleos desde la b\u00fasqueda para seguirlos aqu\u00ed.",
+      "deleteConfirm": "\u00bfEliminar esta aplicaci\u00f3n?",
+      "addApplication": "A\u00f1adir Aplicaci\u00f3n",
+      "title_field": "T\u00edtulo del Puesto",
+      "company_field": "Empresa",
+      "notes": "Notas",
+      "noApplications": "Arrastra empleos aqu\u00ed o haz clic en + para a\u00f1adir"
+    },
+    "jsearchLive": {
+      "title": "JSearch B\u00fasqueda en Vivo",
+      "search": "Buscar",
+      "searching": "Buscando...",
+      "cooldown": "Espera",
+      "queryPlaceholder": "ej. Desarrollador React, Ingeniero Python...",
+      "noResults": "Introduce una b\u00fasqueda y haz clic en Buscar para encontrar empleos",
+      "remoteOnly": "Remoto",
+      "anyDate": "Cualquier fecha",
+      "today": "Hoy",
+      "threeDays": "3 d\u00edas",
+      "week": "Esta semana",
+      "month": "Este mes",
+      "allTypes": "Todos los tipos",
+      "fulltime": "Tiempo completo",
+      "parttime": "Medio tiempo",
+      "contractor": "Contratista",
+      "intern": "Becario"
+    },
+    "salary": {
+      "title": "Anal\u00edticas Salariales",
+      "tabRanges": "Rangos Salariales",
+      "tabByType": "Por Tipo de Empleo",
+      "tabBySource": "Por Fuente",
+      "noData": "Sin datos salariales. Los empleos de JSearch con info salarial aparecer\u00e1n aqu\u00ed."
+    },
+    "savedSearches": {
+      "title": "B\u00fasquedas Guardadas",
+      "create": "Nueva B\u00fasqueda",
+      "empty": "Sin b\u00fasquedas guardadas. Crea una para recibir notificaciones de empleos.",
+      "active": "Activa",
+      "paused": "Pausada",
+      "name": "Nombre de la b\u00fasqueda",
+      "filters": "Filtros",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar"
+    },
+    "newJobs": {
+      "toast": "{{count}} nuevos empleos de {{source}}"
     }
   },
   "terminal": {
@@ -117,6 +267,18 @@
     "cmdHistory": "Mostrar historial de comandos",
     "cmdExit": "Cerrar la terminal",
     "cmdClear": "Limpiar pantalla del terminal",
+    "cmdBackground": "Cambiar efecto de fondo",
+    "cmdTheme": "Cambiar tema de colores",
+    "backgroundChanged": "Fondo cambiado a: {{effect}}",
+    "backgroundCurrent": "Fondo actual: {{effect}}",
+    "backgroundAvailable": "Efectos disponibles:",
+    "backgroundUsage": "Uso: background <efecto> | background list",
+    "backgroundInvalid": "Efecto '{{effect}}' desconocido. Escribe 'background list' para ver opciones.",
+    "themeChanged": "Tema cambiado a: {{theme}}",
+    "themeCurrent": "Tema actual: {{theme}}",
+    "themeAvailable": "Temas disponibles:",
+    "themeUsage": "Uso: theme <nombre> | theme list",
+    "themeInvalid": "Tema '{{theme}}' desconocido. Escribe 'theme list' para ver opciones.",
     "exiting": "Cerrando sesión de terminal...",
     "noData": "Error: datos no disponibles",
     "missingFilename": "falta operando. Uso: cat <archivo>",

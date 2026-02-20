@@ -1,7 +1,12 @@
 import { memo, useMemo, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
+import JobBoardControls from './JobBoardControls';
+import useJobBoardControls from '../../hooks/useJobBoardControls';
+import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
 
 const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
+    const { t } = useTranslation();
     const [filters, setFilters] = useState({
         location: '',
         tag: '',
@@ -48,7 +53,7 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
                 (filters.remote === 'onsite' && job.remote === false);
             const matchesSearch = !filters.search ||
                 job.title?.toLowerCase().includes(filters.search.toLowerCase()) ||
-                job.company_name?.toLowerCase().includes(filters.search.toLowerCase());
+                job.company?.toLowerCase().includes(filters.search.toLowerCase());
 
             return matchesLocation && matchesTag && matchesJobType && matchesRemote && matchesSearch;
         });
@@ -63,6 +68,9 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
     }, []);
 
     const hasActiveFilters = filters.location || filters.tag || filters.jobType || filters.remote || filters.search;
+
+    const { sortBy, handleSortChange, pagedJobs, page, totalPages, from, to, setPage } =
+        useJobBoardControls(filteredJobs, { dateField: 'created_at', companyField: 'company', titleField: 'title' });
 
     // format date from unix timestamp
     const formatDate = (timestamp) => {
@@ -79,7 +87,7 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
                 initialSize={{ width: 650, height: 500 }}
             >
                 <div className="jobboard-empty">
-                    No jobs available at the moment
+                    {t('dashboard.jobBoard.noJobs')}
                 </div>
             </FloatingWindow>
         );
@@ -97,7 +105,7 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
                 <div className="jobboard-filters">
                     <input
                         type="text"
-                        placeholder="Search jobs..."
+                        placeholder={t('dashboard.jobBoard.searchPlaceholder')}
                         value={filters.search}
                         onChange={(e) => handleFilterChange('search', e.target.value)}
                         className="jobboard-search"
@@ -108,9 +116,9 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
                         onChange={(e) => handleFilterChange('remote', e.target.value)}
                         className="jobboard-select"
                     >
-                        <option value="">All Types</option>
-                        <option value="remote">Remote</option>
-                        <option value="onsite">On-site</option>
+                        <option value="">{t('dashboard.jobBoard.allTypes')}</option>
+                        <option value="remote">{t('dashboard.jobBoard.remote')}</option>
+                        <option value="onsite">{t('dashboard.jobBoard.onsite')}</option>
                     </select>
 
                     <select
@@ -118,7 +126,7 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
                         onChange={(e) => handleFilterChange('location', e.target.value)}
                         className="jobboard-select"
                     >
-                        <option value="">All Locations</option>
+                        <option value="">{t('dashboard.jobBoard.allLocations')}</option>
                         {filterOptions.locations.map(location => (
                             <option key={location} value={location}>{location}</option>
                         ))}
@@ -129,7 +137,7 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
                         onChange={(e) => handleFilterChange('tag', e.target.value)}
                         className="jobboard-select"
                     >
-                        <option value="">All Categories</option>
+                        <option value="">{t('dashboard.jobBoard.allCategories')}</option>
                         {filterOptions.tags.map(tag => (
                             <option key={tag} value={tag}>{tag}</option>
                         ))}
@@ -137,33 +145,40 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
 
                     {hasActiveFilters && (
                         <button onClick={clearFilters} className="jobboard-clear-btn">
-                            Clear
+                            {t('dashboard.jobBoard.clear')}
                         </button>
                     )}
                 </div>
 
-                {/* results counter */}
-                <div className="jobboard-count">
-                    Showing {filteredJobs.length} of {data.data.length} jobs
-                </div>
+                <JobBoardControls
+                    sortBy={sortBy}
+                    onSortChange={handleSortChange}
+                    page={page}
+                    totalPages={totalPages}
+                    from={from}
+                    to={to}
+                    total={filteredJobs.length}
+                    onPageChange={setPage}
+                    cacheAge={data.last_updated}
+                />
 
                 {/* job list */}
                 <div className="jobboard-list">
-                    {filteredJobs.length === 0 ? (
+                    {pagedJobs.length === 0 ? (
                         <div className="jobboard-no-results">
-                            No jobs match your filters
+                            {t('dashboard.jobBoard.noMatch')}
                         </div>
                     ) : (
-                        filteredJobs.map(job => (
+                        pagedJobs.map(job => (
                             <div key={job.slug} className="jobboard-card arbeitnow-card">
                                 <div className="jobboard-card-header">
                                     <h3 className="jobboard-title">{job.title}</h3>
                                     <span className={`jobboard-type ${job.remote ? 'arbeitnow-remote' : 'arbeitnow-onsite'}`}>
-                                        {job.remote ? 'Remote' : 'On-site'}
+                                        {job.remote ? t('dashboard.jobBoard.remote') : t('dashboard.jobBoard.onsite')}
                                     </span>
                                 </div>
 
-                                <div className="jobboard-company">{job.company_name}</div>
+                                <div className="jobboard-company"><CompanyResearchName company={job.company}>{job.company}</CompanyResearchName></div>
 
                                 <div className="jobboard-meta">
                                     <span className="jobboard-country">{job.location || 'Europe'}</span>
@@ -194,6 +209,7 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
                                 <div className="jobboard-card-footer">
                                     <span className="jobboard-date">
                                         {formatDate(job.created_at)}
+                                        <FreshnessBadge dateStr={job.created_at} />
                                     </span>
                                     <a
                                         href={job.url}
@@ -201,7 +217,7 @@ const ArbeitnowJobBoardWindow = memo(({ data, initialPosition }) => {
                                         rel="noopener noreferrer"
                                         className="jobboard-apply-btn arbeitnow-apply"
                                     >
-                                        Apply
+                                        {t('dashboard.jobBoard.apply')}
                                     </a>
                                 </div>
                             </div>

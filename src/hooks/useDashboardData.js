@@ -2,16 +2,6 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
 
-const DATA_SOURCES = [
-  { key: 'stats', label: 'stats' },
-  { key: 'mapData', label: 'map' },
-  { key: 'chatAnalytics', label: 'chat-analytics' },
-  { key: 'recentJobs', label: 'jobicy' },
-  { key: 'remotiveRecentJobs', label: 'remotive' },
-  { key: 'arbeitnowRecentJobs', label: 'arbeitnow' },
-  { key: 'jsearchRecentJobs', label: 'jsearch' },
-];
-
 export const useDashboardData = () => {
   const { authenticatedFetch } = useAuth();
   const [stats, setStats] = useState(null);
@@ -26,6 +16,8 @@ export const useDashboardData = () => {
   const [warnings, setWarnings] = useState([]);
 
   useEffect(() => {
+    let aborted = false;
+
     const loadData = async () => {
       try {
         setLoading(true);
@@ -77,23 +69,28 @@ export const useDashboardData = () => {
 
         const [statsData, mapDataPoints, chatAnalyticsJson, recentJobsJson, remotiveRecentJson, arbeitnowRecentJson, jsearchRecentJson] = await Promise.all(promises);
 
-        setStats(statsData);
-        setMapData(mapDataPoints);
-        setChatAnalytics(chatAnalyticsJson);
-        setRecentJobs(recentJobsJson);
-        setRemotiveRecentJobs(remotiveRecentJson);
-        setArbeitnowRecentJobs(arbeitnowRecentJson);
-        setJsearchRecentJobs(jsearchRecentJson);
-        setWarnings(failedSources);
-
-        setLoading(false);
+        if (!aborted) {
+          setStats(statsData);
+          setMapData(mapDataPoints);
+          setChatAnalytics(chatAnalyticsJson);
+          setRecentJobs(recentJobsJson);
+          setRemotiveRecentJobs(remotiveRecentJson);
+          setArbeitnowRecentJobs(arbeitnowRecentJson);
+          setJsearchRecentJobs(jsearchRecentJson);
+          setWarnings(failedSources);
+          setLoading(false);
+        }
       } catch (err) {
-        setError(err.message || 'Failed to load dashboard data');
-        setLoading(false);
+        if (!aborted) {
+          setError(err.message || 'Failed to load dashboard data');
+          setLoading(false);
+        }
       }
     };
 
     loadData();
+
+    return () => { aborted = true; };
   }, [authenticatedFetch]);
 
   return { stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, loading, error, warnings };

@@ -12,7 +12,7 @@ const useVisitorTracking = () => {
                     return;
                 }
 
-                await fetch(`${BACKEND_URL}/api/v1/analytics/track`, {
+                const response = await fetch(`${BACKEND_URL}/api/v1/analytics/track`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -24,8 +24,10 @@ const useVisitorTracking = () => {
                     })
                 });
 
-                // mark that this session has already been tracked
-                sessionStorage.setItem('visit_tracked', 'true');
+                if (response.ok) {
+                    // mark that this session has already been tracked
+                    sessionStorage.setItem('visit_tracked', 'true');
+                }
             } catch (error) {
                 // if tracking fails it's fine, don't want to break the page
                 console.warn('Failed to track visit:', error.message);

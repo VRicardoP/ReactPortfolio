@@ -1,8 +1,22 @@
 import { memo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import FloatingWindow from '../Windows/FloatingWindow';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+
+const maskIp = (ip) => {
+    if (!ip) return 'N/A';
+    const parts = ip.split('.');
+    if (parts.length === 4) return `${parts[0]}.${parts[1]}.${parts[2]}.***`;
+    // IPv6 or other format - mask last segment
+    const segments = ip.split(':');
+    if (segments.length > 1) {
+        segments[segments.length - 1] = '****';
+        return segments.join(':');
+    }
+    return ip;
+};
 
 // this fixes a bug with map icons in react
 delete L.Icon.Default.prototype._getIconUrl;
@@ -51,6 +65,8 @@ const MapResizeHandler = () => {
 };
 
 const MapWindow = memo(({ data, initialPosition }) => {
+    const { t } = useTranslation();
+
     // if there's no data use an empty array
     const markers = data || [];
 
@@ -62,7 +78,7 @@ const MapWindow = memo(({ data, initialPosition }) => {
     return (
         <FloatingWindow
             id="map-window"
-            title="Visitors Map"
+            title={t('dashboard.map.title')}
             initialPosition={initialPosition}
             initialSize={{ width: 600, height: 450 }}
         >
@@ -96,7 +112,7 @@ const MapWindow = memo(({ data, initialPosition }) => {
                                     <div>
                                         <strong>{point.city || 'Unknown'}</strong><br />
                                         <em>{point.country || 'Unknown'}</em><br />
-                                        <small>IP: {point.ip_address || 'N/A'}</small><br />
+                                        <small>IP: {maskIp(point.ip_address)}</small><br />
                                         <small>
                                             {point.timestamp
                                                 ? new Date(point.timestamp).toLocaleString()

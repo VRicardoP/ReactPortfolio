@@ -3,6 +3,15 @@ import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { AuthProvider, useAuth } from '../AuthContext'
 
+// Create a valid JWT token with far-future expiration for tests
+const makeTestToken = (exp = 4102444800) => {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
+  const payload = btoa(JSON.stringify({ sub: 'admin', exp }))
+  return `${header}.${payload}.fake-signature`
+}
+
+const VALID_TOKEN = makeTestToken()
+
 const TestConsumer = () => {
   const { isAuthenticated, loading, login, logout } = useAuth()
   return (
@@ -17,7 +26,7 @@ const TestConsumer = () => {
 
 describe('AuthContext', () => {
   beforeEach(() => {
-    localStorage.clear()
+    sessionStorage.clear()
     global.fetch = vi.fn()
   })
 
@@ -33,8 +42,8 @@ describe('AuthContext', () => {
     expect(screen.getByTestId('auth')).toHaveTextContent('no')
   })
 
-  it('restores token from localStorage', async () => {
-    localStorage.setItem('accessToken', 'stored-token')
+  it('restores token from sessionStorage', async () => {
+    sessionStorage.setItem('accessToken', VALID_TOKEN)
     render(
       <AuthProvider>
         <TestConsumer />
@@ -69,7 +78,7 @@ describe('AuthContext', () => {
     await waitFor(() => {
       expect(screen.getByTestId('auth')).toHaveTextContent('yes')
     })
-    expect(localStorage.getItem('accessToken')).toBe('new-token')
+    expect(sessionStorage.getItem('accessToken')).toBe('new-token')
   })
 
   it('handles login failure', async () => {
@@ -97,8 +106,8 @@ describe('AuthContext', () => {
   })
 
   it('logs out and clears storage', async () => {
-    localStorage.setItem('accessToken', 'stored-token')
-    localStorage.setItem('tokenType', 'bearer')
+    sessionStorage.setItem('accessToken', VALID_TOKEN)
+    sessionStorage.setItem('tokenType', 'bearer')
 
     const user = userEvent.setup()
     render(
@@ -114,6 +123,6 @@ describe('AuthContext', () => {
     await user.click(screen.getByText('Logout'))
 
     expect(screen.getByTestId('auth')).toHaveTextContent('no')
-    expect(localStorage.getItem('accessToken')).toBeNull()
+    expect(sessionStorage.getItem('accessToken')).toBeNull()
   })
 })

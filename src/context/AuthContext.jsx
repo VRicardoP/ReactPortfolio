@@ -18,11 +18,12 @@ const isTokenExpired = (token) => {
         const parts = token.split('.');
         if (parts.length !== 3) return false;
         const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-        const payload = JSON.parse(atob(base64));
+        const padded = base64.padEnd(base64.length + (4 - base64.length % 4) % 4, '=');
+        const payload = JSON.parse(atob(padded));
         if (!payload.exp) return false;
         return payload.exp * 1000 < Date.now();
     } catch {
-        return false;
+        return true; // If we can't decode, assume expired (safer than assuming valid)
     }
 };
 
@@ -31,18 +32,53 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
+    // try to get a new access token using the refresh token
+    const tryRefresh = useCallback(async () => {
+        const refreshToken = sessionStorage.getItem('refreshToken');
+        if (!refreshToken || isTokenExpired(refreshToken)) {
+            return null;
+        }
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/v1/auth/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${refreshToken}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) return null;
+            const data = await response.json();
+            sessionStorage.setItem('accessToken', data.access_token);
+            sessionStorage.setItem('refreshToken', data.refresh_token);
+            return data.access_token;
+        } catch {
+            return null;
+        }
+    }, []);
+
     // when the page loads check if there's already a saved token
     useEffect(() => {
-        const storedToken = localStorage.getItem('accessToken');
-        if (storedToken && !isTokenExpired(storedToken)) {
-            setToken(storedToken);
-            setIsAuthenticated(true);
-        } else if (storedToken) {
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('tokenType');
-        }
-        setLoading(false);
-    }, []);
+        const init = async () => {
+            const storedToken = sessionStorage.getItem('accessToken');
+            if (storedToken && !isTokenExpired(storedToken)) {
+                setToken(storedToken);
+                setIsAuthenticated(true);
+            } else {
+                // access token expired or missing, try refresh
+                const newToken = await tryRefresh();
+                if (newToken) {
+                    setToken(newToken);
+                    setIsAuthenticated(true);
+                } else {
+                    sessionStorage.removeItem('accessToken');
+                    sessionStorage.removeItem('refreshToken');
+                    sessionStorage.removeItem('tokenType');
+                }
+            }
+            setLoading(false);
+        };
+        init();
+    }, [tryRefresh]);
 
     // function to log in
     const login = useCallback(async (username, password) => {
@@ -67,9 +103,10 @@ export const AuthProvider = ({ children }) => {
 
             const data = await response.json();
 
-            // save the token so we don't have to log in again
-            localStorage.setItem('accessToken', data.access_token);
-            localStorage.setItem('tokenType', data.token_type);
+            // save tokens so we don't have to log in again
+            sessionStorage.setItem('accessToken', data.access_token);
+            sessionStorage.setItem('refreshToken', data.refresh_token);
+            sessionStorage.setItem('tokenType', data.token_type);
 
             setToken(data.access_token);
             setIsAuthenticated(true);
@@ -85,8 +122,9 @@ export const AuthProvider = ({ children }) => {
 
     // log out and clear everything
     const logout = useCallback(() => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('tokenType');
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('refreshToken');
+        sessionStorage.removeItem('tokenType');
         setToken(null);
         setIsAuthenticated(false);
     }, []);
@@ -103,11 +141,24 @@ export const AuthProvider = ({ children }) => {
             'Content-Type': 'application/json',
         };
 
-        const response = await fetch(url, { ...options, headers });
+        let response = await fetch(url, { ...options, headers });
 
+        // if 401, try refreshing the token before giving up
         if (response.status === 401) {
-            logout();
-            throw new Error('Session expired');
+            const newToken = await tryRefresh();
+            if (newToken) {
+                setToken(newToken);
+                const retryHeaders = {
+                    ...options.headers,
+                    'Authorization': `Bearer ${newToken}`,
+                    'Content-Type': 'application/json',
+                };
+                response = await fetch(url, { ...options, headers: retryHeaders });
+            }
+            if (!newToken || response.status === 401) {
+                logout();
+                throw new Error('Session expired');
+            }
         }
 
         if (!response.ok) {
@@ -116,7 +167,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         return response;
-    }, [token, logout]);
+    }, [token, logout, tryRefresh]);
 
     const value = {
         token,

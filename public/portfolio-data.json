@@ -1,42 +1,50 @@
 {
     "name": "Vicente Ricardo Pau Valero",
-    "title": "Full Stack Developer & System Administrator",
+    "title": "Full-Stack Developer & IT Systems Engineer",
     "email": "vicente.pau@hotmail.com",
-    "location": "Valencia, Spain",
+    "phone": "+34 644 213 173",
+    "location": "Carcaixent, Valencia (Spain)",
     "profile": {
-        "description": "By vocation, I started as a programmer; however, professionally, I manage networks and IT systems (Windows, Linux, and Mac). I am continuously training in programming to stay current, and I have gained extensive experience working as a System Administrator in data centers supporting environments with over 1,000 terminals, such as hospitals or supermarket chains like Mercadona. I am responsible for system maintenance, administration, and security, which provides me with broad knowledge to handle any organizational needs connected to IT systems."
+        "description": "IT professional with 20+ years of experience spanning systems administration, network security, and full-stack software development. Proven ability to design and deliver end-to-end technical solutions — from securing and rebuilding critical infrastructure to developing AI-powered applications. Managed systems for 1,000+ terminal environments in highly regulated sectors (healthcare, automotive, retail). Fluent in English (bilingual), experienced working in international teams across Spain, England, and multinational environments."
     },
     "softSkills": [
-        "Committed",
-        "Critical thinking",
-        "Integrity",
-        "Empathy",
-        "Desire to learn",
-        "Teamwork",
-        "Initiative",
-        "Stress management",
+        "Committed & Responsible",
+        "Critical & Analytical Thinking",
+        "Professional Integrity",
+        "Empathy & User Orientation",
+        "Constructive Conflict Resolution",
+        "Continuous Learning",
+        "Effective Teamwork",
+        "Initiative & Proactivity",
+        "Stress Management",
         "Adaptability",
-        "Problem-solving",
-        "Communication",
-        "Motivated"
+        "Complex Problem-Solving",
+        "Clear Communication",
+        "Self-Motivation & Self-Management"
     ],
     "education": [
         {
-            "title": "Bachelor's Degree in Web Application Development",
-            "institution": "Currently pursuing",
-            "date": "",
-            "description": "Multiplatform Application Development focus"
+            "title": "Higher Technician in Web Application Development (DAW)",
+            "institution": "IES / FP — EQF Level 5",
+            "date": "2025",
+            "description": "JavaScript, PHP, Node.js, React, REST APIs, database design, web deployment, accessibility, ORM, Git, Odoo ERP"
         },
         {
-            "title": "Bootcamp React",
-            "institution": "Geekshubs",
+            "title": "Higher Technician in Multiplatform App Development (DAM)",
+            "institution": "IES / FP — EQF Level 5",
+            "date": "2024",
+            "description": "Java, Kotlin, Flutter, Android development, ORM (Hibernate), services & processes, 2D/3D game engines, UML, TDD"
+        },
+        {
+            "title": "React Bootcamp",
+            "institution": "Geekshubs Academy",
             "date": "2023",
-            "description": "Topics covered: Linux, Python, Java, HTML5, CSS3, SQL, XML, Database Design, Virtualization, Git, JavaScript, Node.js, PHP, Odoo, Network Administration"
+            "description": "React.js components, hooks, state, context, Redux, REST API integration, component testing"
         },
         {
-            "title": "Management Informatics",
-            "institution": "Polytechnic University of Valencia",
-            "date": "2003 - 2005",
+            "title": "Computer Science & Management",
+            "institution": "Universidad Politécnica de Valencia",
+            "date": "2003 – 2005",
             "description": ""
         },
         {
@@ -46,13 +54,7 @@
             "description": ""
         },
         {
-            "title": "Multimedia, Video Editing, and Web Design Course",
-            "institution": "",
-            "date": "2000 - 2001",
-            "description": ""
-        },
-        {
-            "title": "Specialist Technician in Management Informatics",
+            "title": "IT Management Specialist Technician",
             "institution": "",
             "date": "1997 – 2000",
             "description": ""
@@ -60,32 +62,60 @@
     ],
     "experience": [
         {
-            "title": "Technical Support Specialist",
-            "company": "Centro Gestión Red Arterias — Telefónica / Department of Health",
+            "title": "Software Developer (AI Project) — Internship",
+            "company": "Cook-Code System Startup",
             "location": "Valencia",
-            "date": "2020–2021",
-            "description": "Support for hospitals and health centers within the Department of Sanitation in Alicante, Castellón, and Valencia. Ticket management via custom applications, email, Jira, and Confluence. Management of Routers, Firewalls, and VPNs Cisco and Fortigate. Use of communication tools like Microsoft Teams."
+            "date": "2025 – 2026",
+            "description": "Built 'Minichef' from scratch: an AI voice assistant for professional kitchen management. Engineered a complete Python pipeline integrating real-time speech-to-text (Vosk), NLP, database operations, and text-to-speech synthesis (gTTS/Pygame) — enabling hands-free, conversational access to inventory, recipes, and supplier data."
         },
         {
-            "title": "Support Specialist",
+            "title": "IT Support Technician — Healthcare Network",
+            "company": "Telefónica / Consellería de Sanidad",
+            "location": "Comunitat Valenciana",
+            "date": "2022 – 2025",
+            "description": "Maintained 99%+ uptime for network infrastructure serving hospitals and health centres across 3 provinces. Managed Cisco and Fortigate routers, firewalls and VPNs. Handled incident management via Jira, Confluence, and custom ticketing apps."
+        },
+        {
+            "title": "Support Specialist — Ford European Operations",
             "company": "DHL Supply Chain",
             "location": "Valencia",
-            "date": "2020–2021",
-            "description": "Remote support for Ford European LLP users in Spain, Germany, England, and Hungary. Management of Active Directory user permissions. Resolving VPN and remote access issues. Basic management of European plant databases. Ticketing (Jira) and remote communication channels (Cisco, Teams). Remote administration of virtualized environments in India."
+            "date": "2020 – 2021",
+            "description": "Remote IT support for Ford manufacturing plants across 4 countries (Spain, Germany, UK, Hungary). Streamlined Active Directory user lifecycle management. Administered virtualised servers hosted in India for automated task scheduling."
         },
         {
-            "title": "Support Helpdesk Technician",
-            "company": "Tecnocom / Ford",
+            "title": "N2 Support Technician & Junior Developer",
+            "company": "Temática Software",
             "location": "Valencia",
-            "date": "2016",
-            "description": "Data Center operator and administrator for Ford's engine plant. Backup oversight and automated system installations. System updates and upgrades. Remote virtualization management (ESXi, Windows, Linux)."
+            "date": "2019",
+            "description": "Deployed Zabbix monitoring across Linux and Windows infrastructure. Set up VMware ESXi virtualisation and AWS cloud infrastructure. Contributed as Junior Developer in Python and Java. Oracle SQL database support. Agile/Scrum with University of Valencia's ITI."
         },
         {
             "title": "Systems Administrator",
-            "company": "Postres Romar",
+            "company": "Postres Lácteos Romar S.L.",
             "location": "Valencia",
-            "date": "2016–2018",
-            "description": "Responsible for security systems implementation (Cisco, Sophos). Supporting Java development. Management of Microsoft databases. Redesign and deployment of a new data center, increasing performance by 60%. Backup management with Synology systems. Deployment and maintenance of Windows and Linux systems. Virtualization installations (ESXi, Windows, Linux). VPN and Active Directory administration."
+            "date": "2016 – 2018",
+            "description": "Increased infrastructure performance by 60% by redesigning the data centre from scratch. Introduced the company's first security layer (Cisco/Sophos firewalls). Led ERP system selection and procurement. Managed all IT operations solo: ESXi, VPN/AD, Linux, SQL."
+        },
+        {
+            "title": "IT Administrator — CPD Operations",
+            "company": "Tecnocom (Ford & Mercadona)",
+            "location": "Valencia",
+            "date": "2016",
+            "description": "Operated mission-critical data centres for Ford (engine plant) and Mercadona (national retail). Monitored infrastructure with HP OVO, automated workflows with Axway. Managed backups with HP Dataprotector and CommVault with zero data loss."
+        },
+        {
+            "title": "IT Administrator & Technician",
+            "company": "VSL Support Ltd",
+            "location": "Southern England, UK",
+            "date": "2013 – 2015",
+            "description": "Managed IT systems and networks for NHS hospitals, hotel chains, restaurant groups and automotive franchises across southern England. Deployed complete network and server infrastructures for new client sites."
+        },
+        {
+            "title": "Systems Administrator — Hospital IT",
+            "company": "Hospital de la Ribera",
+            "location": "Alzira, Valencia",
+            "date": "2009 – 2011",
+            "description": "Sole IT responsible during night shifts, ensuring 24/7 continuity of critical healthcare IT infrastructure (Citrix, Exchange, virtualised systems, routers, firewalls)."
         }
     ],
     "languages": [
@@ -95,7 +125,7 @@
         },
         {
             "language": "English",
-            "level": "Advanced / Bilingual"
+            "level": "Bilingual / C1+"
         },
         {
             "language": "Italian",
@@ -105,24 +135,24 @@
     "techSkills": {
         "frontend": [
             {
-                "name": "HTML5 / CSS3",
-                "level": 98
-            },
-            {
-                "name": "JavaScript / TypeScript",
+                "name": "HTML5 / CSS3 / XML",
                 "level": 95
             },
             {
-                "name": "React / Vite",
-                "level": 92
+                "name": "JavaScript",
+                "level": 90
+            },
+            {
+                "name": "React.js",
+                "level": 88
             },
             {
                 "name": "Three.js / WebGL",
-                "level": 85
+                "level": 78
             },
             {
-                "name": "i18n / Accessibility",
-                "level": 80
+                "name": "Flutter / Kotlin (Mobile)",
+                "level": 75
             }
         ],
         "backend": [
@@ -131,82 +161,109 @@
                 "level": 90
             },
             {
-                "name": "Node.js / Express",
-                "level": 88
-            },
-            {
-                "name": "SQLAlchemy / Alembic",
+                "name": "Java / Spring",
                 "level": 85
             },
             {
-                "name": "REST API Design",
-                "level": 90
+                "name": "Node.js / Express",
+                "level": 85
+            },
+            {
+                "name": "PHP",
+                "level": 80
             }
         ],
         "databases": [
             {
-                "name": "PostgreSQL",
-                "level": 90
+                "name": "Oracle SQL",
+                "level": 88
             },
             {
-                "name": "MongoDB",
+                "name": "MySQL / PostgreSQL",
+                "level": 88
+            },
+            {
+                "name": "Microsoft SQL Server",
+                "level": 82
+            },
+            {
+                "name": "SQLAlchemy / Alembic (ORM)",
                 "level": 85
             },
             {
                 "name": "Redis",
-                "level": 78
+                "level": 72
             }
         ],
         "others": [
             {
-                "name": "Git / GitHub",
+                "name": "Windows Server / Linux Admin",
                 "level": 95
             },
             {
-                "name": "Docker / Docker Compose",
-                "level": 85
+                "name": "VMware / ESXi",
+                "level": 92
             },
             {
-                "name": "AWS / Azure",
-                "level": 82
-            },
-            {
-                "name": "VMWare / ESXi",
+                "name": "Network Security (Cisco, Sophos, Fortigate)",
                 "level": 90
             },
             {
-                "name": "Windows Server / Linux",
-                "level": 95
+                "name": "Active Directory / VPN",
+                "level": 90
             },
             {
-                "name": "Network Security (Cisco, Sophos)",
+                "name": "Git / GitHub",
                 "level": 88
             },
             {
-                "name": "CI/CD / Testing",
-                "level": 82
+                "name": "Docker / AWS",
+                "level": 78
+            },
+            {
+                "name": "Agile / Scrum (Jira, Confluence)",
+                "level": 85
             }
         ]
     },
     "portfolio": [
         {
-            "title": "Cyberpunk Dashboard",
-            "tech": "Three.js / WebGL / React",
-            "description": "Panel de control con visualizaciones de datos en tiempo real con estética cyberpunk."
+            "title": "Minichef — AI Voice Assistant",
+            "tech": ["Python", "Vosk", "gTTS", "Pygame", "SQLite"],
+            "description": "AI voice assistant for professional kitchen management with real-time speech-to-text, NLP, and text-to-speech synthesis.",
+            "github": "",
+            "demo": "",
+            "status": "completed"
         },
         {
-            "title": "Neural Network Visualizer",
-            "tech": "D3.js / TensorFlow.js",
-            "description": "Herramienta interactiva para visualizar y entender redes neuronales."
+            "title": "Interactive Portfolio",
+            "tech": ["React", "FastAPI", "PostgreSQL", "Three.js", "Chart.js", "Docker"],
+            "description": "Full-stack portfolio with desktop-window UI metaphor. 34 features: AI chatbot, visitor analytics with maps, 4-API job aggregation with unified search, Kanban pipeline, salary analytics, SSE real-time notifications, JWT auth with refresh tokens, 6 Three.js/Canvas backgrounds, terminal easter egg, full i18n (EN/ES), and WCAG accessibility.",
+            "github": "",
+            "demo": "",
+            "status": "completed"
         },
         {
-            "title": "Data Flow",
-            "tech": "WebGL / Canvas / Vue.js",
-            "description": "Visualización de flujo de datos con partículas interactivas."
+            "title": "Healthcare Network Management",
+            "tech": ["Cisco", "Fortigate", "VPN", "Jira", "Confluence"],
+            "description": "Infrastructure management for hospitals across 3 provinces, maintaining 99%+ uptime for critical healthcare services.",
+            "github": "",
+            "demo": "",
+            "status": "completed"
         }
     ],
+    "achievements": [
+        { "metric": "Network Uptime", "value": "99%+", "icon": "NET" },
+        { "metric": "Infra Performance Boost", "value": "60%", "icon": "UP" },
+        { "metric": "Terminals Managed", "value": "1,000+", "icon": "SYS" },
+        { "metric": "Countries (Remote)", "value": "4", "icon": "GEO" },
+        { "metric": "Data Loss", "value": "Zero", "icon": "SEC" },
+        { "metric": "Years Experience", "value": "20+", "icon": "EXP" },
+        { "metric": "Tech Stack Depth", "value": "19+", "icon": "DEV" },
+        { "metric": "Healthcare Systems", "value": "3 Provinces", "icon": "MED" }
+    ],
     "contact": {
-        "message": "¿Interesado en colaborar en un proyecto? Contáctame vía email:",
+        "message": "Interested in collaborating? Contact me via email:",
         "social": {
             "linkedin": "",
             "github": "",

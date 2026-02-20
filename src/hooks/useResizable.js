@@ -136,8 +136,7 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
   }, [handleResizeMove, handleResizeEnd]);
 
   return {
-    handleResizeStart,
-    isResizing: resizeStateRef.current.isResizing
+    handleResizeStart
   };
 };
 

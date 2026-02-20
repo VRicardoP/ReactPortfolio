@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 import '../../styles/welcome-window.css';
@@ -7,16 +7,18 @@ const WelcomeWindow = ({ portfolioData }) => {
     const [isVisible, setIsVisible] = useState(true);
     const { t } = useTranslation();
 
-    if (!isVisible) return null;
+    const initialPosition = useMemo(() => ({
+        x: (window.innerWidth - 600) / 2,
+        y: (window.innerHeight - 400) / 2
+    }), []);
 
-    const centerX = (window.innerWidth - 600) / 2;
-    const centerY = (window.innerHeight - 400) / 2;
+    if (!isVisible) return null;
 
     return (
         <FloatingWindow
             id="welcome-window"
             title={`🚀 ${t('welcome.title', { name: portfolioData?.name || 'Portfolio' })}`}
-            initialPosition={{ x: Math.max(0, centerX), y: Math.max(0, centerY) }}
+            initialPosition={{ x: Math.max(0, initialPosition.x), y: Math.max(0, initialPosition.y) }}
             initialSize={{ width: 600, height: 400 }}
         >
             <div className="welcome-content">

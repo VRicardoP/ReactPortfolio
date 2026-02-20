@@ -6,15 +6,10 @@
   background-color: rgba(10, 25, 40, 0.7);
   backdrop-filter: blur(1px);
   box-shadow: 0 0 20px rgba(var(--theme-primary-rgb, 0, 255, 255), 0.5);
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, width 0.3s ease, height 0.3s ease;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-}
-
-/* Do NOT apply transition to position and size by default */
-.floating-window:not(.dragging):not(.resizing) {
-  transition: all 0.3s ease;
 }
 
 /* When dragging or resizing, no transition */
@@ -26,6 +21,17 @@
 .floating-window:hover {
   box-shadow: 0 0 30px rgba(var(--theme-primary-rgb, 0, 255, 255), 0.7);
   border-color: var(--theme-primary, #00ffff);
+}
+
+/* Active window indicator */
+.window-active {
+  box-shadow: 0 0 40px rgba(var(--theme-primary-rgb, 0, 255, 255), 0.9),
+              0 0 80px rgba(var(--theme-primary-rgb, 0, 255, 255), 0.3);
+  border-color: var(--theme-primary, #00ffff);
+}
+
+.window-active .window-header {
+  background-color: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.08);
 }
 
 /* Window header */

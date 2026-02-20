@@ -5,7 +5,15 @@ import { useTheme } from '../../context/ThemeContext';
 const RainEffect = () => {
     const mountRef = useRef(null);
     const animationIdRef = useRef(null);
+    const rainMaterialRef = useRef(null);
     const { theme } = useTheme();
+
+    // Update rain color when theme changes — no scene rebuild needed
+    useEffect(() => {
+        if (rainMaterialRef.current) {
+            rainMaterialRef.current.color.set(theme.primary);
+        }
+    }, [theme]);
 
     useEffect(() => {
         if (!mountRef.current) return;
@@ -91,6 +99,9 @@ const RainEffect = () => {
             linewidth: 1
         });
 
+        // store material ref so theme useEffect can update color without rebuilding
+        rainMaterialRef.current = rainMaterial;
+
         const rain = new THREE.LineSegments(rainGeometry, rainMaterial);
         scene.add(rain);
 
@@ -170,13 +181,15 @@ const RainEffect = () => {
                 mountNode.removeChild(renderer.domElement);
             }
 
+            rainMaterialRef.current = null;
             renderer.dispose();
             rainGeometry.dispose();
             rainMaterial.dispose();
             floorGeometry.dispose();
             floorMaterial.dispose();
         };
-    }, [theme]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return <div ref={mountRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />;
 };

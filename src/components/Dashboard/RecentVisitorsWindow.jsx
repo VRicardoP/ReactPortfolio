@@ -1,12 +1,28 @@
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
 
+const maskIp = (ip) => {
+    if (!ip) return 'N/A';
+    const parts = ip.split('.');
+    if (parts.length === 4) return `${parts[0]}.${parts[1]}.${parts[2]}.***`;
+    // IPv6 or other format - mask last segment
+    const segments = ip.split(':');
+    if (segments.length > 1) {
+        segments[segments.length - 1] = '****';
+        return segments.join(':');
+    }
+    return ip;
+};
+
 const RecentVisitorsWindow = memo(({ data, initialPosition }) => {
+    const { t } = useTranslation();
+
     if (!data || !data.recent_visitors || data.recent_visitors.length === 0) {
         return (
             <FloatingWindow
                 id="recent-visitors-window"
-                title="Recent Visitors"
+                title={t('dashboard.recentVisitors.title')}
                 initialPosition={initialPosition}
                 initialSize={{ width: 700, height: 400 }}
             >
@@ -17,7 +33,7 @@ const RecentVisitorsWindow = memo(({ data, initialPosition }) => {
                     height: '100%',
                     color: '#D3D3D3'
                 }}>
-                    No recent visitors data
+                    {t('dashboard.recentVisitors.noData')}
                 </div>
             </FloatingWindow>
         );
@@ -26,7 +42,7 @@ const RecentVisitorsWindow = memo(({ data, initialPosition }) => {
     return (
         <FloatingWindow
             id="recent-visitors-window"
-            title="Recent Visitors"
+            title={t('dashboard.recentVisitors.title')}
             initialPosition={initialPosition}
             initialSize={{ width: 800, height: 450 }}
         >
@@ -34,11 +50,11 @@ const RecentVisitorsWindow = memo(({ data, initialPosition }) => {
                 <table className="visitors-table">
                     <thead>
                         <tr>
-                            <th>Timestamp</th>
-                            <th>Country</th>
-                            <th>City</th>
-                            <th>IP</th>
-                            <th>User Agent</th>
+                            <th>{t('dashboard.recentVisitors.columns.timestamp')}</th>
+                            <th>{t('dashboard.recentVisitors.columns.country')}</th>
+                            <th>{t('dashboard.recentVisitors.columns.city')}</th>
+                            <th>{t('dashboard.recentVisitors.columns.ip')}</th>
+                            <th>{t('dashboard.recentVisitors.columns.userAgent')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,7 +63,7 @@ const RecentVisitorsWindow = memo(({ data, initialPosition }) => {
                                 <td>{new Date(visitor.timestamp).toLocaleString()}</td>
                                 <td>{visitor.country || 'N/A'}</td>
                                 <td>{visitor.city || 'N/A'}</td>
-                                <td>{visitor.ip_address || 'N/A'}</td>
+                                <td>{maskIp(visitor.ip_address)}</td>
                                 <td style={{
                                     maxWidth: '200px',
                                     overflow: 'hidden',

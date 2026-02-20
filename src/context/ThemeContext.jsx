@@ -105,14 +105,20 @@ export const ThemeProvider = ({ children }) => {
         setTheme(themeNames[nextIndex]);
     }, [themeName, setTheme]);
 
+    const setBackground = useCallback((effect) => {
+        const effects = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
+        if (effects.includes(effect)) {
+            setBackgroundEffect(effect);
+            localStorage.setItem('portfolio-background', effect);
+        }
+    }, []);
+
     const cycleBackground = useCallback(() => {
         const effects = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
         const currentIndex = effects.indexOf(backgroundEffect);
         const nextIndex = (currentIndex + 1) % effects.length;
-        const newEffect = effects[nextIndex];
-        setBackgroundEffect(newEffect);
-        localStorage.setItem('portfolio-background', newEffect);
-    }, [backgroundEffect]);
+        setBackground(effects[nextIndex]);
+    }, [backgroundEffect, setBackground]);
 
     // apply global CSS variables when the theme changes
     useEffect(() => {
@@ -131,9 +137,10 @@ export const ThemeProvider = ({ children }) => {
         setTheme,
         cycleTheme,
         backgroundEffect,
+        setBackground,
         cycleBackground,
         availableThemes: Object.keys(themes).map(key => ({ key, name: themes[key].name }))
-    }), [theme, themeName, setTheme, backgroundEffect, cycleTheme, cycleBackground]);
+    }), [theme, themeName, setTheme, backgroundEffect, setBackground, cycleTheme, cycleBackground]);
 
     return (
         <ThemeContext.Provider value={value}>

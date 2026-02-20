@@ -16,6 +16,7 @@ const FloatingWindow = ({
     const contentRef = useRef(null);
     const {
         windows,
+        activeWindowId,
         registerWindow,
         unregisterWindow,
         bringToFront,
@@ -73,6 +74,14 @@ const FloatingWindow = ({
         bringToFront(id);
     };
 
+    // keyboard handler for accessibility
+    const handleKeyDown = (e) => {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            toggleMinimize(id);
+        }
+    };
+
     // when I minimize or restore the window
     const handleToggleMinimize = (e) => {
         e.stopPropagation();
@@ -110,10 +119,13 @@ const FloatingWindow = ({
         zIndex: zIndex
     };
 
+    const isActive = id === activeWindowId && !isMinimized;
+
     const windowClasses = [
         'floating-window',
         isMinimized && 'window-collapsed',
-        isMaximized && 'window-maximized'
+        isMaximized && 'window-maximized',
+        isActive && 'window-active'
     ].filter(Boolean).join(' ');
 
     return (
@@ -122,7 +134,10 @@ const FloatingWindow = ({
             className={windowClasses}
             style={windowStyle}
             onMouseDown={handleWindowClick}
-            onClick={handleWindowClick}
+            onKeyDown={handleKeyDown}
+            role="dialog"
+            aria-labelledby={`${id}-title`}
+            tabIndex={-1}
         >
             <div
                 className="window-header"
@@ -131,18 +146,20 @@ const FloatingWindow = ({
                 <div className="window-controls">
                     <Tooltip text="Minimize" position="bottom">
                         <button
+                            aria-label="Minimize"
                             className="control-btn control-minimize"
                             onClick={handleToggleMinimize}
                         />
                     </Tooltip>
                     <Tooltip text={isMinimized ? "Fit to content" : "Maximize"} position="bottom">
                         <button
+                            aria-label="Maximize"
                             className="control-btn control-maximize"
                             onClick={handleToggleMaximize}
                         />
                     </Tooltip>
                 </div>
-                <div className="window-title">{title}</div>
+                <div className="window-title" id={`${id}-title`}>{title}</div>
             </div>
 
             {!isMinimized && (

@@ -1,7 +1,10 @@
 import { memo, useState, useRef, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '../../context/ThemeContext';
 import FloatingWindow from './FloatingWindow';
 import '../../styles/terminal.css';
+
+const VALID_EFFECTS = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
 
 const ASCII_BANNER = [
   ' _    ___                  __       ',
@@ -23,6 +26,7 @@ const FAKE_FILES = {
 
 const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
   const { t } = useTranslation();
+  const { backgroundEffect, setBackground, setTheme, themeName, availableThemes } = useTheme();
   const [lines, setLines] = useState([]);
   const [history, setHistory] = useState([]);
   const historyIndexRef = useRef(-1);
@@ -82,6 +86,8 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
           { text: '  cat <file>     ' + t('terminal.cmdCat'), type: 'success' },
           { text: '  whoami         ' + t('terminal.cmdWhoami'), type: 'success' },
           { text: '  ping           ' + t('terminal.cmdPing'), type: 'success' },
+          { text: '  background     ' + t('terminal.cmdBackground'), type: 'success' },
+          { text: '  theme          ' + t('terminal.cmdTheme'), type: 'success' },
           { text: '  sudo hire_me   ' + t('terminal.cmdHireMe'), type: 'success' },
           { text: '  history        ' + t('terminal.cmdHistory'), type: 'success' },
           { text: '  exit           ' + t('terminal.cmdExit'), type: 'success' },
@@ -183,12 +189,11 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
           break;
         }
         const mapped = FAKE_FILES[filename];
-        if (!mapped) {
+        if (mapped && mapped !== cmd && !mapped.startsWith('cat ')) {
+          executeCommand(mapped);
+        } else {
           addLines([{ text: `cat: ${filename}: ${t('terminal.fileNotFound')}`, type: 'error' }]);
-          break;
         }
-        // Re-execute the mapped command
-        executeCommand(mapped);
         return; // Don't add to history twice
       }
 
@@ -233,6 +238,67 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
         break;
       }
 
+      case 'background':
+      case 'bg': {
+        const sub = args[0]?.toLowerCase();
+        if (!sub) {
+          addLines([
+            { text: `  ${t('terminal.backgroundCurrent', { effect: backgroundEffect })}`, type: 'info' },
+            { text: `  ${t('terminal.backgroundUsage')}`, type: 'info' },
+            { text: '', type: 'info' },
+          ]);
+        } else if (sub === 'list') {
+          addLines([
+            { text: `  ${t('terminal.backgroundCurrent', { effect: backgroundEffect })}`, type: 'info' },
+            { text: `  ${t('terminal.backgroundAvailable')}`, type: 'highlight' },
+            ...VALID_EFFECTS.map(e => ({
+              text: `    ${e === backgroundEffect ? '> ' : '  '}${e}${e === backgroundEffect ? ' (active)' : ''}`,
+              type: e === backgroundEffect ? 'highlight' : 'success',
+            })),
+            { text: '', type: 'info' },
+          ]);
+        } else if (VALID_EFFECTS.includes(sub)) {
+          setBackground(sub);
+          addLines([
+            { text: `  ${t('terminal.backgroundChanged', { effect: sub })}`, type: 'success' },
+            { text: '', type: 'info' },
+          ]);
+        } else {
+          addLines([{ text: `  ${t('terminal.backgroundInvalid', { effect: sub })}`, type: 'error' }]);
+        }
+        break;
+      }
+
+      case 'theme': {
+        const sub = args[0]?.toLowerCase();
+        if (!sub) {
+          addLines([
+            { text: `  ${t('terminal.themeCurrent', { theme: themeName })}`, type: 'info' },
+            { text: `  ${t('terminal.themeUsage')}`, type: 'info' },
+            { text: '', type: 'info' },
+          ]);
+        } else if (sub === 'list') {
+          addLines([
+            { text: `  ${t('terminal.themeCurrent', { theme: themeName })}`, type: 'info' },
+            { text: `  ${t('terminal.themeAvailable')}`, type: 'highlight' },
+            ...availableThemes.map(({ key, name: label }) => ({
+              text: `    ${key === themeName ? '> ' : '  '}${key} (${label})${key === themeName ? ' (active)' : ''}`,
+              type: key === themeName ? 'highlight' : 'success',
+            })),
+            { text: '', type: 'info' },
+          ]);
+        } else if (availableThemes.some(({ key }) => key === sub)) {
+          setTheme(sub);
+          addLines([
+            { text: `  ${t('terminal.themeChanged', { theme: sub })}`, type: 'success' },
+            { text: '', type: 'info' },
+          ]);
+        } else {
+          addLines([{ text: `  ${t('terminal.themeInvalid', { theme: sub })}`, type: 'error' }]);
+        }
+        break;
+      }
+
       case 'history': {
         if (history.length === 0) {
           addLines([{ text: t('terminal.noHistory'), type: 'info' }]);
@@ -252,6 +318,21 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
         return;
       }
 
+      case 'readme': {
+        addLines([
+          { text: '# README.md', type: 'highlight' },
+          { text: '', type: 'info' },
+          { text: 'Interactive Portfolio - Vicente Pau', type: 'success' },
+          { text: 'Built with React + FastAPI + Three.js', type: 'success' },
+          { text: '', type: 'info' },
+          { text: 'This portfolio was built to be explored.', type: 'info' },
+          { text: 'Not all secrets are visible from the GUI.', type: 'info' },
+          { text: '', type: 'info' },
+          { text: '> Hint: Try typing "help" for available commands.', type: 'highlight' },
+        ]);
+        return;
+      }
+
       case 'clear': {
         setLines([]);
         return; // Don't add the echo line
@@ -264,7 +345,7 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
         ]);
       }
     }
-  }, [addLines, portfolioData, name, history, t, onClose]);
+  }, [addLines, portfolioData, name, history, t, onClose, backgroundEffect, setBackground, themeName, setTheme, availableThemes]);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();

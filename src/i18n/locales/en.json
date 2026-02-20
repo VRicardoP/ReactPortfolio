@@ -14,7 +14,7 @@
     "maximize": "Maximize:",
     "maximizeDesc": "Click the yellow button (right). A second click expands to full screen",
     "tip": "Tip:",
-    "tipText": "Explore the different windows to learn more about my experience, skills, and projects.",
+    "tipText": "Explore the different windows to learn more about my experience, skills, and projects. Power users: try Ctrl+` for a surprise.",
     "gotIt": "Got it, let's go! \u2192"
   },
   "chat": {
@@ -33,7 +33,20 @@
     "frontend": "FRONTEND",
     "backend": "BACKEND",
     "databases": "DATABASES",
-    "others": "OTHERS"
+    "others": "OTHERS",
+    "viewBars": "Bars",
+    "viewRadar": "Radar"
+  },
+  "profile": {
+    "yearsExp": "20+ yrs",
+    "locations": "Spain + UK",
+    "bilingual": "Bilingual",
+    "roles": "8 roles",
+    "recruiterView": "Recruiter View",
+    "normalView": "Full Profile",
+    "downloadCV": "Download CV",
+    "exportJSON": "JSON Resume",
+    "exportPDF": "Print PDF"
   },
   "windows": {
     "profile": "Profile",
@@ -43,8 +56,10 @@
     "softSkills": "Soft Skills",
     "languages": "Languages",
     "portfolio": "Portfolio",
+    "achievements": "Achievements",
     "contact": "Contact",
-    "chat": "Kusanagi AI"
+    "chat": "Kusanagi AI",
+    "fitMatrix": "Skill Fit Matrix"
   },
   "app": {
     "loading": "Loading...",
@@ -78,6 +93,73 @@
     "bgLensflare": "Lensflare",
     "bgCube": "Cube",
     "bgSmoke": "Smoke",
+    "stats": {
+      "title": "General Statistics",
+      "loading": "Loading statistics...",
+      "totalVisitors": "Total Visitors",
+      "uniqueCountries": "Unique Countries",
+      "uniqueCities": "Unique Cities",
+      "topCountries": "Top Countries"
+    },
+    "recentVisitors": {
+      "title": "Recent Visitors",
+      "noData": "No recent visitors data",
+      "columns": {
+        "timestamp": "Timestamp",
+        "country": "Country",
+        "city": "City",
+        "ip": "IP",
+        "userAgent": "User Agent"
+      }
+    },
+    "map": {
+      "title": "Visitors Map"
+    },
+    "jobBoard": {
+      "searchPlaceholder": "Search jobs...",
+      "allCountries": "All Countries",
+      "allSkills": "All Skills",
+      "allLocations": "All Locations",
+      "allCategories": "All Categories",
+      "allTags": "All Tags",
+      "allTypes": "All Types",
+      "allCities": "All Cities",
+      "allSources": "All Sources",
+      "remote": "Remote",
+      "onsite": "On-site",
+      "apply": "Apply",
+      "noJobs": "No jobs available at the moment",
+      "noMatch": "No jobs match your filters",
+      "clear": "Clear",
+      "showing": "Showing {{from}}-{{to}} of {{total}} jobs",
+      "recently": "Recently",
+      "sortNewest": "Newest first",
+      "sortOldest": "Oldest first",
+      "sortCompany": "Company A-Z",
+      "sortTitle": "Title A-Z",
+      "prev": "Prev",
+      "next": "Next",
+      "page": "Page {{page}} of {{pages}}",
+      "sortMatch": "Best match",
+      "match": "{{score}}% match",
+      "bookmark": "Bookmark",
+      "unbookmark": "Remove bookmark"
+    },
+    "bookmarks": {
+      "title": "Bookmarked Jobs",
+      "empty": "No bookmarked jobs yet. Click the star on any job to save it.",
+      "remove": "Remove"
+    },
+    "jobAnalytics": {
+      "title": "Job Market Analytics",
+      "tabSkills": "Top Skills",
+      "tabRemote": "Remote vs On-site",
+      "tabSources": "By Source",
+      "topSkills": "Most Demanded Skills",
+      "remoteRatio": "Remote vs On-site",
+      "jobsBySource": "Jobs by Source",
+      "noData": "No job data available for analytics"
+    },
     "chatAnalytics": {
       "title": "Chat Analytics - Recruiter Insights",
       "questionsPerDay": "Questions per day",
@@ -97,6 +179,74 @@
       "noQuestionsYet": "No questions recorded yet",
       "noTimelineData": "No timeline data available",
       "noCountryData": "No country data available"
+    },
+    "unified": {
+      "title": "Unified Job Search",
+      "searchPlaceholder": "Search across all job sources...",
+      "noResults": "No results found. Try a different search.",
+      "loading": "Searching...",
+      "allSources": "All Sources",
+      "prev": "Prev",
+      "next": "Next"
+    },
+    "kanban": {
+      "title": "Application Pipeline",
+      "saved": "Saved",
+      "applied": "Applied",
+      "phoneScreen": "Phone Screen",
+      "technical": "Technical",
+      "offer": "Offer",
+      "rejected": "Rejected",
+      "addNote": "Add note...",
+      "followUp": "Follow-up",
+      "empty": "No applications yet. Save jobs from the search to track them here.",
+      "deleteConfirm": "Delete this application?",
+      "addApplication": "Add Application",
+      "title_field": "Job Title",
+      "company_field": "Company",
+      "notes": "Notes",
+      "noApplications": "Drop jobs here or click + to add"
+    },
+    "jsearchLive": {
+      "title": "JSearch Live Search",
+      "search": "Search",
+      "searching": "Searching...",
+      "cooldown": "Wait",
+      "queryPlaceholder": "e.g. React developer, Python engineer...",
+      "noResults": "Enter a query and click Search to find jobs",
+      "remoteOnly": "Remote",
+      "anyDate": "Any date",
+      "today": "Today",
+      "threeDays": "3 days",
+      "week": "This week",
+      "month": "This month",
+      "allTypes": "All types",
+      "fulltime": "Full-time",
+      "parttime": "Part-time",
+      "contractor": "Contractor",
+      "intern": "Intern"
+    },
+    "salary": {
+      "title": "Salary Analytics",
+      "tabRanges": "Salary Ranges",
+      "tabByType": "By Employment Type",
+      "tabBySource": "By Source",
+      "noData": "No salary data available. JSearch jobs with salary info will appear here."
+    },
+    "savedSearches": {
+      "title": "Saved Searches",
+      "create": "New Search",
+      "empty": "No saved searches yet. Create one to get notified about matching jobs.",
+      "active": "Active",
+      "paused": "Paused",
+      "name": "Search name",
+      "filters": "Filters",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "newJobs": {
+      "toast": "{{count}} new jobs from {{source}}"
     }
   },
   "terminal": {
@@ -117,6 +267,18 @@
     "cmdHistory": "Show command history",
     "cmdExit": "Close the terminal",
     "cmdClear": "Clear terminal screen",
+    "cmdBackground": "Change background effect",
+    "cmdTheme": "Change color theme",
+    "backgroundChanged": "Background changed to: {{effect}}",
+    "backgroundCurrent": "Current background: {{effect}}",
+    "backgroundAvailable": "Available effects:",
+    "backgroundUsage": "Usage: background <effect> | background list",
+    "backgroundInvalid": "Unknown effect '{{effect}}'. Type 'background list' to see options.",
+    "themeChanged": "Theme changed to: {{theme}}",
+    "themeCurrent": "Current theme: {{theme}}",
+    "themeAvailable": "Available themes:",
+    "themeUsage": "Usage: theme <name> | theme list",
+    "themeInvalid": "Unknown theme '{{theme}}'. Type 'theme list' to see options.",
     "exiting": "Closing terminal session...",
     "noData": "Error: data not available",
     "missingFilename": "missing operand. Usage: cat <filename>",

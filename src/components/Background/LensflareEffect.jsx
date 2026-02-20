@@ -6,7 +6,19 @@ import { useTheme } from '../../context/ThemeContext';
 const LensflareEffect = () => {
     const mountRef = useRef(null);
     const animationIdRef = useRef(null);
+    const boxMaterialRef = useRef(null);
+    const sceneRef = useRef(null);
     const { theme } = useTheme();
+
+    // Update material and scene background when theme changes — no scene rebuild needed
+    useEffect(() => {
+        if (boxMaterialRef.current) {
+            boxMaterialRef.current.color.set(theme.primary);
+        }
+        if (sceneRef.current) {
+            sceneRef.current.background.set(theme.background);
+        }
+    }, [theme]);
 
     useEffect(() => {
         if (!mountRef.current) return;
@@ -17,6 +29,7 @@ const LensflareEffect = () => {
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000000);
         scene.fog = new THREE.Fog(0x000000, 2500, 10000);
+        sceneRef.current = scene;
 
         // the camera
         const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 1, 15000);
@@ -36,26 +49,34 @@ const LensflareEffect = () => {
 
         mountRef.current.appendChild(renderer.domElement);
 
-        // create the floating cubes like in the original
+        // create the floating cubes using InstancedMesh for performance
         const boxGeometry = new THREE.BoxGeometry(250, 250, 250);
         const boxMaterial = new THREE.MeshPhongMaterial({
-            color: 0xc9a868,
+            color: new THREE.Color(theme.primary),
             specular: 0xffffff,
             shininess: 50
         });
+        boxMaterialRef.current = boxMaterial;
 
-        for (let i = 0; i < 3000; i++) {
-            const mesh = new THREE.Mesh(boxGeometry, boxMaterial);
-            mesh.position.x = 8000 * (2.0 * Math.random() - 1.0);
-            mesh.position.y = 8000 * (2.0 * Math.random() - 1.0);
-            mesh.position.z = 8000 * (2.0 * Math.random() - 1.0);
-            mesh.rotation.x = Math.random() * Math.PI;
-            mesh.rotation.y = Math.random() * Math.PI;
-            mesh.rotation.z = Math.random() * Math.PI;
-            mesh.matrixAutoUpdate = false;
-            mesh.updateMatrix();
-            scene.add(mesh);
+        const instanceCount = 3000;
+        const instancedMesh = new THREE.InstancedMesh(boxGeometry, boxMaterial, instanceCount);
+        const dummy = new THREE.Object3D();
+        for (let i = 0; i < instanceCount; i++) {
+            dummy.position.set(
+                8000 * (2.0 * Math.random() - 1.0),
+                8000 * (2.0 * Math.random() - 1.0),
+                8000 * (2.0 * Math.random() - 1.0)
+            );
+            dummy.rotation.set(
+                Math.random() * Math.PI,
+                Math.random() * Math.PI,
+                Math.random() * Math.PI
+            );
+            dummy.updateMatrix();
+            instancedMesh.setMatrixAt(i, dummy.matrix);
         }
+        instancedMesh.instanceMatrix.needsUpdate = true;
+        scene.add(instancedMesh);
 
         // directional light to illuminate the cubes
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.15);
@@ -159,7 +180,7 @@ const LensflareEffect = () => {
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mousedown', onMouseDown);
         document.addEventListener('mouseup', onMouseUp);
-        document.addEventListener('contextmenu', onContextMenu);
+        renderer.domElement.addEventListener('contextmenu', onContextMenu);
 
         // animation loop
         const animate = () => {
@@ -219,7 +240,7 @@ const LensflareEffect = () => {
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mousedown', onMouseDown);
             document.removeEventListener('mouseup', onMouseUp);
-            document.removeEventListener('contextmenu', onContextMenu);
+            renderer.domElement.removeEventListener('contextmenu', onContextMenu);
             window.removeEventListener('resize', onWindowResize);
 
             if (animationIdRef.current) {
@@ -230,12 +251,16 @@ const LensflareEffect = () => {
                 mountNode.removeChild(renderer.domElement);
             }
 
-            renderer.dispose();
+            boxMaterialRef.current = null;
+            sceneRef.current = null;
+            scene.clear(); // dispose all meshes from scene
             boxGeometry.dispose();
             boxMaterial.dispose();
+            renderer.dispose();
             textureFlare0.dispose();
         };
-    }, [theme]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return <div ref={mountRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />;
 };

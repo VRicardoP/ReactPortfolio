@@ -21,8 +21,10 @@ const TechSkillsWindow = lazy(() => import('./components/Windows/TechSkillsWindo
 const EducationWindow = lazy(() => import('./components/Windows/EducationWindow'));
 const PortfolioWindow = lazy(() => import('./components/Windows/PortfolioWindow'));
 const ExperienceWindow = lazy(() => import('./components/Windows/ExperienceWindow'));
+const AchievementsWindow = lazy(() => import('./components/Windows/AchievementsWindow'));
 const ChatWindow = lazy(() => import('./components/Windows/ChatWindow'));
 const TerminalWindow = lazy(() => import('./components/Windows/TerminalWindow'));
+const FitMatrixWindow = lazy(() => import('./components/Windows/FitMatrixWindow'));
 
 // this is what is shown while a window is loading
 const WindowLoader = memo(() => (
@@ -62,15 +64,17 @@ const PortfolioContent = memo(({ portfolioData }) => {
     'languages-window',
     'tech-skills-window',
     'portfolio-window',
+    'achievements-window',
     'contact-window',
-    'chat-window'
+    'chat-window',
+    'fit-matrix-window'
   ];
 
   useWindowLayout(portfolioWindowIds, 500);
 
-  // Ctrl+ñ toggles the terminal easter egg
+  // Ctrl+` or Ctrl+ñ toggles the terminal easter egg
   const handleKeyDown = useCallback((e) => {
-    if (e.ctrlKey && e.key === 'ñ') {
+    if (e.ctrlKey && (e.key === 'ñ' || e.key === '`')) {
       e.preventDefault();
       setShowTerminal(prev => !prev);
     }
@@ -121,14 +125,24 @@ const PortfolioContent = memo(({ portfolioData }) => {
         initialPosition={{ x: 400, y: 240 }}
       />
 
-      <ContactWindow
+      <AchievementsWindow
         data={portfolioData}
         initialPosition={{ x: 450, y: 260 }}
       />
 
-      <ChatWindow
+      <ContactWindow
         data={portfolioData}
         initialPosition={{ x: 500, y: 280 }}
+      />
+
+      <ChatWindow
+        data={portfolioData}
+        initialPosition={{ x: 550, y: 300 }}
+      />
+
+      <FitMatrixWindow
+        data={portfolioData}
+        initialPosition={{ x: 600, y: 320 }}
       />
     </Suspense>
 
@@ -152,6 +166,11 @@ function App() {
 
   // track the user's visit
   useVisitorTracking();
+
+  // subtle console hint about the terminal easter egg
+  useEffect(() => {
+    console.log('%c>_ Terminal access available. Try Ctrl+` or Ctrl+ñ', 'color: #00ffff; font-family: monospace; font-size: 12px;');
+  }, []);
 
   const { data: portfolioData, loading, error } = usePortfolioData();
   const typedText = useTypewriter(

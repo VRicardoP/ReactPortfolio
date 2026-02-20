@@ -1,11 +1,8 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { useTheme } from '../../context/ThemeContext';
-
 const SmokeEffect = () => {
     const mountRef = useRef(null);
     const animationIdRef = useRef(null);
-    const { theme } = useTheme();
 
     useEffect(() => {
         if (!mountRef.current) return;
@@ -116,7 +113,7 @@ const SmokeEffect = () => {
             smokeMaterial.dispose();
             smokeTexture.dispose();
         };
-    }, [theme]);
+    }, []); // theme is not used — smoke color is hardcoded
 
     return <div ref={mountRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />;
 };

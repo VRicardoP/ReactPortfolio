@@ -101,8 +101,7 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange, onB
   }, [handleMouseMove, handleMouseUp]);
 
   return {
-    handleMouseDown,
-    isDragging: dragStateRef.current.isDragging
+    handleMouseDown
   };
 };
 

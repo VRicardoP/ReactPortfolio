@@ -14,7 +14,8 @@ export const useWindowContext = () => {
 
 export const WindowProvider = ({ children }) => {
     const [windows, setWindows] = useState({});
-    const [, setHighestZIndex] = useState(100);
+    const [activeWindowId, setActiveWindowId] = useState(null);
+    const highestZIndexRef = useRef(100);
     const toastTimeoutRef = useRef({});
 
     // to show notifications without duplicates
@@ -39,12 +40,12 @@ export const WindowProvider = ({ children }) => {
             return {
                 ...prev,
                 [windowId]: {
-                    isMinimized: initialState.isMinimized || false,
+                    isMinimized: initialState.isMinimized ?? false,
                     isMaximized: initialState.isMaximized || false,
                     position: initialState.position || { x: 100, y: 100 },
                     size: initialState.size || { width: 400, height: 300 },
                     zIndex: initialState.zIndex || 100,
-                    ...initialState
+                    ...initialState,
                 }
             };
         });
@@ -61,29 +62,31 @@ export const WindowProvider = ({ children }) => {
 
     // bring a window in front of all the others
     const bringToFront = useCallback((windowId) => {
-        setHighestZIndex(prev => {
-            const newZIndex = prev + 1;
+        setActiveWindowId(windowId);
+        setWindows(prev => {
+            const current = prev[windowId];
+            if (!current) return prev;
 
-            setWindows(prevWindows => {
-                const currentWindow = prevWindows[windowId];
-                if (!currentWindow) return prevWindows;
+            const newHighest = highestZIndexRef.current + 1;
+            highestZIndexRef.current = newHighest;
 
-                // check if it's already in front to avoid doing anything
-                const maxZ = Math.max(...Object.values(prevWindows).map(w => w.zIndex));
-                if (currentWindow.zIndex === maxZ && maxZ >= newZIndex - 1) {
-                    return prevWindows;
-                }
+            // Normalize if z-index gets too high
+            if (newHighest > 10000) {
+                const sorted = Object.entries(prev)
+                    .sort((a, b) => a[1].zIndex - b[1].zIndex);
+                const normalized = {};
+                sorted.forEach(([id, win], index) => {
+                    normalized[id] = { ...win, zIndex: 100 + index };
+                });
+                normalized[windowId] = { ...normalized[windowId], zIndex: 100 + sorted.length };
+                highestZIndexRef.current = 100 + sorted.length;
+                return normalized;
+            }
 
-                return {
-                    ...prevWindows,
-                    [windowId]: {
-                        ...currentWindow,
-                        zIndex: newZIndex
-                    }
-                };
-            });
-
-            return newZIndex;
+            return {
+                ...prev,
+                [windowId]: { ...current, zIndex: newHighest }
+            };
         });
     }, []);
 
@@ -247,9 +250,35 @@ export const WindowProvider = ({ children }) => {
         });
     }, []);
 
+    // cycle focus to the next or previous non-minimized window
+    const focusNextWindow = useCallback((reverse = false) => {
+        setWindows(prev => {
+            const nonMinimized = Object.entries(prev)
+                .filter(([, w]) => !w.isMinimized)
+                .sort((a, b) => a[1].zIndex - b[1].zIndex);
+            if (nonMinimized.length < 2) return prev;
+
+            const currentIdx = nonMinimized.findIndex(([id]) => id === activeWindowId);
+            const nextIdx = reverse
+                ? (currentIdx <= 0 ? nonMinimized.length - 1 : currentIdx - 1)
+                : (currentIdx >= nonMinimized.length - 1 ? 0 : currentIdx + 1);
+            const [nextId] = nonMinimized[nextIdx];
+
+            const newHighest = highestZIndexRef.current + 1;
+            highestZIndexRef.current = newHighest;
+            setActiveWindowId(nextId);
+
+            return {
+                ...prev,
+                [nextId]: { ...prev[nextId], zIndex: newHighest }
+            };
+        });
+    }, [activeWindowId]);
+
     // combine everything so components can use it
     const value = useMemo(() => ({
         windows,
+        activeWindowId,
         registerWindow,
         unregisterWindow,
         bringToFront,
@@ -257,9 +286,11 @@ export const WindowProvider = ({ children }) => {
         toggleMaximize,
         fitToContent,
         updatePosition,
-        updateSize
+        updateSize,
+        focusNextWindow
     }), [
         windows,
+        activeWindowId,
         registerWindow,
         unregisterWindow,
         bringToFront,
@@ -267,7 +298,8 @@ export const WindowProvider = ({ children }) => {
         toggleMaximize,
         fitToContent,
         updatePosition,
-        updateSize
+        updateSize,
+        focusNextWindow
     ]);
 
     return (

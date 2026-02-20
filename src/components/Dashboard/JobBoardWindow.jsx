@@ -1,7 +1,12 @@
 import { memo, useMemo, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
+import JobBoardControls from './JobBoardControls';
+import useJobBoardControls from '../../hooks/useJobBoardControls';
+import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
 
 const JobBoardWindow = memo(({ data, initialPosition }) => {
+    const { t } = useTranslation();
     const [filters, setFilters] = useState({
         country: '',
         skill: '',
@@ -53,6 +58,9 @@ const JobBoardWindow = memo(({ data, initialPosition }) => {
 
     const hasActiveFilters = filters.country || filters.skill || filters.search;
 
+    const { sortBy, handleSortChange, pagedJobs, page, totalPages, from, to, setPage } =
+        useJobBoardControls(filteredJobs, { dateField: 'date', companyField: 'company', titleField: 'title' });
+
     if (!data?.data || data.data.length === 0) {
         return (
             <FloatingWindow
@@ -62,7 +70,7 @@ const JobBoardWindow = memo(({ data, initialPosition }) => {
                 initialSize={{ width: 650, height: 500 }}
             >
                 <div className="jobboard-empty">
-                    No jobs available at the moment
+                    {t('dashboard.jobBoard.noJobs')}
                 </div>
             </FloatingWindow>
         );
@@ -80,7 +88,7 @@ const JobBoardWindow = memo(({ data, initialPosition }) => {
                 <div className="jobboard-filters">
                     <input
                         type="text"
-                        placeholder="Search jobs..."
+                        placeholder={t('dashboard.jobBoard.searchPlaceholder')}
                         value={filters.search}
                         onChange={(e) => handleFilterChange('search', e.target.value)}
                         className="jobboard-search"
@@ -91,7 +99,7 @@ const JobBoardWindow = memo(({ data, initialPosition }) => {
                         onChange={(e) => handleFilterChange('country', e.target.value)}
                         className="jobboard-select"
                     >
-                        <option value="">All Countries</option>
+                        <option value="">{t('dashboard.jobBoard.allCountries')}</option>
                         {filterOptions.countries.map(country => (
                             <option key={country} value={country}>{country}</option>
                         ))}
@@ -102,7 +110,7 @@ const JobBoardWindow = memo(({ data, initialPosition }) => {
                         onChange={(e) => handleFilterChange('skill', e.target.value)}
                         className="jobboard-select"
                     >
-                        <option value="">All Skills</option>
+                        <option value="">{t('dashboard.jobBoard.allSkills')}</option>
                         {filterOptions.skills.map(skill => (
                             <option key={skill} value={skill}>{skill}</option>
                         ))}
@@ -110,31 +118,38 @@ const JobBoardWindow = memo(({ data, initialPosition }) => {
 
                     {hasActiveFilters && (
                         <button onClick={clearFilters} className="jobboard-clear-btn">
-                            Clear
+                            {t('dashboard.jobBoard.clear')}
                         </button>
                     )}
                 </div>
 
-                {/* results counter */}
-                <div className="jobboard-count">
-                    Showing {filteredJobs.length} of {data.data.length} jobs
-                </div>
+                <JobBoardControls
+                    sortBy={sortBy}
+                    onSortChange={handleSortChange}
+                    page={page}
+                    totalPages={totalPages}
+                    from={from}
+                    to={to}
+                    total={filteredJobs.length}
+                    onPageChange={setPage}
+                    cacheAge={data.last_updated}
+                />
 
                 {/* job list */}
                 <div className="jobboard-list">
-                    {filteredJobs.length === 0 ? (
+                    {pagedJobs.length === 0 ? (
                         <div className="jobboard-no-results">
-                            No jobs match your filters
+                            {t('dashboard.jobBoard.noMatch')}
                         </div>
                     ) : (
-                        filteredJobs.map(job => (
+                        pagedJobs.map(job => (
                             <div key={job.id} className="jobboard-card">
                                 <div className="jobboard-card-header">
                                     <h3 className="jobboard-title">{job.title}</h3>
                                     <span className="jobboard-type">{job.type || 'Full-time'}</span>
                                 </div>
 
-                                <div className="jobboard-company">{job.company}</div>
+                                <div className="jobboard-company"><CompanyResearchName company={job.company}>{job.company}</CompanyResearchName></div>
 
                                 <div className="jobboard-meta">
                                     <span className="jobboard-country">{job.country}</span>
@@ -165,6 +180,7 @@ const JobBoardWindow = memo(({ data, initialPosition }) => {
                                 <div className="jobboard-card-footer">
                                     <span className="jobboard-date">
                                         {new Date(job.date).toLocaleDateString()}
+                                        <FreshnessBadge dateStr={job.date} />
                                     </span>
                                     <a
                                         href={job.url}
@@ -172,7 +188,7 @@ const JobBoardWindow = memo(({ data, initialPosition }) => {
                                         rel="noopener noreferrer"
                                         className="jobboard-apply-btn"
                                     >
-                                        Apply
+                                        {t('dashboard.jobBoard.apply')}
                                     </a>
                                 </div>
                             </div>

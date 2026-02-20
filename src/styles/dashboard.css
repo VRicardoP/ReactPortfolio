@@ -503,9 +503,69 @@
   background: rgba(255, 107, 107, 0.3);
 }
 
+.jobboard-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.jobboard-sort {
+  min-width: auto;
+  font-size: 12px;
+  padding: 5px 8px;
+}
+
 .jobboard-count {
   font-size: 12px;
   color: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.7);
+  font-family: 'Courier New', monospace;
+}
+
+.jobboard-cache-badge {
+  margin-left: auto;
+  font-size: 11px;
+  padding: 3px 8px;
+  background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.08);
+  border: 1px solid rgba(var(--theme-primary-rgb, 0, 255, 255), 0.25);
+  border-radius: 10px;
+  color: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.7);
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+}
+
+.jobboard-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.jobboard-page-btn {
+  padding: 4px 12px;
+  background: transparent;
+  border: 1px solid rgba(var(--theme-primary-rgb, 0, 255, 255), 0.4);
+  border-radius: 4px;
+  color: var(--theme-primary, #00ffff);
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.jobboard-page-btn:hover:not(:disabled) {
+  background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.1);
+  border-color: var(--theme-primary, #00ffff);
+}
+
+.jobboard-page-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.jobboard-page-info {
+  font-size: 12px;
+  color: rgba(211, 211, 211, 0.7);
   font-family: 'Courier New', monospace;
 }
 
@@ -665,6 +725,62 @@
   filter: brightness(0.9);
   box-shadow: 0 0 10px rgba(var(--theme-primary-rgb, 0, 255, 255), 0.5);
   transform: translateY(-1px);
+}
+
+/* Match badge for skills matching */
+.jobboard-match-badge {
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-family: 'Courier New', monospace;
+}
+
+.jobboard-match-badge.high {
+  background: rgba(0, 255, 100, 0.2);
+  color: #00ff64;
+  border: 1px solid rgba(0, 255, 100, 0.3);
+}
+
+.jobboard-match-badge.medium {
+  background: rgba(255, 200, 0, 0.2);
+  color: #ffc800;
+  border: 1px solid rgba(255, 200, 0, 0.3);
+}
+
+.jobboard-match-badge.low {
+  background: rgba(255, 100, 100, 0.15);
+  color: #ff8888;
+  border: 1px solid rgba(255, 100, 100, 0.2);
+}
+
+/* Bookmark button */
+.jobboard-bookmark-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.jobboard-bookmark-btn:hover {
+  color: #ffd700;
+  border-color: rgba(255, 215, 0, 0.4);
+}
+
+.jobboard-bookmark-btn.active {
+  color: #ffd700;
+  border-color: rgba(255, 215, 0, 0.3);
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+}
+
+/* Bookmarked jobs card */
+.bookmarked-card {
+  border-left: 3px solid #ffd700;
 }
 
 /* Job Board Responsive */
@@ -927,4 +1043,69 @@
   .visitors-table td {
     padding: 14px 10px;
   }
+}
+
+/* Freshness badges for job cards (F27) */
+.freshness-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.freshness-new {
+  background: rgba(0, 255, 100, 0.15);
+  color: #00ff64;
+  border: 1px solid rgba(0, 255, 100, 0.3);
+}
+
+.freshness-recent {
+  background: rgba(0, 255, 255, 0.12);
+  color: #00ffff;
+  border: 1px solid rgba(0, 255, 255, 0.25);
+}
+
+.freshness-old {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Company research panel (F28) */
+.company-research-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: rgba(15, 15, 25, 0.95);
+  border: 1px solid rgba(var(--theme-primary-rgb, 0, 255, 255), 0.4);
+  border-radius: 4px;
+  padding: 8px;
+  z-index: 200;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.company-research-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 3px;
+  color: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.9);
+  text-decoration: none;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  transition: background 0.15s ease;
+}
+
+.company-research-link:hover {
+  background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.12);
 }

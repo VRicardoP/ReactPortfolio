@@ -4,11 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useDashboardData } from '../hooks/useDashboardData';
+import useJobBookmarks from '../hooks/useJobBookmarks';
 import BackgroundEffect from '../components/Background/BackgroundEffect';
 import { WindowProvider } from '../context/WindowContext';
-import Toast from '../components/UI/Toast';
 import useTypewriter from '../hooks/useTypewriter';
 import useWindowLayout from '../hooks/useWindowLayout';
+import { useSSENotifications } from '../hooks/useSSENotifications';
 import '../styles/dashboard.css';
 
 // lazy load components only when needed so it's faster
@@ -20,6 +21,13 @@ const JobBoardWindow = lazy(() => import('../components/Dashboard/JobBoardWindow
 const RemotiveJobBoardWindow = lazy(() => import('../components/Dashboard/RemotiveJobBoardWindow'));
 const ArbeitnowJobBoardWindow = lazy(() => import('../components/Dashboard/ArbeitnowJobBoardWindow'));
 const JsearchJobBoardWindow = lazy(() => import('../components/Dashboard/JsearchJobBoardWindow'));
+const JobMarketAnalyticsWindow = lazy(() => import('../components/Dashboard/JobMarketAnalyticsWindow'));
+const BookmarkedJobsWindow = lazy(() => import('../components/Dashboard/BookmarkedJobsWindow'));
+const UnifiedJobSearchWindow = lazy(() => import('../components/Dashboard/UnifiedJobSearchWindow'));
+const JSearchLiveWindow = lazy(() => import('../components/Dashboard/JSearchLiveWindow'));
+const SalaryAnalyticsWindow = lazy(() => import('../components/Dashboard/SalaryAnalyticsWindow'));
+const SavedSearchesWindow = lazy(() => import('../components/Dashboard/SavedSearchesWindow'));
+const KanbanWindow = lazy(() => import('../components/Dashboard/KanbanWindow'));
 
 // what is shown while the dashboard is loading
 const DashboardLoader = memo(() => (
@@ -48,7 +56,10 @@ const DashboardLoader = memo(() => (
 DashboardLoader.displayName = 'DashboardLoader';
 
 // here are all the dashboard windows
-const DashboardContent = memo(({ stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs }) => {
+const DashboardContent = memo(({ stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, bookmarks, removeBookmark }) => {
+    // Listen for SSE notifications (new jobs toast, etc.)
+    useSSENotifications();
+
     const dashboardWindowIds = [
         'stats-window',
         'recent-visitors-window',
@@ -57,7 +68,14 @@ const DashboardContent = memo(({ stats, mapData, chatAnalytics, recentJobs, remo
         'jobboard-window',
         'remotive-jobboard-window',
         'arbeitnow-jobboard-window',
-        'jsearch-jobboard-window'
+        'jsearch-jobboard-window',
+        'job-analytics-window',
+        'bookmarked-jobs-window',
+        'unified-search-window',
+        'jsearch-live-window',
+        'salary-analytics-window',
+        'saved-searches-window',
+        'kanban-window'
     ];
 
     useWindowLayout(dashboardWindowIds, 3000);
@@ -103,6 +121,43 @@ const DashboardContent = memo(({ stats, mapData, chatAnalytics, recentJobs, remo
                 data={jsearchRecentJobs}
                 initialPosition={{ x: 310, y: 190 }}
             />
+
+            <JobMarketAnalyticsWindow
+                jobData={{
+                    jobicy: recentJobs,
+                    remotive: remotiveRecentJobs,
+                    arbeitnow: arbeitnowRecentJobs,
+                    jsearch: jsearchRecentJobs,
+                }}
+                initialPosition={{ x: 340, y: 200 }}
+            />
+
+            <BookmarkedJobsWindow
+                bookmarks={bookmarks}
+                onRemove={removeBookmark}
+                initialPosition={{ x: 370, y: 210 }}
+            />
+
+            <UnifiedJobSearchWindow
+                initialPosition={{ x: 400, y: 220 }}
+            />
+
+            <JSearchLiveWindow
+                initialPosition={{ x: 430, y: 230 }}
+            />
+
+            <SalaryAnalyticsWindow
+                data={jsearchRecentJobs}
+                initialPosition={{ x: 460, y: 240 }}
+            />
+
+            <SavedSearchesWindow
+                initialPosition={{ x: 490, y: 250 }}
+            />
+
+            <KanbanWindow
+                initialPosition={{ x: 520, y: 260 }}
+            />
         </Suspense>
     );
 });
@@ -134,6 +189,7 @@ const DashboardPage = () => {
     const navigate = useNavigate();
     const typedText = useTypewriter(t('dashboard.title'), 100);
     const { stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, loading, error } = useDashboardData();
+    const { bookmarks, removeBookmark } = useJobBookmarks();
 
     // functions for the buttons
     const handleLogout = useCallback(() => {
@@ -294,8 +350,6 @@ const DashboardPage = () => {
                 </div>
             </div>
 
-            <Toast />
-
             <WindowProvider>
                 <DashboardContent
                     stats={stats}
@@ -305,6 +359,8 @@ const DashboardPage = () => {
                     remotiveRecentJobs={remotiveRecentJobs}
                     arbeitnowRecentJobs={arbeitnowRecentJobs}
                     jsearchRecentJobs={jsearchRecentJobs}
+                    bookmarks={bookmarks}
+                    removeBookmark={removeBookmark}
                 />
             </WindowProvider>
         </>
