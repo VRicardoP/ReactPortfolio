@@ -8,8 +8,8 @@ const WelcomeWindow = ({ portfolioData }) => {
     const { t } = useTranslation();
 
     const initialPosition = useMemo(() => ({
-        x: (window.innerWidth - 600) / 2,
-        y: (window.innerHeight - 400) / 2
+        x: (window.innerWidth - 750) / 2,
+        y: (window.innerHeight - 550) / 2
     }), []);
 
     if (!isVisible) return null;
@@ -19,7 +19,7 @@ const WelcomeWindow = ({ portfolioData }) => {
             id="welcome-window"
             title={`🚀 ${t('welcome.title', { name: portfolioData?.name || 'Portfolio' })}`}
             initialPosition={{ x: Math.max(0, initialPosition.x), y: Math.max(0, initialPosition.y) }}
-            initialSize={{ width: 600, height: 400 }}
+            initialSize={{ width: 750, height: 550 }}
         >
             <div className="welcome-content">
                 <div className="welcome-header">

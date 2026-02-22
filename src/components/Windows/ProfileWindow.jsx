@@ -10,20 +10,21 @@ const QUICK_STATS = [
     { key: 'roles', fallback: '8 roles' },
 ];
 
-const RECRUITER_HIGHLIGHTS = [
-    { label: 'Top Impact', items: ['99%+ network uptime (healthcare)', '60% infra performance boost', 'Zero data loss across mission-critical DCs'] },
-    { label: 'Core Stack', items: ['React / FastAPI / PostgreSQL / Docker', 'Cisco / Fortigate / VMware / AWS', 'Python / Java / Node.js / SQL'] },
-    { label: 'Key Metrics', items: ['20+ years across 8 roles', '1,000+ terminals managed', '4 countries remote support'] },
+const RECRUITER_SECTIONS = [
+    { labelKey: 'profile.recruiterTopImpact', itemKeys: ['profile.recruiterTopImpact1', 'profile.recruiterTopImpact2', 'profile.recruiterTopImpact3'] },
+    { labelKey: 'profile.recruiterCoreStack', itemKeys: ['profile.recruiterCoreStack1', 'profile.recruiterCoreStack2', 'profile.recruiterCoreStack3'] },
+    { labelKey: 'profile.recruiterKeyMetrics', itemKeys: ['profile.recruiterKeyMetrics1', 'profile.recruiterKeyMetrics2', 'profile.recruiterKeyMetrics3'] },
 ];
 
 const ProfileWindow = ({ data, initialPosition }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [recruiterMode, setRecruiterMode] = useState(false);
     const [showCvMenu, setShowCvMenu] = useState(false);
 
     const handleExportJSON = useCallback(async () => {
         try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/cv/json-resume`);
+            const lang = (i18n.language || 'en').split('-')[0];
+            const response = await fetch(`${BACKEND_URL}/api/v1/cv/json-resume?lang=${lang}`);
             const json = await response.json();
             const blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -36,11 +37,12 @@ const ProfileWindow = ({ data, initialPosition }) => {
             // Silently fail
         }
         setShowCvMenu(false);
-    }, []);
+    }, [i18n.language]);
 
     const handleExportPDF = useCallback(async () => {
         try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/cv/html`);
+            const lang = (i18n.language || 'en').split('-')[0];
+            const response = await fetch(`${BACKEND_URL}/api/v1/cv/html?lang=${lang}`);
             const html = await response.text();
             const win = window.open('', '_blank');
             win.document.write(html);
@@ -112,12 +114,12 @@ const ProfileWindow = ({ data, initialPosition }) => {
 
                 {recruiterMode ? (
                     <div className="recruiter-view">
-                        {RECRUITER_HIGHLIGHTS.map(({ label, items }) => (
-                            <div key={label} className="recruiter-section">
-                                <div className="recruiter-section-title">{label}</div>
+                        {RECRUITER_SECTIONS.map(({ labelKey, itemKeys }) => (
+                            <div key={labelKey} className="recruiter-section">
+                                <div className="recruiter-section-title">{t(labelKey)}</div>
                                 <ul className="recruiter-list">
-                                    {items.map((item, i) => (
-                                        <li key={i}>{item}</li>
+                                    {itemKeys.map((key) => (
+                                        <li key={key}>{t(key)}</li>
                                     ))}
                                 </ul>
                             </div>

@@ -27,36 +27,42 @@
             "title": "Higher Technician in Web Application Development (DAW)",
             "institution": "IES / FP — EQF Level 5",
             "date": "2025",
+            "type": "degree",
             "description": "JavaScript, PHP, Node.js, React, REST APIs, database design, web deployment, accessibility, ORM, Git, Odoo ERP"
         },
         {
             "title": "Higher Technician in Multiplatform App Development (DAM)",
             "institution": "IES / FP — EQF Level 5",
             "date": "2024",
+            "type": "degree",
             "description": "Java, Kotlin, Flutter, Android development, ORM (Hibernate), services & processes, 2D/3D game engines, UML, TDD"
         },
         {
             "title": "React Bootcamp",
             "institution": "Geekshubs Academy",
             "date": "2023",
+            "type": "bootcamp",
             "description": "React.js components, hooks, state, context, Redux, REST API integration, component testing"
         },
         {
             "title": "Computer Science & Management",
             "institution": "Universidad Politécnica de Valencia",
             "date": "2003 – 2005",
+            "type": "degree",
             "description": ""
         },
         {
             "title": "Server Administration Course",
             "institution": "",
             "date": "2002 – 2003",
+            "type": "course",
             "description": ""
         },
         {
             "title": "IT Management Specialist Technician",
             "institution": "",
             "date": "1997 – 2000",
+            "type": "degree",
             "description": ""
         }
     ],
@@ -80,7 +86,7 @@
             "company": "DHL Supply Chain",
             "location": "Valencia",
             "date": "2020 – 2021",
-            "description": "Remote IT support for Ford manufacturing plants across 4 countries (Spain, Germany, UK, Hungary). Streamlined Active Directory user lifecycle management. Administered virtualised servers hosted in India for automated task scheduling."
+            "description": "Remote IT support for Ford manufacturing plants across 4 countries (Spain, Germany, UK, Hungary). Streamlined Active Directory user lifecycle management. Administered virtualised servers hosted in India for automated task scheduling. Performed critical remote interventions on India-hosted servers to execute database cleanup scripts when errors occurred — a mission-critical process, as failure to clear stale data would block information flow to European plants and risk halting production lines."
         },
         {
             "title": "N2 Support Technician & Junior Developer",
@@ -223,6 +229,10 @@
             {
                 "name": "Agile / Scrum (Jira, Confluence)",
                 "level": 85
+            },
+            {
+                "name": "AI / ML (sentence-transformers, Groq, NLP)",
+                "level": 75
             }
         ]
     },
@@ -237,8 +247,8 @@
         },
         {
             "title": "Interactive Portfolio",
-            "tech": ["React", "FastAPI", "PostgreSQL", "Three.js", "Chart.js", "Docker"],
-            "description": "Full-stack portfolio with desktop-window UI metaphor. 34 features: AI chatbot, visitor analytics with maps, 4-API job aggregation with unified search, Kanban pipeline, salary analytics, SSE real-time notifications, JWT auth with refresh tokens, 6 Three.js/Canvas backgrounds, terminal easter egg, full i18n (EN/ES), and WCAG accessibility.",
+            "tech": ["React", "FastAPI", "PostgreSQL", "Three.js", "Chart.js", "Docker", "sentence-transformers", "Groq AI"],
+            "description": "Full-stack portfolio with desktop-window UI metaphor. AI chatbot, visitor analytics with maps, 8-API job aggregation (Jobicy, Remotive, Arbeitnow, JSearch, RemoteOK, Himalayas, Adzuna, WeWorkRemotely) with unified search, AI job matching (sentence-transformers + LLM re-ranking), Kanban pipeline, salary analytics, SSE real-time notifications, JWT auth with refresh tokens, 6 Three.js/Canvas backgrounds, terminal easter egg, full i18n (6 languages), and WCAG accessibility.",
             "github": "",
             "demo": "",
             "status": "completed"

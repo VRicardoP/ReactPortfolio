@@ -727,6 +727,19 @@
   transform: translateY(-1px);
 }
 
+.jobboard-apply-btn.applied {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4CAF50;
+  border: 1px solid #4CAF50;
+  cursor: default;
+}
+
+.jobboard-apply-btn.applied:hover {
+  filter: none;
+  box-shadow: none;
+  transform: none;
+}
+
 /* Match badge for skills matching */
 .jobboard-match-badge {
   font-size: 11px;
@@ -781,6 +794,113 @@
 /* Bookmarked jobs card */
 .bookmarked-card {
   border-left: 3px solid #ffd700;
+}
+
+/* AI Job Match */
+.ai-match-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ai-match-analyze-btn {
+  padding: 8px 20px;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.ai-match-analyze-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ai-match-meta {
+  font-size: 11px;
+  color: rgba(211, 211, 211, 0.6);
+  font-family: 'Courier New', monospace;
+}
+
+.ai-match-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 30px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.ai-match-score {
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+}
+
+.ai-match-fit-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.ai-match-skills-toggle {
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px 0;
+  font-family: 'Courier New', monospace;
+  opacity: 0.8;
+  user-select: none;
+}
+
+.ai-match-skills-toggle:hover {
+  opacity: 1;
+}
+
+.ai-match-skills-detail {
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+.ai-match-skills-label {
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.ai-match-reason {
+  font-size: 11px;
+  color: rgba(211, 211, 211, 0.8);
+  font-family: 'Courier New', monospace;
+  margin: 6px 0 0 0;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.ai-match-error {
+  padding: 10px;
+  color: #ff6b6b;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  text-align: center;
+  background: rgba(255, 100, 100, 0.1);
+  border-radius: 4px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Job Board Responsive */
@@ -1108,4 +1228,83 @@
 
 .company-research-link:hover {
   background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.12);
+}
+
+/* ===== JOB BOARD TABS ===== */
+.job-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 4px 6px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+.job-tabs::-webkit-scrollbar {
+  height: 3px;
+}
+
+.job-tabs::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+}
+
+.job-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(255,255,255,0.5);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.job-tab:hover {
+  color: var(--tab-color, #fff);
+  background: rgba(255,255,255,0.05);
+}
+
+.job-tab.active {
+  color: var(--tab-color, #fff);
+  border-bottom-color: var(--tab-color, #fff);
+  background: rgba(255,255,255,0.06);
+}
+
+.job-tab-badge {
+  padding: 1px 5px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  line-height: 1.2;
+}
+
+/* Source badge on job cards */
+.jobboard-source-badge {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  border: 1px solid;
+  text-transform: capitalize;
+}
+
+/* Remote badge on job cards */
+.jobboard-remote-badge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  background: rgba(0,255,0,0.12);
+  color: #00ff00;
+  border: 1px solid rgba(0,255,0,0.25);
 }

@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
+import LanguageSwitcher from './components/UI/LanguageSwitcher';
 import App from './App.jsx';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -29,6 +30,7 @@ createRoot(document.getElementById('root')).render(
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <LanguageSwitcher />
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>

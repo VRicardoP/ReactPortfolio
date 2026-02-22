@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useRef, useMemo } from 'react';
 import { showToast } from '../components/UI/Toast';
+import i18n from '../i18n';
 
 const WindowContext = createContext();
 
@@ -90,6 +91,13 @@ export const WindowProvider = ({ children }) => {
         });
     }, []);
 
+    // get translated window title from windowId
+    const getWindowTitle = useCallback((windowId) => {
+        const key = windowId.replace('-window', '').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+        const fallback = key.charAt(0).toUpperCase() + key.slice(1);
+        return i18n.t(`windows.${key}`, { defaultValue: fallback });
+    }, []);
+
     // to minimize or restore a window
     const toggleMinimize = useCallback((windowId) => {
         setWindows(prev => {
@@ -107,22 +115,17 @@ export const WindowProvider = ({ children }) => {
                 }
             };
 
-            const windowTitle = windowId
-                .replace('-window', '')
-                .replace(/-/g, ' ')
-                .split(' ')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
+            const windowTitle = getWindowTitle(windowId);
 
             if (newIsMinimized) {
-                showWindowToast(windowId, `${windowTitle} minimized`);
+                showWindowToast(windowId, i18n.t('toast.minimized', { window: windowTitle }));
             } else {
-                showWindowToast(windowId, `${windowTitle} restored`);
+                showWindowToast(windowId, i18n.t('toast.restored', { window: windowTitle }));
             }
 
             return newState;
         });
-    }, [showWindowToast]);
+    }, [showWindowToast, getWindowTitle]);
 
     // to toggle the window fullscreen on or off
     const toggleMaximize = useCallback((windowId) => {
@@ -150,22 +153,17 @@ export const WindowProvider = ({ children }) => {
                 }
             };
 
-            const windowTitle = windowId
-                .replace('-window', '')
-                .replace(/-/g, ' ')
-                .split(' ')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
+            const windowTitle = getWindowTitle(windowId);
 
             if (newIsMaximized) {
-                showWindowToast(windowId, `${windowTitle} maximized`);
+                showWindowToast(windowId, i18n.t('toast.maximized', { window: windowTitle }));
             } else {
-                showWindowToast(windowId, `${windowTitle} restored`);
+                showWindowToast(windowId, i18n.t('toast.restored', { window: windowTitle }));
             }
 
             return newState;
         });
-    }, [showWindowToast]);
+    }, [showWindowToast, getWindowTitle]);
 
     // fit the window to the optimal size to show all the content
     const fitToContent = useCallback((windowId, contentSize) => {
@@ -186,14 +184,9 @@ export const WindowProvider = ({ children }) => {
             const centerX = Math.max(20, (globalThis.innerWidth - optimalWidth) / 2);
             const centerY = Math.max(80, (globalThis.innerHeight - optimalHeight) / 2);
 
-            const windowTitle = windowId
-                .replace('-window', '')
-                .replace(/-/g, ' ')
-                .split(' ')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
+            const windowTitle = getWindowTitle(windowId);
 
-            showWindowToast(windowId, `${windowTitle} fitted to content`);
+            showWindowToast(windowId, i18n.t('toast.fittedToContent', { window: windowTitle }));
 
             return {
                 ...prev,
@@ -206,7 +199,7 @@ export const WindowProvider = ({ children }) => {
                 }
             };
         });
-    }, [showWindowToast]);
+    }, [showWindowToast, getWindowTitle]);
 
     // save where the window is when I move it
     const updatePosition = useCallback((windowId, position) => {

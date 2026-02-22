@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
-const STATUS_LABELS = {
-    'completed': 'Completed',
-    'in-progress': 'In Progress',
+const STATUS_LABEL_KEYS = {
+    'completed': 'portfolio.statusCompleted',
+    'in-progress': 'portfolio.statusInProgress',
 };
 
 const PortfolioWindow = ({ data, initialPosition }) => {
@@ -25,7 +25,7 @@ const PortfolioWindow = ({ data, initialPosition }) => {
                                 <div className="portfolio-title">{project.title}</div>
                                 {project.status && (
                                     <span className={`portfolio-status-badge status-${project.status}`}>
-                                        {STATUS_LABELS[project.status] || project.status}
+                                        {t(STATUS_LABEL_KEYS[project.status]) || project.status}
                                     </span>
                                 )}
                             </div>

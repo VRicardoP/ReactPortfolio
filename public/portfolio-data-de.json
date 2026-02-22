@@ -1,0 +1,99 @@
+{
+    "name": "Vicente Ricardo Pau Valero",
+    "title": "Full-Stack-Entwickler & IT-Systemingenieur",
+    "email": "vicente.pau@hotmail.com",
+    "phone": "+34 644 213 173",
+    "location": "Carcaixent, Valencia (Spanien)",
+    "profile": {
+        "description": "IT-Fachmann mit über 20 Jahren Erfahrung in Systemadministration, Netzwerksicherheit und Full-Stack-Softwareentwicklung. Nachgewiesene Fähigkeit, ganzheitliche technische Lösungen zu konzipieren und umzusetzen — von der Absicherung und dem Neuaufbau kritischer Infrastrukturen bis hin zur Entwicklung KI-gestützter Anwendungen. Verwaltung von Systemen mit über 1.000 Terminals in stark regulierten Branchen (Gesundheitswesen, Automobilindustrie, Einzelhandel). Fließend Englisch (zweisprachig), erfahren in internationalen Teams in Spanien, England und multinationalen Umgebungen."
+    },
+    "softSkills": [
+        "Engagement und Verantwortung",
+        "Kritisches und analytisches Denken",
+        "Berufliche Integrität",
+        "Empathie und Benutzerorientierung",
+        "Konstruktive Konfliktlösung",
+        "Kontinuierliches Lernen",
+        "Effektive Teamarbeit",
+        "Initiative und Proaktivität",
+        "Stressmanagement",
+        "Anpassungsfähigkeit",
+        "Komplexe Problemlösung",
+        "Klare Kommunikation",
+        "Eigenmotivation und Selbstmanagement"
+    ],
+    "education": [
+        {"title": "Höherer Techniker für Webanwendungsentwicklung (DAW)", "institution": "IES / FP — EQF Level 5", "date": "2025", "type": "degree", "description": "JavaScript, PHP, Node.js, React, REST-APIs, Datenbankdesign, Web-Deployment, Barrierefreiheit, ORM, Git, Odoo ERP"},
+        {"title": "Höherer Techniker für Multiplattform-App-Entwicklung (DAM)", "institution": "IES / FP — EQF Level 5", "date": "2024", "type": "degree", "description": "Java, Kotlin, Flutter, Android-Entwicklung, ORM (Hibernate), Dienste und Prozesse, 2D/3D-Spieleengines, UML, TDD"},
+        {"title": "React Bootcamp", "institution": "Geekshubs Academy", "date": "2023", "type": "bootcamp", "description": "React.js-Komponenten, Hooks, State, Context, Redux, REST-API-Integration, Komponententests"},
+        {"title": "Informatik und Management", "institution": "Universidad Politécnica de Valencia", "date": "2003 – 2005", "type": "degree", "description": ""},
+        {"title": "Kurs Serveradministration", "institution": "", "date": "2002 – 2003", "type": "course", "description": ""},
+        {"title": "Fachtechniker für IT-Management", "institution": "", "date": "1997 – 2000", "type": "degree", "description": ""}
+    ],
+    "experience": [
+        {"title": "Softwareentwickler (KI-Projekt) — Praktikum", "company": "Cook-Code System Startup", "location": "Valencia", "date": "2025 – 2026", "description": "Komplettentwicklung von 'Minichef': ein KI-Sprachassistent für professionelles Küchenmanagement. Entwicklung einer vollständigen Python-Pipeline mit Echtzeit-Spracherkennung (Vosk), NLP, Datenbankoperationen und Sprachsynthese (gTTS/Pygame) — für freihändigen, konversationsbasierten Zugriff auf Inventar, Rezepte und Lieferantendaten."},
+        {"title": "IT-Support-Techniker — Gesundheitsnetzwerk", "company": "Telefónica / Consellería de Sanidad", "location": "Comunitat Valenciana", "date": "2022 – 2025", "description": "99%+ Verfügbarkeit der Netzwerkinfrastruktur für Krankenhäuser und Gesundheitszentren in 3 Provinzen. Verwaltung von Cisco- und Fortigate-Routern, Firewalls und VPNs. Incident Management über Jira, Confluence und maßgeschneiderte Ticketing-Apps."},
+        {"title": "Support-Spezialist — Ford European Operations", "company": "DHL Supply Chain", "location": "Valencia", "date": "2020 – 2021", "description": "Remote-IT-Support für Ford-Fertigungswerke in 4 Ländern (Spanien, Deutschland, UK, Ungarn). Optimierung des Active-Directory-Benutzer-Lifecycle-Managements. Verwaltung virtualisierter Server in Indien für automatisierte Aufgabenplanung. Durchführung kritischer Remote-Eingriffe auf Servern in Indien zur Ausführung von Datenbank-Bereinigungsskripten bei Fehlern — ein geschäftskritischer Prozess, da ohne diesen Schritt der Informationsfluss zu europäischen Werken blockiert und die Produktion gefährdet würde."},
+        {"title": "N2-Support-Techniker und Junior-Entwickler", "company": "Temática Software", "location": "Valencia", "date": "2019", "description": "Einrichtung von Zabbix-Monitoring für Linux- und Windows-Infrastruktur. Aufbau von VMware ESXi-Virtualisierung und AWS-Cloud-Infrastruktur. Mitarbeit als Junior-Entwickler in Python und Java. Oracle SQL-Datenbankunterstützung. Agile/Scrum mit dem ITI der Universität Valencia."},
+        {"title": "Systemadministrator", "company": "Postres Lácteos Romar S.L.", "location": "Valencia", "date": "2016 – 2018", "description": "60% Leistungssteigerung der Infrastruktur durch komplette Neugestaltung des Rechenzentrums. Einführung der ersten Sicherheitsebene des Unternehmens (Cisco/Sophos-Firewalls). Auswahl und Beschaffung des ERP-Systems. Alleinige Verwaltung aller IT-Operationen: ESXi, VPN/AD, Linux, SQL."},
+        {"title": "IT-Administrator — Rechenzentrum-Betrieb", "company": "Tecnocom (Ford & Mercadona)", "location": "Valencia", "date": "2016", "description": "Betrieb geschäftskritischer Rechenzentren für Ford (Motorenwerk) und Mercadona (nationaler Einzelhandel). Infrastruktur-Monitoring mit HP OVO, automatisierte Workflows mit Axway. Backup-Management mit HP Dataprotector und CommVault ohne Datenverlust."},
+        {"title": "IT-Administrator und Techniker", "company": "VSL Support Ltd", "location": "Südengland, Vereinigtes Königreich", "date": "2013 – 2015", "description": "Verwaltung von IT-Systemen und Netzwerken für NHS-Krankenhäuser, Hotelketten, Restaurantgruppen und Kfz-Franchises in Südengland. Bereitstellung kompletter Netzwerk- und Serverinfrastrukturen für neue Kundenstandorte."},
+        {"title": "Systemadministrator — Krankenhaus-IT", "company": "Hospital de la Ribera", "location": "Alzira, Valencia", "date": "2009 – 2011", "description": "Alleiniger IT-Verantwortlicher während der Nachtschichten, Sicherstellung der 24/7-Kontinuität der kritischen Krankenhaus-IT-Infrastruktur (Citrix, Exchange, virtualisierte Systeme, Router, Firewalls)."}
+    ],
+    "languages": [
+        {"language": "Spanisch", "level": "Muttersprache"},
+        {"language": "Englisch", "level": "Zweisprachig / C1+"},
+        {"language": "Italienisch", "level": "Anfänger"}
+    ],
+    "techSkills": {
+        "frontend": [
+            {"name": "HTML5 / CSS3 / XML", "level": 95},
+            {"name": "JavaScript", "level": 90},
+            {"name": "React.js", "level": 88},
+            {"name": "Three.js / WebGL", "level": 78},
+            {"name": "Flutter / Kotlin (Mobile)", "level": 75}
+        ],
+        "backend": [
+            {"name": "Python / FastAPI", "level": 90},
+            {"name": "Java / Spring", "level": 85},
+            {"name": "Node.js / Express", "level": 85},
+            {"name": "PHP", "level": 80}
+        ],
+        "databases": [
+            {"name": "Oracle SQL", "level": 88},
+            {"name": "MySQL / PostgreSQL", "level": 88},
+            {"name": "Microsoft SQL Server", "level": 82},
+            {"name": "SQLAlchemy / Alembic (ORM)", "level": 85},
+            {"name": "Redis", "level": 72}
+        ],
+        "others": [
+            {"name": "Windows Server / Linux Admin", "level": 95},
+            {"name": "VMware / ESXi", "level": 92},
+            {"name": "Network Security (Cisco, Sophos, Fortigate)", "level": 90},
+            {"name": "Active Directory / VPN", "level": 90},
+            {"name": "Git / GitHub", "level": 88},
+            {"name": "Docker / AWS", "level": 78},
+            {"name": "Agile / Scrum (Jira, Confluence)", "level": 85},
+            {"name": "KI / ML (sentence-transformers, Groq, NLP)", "level": 75}
+        ]
+    },
+    "portfolio": [
+        {"title": "Minichef — KI-Sprachassistent", "tech": ["Python", "Vosk", "gTTS", "Pygame", "SQLite"], "description": "KI-Sprachassistent für professionelles Küchenmanagement mit Echtzeit-Spracherkennung, NLP und Sprachsynthese.", "github": "", "demo": "", "status": "completed"},
+        {"title": "Interaktives Portfolio", "tech": ["React", "FastAPI", "PostgreSQL", "Three.js", "Chart.js", "Docker", "sentence-transformers", "Groq AI"], "description": "Full-Stack-Portfolio mit Desktop-Fenster-Metapher. KI-Chatbot, Besucheranalysen mit Karten, Job-Aggregation aus 8 APIs (Jobicy, Remotive, Arbeitnow, JSearch, RemoteOK, Himalayas, Adzuna, WeWorkRemotely) mit einheitlicher Suche, KI-Job-Matching (sentence-transformers + LLM Re-Ranking), Kanban-Pipeline, Gehaltsanalysen, SSE-Echtzeitbenachrichtigungen, JWT-Auth mit Refresh-Tokens, 6 Three.js/Canvas-Hintergründe, Terminal-Easter-Egg, vollständige i18n (6 Sprachen) und WCAG-Barrierefreiheit.", "github": "", "demo": "", "status": "completed"},
+        {"title": "Gesundheitsnetzwerk-Management", "tech": ["Cisco", "Fortigate", "VPN", "Jira", "Confluence"], "description": "Infrastrukturmanagement für Krankenhäuser in 3 Provinzen mit 99%+ Verfügbarkeit für kritische Gesundheitsdienste.", "github": "", "demo": "", "status": "completed"}
+    ],
+    "achievements": [
+        {"metric": "Netzwerk-Verfügbarkeit", "value": "99%+", "icon": "NET"},
+        {"metric": "Infra-Leistungssteigerung", "value": "60%", "icon": "UP"},
+        {"metric": "Verwaltete Terminals", "value": "1.000+", "icon": "SYS"},
+        {"metric": "Länder (Remote)", "value": "4", "icon": "GEO"},
+        {"metric": "Datenverlust", "value": "Null", "icon": "SEC"},
+        {"metric": "Jahre Erfahrung", "value": "20+", "icon": "EXP"},
+        {"metric": "Tech-Stack-Tiefe", "value": "19+", "icon": "DEV"},
+        {"metric": "Gesundheitssysteme", "value": "3 Provinzen", "icon": "MED"}
+    ],
+    "contact": {
+        "message": "Interesse an einer Zusammenarbeit? Kontaktieren Sie mich per E-Mail:",
+        "social": {"linkedin": "", "github": "", "twitter": "", "instagram": ""}
+    }
+}

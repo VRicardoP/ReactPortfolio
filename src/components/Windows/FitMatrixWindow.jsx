@@ -141,10 +141,10 @@ const FitMatrixWindow = memo(({ data, initialPosition }) => {
                 <table style={styles.table}>
                     <thead>
                         <tr style={styles.headerRow}>
-                            <th style={styles.th}>Skill</th>
-                            <th style={styles.th}>Category</th>
-                            <th style={styles.th}>Proficiency</th>
-                            <th style={styles.thRight}>Lvl</th>
+                            <th style={styles.th}>{t('fitMatrix.skill')}</th>
+                            <th style={styles.th}>{t('fitMatrix.category')}</th>
+                            <th style={styles.th}>{t('fitMatrix.proficiency')}</th>
+                            <th style={styles.thRight}>{t('fitMatrix.level')}</th>
                         </tr>
                     </thead>
                     <tbody>

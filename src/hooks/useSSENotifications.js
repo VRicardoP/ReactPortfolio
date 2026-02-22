@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
+import i18n from '../i18n';
 
 export const useSSENotifications = () => {
     const { token, isAuthenticated } = useAuth();
@@ -54,7 +55,7 @@ export const useSSENotifications = () => {
                                 // Show toast for new jobs events
                                 if (data.type === 'new_jobs' && data.source && data.count) {
                                     const sourceName = data.source.charAt(0).toUpperCase() + data.source.slice(1);
-                                    showToast(`${data.count} new jobs from ${sourceName}`, 4000);
+                                    showToast(i18n.t('dashboard.newJobs.toast', { count: data.count, source: sourceName }), 4000);
                                 }
 
                                 setNotifications(prev => [

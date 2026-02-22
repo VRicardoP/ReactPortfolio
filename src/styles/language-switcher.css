@@ -1,0 +1,93 @@
+.language-switcher {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  font-family: 'Courier New', monospace;
+}
+
+.language-switcher-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(var(--theme-primary-rgb, 0, 255, 255), 0.5);
+  background: rgba(0, 0, 0, 0.85);
+  color: rgba(var(--theme-primary-rgb, 0, 255, 255), 1);
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-switcher-btn:hover {
+  border-color: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.9);
+  box-shadow: 0 0 12px rgba(var(--theme-primary-rgb, 0, 255, 255), 0.4);
+}
+
+.language-switcher-dropdown {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  background: rgba(10, 10, 20, 0.95);
+  border: 1px solid rgba(var(--theme-primary-rgb, 0, 255, 255), 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  min-width: 150px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  animation: langDropdownIn 0.15s ease-out;
+}
+
+@keyframes langDropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.language-option:hover {
+  background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.1);
+  color: rgba(var(--theme-primary-rgb, 0, 255, 255), 1);
+}
+
+.language-option.active {
+  color: rgba(var(--theme-primary-rgb, 0, 255, 255), 1);
+  background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.08);
+}
+
+.language-option-code {
+  font-weight: bold;
+  min-width: 24px;
+}
+
+.language-option-name {
+  opacity: 0.7;
+}
+
+.language-option.active .language-option-name {
+  opacity: 1;
+}

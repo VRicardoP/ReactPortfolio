@@ -10,6 +10,11 @@ body {
   box-sizing: border-box;
 }
 
+/* Japanese CJK font support */
+:lang(ja) {
+  font-family: 'Courier New', 'Noto Sans Mono CJK JP', 'MS Gothic', 'Osaka-Mono', monospace;
+}
+
 /* Three.js canvas fixed in background */
 #root {
   width: 100%;

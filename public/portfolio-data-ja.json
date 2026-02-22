@@ -1,0 +1,99 @@
+{
+    "name": "Vicente Ricardo Pau Valero",
+    "title": "フルスタック開発者 & ITシステムエンジニア",
+    "email": "vicente.pau@hotmail.com",
+    "phone": "+34 644 213 173",
+    "location": "カルカイシェント、バレンシア（スペイン）",
+    "profile": {
+        "description": "システム管理、ネットワークセキュリティ、フルスタックソフトウェア開発にわたる20年以上の経験を持つITプロフェッショナル。重要なインフラストラクチャの保護・再構築からAI搭載アプリケーションの開発まで、エンドツーエンドの技術ソリューションを設計・提供する実績あり。医療、自動車、小売などの高度に規制された分野で1,000台以上の端末環境を管理。英語に堪能（バイリンガル）、スペイン、イギリス、多国籍環境での国際チームでの勤務経験あり。"
+    },
+    "softSkills": [
+        "コミットメントと責任感",
+        "批判的・分析的思考",
+        "職業的誠実さ",
+        "共感とユーザー志向",
+        "建設的な紛争解決",
+        "継続的な学習",
+        "効果的なチームワーク",
+        "主体性と積極性",
+        "ストレスマネジメント",
+        "適応力",
+        "複雑な問題解決",
+        "明確なコミュニケーション",
+        "自己動機付けと自己管理"
+    ],
+    "education": [
+        {"title": "Webアプリケーション開発上級技術者（DAW）", "institution": "IES / FP — EQF Level 5", "date": "2025", "type": "degree", "description": "JavaScript、PHP、Node.js、React、REST API、データベース設計、Webデプロイメント、アクセシビリティ、ORM、Git、Odoo ERP"},
+        {"title": "マルチプラットフォームアプリ開発上級技術者（DAM）", "institution": "IES / FP — EQF Level 5", "date": "2024", "type": "degree", "description": "Java、Kotlin、Flutter、Android開発、ORM（Hibernate）、サービスとプロセス、2D/3Dゲームエンジン、UML、TDD"},
+        {"title": "Reactブートキャンプ", "institution": "Geekshubs Academy", "date": "2023", "type": "bootcamp", "description": "React.jsコンポーネント、フック、ステート、コンテキスト、Redux、REST API統合、コンポーネントテスト"},
+        {"title": "情報科学・経営学", "institution": "Universidad Politécnica de Valencia", "date": "2003 – 2005", "type": "degree", "description": ""},
+        {"title": "サーバー管理コース", "institution": "", "date": "2002 – 2003", "type": "course", "description": ""},
+        {"title": "IT管理スペシャリスト技術者", "institution": "", "date": "1997 – 2000", "type": "degree", "description": ""}
+    ],
+    "experience": [
+        {"title": "ソフトウェア開発者（AIプロジェクト）— インターンシップ", "company": "Cook-Code System Startup", "location": "バレンシア", "date": "2025 – 2026", "description": "'Minichef'をゼロから構築：プロの厨房管理のためのAI音声アシスタント。リアルタイム音声認識（Vosk）、自然言語処理、データベース操作、音声合成（gTTS/Pygame）を統合した完全なPythonパイプラインを開発し、在庫、レシピ、仕入先データへのハンズフリーの会話型アクセスを実現。"},
+        {"title": "ITサポート技術者 — 医療ネットワーク", "company": "Telefónica / Consellería de Sanidad", "location": "バレンシア州", "date": "2022 – 2025", "description": "3つの州にわたる病院と医療センターのネットワークインフラで99%以上の稼働率を維持。CiscoおよびFortigateルーター、ファイアウォール、VPNを管理。Jira、Confluence、カスタムチケッティングアプリによるインシデント管理。"},
+        {"title": "サポートスペシャリスト — フォード欧州事業", "company": "DHL Supply Chain", "location": "バレンシア", "date": "2020 – 2021", "description": "4カ国（スペイン、ドイツ、イギリス、ハンガリー）のフォード製造工場へのリモートITサポート。Active Directoryユーザーライフサイクル管理の効率化。インドにホストされた仮想サーバーの管理。エラー発生時にインドのサーバーでデータベースクリーンアップスクリプトを実行する重要なリモート介入を実施 — これはミッションクリティカルなプロセスであり、古いデータのクリアに失敗するとヨーロッパの工場への情報フローが遮断され、生産ラインが停止するリスクがあった。"},
+        {"title": "N2サポート技術者 & ジュニア開発者", "company": "Temática Software", "location": "バレンシア", "date": "2019", "description": "LinuxおよびWindowsインフラ全体にZabbixモニタリングを導入。VMware ESXi仮想化とAWSクラウドインフラを構築。PythonとJavaのジュニア開発者として貢献。Oracle SQLデータベースサポート。バレンシア大学ITIとのAgile/Scrum。"},
+        {"title": "システム管理者", "company": "Postres Lácteos Romar S.L.", "location": "バレンシア", "date": "2016 – 2018", "description": "データセンターをゼロから再設計し、インフラ性能を60%向上。企業初のセキュリティレイヤー（Cisco/Sophosファイアウォール）を導入。ERPシステムの選定・調達を主導。すべてのIT運用を単独で管理：ESXi、VPN/AD、Linux、SQL。"},
+        {"title": "IT管理者 — データセンター運用", "company": "Tecnocom (Ford & Mercadona)", "location": "バレンシア", "date": "2016", "description": "フォード（エンジン工場）とMercadona（全国小売）のミッションクリティカルなデータセンターを運用。HP OVOによるインフラ監視、Axwayによるワークフロー自動化。HP DataprotectorとCommVaultによるバックアップ管理でデータ損失ゼロ。"},
+        {"title": "IT管理者 & 技術者", "company": "VSL Support Ltd", "location": "イングランド南部、イギリス", "date": "2013 – 2015", "description": "イングランド南部のNHS病院、ホテルチェーン、レストラングループ、自動車フランチャイズのITシステムとネットワークを管理。新規クライアントサイトへの完全なネットワークおよびサーバーインフラの導入。"},
+        {"title": "システム管理者 — 病院IT", "company": "Hospital de la Ribera", "location": "アルシラ、バレンシア", "date": "2009 – 2011", "description": "夜間シフトの唯一のIT担当者として、重要な医療ITインフラ（Citrix、Exchange、仮想化システム、ルーター、ファイアウォール）の24時間365日の継続性を確保。"}
+    ],
+    "languages": [
+        {"language": "スペイン語", "level": "ネイティブ"},
+        {"language": "英語", "level": "バイリンガル / C1+"},
+        {"language": "イタリア語", "level": "初級"}
+    ],
+    "techSkills": {
+        "frontend": [
+            {"name": "HTML5 / CSS3 / XML", "level": 95},
+            {"name": "JavaScript", "level": 90},
+            {"name": "React.js", "level": 88},
+            {"name": "Three.js / WebGL", "level": 78},
+            {"name": "Flutter / Kotlin (Mobile)", "level": 75}
+        ],
+        "backend": [
+            {"name": "Python / FastAPI", "level": 90},
+            {"name": "Java / Spring", "level": 85},
+            {"name": "Node.js / Express", "level": 85},
+            {"name": "PHP", "level": 80}
+        ],
+        "databases": [
+            {"name": "Oracle SQL", "level": 88},
+            {"name": "MySQL / PostgreSQL", "level": 88},
+            {"name": "Microsoft SQL Server", "level": 82},
+            {"name": "SQLAlchemy / Alembic (ORM)", "level": 85},
+            {"name": "Redis", "level": 72}
+        ],
+        "others": [
+            {"name": "Windows Server / Linux Admin", "level": 95},
+            {"name": "VMware / ESXi", "level": 92},
+            {"name": "Network Security (Cisco, Sophos, Fortigate)", "level": 90},
+            {"name": "Active Directory / VPN", "level": 90},
+            {"name": "Git / GitHub", "level": 88},
+            {"name": "Docker / AWS", "level": 78},
+            {"name": "Agile / Scrum (Jira, Confluence)", "level": 85},
+            {"name": "AI / ML (sentence-transformers, Groq, NLP)", "level": 75}
+        ]
+    },
+    "portfolio": [
+        {"title": "Minichef — AI音声アシスタント", "tech": ["Python", "Vosk", "gTTS", "Pygame", "SQLite"], "description": "リアルタイム音声認識、自然言語処理、音声合成によるプロの厨房管理のためのAI音声アシスタント。", "github": "", "demo": "", "status": "completed"},
+        {"title": "インタラクティブポートフォリオ", "tech": ["React", "FastAPI", "PostgreSQL", "Three.js", "Chart.js", "Docker", "sentence-transformers", "Groq AI"], "description": "デスクトップウィンドウUIメタファーのフルスタックポートフォリオ。AIチャットボット、マップ付き訪問者分析、8つのAPI（Jobicy、Remotive、Arbeitnow、JSearch、RemoteOK、Himalayas、Adzuna、WeWorkRemotely）からの求人集約と統合検索、AIジョブマッチング（sentence-transformers + LLM再ランキング）、カンバンパイプライン、給与分析、SSEリアルタイム通知、リフレッシュトークン付きJWT認証、6つのThree.js/Canvas背景、ターミナルイースターエッグ、完全なi18n（6言語）、WCAGアクセシビリティ。", "github": "", "demo": "", "status": "completed"},
+        {"title": "医療ネットワーク管理", "tech": ["Cisco", "Fortigate", "VPN", "Jira", "Confluence"], "description": "3つの州にわたる病院のインフラ管理、重要な医療サービスで99%以上の稼働率を維持。", "github": "", "demo": "", "status": "completed"}
+    ],
+    "achievements": [
+        {"metric": "ネットワーク稼働率", "value": "99%+", "icon": "NET"},
+        {"metric": "インフラ性能向上", "value": "60%", "icon": "UP"},
+        {"metric": "管理端末数", "value": "1,000+", "icon": "SYS"},
+        {"metric": "対応国数（リモート）", "value": "4", "icon": "GEO"},
+        {"metric": "データ損失", "value": "ゼロ", "icon": "SEC"},
+        {"metric": "経験年数", "value": "20+", "icon": "EXP"},
+        {"metric": "テックスタック深度", "value": "19+", "icon": "DEV"},
+        {"metric": "医療システム", "value": "3州", "icon": "MED"}
+    ],
+    "contact": {
+        "message": "コラボレーションに興味がありますか？メールでご連絡ください：",
+        "social": {"linkedin": "", "github": "", "twitter": "", "instagram": ""}
+    }
+}

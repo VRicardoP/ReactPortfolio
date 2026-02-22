@@ -8,11 +8,11 @@ React 19 + Vite 7 + react-router-dom 7 + Three.js + tsparticles + Chart.js + Lea
 src/
   components/
     Background/     — 6 visual effects (Rain, Matrix, Parallax, Lensflare, Cube, Smoke)
-    Dashboard/      — 15 admin dashboard windows:
+    Dashboard/      — 13 admin dashboard windows:
       StatsWindow, MapWindow, ChatAnalyticsWindow, RecentVisitorsWindow
-      JobBoardWindow (Jobicy), RemotiveJobBoardWindow, ArbeitnowJobBoardWindow, JsearchJobBoardWindow
-      JobMarketAnalyticsWindow, BookmarkedJobsWindow
-      UnifiedJobSearchWindow, JSearchLiveWindow, SalaryAnalyticsWindow, SavedSearchesWindow, KanbanWindow
+      JobBoardTabbedWindow (8 sources in tabs), JobMarketAnalyticsWindow, BookmarkedJobsWindow
+      JSearchLiveWindow, SalaryAnalyticsWindow, JobFilterWindow (unified search)
+      SavedSearchesWindow, KanbanWindow, AIJobMatchWindow (embeddings + LLM)
       JobCardExtras.jsx — Shared freshness badges + company research popover
     Windows/        — 12 portfolio windows:
       WelcomeWindow, ProfileWindow, EducationWindow (timeline), ExperienceWindow (timeline)
@@ -39,11 +39,15 @@ src/
     ThemeContext.jsx   — 3 themes (cyan/silver/amber), 6 backgrounds, persisted to localStorage
   pages/
     LoginPage.jsx      — i18n-enabled login form
-    DashboardPage.jsx  — Admin dashboard with 15 windows + theme controls
+    DashboardPage.jsx  — Admin dashboard with 13 windows + theme controls
   i18n/
     index.js           — i18next config with LanguageDetector
-    locales/en.json    — English translations (~200 keys)
-    locales/es.json    — Spanish translations (~200 keys)
+    locales/en.json    — English translations (~250 keys)
+    locales/es.json    — Spanish translations (~250 keys)
+    locales/fr.json    — French translations
+    locales/de.json    — German translations
+    locales/ja.json    — Japanese translations
+    locales/it.json    — Italian translations
   styles/              — CSS files (base, windows-content, floating-window, dashboard, chat, login, etc.)
   config/
     api.js             — Backend URL centralized (reads VITE_API_BASE_URL, fallback: http://127.0.0.1:8001)
@@ -55,7 +59,7 @@ src/
 ```
 /           → App.jsx (public portfolio, 12 windows)
 /login      → LoginPage
-/dashboard  → DashboardPage (requires auth via ProtectedRoute, 15 windows)
+/dashboard  → DashboardPage (requires auth via ProtectedRoute, 13 windows)
 *           → redirect to /
 ```
 
@@ -80,7 +84,7 @@ Imported by: `AuthContext.jsx`, `useDashboardData.js`, `useVisitorTracking.js`
 
 ### i18n
 Use `const { t } = useTranslation()` then `t('key')` for translatable text.
-Locale files: `src/i18n/locales/en.json` and `es.json`.
+Locale files: `src/i18n/locales/{en,es,fr,de,ja,it}.json`.
 Keys: `welcome.*`, `chat.*`, `contact.*`, `skills.*`, `windows.*`, `app.*`, `error.*`, `login.*`, `dashboard.*`, `terminal.*`
 
 ### Code Splitting (vite.config.js)
@@ -93,7 +97,7 @@ Warning limit: 700KB (Three.js core is ~522KB, lazy-loaded)
 - Leaflet CDN — Map marker icons
 - OpenStreetMap — Map tiles
 
-### Job Board Features (shared across all 4 boards)
+### Job Board Features (shared across all 8 sources)
 - Sort (4 options), pagination (20/page), cache age badge via `useJobBoardControls`
 - Freshness badges: <24h green "New", <72h cyan, >72h hidden
 - Company research: click company → popover with LinkedIn/Glassdoor/Crunchbase links
@@ -123,4 +127,3 @@ npx vitest           # watch mode
 - useDashboardData returns `warnings` array for failed API sources (no longer silently swallows errors)
 - All previous known gaps (i18n in dashboard, centralized backend URL) have been resolved
 - Background effects (Three.js/Canvas) use mount-only effects with `eslint-disable` — adding theme as dependency would destroy/recreate the entire 3D scene
-- See root `DEUDA_TECNICA.md` for resolved technical debt details

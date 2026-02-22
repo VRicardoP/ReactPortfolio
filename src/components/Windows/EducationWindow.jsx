@@ -2,20 +2,21 @@ import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
-// detect education type for badge styling
-const getEducationType = (title, institution) => {
-    const text = `${title} ${institution}`.toLowerCase();
+// detect education type for badge styling — uses explicit type field if available
+const getEducationType = (edu) => {
+    if (edu.type) return edu.type;
+    const text = `${edu.title} ${edu.institution || ''}`.toLowerCase();
     if (text.includes('bootcamp') || text.includes('full stack')) return 'bootcamp';
     if (text.includes('certificate') || text.includes('certificat') || text.includes('cisco') || text.includes('ccna')) return 'cert';
     if (text.includes('technician') || text.includes('degree') || text.includes('bachelor') || text.includes('master') || text.includes('eso') || text.includes('eqf')) return 'degree';
     return 'course';
 };
 
-const TYPE_LABELS = {
-    degree: 'Degree',
-    bootcamp: 'Bootcamp',
-    cert: 'Certificate',
-    course: 'Course'
+const TYPE_LABEL_KEYS = {
+    degree: 'education.typeDegree',
+    bootcamp: 'education.typeBootcamp',
+    cert: 'education.typeCert',
+    course: 'education.typeCourse'
 };
 
 const EducationWindow = ({ data, initialPosition }) => {
@@ -40,7 +41,7 @@ const EducationWindow = ({ data, initialPosition }) => {
                     <div className="timeline-line" />
                     {data.education.map((edu, index) => {
                         const isExpanded = expandedIndex === index;
-                        const type = getEducationType(edu.title, edu.institution || '');
+                        const type = getEducationType(edu);
 
                         return (
                             <div
@@ -56,7 +57,7 @@ const EducationWindow = ({ data, initialPosition }) => {
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                                         <span className="timeline-card-title">{edu.title}</span>
                                         <span className={`education-badge education-badge-${type}`}>
-                                            {TYPE_LABELS[type]}
+                                            {t(TYPE_LABEL_KEYS[type])}
                                         </span>
                                     </div>
                                     {edu.institution && (

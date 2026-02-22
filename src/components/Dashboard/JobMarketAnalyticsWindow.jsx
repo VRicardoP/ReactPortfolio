@@ -21,13 +21,12 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     const { theme } = useTheme();
     const [activeTab, setActiveTab] = useState('skills');
 
-    // Aggregate all jobs from all 4 sources
+    // Aggregate all jobs from all sources
     const allJobs = useMemo(() => {
         if (!jobData) return [];
-        const { jobicy, remotive, arbeitnow, jsearch } = jobData;
+        const { jobicy, remotive, arbeitnow, jsearch, remoteok, himalayas, adzuna, weworkremotely } = jobData;
         const jobs = [];
 
-        // Jobicy
         if (jobicy?.data) {
             jobicy.data.forEach(j => jobs.push({
                 skills: j.skills || [],
@@ -36,7 +35,6 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
             }));
         }
 
-        // Remotive
         if (remotive?.data) {
             remotive.data.forEach(j => jobs.push({
                 skills: j.tags || [],
@@ -45,7 +43,6 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
             }));
         }
 
-        // Arbeitnow
         if (arbeitnow?.data) {
             arbeitnow.data.forEach(j => jobs.push({
                 skills: j.tags || [],
@@ -54,13 +51,44 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
             }));
         }
 
-        // JSearch
         const jsearchJobs = Array.isArray(jsearch) ? jsearch : (jsearch?.data || jsearch?.jobs || []);
         jsearchJobs.forEach(j => jobs.push({
             skills: [],
             remote: j.job_is_remote ?? j.is_remote ?? false,
             source: 'JSearch',
         }));
+
+        if (remoteok?.data) {
+            remoteok.data.forEach(j => jobs.push({
+                skills: j.tags || [],
+                remote: true,
+                source: 'RemoteOK',
+            }));
+        }
+
+        if (himalayas?.data) {
+            himalayas.data.forEach(j => jobs.push({
+                skills: j.categories || j.tags || [],
+                remote: true,
+                source: 'Himalayas',
+            }));
+        }
+
+        if (adzuna?.data) {
+            adzuna.data.forEach(j => jobs.push({
+                skills: j.tags || [],
+                remote: j.remote === true,
+                source: 'Adzuna',
+            }));
+        }
+
+        if (weworkremotely?.data) {
+            weworkremotely.data.forEach(j => jobs.push({
+                skills: j.tags || [],
+                remote: true,
+                source: 'WeWorkRemotely',
+            }));
+        }
 
         return jobs;
     }, [jobData]);

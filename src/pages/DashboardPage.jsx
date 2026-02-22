@@ -17,17 +17,15 @@ const StatsWindow = lazy(() => import('../components/Dashboard/StatsWindow'));
 const MapWindow = lazy(() => import('../components/Dashboard/MapWindow'));
 const ChatAnalyticsWindow = lazy(() => import('../components/Dashboard/ChatAnalyticsWindow'));
 const RecentVisitorsWindow = lazy(() => import('../components/Dashboard/RecentVisitorsWindow'));
-const JobBoardWindow = lazy(() => import('../components/Dashboard/JobBoardWindow'));
-const RemotiveJobBoardWindow = lazy(() => import('../components/Dashboard/RemotiveJobBoardWindow'));
-const ArbeitnowJobBoardWindow = lazy(() => import('../components/Dashboard/ArbeitnowJobBoardWindow'));
-const JsearchJobBoardWindow = lazy(() => import('../components/Dashboard/JsearchJobBoardWindow'));
+const JobBoardTabbedWindow = lazy(() => import('../components/Dashboard/JobBoardTabbedWindow'));
 const JobMarketAnalyticsWindow = lazy(() => import('../components/Dashboard/JobMarketAnalyticsWindow'));
 const BookmarkedJobsWindow = lazy(() => import('../components/Dashboard/BookmarkedJobsWindow'));
-const UnifiedJobSearchWindow = lazy(() => import('../components/Dashboard/UnifiedJobSearchWindow'));
 const JSearchLiveWindow = lazy(() => import('../components/Dashboard/JSearchLiveWindow'));
 const SalaryAnalyticsWindow = lazy(() => import('../components/Dashboard/SalaryAnalyticsWindow'));
 const SavedSearchesWindow = lazy(() => import('../components/Dashboard/SavedSearchesWindow'));
+const JobFilterWindow = lazy(() => import('../components/Dashboard/JobFilterWindow'));
 const KanbanWindow = lazy(() => import('../components/Dashboard/KanbanWindow'));
+const AIJobMatchWindow = lazy(() => import('../components/Dashboard/AIJobMatchWindow'));
 
 // what is shown while the dashboard is loading
 const DashboardLoader = memo(() => (
@@ -56,7 +54,7 @@ const DashboardLoader = memo(() => (
 DashboardLoader.displayName = 'DashboardLoader';
 
 // here are all the dashboard windows
-const DashboardContent = memo(({ stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, bookmarks, removeBookmark }) => {
+const DashboardContent = memo(({ stats, mapData, chatAnalytics, jobData, bookmarks, removeBookmark }) => {
     // Listen for SSE notifications (new jobs toast, etc.)
     useSSENotifications();
 
@@ -65,20 +63,18 @@ const DashboardContent = memo(({ stats, mapData, chatAnalytics, recentJobs, remo
         'recent-visitors-window',
         'map-window',
         'chat-analytics-window',
-        'jobboard-window',
-        'remotive-jobboard-window',
-        'arbeitnow-jobboard-window',
-        'jsearch-jobboard-window',
+        'job-board-window',
         'job-analytics-window',
         'bookmarked-jobs-window',
-        'unified-search-window',
         'jsearch-live-window',
         'salary-analytics-window',
+        'job-filter-window',
         'saved-searches-window',
-        'kanban-window'
+        'kanban-window',
+        'ai-match-window'
     ];
 
-    useWindowLayout(dashboardWindowIds, 3000);
+    useWindowLayout(dashboardWindowIds, 1500);
 
     return (
         <Suspense fallback={<DashboardLoader />}>
@@ -102,61 +98,45 @@ const DashboardContent = memo(({ stats, mapData, chatAnalytics, recentJobs, remo
                 initialPosition={{ x: 190, y: 150 }}
             />
 
-            <JobBoardWindow
-                data={recentJobs}
+            <JobBoardTabbedWindow
+                jobData={jobData}
                 initialPosition={{ x: 220, y: 160 }}
             />
 
-            <RemotiveJobBoardWindow
-                data={remotiveRecentJobs}
-                initialPosition={{ x: 250, y: 170 }}
-            />
-
-            <ArbeitnowJobBoardWindow
-                data={arbeitnowRecentJobs}
-                initialPosition={{ x: 280, y: 180 }}
-            />
-
-            <JsearchJobBoardWindow
-                data={jsearchRecentJobs}
-                initialPosition={{ x: 310, y: 190 }}
-            />
-
             <JobMarketAnalyticsWindow
-                jobData={{
-                    jobicy: recentJobs,
-                    remotive: remotiveRecentJobs,
-                    arbeitnow: arbeitnowRecentJobs,
-                    jsearch: jsearchRecentJobs,
-                }}
-                initialPosition={{ x: 340, y: 200 }}
+                jobData={jobData}
+                initialPosition={{ x: 250, y: 170 }}
             />
 
             <BookmarkedJobsWindow
                 bookmarks={bookmarks}
                 onRemove={removeBookmark}
-                initialPosition={{ x: 370, y: 210 }}
-            />
-
-            <UnifiedJobSearchWindow
-                initialPosition={{ x: 400, y: 220 }}
+                initialPosition={{ x: 280, y: 180 }}
             />
 
             <JSearchLiveWindow
-                initialPosition={{ x: 430, y: 230 }}
+                initialPosition={{ x: 310, y: 190 }}
             />
 
             <SalaryAnalyticsWindow
-                data={jsearchRecentJobs}
-                initialPosition={{ x: 460, y: 240 }}
+                data={jobData.jsearch}
+                initialPosition={{ x: 340, y: 200 }}
+            />
+
+            <JobFilterWindow
+                initialPosition={{ x: 370, y: 210 }}
             />
 
             <SavedSearchesWindow
-                initialPosition={{ x: 490, y: 250 }}
+                initialPosition={{ x: 400, y: 220 }}
             />
 
             <KanbanWindow
-                initialPosition={{ x: 520, y: 260 }}
+                initialPosition={{ x: 430, y: 230 }}
+            />
+
+            <AIJobMatchWindow
+                initialPosition={{ x: 460, y: 240 }}
             />
         </Suspense>
     );
@@ -188,7 +168,7 @@ const DashboardPage = () => {
     const { theme, cycleTheme, themeName, backgroundEffect, cycleBackground } = useTheme();
     const navigate = useNavigate();
     const typedText = useTypewriter(t('dashboard.title'), 100);
-    const { stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, loading, error } = useDashboardData();
+    const { stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, remoteokRecentJobs, himalayasRecentJobs, adzunaRecentJobs, weworkremotelyRecentJobs, loading, error } = useDashboardData();
     const { bookmarks, removeBookmark } = useJobBookmarks();
 
     // functions for the buttons
@@ -355,10 +335,16 @@ const DashboardPage = () => {
                     stats={stats}
                     mapData={mapData}
                     chatAnalytics={chatAnalytics}
-                    recentJobs={recentJobs}
-                    remotiveRecentJobs={remotiveRecentJobs}
-                    arbeitnowRecentJobs={arbeitnowRecentJobs}
-                    jsearchRecentJobs={jsearchRecentJobs}
+                    jobData={{
+                        jobicy: recentJobs,
+                        remotive: remotiveRecentJobs,
+                        arbeitnow: arbeitnowRecentJobs,
+                        jsearch: jsearchRecentJobs,
+                        remoteok: remoteokRecentJobs,
+                        himalayas: himalayasRecentJobs,
+                        adzuna: adzunaRecentJobs,
+                        weworkremotely: weworkremotelyRecentJobs,
+                    }}
                     bookmarks={bookmarks}
                     removeBookmark={removeBookmark}
                 />

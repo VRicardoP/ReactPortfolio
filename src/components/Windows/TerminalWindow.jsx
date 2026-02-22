@@ -5,6 +5,7 @@ import FloatingWindow from './FloatingWindow';
 import '../../styles/terminal.css';
 
 const VALID_EFFECTS = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
+const SUPPORTED_LANGS = ['en', 'es', 'fr', 'de', 'ja', 'it'];
 
 const ASCII_BANNER = [
   ' _    ___                  __       ',
@@ -25,7 +26,7 @@ const FAKE_FILES = {
 };
 
 const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { backgroundEffect, setBackground, setTheme, themeName, availableThemes } = useTheme();
   const [lines, setLines] = useState([]);
   const [history, setHistory] = useState([]);
@@ -43,6 +44,11 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
     }
   }, [lines]);
+
+  // Auto-focus input on mount
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   // Show welcome banner on mount
   useEffect(() => {
@@ -88,6 +94,7 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
           { text: '  ping           ' + t('terminal.cmdPing'), type: 'success' },
           { text: '  background     ' + t('terminal.cmdBackground'), type: 'success' },
           { text: '  theme          ' + t('terminal.cmdTheme'), type: 'success' },
+          { text: '  lang           ' + t('terminal.cmdLang'), type: 'success' },
           { text: '  sudo hire_me   ' + t('terminal.cmdHireMe'), type: 'success' },
           { text: '  history        ' + t('terminal.cmdHistory'), type: 'success' },
           { text: '  exit           ' + t('terminal.cmdExit'), type: 'success' },
@@ -299,6 +306,39 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
         break;
       }
 
+      case 'lang':
+      case 'language': {
+        const sub = args[0]?.toLowerCase();
+        if (!sub) {
+          const currentLang = (i18n.language || 'en').split('-')[0];
+          addLines([
+            { text: `  ${t('terminal.langCurrent', { lang: currentLang })}`, type: 'info' },
+            { text: `  ${t('terminal.langUsage')}`, type: 'info' },
+            { text: '', type: 'info' },
+          ]);
+        } else if (sub === 'list') {
+          const currentLang = (i18n.language || 'en').split('-')[0];
+          addLines([
+            { text: `  ${t('terminal.langCurrent', { lang: currentLang })}`, type: 'info' },
+            { text: `  ${t('terminal.langAvailable')}`, type: 'highlight' },
+            ...SUPPORTED_LANGS.map(l => ({
+              text: `    ${l === currentLang ? '> ' : '  '}${l}${l === currentLang ? ' (active)' : ''}`,
+              type: l === currentLang ? 'highlight' : 'success',
+            })),
+            { text: '', type: 'info' },
+          ]);
+        } else if (SUPPORTED_LANGS.includes(sub)) {
+          i18n.changeLanguage(sub);
+          addLines([
+            { text: `  ${t('terminal.langChanged', { lang: sub })}`, type: 'success' },
+            { text: '', type: 'info' },
+          ]);
+        } else {
+          addLines([{ text: `  ${t('terminal.langInvalid', { lang: sub })}`, type: 'error' }]);
+        }
+        break;
+      }
+
       case 'history': {
         if (history.length === 0) {
           addLines([{ text: t('terminal.noHistory'), type: 'info' }]);
@@ -345,7 +385,7 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
         ]);
       }
     }
-  }, [addLines, portfolioData, name, history, t, onClose, backgroundEffect, setBackground, themeName, setTheme, availableThemes]);
+  }, [addLines, portfolioData, name, history, t, i18n, onClose, backgroundEffect, setBackground, themeName, setTheme, availableThemes]);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
@@ -390,7 +430,7 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
       id="terminal-window"
       title={t('terminal.title')}
       initialPosition={initialPosition}
-      initialSize={{ width: 600, height: 400 }}
+      initialSize={{ width: 900, height: 600 }}
     >
       <div className="terminal-body" onClick={handleBodyClick}>
         <div className="terminal-output" ref={outputRef}>
@@ -411,6 +451,7 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
             onKeyDown={handleKeyDown}
             autoComplete="off"
             spellCheck={false}
+            autoFocus
           />
         </form>
       </div>

@@ -46,7 +46,50 @@
     "normalView": "Perfil Completo",
     "downloadCV": "Descargar CV",
     "exportJSON": "JSON Resume",
-    "exportPDF": "Imprimir PDF"
+    "exportPDF": "Imprimir PDF",
+    "recruiterTopImpact": "Impacto Principal",
+    "recruiterTopImpact1": "99%+ uptime de red (sanidad)",
+    "recruiterTopImpact2": "60% mejora rendimiento infraestructura",
+    "recruiterTopImpact3": "Cero pérdida de datos en CPDs de misión crítica",
+    "recruiterCoreStack": "Stack Principal",
+    "recruiterCoreStack1": "React / FastAPI / PostgreSQL / Docker",
+    "recruiterCoreStack2": "Cisco / Fortigate / VMware / AWS",
+    "recruiterCoreStack3": "Python / Java / Node.js / SQL",
+    "recruiterKeyMetrics": "Métricas Clave",
+    "recruiterKeyMetrics1": "20+ años en 8 puestos",
+    "recruiterKeyMetrics2": "1.000+ terminales gestionados",
+    "recruiterKeyMetrics3": "4 países en soporte remoto"
+  },
+  "softSkills": {
+    "desc0": "Cumple sus compromisos y asume la responsabilidad de los resultados",
+    "desc1": "Evalúa situaciones complejas con lógica y razonamiento basado en datos",
+    "desc2": "Mantiene estándares éticos y transparencia en todas las interacciones",
+    "desc3": "Comprende las necesidades del usuario y diseña soluciones desde su perspectiva",
+    "desc4": "Gestiona desacuerdos para encontrar soluciones beneficiosas para todos",
+    "desc5": "Adquiere nuevas habilidades proactivamente y se mantiene al día con las tendencias",
+    "desc6": "Colabora entre roles y contribuye a objetivos compartidos",
+    "desc7": "Identifica oportunidades y actúa sin esperar a que se lo pidan",
+    "desc8": "Mantiene la calma y productividad bajo presión",
+    "desc9": "Prospera en entornos cambiantes y se adapta rápidamente",
+    "desc10": "Descompone desafíos difíciles en soluciones accionables",
+    "desc11": "Comunica ideas eficazmente tanto a audiencias técnicas como no técnicas",
+    "desc12": "Establece metas de forma independiente y mantiene el enfoque sin supervisión"
+  },
+  "education": {
+    "typeDegree": "Titulación",
+    "typeBootcamp": "Bootcamp",
+    "typeCert": "Certificado",
+    "typeCourse": "Curso"
+  },
+  "portfolio": {
+    "statusCompleted": "Completado",
+    "statusInProgress": "En Progreso"
+  },
+  "fitMatrix": {
+    "skill": "Habilidad",
+    "category": "Categoría",
+    "proficiency": "Dominio",
+    "level": "Niv"
   },
   "windows": {
     "profile": "Perfil",
@@ -143,7 +186,18 @@
       "sortMatch": "Mejor coincidencia",
       "match": "{{score}}% coincidencia",
       "bookmark": "Guardar",
-      "unbookmark": "Quitar guardado"
+      "unbookmark": "Quitar guardado",
+      "windowTitle": "Bolsa de Empleo",
+      "tabAll": "Todos",
+      "tabJobicy": "Jobicy",
+      "tabRemotive": "Remotive",
+      "tabArbeitnow": "Arbeitnow",
+      "tabJsearch": "JSearch",
+      "tabRemoteok": "RemoteOK",
+      "tabHimalayas": "Himalayas",
+      "tabAdzuna": "Adzuna",
+      "tabWeworkremotely": "WWRemotely",
+      "applied": "Aplicado"
     },
     "bookmarks": {
       "title": "Empleos Guardados",
@@ -243,10 +297,49 @@
       "filters": "Filtros",
       "save": "Guardar",
       "cancel": "Cancelar",
-      "delete": "Eliminar"
+      "delete": "Eliminar",
+      "queryPlaceholder": "Palabras clave...",
+      "countryPlaceholder": "Pa\u00eds...",
+      "cityPlaceholder": "Ciudad...",
+      "salaryMinPH": "Min $",
+      "salaryMaxPH": "Max $",
+      "remoteOnly": "Solo remoto",
+      "searching": "Buscando...",
+      "noResults": "Sin resultados",
+      "resultsFound": "resultados encontrados"
+    },
+    "jobFilter": {
+      "title": "Filtro Avanzado",
+      "searchLabel": "Buscar",
+      "searchPlaceholder": "T\u00edtulo, empresa, skill...",
+      "countryLabel": "Pa\u00eds",
+      "countryPlaceholder": "ej. Alemania, EEUU...",
+      "cityLabel": "Ciudad",
+      "cityPlaceholder": "ej. Berl\u00edn, Londres...",
+      "salaryMin": "Salario m\u00edn.",
+      "salaryMax": "Salario m\u00e1x.",
+      "remoteOnly": "Solo remoto",
+      "search": "Buscar",
+      "clear": "Limpiar",
+      "saveSearch": "Guardar",
+      "searching": "Buscando...",
+      "resultsFound": "resultados encontrados",
+      "noResults": "Ning\u00fan resultado coincide con tus filtros",
+      "hint": "Configura los filtros y pulsa Buscar para encontrar ofertas en todas las fuentes"
     },
     "newJobs": {
       "toast": "{{count}} nuevos empleos de {{source}}"
+    },
+    "aiMatch": {
+      "title": "AI Job Match",
+      "runAnalysis": "Ejecutar Análisis IA",
+      "analyzing": "Analizando empleos con IA...",
+      "analyzed": "{{total}} empleos analizados en {{time}}s",
+      "stageInfo": "Fase 1: Embeddings → Fase 2: Scoring LLM",
+      "skillsAnalysis": "Análisis de habilidades",
+      "matchingSkills": "Coincidentes",
+      "missingSkills": "Faltantes",
+      "noResults": "Pulsa 'Ejecutar Análisis IA' para encontrar tus mejores ofertas"
     }
   },
   "terminal": {
@@ -296,7 +389,20 @@
     "hireMe4": "¡Construyamos algo increíble juntos!",
     "noHistory": "No hay comandos en el historial aún.",
     "experienceHeader": "EXPERIENCIA LABORAL",
-    "educationHeader": "EDUCACIÓN"
+    "educationHeader": "EDUCACIÓN",
+    "cmdLang": "Cambiar idioma de la interfaz",
+    "langChanged": "Idioma cambiado a: {{lang}}",
+    "langCurrent": "Idioma actual: {{lang}}",
+    "langAvailable": "Idiomas disponibles:",
+    "langUsage": "Uso: lang <código> | lang list",
+    "langInvalid": "Idioma '{{lang}}' desconocido. Escribe 'lang list' para ver opciones."
+  },
+  "toast": {
+    "minimized": "{{window}} minimizado",
+    "restored": "{{window}} restaurado",
+    "maximized": "{{window}} maximizado",
+    "fittedToContent": "{{window}} ajustado al contenido",
+    "exploreWindows": "¡Haz clic en cualquier ventana para explorar!"
   },
   "login": {
     "title": "Acceso al Dashboard",

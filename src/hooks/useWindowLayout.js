@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useWindowContext } from '../context/WindowContext';
 import { showToast } from '../components/UI/Toast';
+import i18n from '../i18n';
 
 const useWindowLayout = (windowIds, delay = 3000) => {
   const { windows, toggleMinimize, updatePosition } = useWindowContext();
@@ -33,18 +34,25 @@ const useWindowLayout = (windowIds, delay = 3000) => {
     });
 
     // Then minimize them after a brief pause
-    const itemWidth = isMobile ? 140 : 200;
-    const menuWidth = Math.min(screenWidth * 0.85, windowIds.length * itemWidth);
-    const startX = Math.max(10, (screenWidth - menuWidth) / 2);
-    const itemSpacing = menuWidth / windowIds.length;
-    const menuY = isMobile ? 70 : 125;
+    const pillWidth = isMobile ? 140 : 180;
+    const pillGap = isMobile ? 6 : 10;
+    const maxRowWidth = screenWidth * 0.92;
+    const perRow = Math.max(1, Math.floor((maxRowWidth + pillGap) / (pillWidth + pillGap)));
+    const menuY = isMobile ? 70 : 110;
+    const rowHeight = isMobile ? 42 : 48;
 
     timerIdsRef.current = [];
 
     windowIds.forEach((windowId, index) => {
+      const row = Math.floor(index / perRow);
+      const col = index % perRow;
+      const itemsInRow = Math.min(perRow, windowIds.length - row * perRow);
+      const rowWidth = itemsInRow * pillWidth + (itemsInRow - 1) * pillGap;
+      const rowStartX = (screenWidth - rowWidth) / 2;
+
       const position = {
-        x: startX + (index * itemSpacing),
-        y: menuY
+        x: rowStartX + col * (pillWidth + pillGap),
+        y: menuY + row * rowHeight
       };
 
       const outerTimerId = setTimeout(() => {
@@ -54,7 +62,7 @@ const useWindowLayout = (windowIds, delay = 3000) => {
           toggleMinimize(windowId);
 
           if (index === windowIds.length - 1) {
-            showToast('Click on any window to explore!', 3000);
+            showToast(i18n.t('toast.exploreWindows'), 3000);
             hasAnimated.current = true;
           }
         }, 500);
@@ -102,21 +110,27 @@ const useWindowLayout = (windowIds, delay = 3000) => {
     if (!hasAnimated.current) return;
 
     const handleResize = () => {
-      // move minimized windows to their new position
       const screenWidth = window.innerWidth;
       const isMobile = screenWidth <= 768;
-      const itemWidth = isMobile ? 140 : 200;
-      const menuWidth = Math.min(screenWidth * 0.85, windowIds.length * itemWidth);
-      const startX = Math.max(10, (screenWidth - menuWidth) / 2);
-      const itemSpacing = menuWidth / windowIds.length;
-      const menuY = isMobile ? 70 : 100;
+      const pillWidth = isMobile ? 140 : 180;
+      const pillGap = isMobile ? 6 : 10;
+      const maxRowWidth = screenWidth * 0.92;
+      const perRow = Math.max(1, Math.floor((maxRowWidth + pillGap) / (pillWidth + pillGap)));
+      const menuY = isMobile ? 70 : 110;
+      const rowHeight = isMobile ? 42 : 48;
 
       windowIds.forEach((windowId, index) => {
-        const window = windows[windowId];
-        if (window && window.isMinimized) {
+        const win = windows[windowId];
+        if (win && win.isMinimized) {
+          const row = Math.floor(index / perRow);
+          const col = index % perRow;
+          const itemsInRow = Math.min(perRow, windowIds.length - row * perRow);
+          const rowWidth = itemsInRow * pillWidth + (itemsInRow - 1) * pillGap;
+          const rowStartX = (screenWidth - rowWidth) / 2;
+
           updatePosition(windowId, {
-            x: startX + (index * itemSpacing),
-            y: menuY
+            x: rowStartX + col * (pillWidth + pillGap),
+            y: menuY + row * rowHeight
           });
         }
       });

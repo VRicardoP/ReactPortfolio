@@ -51,19 +51,6 @@ const ContactWindow = ({ data, initialPosition }) => {
                         </button>
                     </div>
 
-                    {data.phone && (
-                        <div className="contact-info-row">
-                            <span className="contact-info-icon">T</span>
-                            <span>{data.phone}</span>
-                        </div>
-                    )}
-
-                    {data.location && (
-                        <div className="contact-info-row">
-                            <span className="contact-info-icon">~</span>
-                            <span>{data.location}</span>
-                        </div>
-                    )}
                 </div>
 
                 <div className="contact-social-links">

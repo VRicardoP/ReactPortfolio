@@ -1,0 +1,218 @@
+{
+    "name": "Vicente Ricardo Pau Valero",
+    "title": "Desarrollador Full-Stack e Ingeniero de Sistemas IT",
+    "email": "vicente.pau@hotmail.com",
+    "phone": "+34 644 213 173",
+    "location": "Carcaixent, Valencia (España)",
+    "profile": {
+        "description": "Profesional IT con más de 20 años de experiencia en administración de sistemas, seguridad de redes y desarrollo de software full-stack. Capacidad demostrada para diseñar y entregar soluciones técnicas de extremo a extremo — desde asegurar y reconstruir infraestructuras críticas hasta desarrollar aplicaciones con inteligencia artificial. Gestión de sistemas de más de 1.000 terminales en sectores altamente regulados (sanidad, automoción, retail). Bilingüe en inglés, con experiencia trabajando en equipos internacionales en España, Inglaterra y entornos multinacionales."
+    },
+    "softSkills": [
+        "Compromiso y Responsabilidad",
+        "Pensamiento Crítico y Analítico",
+        "Integridad Profesional",
+        "Empatía y Orientación al Usuario",
+        "Resolución Constructiva de Conflictos",
+        "Aprendizaje Continuo",
+        "Trabajo en Equipo Eficaz",
+        "Iniciativa y Proactividad",
+        "Gestión del Estrés",
+        "Adaptabilidad",
+        "Resolución de Problemas Complejos",
+        "Comunicación Clara",
+        "Automotivación y Autogestión"
+    ],
+    "education": [
+        {
+            "title": "Técnico Superior en Desarrollo de Aplicaciones Web (DAW)",
+            "institution": "IES / FP — Nivel EQF 5",
+            "date": "2025",
+            "type": "degree",
+            "description": "JavaScript, PHP, Node.js, React, APIs REST, diseño de bases de datos, despliegue web, accesibilidad, ORM, Git, Odoo ERP"
+        },
+        {
+            "title": "Técnico Superior en Desarrollo de Aplicaciones Multiplataforma (DAM)",
+            "institution": "IES / FP — Nivel EQF 5",
+            "date": "2024",
+            "type": "degree",
+            "description": "Java, Kotlin, Flutter, desarrollo Android, ORM (Hibernate), servicios y procesos, motores de juegos 2D/3D, UML, TDD"
+        },
+        {
+            "title": "Bootcamp React",
+            "institution": "Geekshubs Academy",
+            "date": "2023",
+            "type": "bootcamp",
+            "description": "Componentes React.js, hooks, estado, contexto, Redux, integración con APIs REST, testing de componentes"
+        },
+        {
+            "title": "Informática de Gestión",
+            "institution": "Universidad Politécnica de Valencia",
+            "date": "2003 – 2005",
+            "type": "degree",
+            "description": ""
+        },
+        {
+            "title": "Curso de Administración de Servidores",
+            "institution": "",
+            "date": "2002 – 2003",
+            "type": "course",
+            "description": ""
+        },
+        {
+            "title": "Técnico Especialista en Informática de Gestión",
+            "institution": "",
+            "date": "1997 – 2000",
+            "type": "degree",
+            "description": ""
+        }
+    ],
+    "experience": [
+        {
+            "title": "Desarrollador de Software (Proyecto IA) — Prácticas",
+            "company": "Cook-Code System Startup",
+            "location": "Valencia",
+            "date": "2025 – 2026",
+            "description": "Desarrollo completo de 'Minichef': un asistente de voz con IA para la gestión de cocinas profesionales. Pipeline completo en Python integrando transcripción de voz en tiempo real (Vosk), procesamiento de lenguaje natural, operaciones en base de datos y síntesis de voz (gTTS/Pygame) — permitiendo acceso conversacional manos libres a inventarios, recetas y datos de proveedores."
+        },
+        {
+            "title": "Técnico de Soporte IT — Red Sanitaria",
+            "company": "Telefónica / Consellería de Sanidad",
+            "location": "Comunitat Valenciana",
+            "date": "2022 – 2025",
+            "description": "Mantenimiento de 99%+ de disponibilidad de la infraestructura de red para hospitales y centros de salud de 3 provincias. Gestión de routers, firewalls y VPNs Cisco y Fortigate. Gestión de incidencias con Jira, Confluence y aplicaciones de ticketing a medida."
+        },
+        {
+            "title": "Especialista de Soporte — Ford European Operations",
+            "company": "DHL Supply Chain",
+            "location": "Valencia",
+            "date": "2020 – 2021",
+            "description": "Soporte IT remoto para plantas de fabricación de Ford en 4 países (España, Alemania, Reino Unido, Hungría). Gestión del ciclo de vida de usuarios en Active Directory. Administración de servidores virtualizados en India para tareas programadas. Intervenciones remotas críticas en servidores de India para ejecutar scripts de limpieza de bases de datos ante errores — un proceso de misión crítica, ya que sin este paso la información no llegaría a las plantas europeas y la producción podría detenerse."
+        },
+        {
+            "title": "Técnico de Soporte N2 y Desarrollador Junior",
+            "company": "Temática Software",
+            "location": "Valencia",
+            "date": "2019",
+            "description": "Despliegue de monitorización Zabbix en infraestructura Linux y Windows. Configuración de virtualización VMware ESXi e infraestructura cloud AWS. Desarrollador Junior en Python y Java. Soporte de bases de datos Oracle SQL. Metodología Agile/Scrum con el ITI de la Universidad de Valencia."
+        },
+        {
+            "title": "Administrador de Sistemas",
+            "company": "Postres Lácteos Romar S.L.",
+            "location": "Valencia",
+            "date": "2016 – 2018",
+            "description": "Incremento del 60% en el rendimiento de la infraestructura rediseñando el CPD desde cero. Implantación de la primera capa de seguridad de la empresa (firewalls Cisco/Sophos). Selección y contratación del sistema ERP. Gestión en solitario de todas las operaciones IT: ESXi, VPN/AD, Linux, SQL."
+        },
+        {
+            "title": "Administrador IT — Operaciones CPD",
+            "company": "Tecnocom (Ford y Mercadona)",
+            "location": "Valencia",
+            "date": "2016",
+            "description": "Operación de centros de datos de misión crítica para Ford (planta de motores) y Mercadona (retail nacional). Monitorización con HP OVO, automatización con Axway. Gestión de backups con HP Dataprotector y CommVault con cero pérdida de datos."
+        },
+        {
+            "title": "Administrador y Técnico IT",
+            "company": "VSL Support Ltd",
+            "location": "Sur de Inglaterra, Reino Unido",
+            "date": "2013 – 2015",
+            "description": "Gestión de sistemas y redes informáticas para hospitales del NHS, cadenas hoteleras, grupos de restaurantes y franquicias de automoción en el sur de Inglaterra. Despliegue de infraestructuras completas de red y servidores para nuevos clientes."
+        },
+        {
+            "title": "Administrador de Sistemas — IT Hospitalario",
+            "company": "Hospital de la Ribera",
+            "location": "Alzira, Valencia",
+            "date": "2009 – 2011",
+            "description": "Único responsable de IT en turnos nocturnos, garantizando la continuidad 24/7 de la infraestructura IT crítica sanitaria (Citrix, Exchange, sistemas virtualizados, routers, firewalls)."
+        }
+    ],
+    "languages": [
+        {
+            "language": "Español",
+            "level": "Nativo"
+        },
+        {
+            "language": "Inglés",
+            "level": "Bilingüe / C1+"
+        },
+        {
+            "language": "Italiano",
+            "level": "Principiante"
+        }
+    ],
+    "techSkills": {
+        "frontend": [
+            { "name": "HTML5 / CSS3 / XML", "level": 95 },
+            { "name": "JavaScript", "level": 90 },
+            { "name": "React.js", "level": 88 },
+            { "name": "Three.js / WebGL", "level": 78 },
+            { "name": "Flutter / Kotlin (Mobile)", "level": 75 }
+        ],
+        "backend": [
+            { "name": "Python / FastAPI", "level": 90 },
+            { "name": "Java / Spring", "level": 85 },
+            { "name": "Node.js / Express", "level": 85 },
+            { "name": "PHP", "level": 80 }
+        ],
+        "databases": [
+            { "name": "Oracle SQL", "level": 88 },
+            { "name": "MySQL / PostgreSQL", "level": 88 },
+            { "name": "Microsoft SQL Server", "level": 82 },
+            { "name": "SQLAlchemy / Alembic (ORM)", "level": 85 },
+            { "name": "Redis", "level": 72 }
+        ],
+        "others": [
+            { "name": "Windows Server / Linux Admin", "level": 95 },
+            { "name": "VMware / ESXi", "level": 92 },
+            { "name": "Network Security (Cisco, Sophos, Fortigate)", "level": 90 },
+            { "name": "Active Directory / VPN", "level": 90 },
+            { "name": "Git / GitHub", "level": 88 },
+            { "name": "Docker / AWS", "level": 78 },
+            { "name": "Agile / Scrum (Jira, Confluence)", "level": 85 },
+            { "name": "IA / ML (sentence-transformers, Groq, NLP)", "level": 75 }
+        ]
+    },
+    "portfolio": [
+        {
+            "title": "Minichef — Asistente de Voz IA",
+            "tech": ["Python", "Vosk", "gTTS", "Pygame", "SQLite"],
+            "description": "Asistente de voz con IA para gestión de cocinas profesionales con transcripción de voz en tiempo real, procesamiento de lenguaje natural y síntesis de voz.",
+            "github": "",
+            "demo": "",
+            "status": "completed"
+        },
+        {
+            "title": "Portfolio Interactivo",
+            "tech": ["React", "FastAPI", "PostgreSQL", "Three.js", "Chart.js", "Docker", "sentence-transformers", "Groq AI"],
+            "description": "Portafolio full-stack con metáfora de escritorio con ventanas. Chatbot IA, analíticas de visitantes con mapas, agregación de empleo de 8 APIs (Jobicy, Remotive, Arbeitnow, JSearch, RemoteOK, Himalayas, Adzuna, WeWorkRemotely) con búsqueda unificada, matching de empleo con IA (sentence-transformers + LLM re-ranking), pipeline Kanban, analíticas salariales, notificaciones SSE en tiempo real, auth JWT con refresh tokens, 6 fondos Three.js/Canvas, terminal easter egg, i18n completo (6 idiomas) y accesibilidad WCAG.",
+            "github": "",
+            "demo": "",
+            "status": "completed"
+        },
+        {
+            "title": "Gestión de Red Sanitaria",
+            "tech": ["Cisco", "Fortigate", "VPN", "Jira", "Confluence"],
+            "description": "Gestión de infraestructura para hospitales de 3 provincias, manteniendo 99%+ de disponibilidad para servicios sanitarios críticos.",
+            "github": "",
+            "demo": "",
+            "status": "completed"
+        }
+    ],
+    "achievements": [
+        { "metric": "Disponibilidad de Red", "value": "99%+", "icon": "NET" },
+        { "metric": "Mejora Rendimiento Infra", "value": "60%", "icon": "UP" },
+        { "metric": "Terminales Gestionados", "value": "1.000+", "icon": "SYS" },
+        { "metric": "Países (Remoto)", "value": "4", "icon": "GEO" },
+        { "metric": "Pérdida de Datos", "value": "Cero", "icon": "SEC" },
+        { "metric": "Años de Experiencia", "value": "20+", "icon": "EXP" },
+        { "metric": "Profundidad del Stack", "value": "19+", "icon": "DEV" },
+        { "metric": "Sistemas Sanitarios", "value": "3 Provincias", "icon": "MED" }
+    ],
+    "contact": {
+        "message": "¿Interesado en colaborar? Contáctame por email:",
+        "social": {
+            "linkedin": "",
+            "github": "",
+            "twitter": "",
+            "instagram": ""
+        }
+    }
+}
