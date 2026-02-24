@@ -10,7 +10,7 @@ src/
     Background/     — 6 visual effects (Rain, Matrix, Parallax, Lensflare, Cube, Smoke)
     Dashboard/      — 13 admin dashboard windows:
       StatsWindow, MapWindow, ChatAnalyticsWindow, RecentVisitorsWindow
-      JobBoardTabbedWindow (8 sources in tabs), JobMarketAnalyticsWindow, BookmarkedJobsWindow
+      JobBoardTabbedWindow (12 sources in tabs), JobMarketAnalyticsWindow, BookmarkedJobsWindow
       JSearchLiveWindow, SalaryAnalyticsWindow, JobFilterWindow (unified search)
       SavedSearchesWindow, KanbanWindow, AIJobMatchWindow (embeddings + LLM)
       JobCardExtras.jsx — Shared freshness badges + company research popover
@@ -51,6 +51,7 @@ src/
   styles/              — CSS files (base, windows-content, floating-window, dashboard, chat, login, etc.)
   config/
     api.js             — Backend URL centralized (reads VITE_API_BASE_URL, fallback: http://127.0.0.1:8001)
+    jobSources.js      — Centralized registry for all 12 job sources (key, color, urlPath, normalize, skillsField, alwaysRemote)
   App.jsx              — Portfolio page with 12 lazy-loaded windows + Ctrl+`/Ctrl+ñ terminal toggle
   main.jsx             — Router setup, providers (Theme, Auth, ErrorBoundary)
 ```
@@ -97,7 +98,7 @@ Warning limit: 700KB (Three.js core is ~522KB, lazy-loaded)
 - Leaflet CDN — Map marker icons
 - OpenStreetMap — Map tiles
 
-### Job Board Features (shared across all 8 sources)
+### Job Board Features (shared across all 12 sources)
 - Sort (4 options), pagination (20/page), cache age badge via `useJobBoardControls`
 - Freshness badges: <24h green "New", <72h cyan, >72h hidden
 - Company research: click company → popover with LinkedIn/Glassdoor/Crunchbase links
@@ -125,5 +126,6 @@ npx vitest           # watch mode
 ## Notes
 - AuthContext validates JWT `exp` claim on mount, auto-clears expired tokens. Refresh tokens auto-renew access tokens
 - useDashboardData returns `warnings` array for failed API sources (no longer silently swallows errors)
-- All previous known gaps (i18n in dashboard, centralized backend URL) have been resolved
+- All previous known gaps (i18n in dashboard, centralized backend URL, job source duplication) have been resolved
+- Job source registry: `config/jobSources.js` is the single source of truth. To add a new source, only add an entry there
 - Background effects (Three.js/Canvas) use mount-only effects with `eslint-disable` — adding theme as dependency would destroy/recreate the entire 3D scene

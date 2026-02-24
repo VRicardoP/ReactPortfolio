@@ -65,9 +65,9 @@ const useWindowLayout = (windowIds, delay = 3000) => {
             showToast(i18n.t('toast.exploreWindows'), 3000);
             hasAnimated.current = true;
           }
-        }, 500);
+        }, 200);
         timerIdsRef.current.push(innerTimerId);
-      }, 800 + index * 100);
+      }, 300 + index * 60);
       timerIdsRef.current.push(outerTimerId);
     });
   }, [windowIds, toggleMinimize, updatePosition]);

@@ -74,7 +74,7 @@ const DashboardContent = memo(({ stats, mapData, chatAnalytics, jobData, bookmar
         'ai-match-window'
     ];
 
-    useWindowLayout(dashboardWindowIds, 1500);
+    useWindowLayout(dashboardWindowIds, 600);
 
     return (
         <Suspense fallback={<DashboardLoader />}>
@@ -168,7 +168,7 @@ const DashboardPage = () => {
     const { theme, cycleTheme, themeName, backgroundEffect, cycleBackground } = useTheme();
     const navigate = useNavigate();
     const typedText = useTypewriter(t('dashboard.title'), 100);
-    const { stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, remoteokRecentJobs, himalayasRecentJobs, adzunaRecentJobs, weworkremotelyRecentJobs, loading, error } = useDashboardData();
+    const { stats, mapData, chatAnalytics, jobData, loading, error } = useDashboardData();
     const { bookmarks, removeBookmark } = useJobBookmarks();
 
     // functions for the buttons
@@ -335,16 +335,7 @@ const DashboardPage = () => {
                     stats={stats}
                     mapData={mapData}
                     chatAnalytics={chatAnalytics}
-                    jobData={{
-                        jobicy: recentJobs,
-                        remotive: remotiveRecentJobs,
-                        arbeitnow: arbeitnowRecentJobs,
-                        jsearch: jsearchRecentJobs,
-                        remoteok: remoteokRecentJobs,
-                        himalayas: himalayasRecentJobs,
-                        adzuna: adzunaRecentJobs,
-                        weworkremotely: weworkremotelyRecentJobs,
-                    }}
+                    jobData={jobData}
                     bookmarks={bookmarks}
                     removeBookmark={removeBookmark}
                 />

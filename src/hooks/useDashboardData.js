@@ -1,20 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
+import { JOB_SOURCES } from '../config/jobSources';
 
 export const useDashboardData = () => {
   const { authenticatedFetch } = useAuth();
   const [stats, setStats] = useState(null);
   const [mapData, setMapData] = useState(null);
   const [chatAnalytics, setChatAnalytics] = useState(null);
-  const [recentJobs, setRecentJobs] = useState(null);
-  const [remotiveRecentJobs, setRemotiveRecentJobs] = useState(null);
-  const [arbeitnowRecentJobs, setArbeitnowRecentJobs] = useState(null);
-  const [jsearchRecentJobs, setJsearchRecentJobs] = useState(null);
-  const [remoteokRecentJobs, setRemoteokRecentJobs] = useState(null);
-  const [himalayasRecentJobs, setHimalayasRecentJobs] = useState(null);
-  const [adzunaRecentJobs, setAdzunaRecentJobs] = useState(null);
-  const [weworkremotelyRecentJobs, setWeworkremotelyRecentJobs] = useState(null);
+  const [jobData, setJobData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [warnings, setWarnings] = useState([]);
@@ -59,23 +53,13 @@ export const useDashboardData = () => {
         }
 
         // Job data — loads in background, windows update progressively
-        const jobFetches = [
-          { setter: setRecentJobs, url: `${BACKEND_URL}/api/v1/jobicy-jobs/recent-jobs`, name: 'jobicy' },
-          { setter: setRemotiveRecentJobs, url: `${BACKEND_URL}/api/v1/remotive-jobs/recent`, name: 'remotive' },
-          { setter: setArbeitnowRecentJobs, url: `${BACKEND_URL}/api/v1/arbeitnow-jobs/recent`, name: 'arbeitnow' },
-          { setter: setJsearchRecentJobs, url: `${BACKEND_URL}/api/v1/jsearch-jobs/recent`, name: 'jsearch' },
-          { setter: setRemoteokRecentJobs, url: `${BACKEND_URL}/api/v1/remoteok-jobs/recent`, name: 'remoteok' },
-          { setter: setHimalayasRecentJobs, url: `${BACKEND_URL}/api/v1/himalayas-jobs/recent`, name: 'himalayas' },
-          { setter: setAdzunaRecentJobs, url: `${BACKEND_URL}/api/v1/adzuna-jobs/recent`, name: 'adzuna' },
-          { setter: setWeworkremotelyRecentJobs, url: `${BACKEND_URL}/api/v1/weworkremotely-jobs/recent`, name: 'weworkremotely' },
-        ];
-
-        // Fire all job fetches in parallel, each updates state independently
-        jobFetches.forEach(({ setter, url, name }) => {
-          authenticatedFetch(url)
+        JOB_SOURCES.forEach(({ key, urlPath }) => {
+          authenticatedFetch(`${BACKEND_URL}${urlPath}`)
             .then(res => res.json())
-            .then(data => { if (!aborted) setter(data); })
-            .catch(() => { if (!aborted) failedSources.push(name); });
+            .then(data => {
+              if (!aborted) setJobData(prev => ({ ...prev, [key]: data }));
+            })
+            .catch(() => { if (!aborted) failedSources.push(key); });
         });
 
       } catch (err) {
@@ -91,5 +75,5 @@ export const useDashboardData = () => {
     return () => { aborted = true; };
   }, [authenticatedFetch]);
 
-  return { stats, mapData, chatAnalytics, recentJobs, remotiveRecentJobs, arbeitnowRecentJobs, jsearchRecentJobs, remoteokRecentJobs, himalayasRecentJobs, adzunaRecentJobs, weworkremotelyRecentJobs, loading, error, warnings };
+  return { stats, mapData, chatAnalytics, jobData, loading, error, warnings };
 };

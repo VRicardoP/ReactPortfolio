@@ -12,6 +12,7 @@ import {
     Legend,
 } from 'chart.js';
 import { useTheme } from '../../context/ThemeContext';
+import { JOB_SOURCES, extractJobs } from '../../config/jobSources';
 import FloatingWindow from '../Windows/FloatingWindow';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
@@ -21,75 +22,21 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     const { theme } = useTheme();
     const [activeTab, setActiveTab] = useState('skills');
 
-    // Aggregate all jobs from all sources
+    // Aggregate all jobs from all sources using the centralized registry
     const allJobs = useMemo(() => {
         if (!jobData) return [];
-        const { jobicy, remotive, arbeitnow, jsearch, remoteok, himalayas, adzuna, weworkremotely } = jobData;
         const jobs = [];
-
-        if (jobicy?.data) {
-            jobicy.data.forEach(j => jobs.push({
-                skills: j.skills || [],
-                remote: true,
-                source: 'Jobicy',
-            }));
-        }
-
-        if (remotive?.data) {
-            remotive.data.forEach(j => jobs.push({
-                skills: j.tags || [],
-                remote: true,
-                source: 'Remotive',
-            }));
-        }
-
-        if (arbeitnow?.data) {
-            arbeitnow.data.forEach(j => jobs.push({
-                skills: j.tags || [],
-                remote: j.remote === true,
-                source: 'Arbeitnow',
-            }));
-        }
-
-        const jsearchJobs = Array.isArray(jsearch) ? jsearch : (jsearch?.data || jsearch?.jobs || []);
-        jsearchJobs.forEach(j => jobs.push({
-            skills: [],
-            remote: j.job_is_remote ?? j.is_remote ?? false,
-            source: 'JSearch',
-        }));
-
-        if (remoteok?.data) {
-            remoteok.data.forEach(j => jobs.push({
-                skills: j.tags || [],
-                remote: true,
-                source: 'RemoteOK',
-            }));
-        }
-
-        if (himalayas?.data) {
-            himalayas.data.forEach(j => jobs.push({
-                skills: j.categories || j.tags || [],
-                remote: true,
-                source: 'Himalayas',
-            }));
-        }
-
-        if (adzuna?.data) {
-            adzuna.data.forEach(j => jobs.push({
-                skills: j.tags || [],
-                remote: j.remote === true,
-                source: 'Adzuna',
-            }));
-        }
-
-        if (weworkremotely?.data) {
-            weworkremotely.data.forEach(j => jobs.push({
-                skills: j.tags || [],
-                remote: true,
-                source: 'WeWorkRemotely',
-            }));
-        }
-
+        JOB_SOURCES.forEach(({ key, skillsField, alwaysRemote }) => {
+            const rawJobs = extractJobs(jobData[key]);
+            rawJobs.forEach(j => {
+                const skills = skillsField ? (j[skillsField] || j.tags || []) : [];
+                jobs.push({
+                    skills,
+                    remote: alwaysRemote || j.remote === true,
+                    source: key.charAt(0).toUpperCase() + key.slice(1),
+                });
+            });
+        });
         return jobs;
     }, [jobData]);
 
@@ -209,14 +156,14 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
             initialSize={{ width: 580, height: 480 }}
         >
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '10px', gap: '10px' }}>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                    <button style={tabStyle(activeTab === 'skills')} onClick={() => setActiveTab('skills')}>
+                <div style={{ display: 'flex', gap: '8px' }} role="tablist" aria-label={t('dashboard.jobAnalytics.title')}>
+                    <button role="tab" aria-selected={activeTab === 'skills'} style={tabStyle(activeTab === 'skills')} onClick={() => setActiveTab('skills')}>
                         {t('dashboard.jobAnalytics.tabSkills')}
                     </button>
-                    <button style={tabStyle(activeTab === 'remote')} onClick={() => setActiveTab('remote')}>
+                    <button role="tab" aria-selected={activeTab === 'remote'} style={tabStyle(activeTab === 'remote')} onClick={() => setActiveTab('remote')}>
                         {t('dashboard.jobAnalytics.tabRemote')}
                     </button>
-                    <button style={tabStyle(activeTab === 'sources')} onClick={() => setActiveTab('sources')}>
+                    <button role="tab" aria-selected={activeTab === 'sources'} style={tabStyle(activeTab === 'sources')} onClick={() => setActiveTab('sources')}>
                         {t('dashboard.jobAnalytics.tabSources')}
                     </button>
                     <span style={{ marginLeft: 'auto', fontSize: '11px', color: theme.text, opacity: 0.6, fontFamily: 'Courier New' }}>

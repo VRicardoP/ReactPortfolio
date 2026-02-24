@@ -52,7 +52,7 @@ const ProfileWindow = ({ data, initialPosition }) => {
             // Silently fail
         }
         setShowCvMenu(false);
-    }, []);
+    }, [i18n.language]);
 
     if (!data) return null;
 
