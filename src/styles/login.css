@@ -77,7 +77,7 @@
   font-size: 16px;
   font-weight: bold;
   font-family: 'Courier New', monospace;
-  transition: all 0.3s ease;
+  transition: box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
   box-shadow: 0 0 10px rgba(var(--theme-primary-rgb, 0, 255, 255), 0.3);
 }
 

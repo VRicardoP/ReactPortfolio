@@ -1,21 +1,19 @@
 import { memo, useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
-import { useAuth } from '../../context/AuthContext';
-import { BACKEND_URL } from '../../config/api';
 import { SOURCE_TAB_DATA, SOURCE_KEYS, SOURCE_COLOR_MAP, normalizeJob, extractJobs } from '../../config/jobSources';
 import FloatingWindow from '../Windows/FloatingWindow';
 import JobBoardControls from './JobBoardControls';
 import useJobBoardControls from '../../hooks/useJobBoardControls';
+import useJobApplication from '../../hooks/useJobApplication';
 import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
 
 const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
-    const { authenticatedFetch } = useAuth();
     const [activeTab, setActiveTab] = useState('all');
     const [search, setSearch] = useState('');
-    const [appliedIds, setAppliedIds] = useState(new Set());
+    const { handleApply, appliedIds } = useJobApplication();
 
     // Normalize all jobs per source
     const normalizedBySource = useMemo(() => {
@@ -71,29 +69,6 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
     const sourceColor = useCallback((source) => {
         return SOURCE_COLOR_MAP[source] || theme.primary;
     }, [theme.primary]);
-
-    // Apply: open URL and add to pipeline
-    const handleApply = useCallback(async (job) => {
-        if (job.url) {
-            window.open(job.url, '_blank', 'noopener,noreferrer');
-        }
-        if (appliedIds.has(job.id)) return;
-        try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    title: job.title,
-                    company: job.company,
-                    url: job.url || null,
-                    source: job.source,
-                    status: 'applied',
-                }),
-            });
-            setAppliedIds(prev => new Set(prev).add(job.id));
-        } catch {
-            // Silently fail — URL already opened
-        }
-    }, [authenticatedFetch, appliedIds]);
 
     return (
         <FloatingWindow

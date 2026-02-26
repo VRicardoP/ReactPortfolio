@@ -7,7 +7,7 @@ export const JOB_SOURCES = [
   {
     key: 'jobicy',
     color: '#00e5ff',
-    urlPath: '/api/v1/jobicy-jobs/recent-jobs',
+    urlPath: '/api/v1/jobicy-jobs/recent',
     skillsField: 'skills',
     alwaysRemote: true,
     normalize: (job) => ({

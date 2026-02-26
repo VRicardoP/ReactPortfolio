@@ -56,7 +56,7 @@
   font-family: 'Courier New', monospace;
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .contact-copy-btn:hover {
@@ -116,7 +116,7 @@
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(0, 255, 255, 0.3);
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .language-dot.filled {
@@ -305,7 +305,7 @@
   border-radius: 5px;
   padding: 15px;
   background: rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
 }
 
@@ -401,7 +401,7 @@
   font-family: 'Courier New', monospace;
   font-size: 11px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .profile-view-toggle:hover,
@@ -489,7 +489,7 @@
   font-family: 'Courier New', monospace;
   font-size: 11px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   flex-shrink: 0;
 }
 
@@ -515,7 +515,7 @@
   font-family: 'Courier New', monospace;
   font-size: 12px;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
 .contact-social-link:hover {
@@ -584,7 +584,7 @@
   font-family: 'Courier New', monospace;
   font-size: 12px;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
 .portfolio-link:hover {
@@ -612,7 +612,7 @@
   border: 1px solid rgba(0, 255, 255, 0.2);
   border-radius: 8px;
   text-align: center;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .achievement-card:hover {
@@ -660,7 +660,7 @@
   font-family: 'Courier New', monospace;
   font-size: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .toggle-btn:hover {
@@ -753,7 +753,7 @@
   border: 2px solid #00ffff;
   box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
   z-index: 1;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .timeline-item:hover .timeline-dot,
@@ -774,7 +774,7 @@
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(0, 255, 255, 0.15);
   border-radius: 6px;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .timeline-item:hover .timeline-card {

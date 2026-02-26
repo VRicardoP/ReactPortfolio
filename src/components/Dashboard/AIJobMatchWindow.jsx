@@ -4,6 +4,7 @@ import FloatingWindow from '../Windows/FloatingWindow';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { BACKEND_URL } from '../../config/api';
+import useJobApplication from '../../hooks/useJobApplication';
 import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
 
 const FIT_COLORS = {
@@ -27,7 +28,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
     const [error, setError] = useState(null);
     const [page, setPage] = useState(0);
     const [expandedId, setExpandedId] = useState(null);
-    const [appliedIds, setAppliedIds] = useState(new Set());
+    const { handleApply, appliedIds } = useJobApplication();
 
     const runAnalysis = useCallback(async () => {
         setLoading(true);
@@ -47,26 +48,6 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
             setLoading(false);
         }
     }, [authenticatedFetch]);
-
-    const handleApply = useCallback(async (job) => {
-        if (job.url) {
-            window.open(job.url, '_blank', 'noopener,noreferrer');
-        }
-        if (appliedIds.has(job.id)) return;
-        try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    title: job.title,
-                    company: job.company,
-                    url: job.url || null,
-                    source: job.source,
-                    status: 'applied',
-                }),
-            });
-            setAppliedIds(prev => new Set(prev).add(job.id));
-        } catch { /* URL already opened */ }
-    }, [authenticatedFetch, appliedIds]);
 
     const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
     const pagedResults = results.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);

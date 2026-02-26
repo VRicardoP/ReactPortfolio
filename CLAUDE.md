@@ -30,8 +30,10 @@ src/
     useResizable.js           — 8-direction resize for FloatingWindow
     useTypewriter.js          — Character-by-character animation
     useVisitorTracking.js     — POSTs to /analytics/track once per session
-    useWindowLayout.js        — Animates windows into minimized grid on mount (3/2/1 cols responsive)
+    useWindowLayout.js        — Animates windows into minimized grid on mount (3/2/1 cols responsive, named constants)
     useJobBoardControls.js    — Shared sort, pagination, cache age badge for job boards
+    useJobApplication.js      — Shared handleApply + appliedIds tracking (used by 4 dashboard windows)
+    useTerminalCommands.js    — Terminal command parsing, execution, history (19 commands)
     useKanban.js              — Kanban pipeline state management and CRUD
   context/
     AuthContext.jsx    — JWT auth (access + refresh tokens), login/logout, authenticatedFetch (auto-logout on 401, auto-refresh)

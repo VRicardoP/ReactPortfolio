@@ -114,7 +114,7 @@
   font-family: 'Courier New', monospace;
   font-size: 14px;
   font-weight: bold;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .chat-send-btn:hover {

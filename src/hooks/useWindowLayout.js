@@ -3,6 +3,37 @@ import { useWindowContext } from '../context/WindowContext';
 import { showToast } from '../components/UI/Toast';
 import i18n from '../i18n';
 
+// Responsive breakpoints (px)
+const MOBILE_BREAKPOINT = 768;
+const TABLET_BREAKPOINT = 1200;
+
+// Grid layout for pre-minimize positioning
+const GRID_PADDING = 20;
+const GRID_CELL_INSET = 10;
+const MAX_CELL_HEIGHT = 320;
+
+// Header offset accounts for top navbar height
+const HEADER_OFFSET_MOBILE = 70;
+const HEADER_OFFSET_DESKTOP = 110;
+
+// Minimized pill dimensions
+const PILL_WIDTH_MOBILE = 140;
+const PILL_WIDTH_DESKTOP = 180;
+const PILL_GAP_MOBILE = 6;
+const PILL_GAP_DESKTOP = 10;
+const ROW_HEIGHT_MOBILE = 42;
+const ROW_HEIGHT_DESKTOP = 48;
+
+// Max fraction of screen width used for pill rows
+const MAX_ROW_WIDTH_RATIO = 0.92;
+
+// Animation timing (ms)
+const MINIMIZE_DELAY_BASE = 300;
+const MINIMIZE_STAGGER_PER_WINDOW = 60;
+const POSITION_TO_MINIMIZE_DELAY = 200;
+const TOAST_DURATION = 3000;
+const RESIZE_DEBOUNCE_DELAY = 250;
+
 const useWindowLayout = (windowIds, delay = 3000) => {
   const { windows, toggleMinimize, updatePosition } = useWindowContext();
   const hasAnimated = useRef(false);
@@ -14,32 +45,31 @@ const useWindowLayout = (windowIds, delay = 3000) => {
   const animateWindows = useCallback(() => {
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    const isMobile = screenWidth <= 768;
-    const isTablet = screenWidth > 768 && screenWidth <= 1200;
+    const isMobile = screenWidth <= MOBILE_BREAKPOINT;
+    const isTablet = screenWidth > MOBILE_BREAKPOINT && screenWidth <= TABLET_BREAKPOINT;
 
     // First, position windows in a visible grid before minimizing (F33)
     const cols = isMobile ? 1 : isTablet ? 2 : 3;
-    const gridPadding = 20;
-    const headerOffset = isMobile ? 70 : 110;
-    const cellWidth = (screenWidth - gridPadding * 2) / cols;
-    const cellHeight = Math.min(320, (screenHeight - headerOffset - gridPadding) / Math.ceil(windowIds.length / cols));
+    const headerOffset = isMobile ? HEADER_OFFSET_MOBILE : HEADER_OFFSET_DESKTOP;
+    const cellWidth = (screenWidth - GRID_PADDING * 2) / cols;
+    const cellHeight = Math.min(MAX_CELL_HEIGHT, (screenHeight - headerOffset - GRID_PADDING) / Math.ceil(windowIds.length / cols));
 
     windowIds.forEach((windowId, index) => {
       const col = index % cols;
       const row = Math.floor(index / cols);
       updatePosition(windowId, {
-        x: gridPadding + col * cellWidth + 10,
-        y: headerOffset + row * cellHeight + 10,
+        x: GRID_PADDING + col * cellWidth + GRID_CELL_INSET,
+        y: headerOffset + row * cellHeight + GRID_CELL_INSET,
       });
     });
 
     // Then minimize them after a brief pause
-    const pillWidth = isMobile ? 140 : 180;
-    const pillGap = isMobile ? 6 : 10;
-    const maxRowWidth = screenWidth * 0.92;
+    const pillWidth = isMobile ? PILL_WIDTH_MOBILE : PILL_WIDTH_DESKTOP;
+    const pillGap = isMobile ? PILL_GAP_MOBILE : PILL_GAP_DESKTOP;
+    const maxRowWidth = screenWidth * MAX_ROW_WIDTH_RATIO;
     const perRow = Math.max(1, Math.floor((maxRowWidth + pillGap) / (pillWidth + pillGap)));
-    const menuY = isMobile ? 70 : 110;
-    const rowHeight = isMobile ? 42 : 48;
+    const menuY = isMobile ? HEADER_OFFSET_MOBILE : HEADER_OFFSET_DESKTOP;
+    const rowHeight = isMobile ? ROW_HEIGHT_MOBILE : ROW_HEIGHT_DESKTOP;
 
     timerIdsRef.current = [];
 
@@ -62,12 +92,12 @@ const useWindowLayout = (windowIds, delay = 3000) => {
           toggleMinimize(windowId);
 
           if (index === windowIds.length - 1) {
-            showToast(i18n.t('toast.exploreWindows'), 3000);
+            showToast(i18n.t('toast.exploreWindows'), TOAST_DURATION);
             hasAnimated.current = true;
           }
-        }, 200);
+        }, POSITION_TO_MINIMIZE_DELAY);
         timerIdsRef.current.push(innerTimerId);
-      }, 300 + index * 60);
+      }, MINIMIZE_DELAY_BASE + index * MINIMIZE_STAGGER_PER_WINDOW);
       timerIdsRef.current.push(outerTimerId);
     });
   }, [windowIds, toggleMinimize, updatePosition]);
@@ -111,13 +141,13 @@ const useWindowLayout = (windowIds, delay = 3000) => {
 
     const handleResize = () => {
       const screenWidth = window.innerWidth;
-      const isMobile = screenWidth <= 768;
-      const pillWidth = isMobile ? 140 : 180;
-      const pillGap = isMobile ? 6 : 10;
-      const maxRowWidth = screenWidth * 0.92;
+      const isMobile = screenWidth <= MOBILE_BREAKPOINT;
+      const pillWidth = isMobile ? PILL_WIDTH_MOBILE : PILL_WIDTH_DESKTOP;
+      const pillGap = isMobile ? PILL_GAP_MOBILE : PILL_GAP_DESKTOP;
+      const maxRowWidth = screenWidth * MAX_ROW_WIDTH_RATIO;
       const perRow = Math.max(1, Math.floor((maxRowWidth + pillGap) / (pillWidth + pillGap)));
-      const menuY = isMobile ? 70 : 110;
-      const rowHeight = isMobile ? 42 : 48;
+      const menuY = isMobile ? HEADER_OFFSET_MOBILE : HEADER_OFFSET_DESKTOP;
+      const rowHeight = isMobile ? ROW_HEIGHT_MOBILE : ROW_HEIGHT_DESKTOP;
 
       windowIds.forEach((windowId, index) => {
         const win = windows[windowId];
@@ -139,7 +169,7 @@ const useWindowLayout = (windowIds, delay = 3000) => {
     let resizeTimeout;
     const debouncedResize = () => {
       clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(handleResize, 250);
+      resizeTimeout = setTimeout(handleResize, RESIZE_DEBOUNCE_DELAY);
     };
 
     window.addEventListener('resize', debouncedResize);

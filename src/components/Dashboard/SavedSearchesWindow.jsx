@@ -4,6 +4,7 @@ import FloatingWindow from '../Windows/FloatingWindow';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { BACKEND_URL } from '../../config/api';
+import useJobApplication from '../../hooks/useJobApplication';
 import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
 
 const INITIAL_FORM = {
@@ -29,7 +30,7 @@ const SavedSearchesWindow = memo(({ initialPosition }) => {
     const [searchResults, setSearchResults] = useState([]);
     const [searchLoading, setSearchLoading] = useState(false);
     const [resultsTotal, setResultsTotal] = useState(0);
-    const [appliedIds, setAppliedIds] = useState(new Set());
+    const { handleApply, appliedIds } = useJobApplication();
 
     // Fetch saved searches on mount
     const fetchSearches = useCallback(async () => {
@@ -155,28 +156,6 @@ const SavedSearchesWindow = memo(({ initialPosition }) => {
             fetchSearches();
         }
     }, [authenticatedFetch, fetchSearches, t, expandedId]);
-
-    const handleApply = useCallback(async (job) => {
-        if (job.url) {
-            window.open(job.url, '_blank', 'noopener,noreferrer');
-        }
-        if (appliedIds.has(job.id)) return;
-        try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    title: job.title,
-                    company: job.company,
-                    url: job.url || null,
-                    source: job.source,
-                    status: 'applied',
-                }),
-            });
-            setAppliedIds(prev => new Set(prev).add(job.id));
-        } catch {
-            // URL already opened
-        }
-    }, [authenticatedFetch, appliedIds]);
 
     // Format filter summary for display
     const filterSummary = (filters) => {

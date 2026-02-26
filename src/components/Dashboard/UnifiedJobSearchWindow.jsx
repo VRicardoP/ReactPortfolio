@@ -4,13 +4,7 @@ import FloatingWindow from '../Windows/FloatingWindow';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { BACKEND_URL } from '../../config/api';
-
-const SOURCE_COLORS = {
-    jobicy: '#00e5ff',
-    remotive: '#ab47bc',
-    arbeitnow: '#ff9800',
-    jsearch: '#2196f3',
-};
+import { SOURCE_COLOR_MAP } from '../../config/jobSources';
 
 const PAGE_SIZE = 20;
 
@@ -85,7 +79,7 @@ const UnifiedJobSearchWindow = memo(({ initialPosition }) => {
 
     const sourceColor = (source) => {
         const key = (source || '').toLowerCase();
-        return SOURCE_COLORS[key] || theme.primary;
+        return SOURCE_COLOR_MAP[key] || theme.primary;
     };
 
     return (
