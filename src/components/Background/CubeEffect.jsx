@@ -42,10 +42,10 @@ const CubeEffect = () => {
         // load textures from the original URLs
         const textureLoader = new THREE.TextureLoader();
         const matcapTexture = textureLoader.load(
-            '/textures/cube-matcap.jpg'
+            '/textures/cube-matcap.webp'
         );
         const envTexture = textureLoader.load(
-            '/textures/cube-env.jpg'
+            '/textures/cube-env.webp'
         );
 
         // cube with rounded edges - material same as the original

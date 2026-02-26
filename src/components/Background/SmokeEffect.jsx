@@ -42,7 +42,7 @@ const SmokeEffect = () => {
         // load the smoke texture from the original URL
         const textureLoader = new THREE.TextureLoader();
         const smokeTexture = textureLoader.load(
-            '/textures/smoke.png'
+            '/textures/smoke.webp'
         );
 
         // smoke material - same as the original

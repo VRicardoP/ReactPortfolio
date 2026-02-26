@@ -1,28 +1,31 @@
+import { lazy, Suspense } from 'react';
 import { useTheme } from '../../context/ThemeContext';
-import RainEffect from './RainEffect';
-import ParallaxEffect from './ParallaxEffect';
-import MatrixEffect from './MatrixEffect';
-import LensflareEffect from './LensflareEffect';
-import CubeEffect from './CubeEffect';
-import SmokeEffect from './SmokeEffect';
+
+// Lazy-load each effect so only the active one is downloaded
+const RainEffect = lazy(() => import('./RainEffect'));
+const ParallaxEffect = lazy(() => import('./ParallaxEffect'));
+const MatrixEffect = lazy(() => import('./MatrixEffect'));
+const LensflareEffect = lazy(() => import('./LensflareEffect'));
+const CubeEffect = lazy(() => import('./CubeEffect'));
+const SmokeEffect = lazy(() => import('./SmokeEffect'));
+
+const EFFECTS = {
+    parallax: ParallaxEffect,
+    matrix: MatrixEffect,
+    lensflare: LensflareEffect,
+    cube: CubeEffect,
+    smoke: SmokeEffect,
+};
 
 const BackgroundEffect = () => {
     const { backgroundEffect } = useTheme();
+    const EffectComponent = EFFECTS[backgroundEffect] || RainEffect;
 
-    switch (backgroundEffect) {
-        case 'parallax':
-            return <ParallaxEffect />;
-        case 'matrix':
-            return <MatrixEffect />;
-        case 'lensflare':
-            return <LensflareEffect />;
-        case 'cube':
-            return <CubeEffect />;
-        case 'smoke':
-            return <SmokeEffect />;
-        default:
-            return <RainEffect />;
-    }
+    return (
+        <Suspense fallback={null}>
+            <EffectComponent />
+        </Suspense>
+    );
 };
 
 export default BackgroundEffect;
