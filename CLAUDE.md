@@ -66,6 +66,17 @@ src/
 *           → redirect to /
 ```
 
+## Design Principles (PRIORITY)
+Every change must preserve or improve adherence to SRP, Cohesion, Low Coupling, and Readability:
+
+- **Components**: Render UI only. Extract logic (state, effects, handlers) to custom hooks. Target <150 lines per component.
+- **Hooks**: One concern per hook. `useJobApplication` handles apply logic, `useTerminalCommands` handles terminal logic. Don't mix unrelated state.
+- **No duplicated logic**: If 2+ components share behavior (handleApply, sort/pagination), extract to a shared hook.
+- **Registry pattern**: `jobSources.js` is the single source of truth for job sources. Colors, endpoints, normalizers — all there. Never duplicate source metadata in components.
+- **Named constants**: No magic numbers in layout/animation code. Use named constants (see `useWindowLayout.js`).
+- **CSS**: Never `transition: all` — always list specific properties. Keep selectors specific and colocated with their component.
+- **File size**: Target <200 lines per component, <300 lines per hook. If larger, split by responsibility.
+
 ## Key Patterns
 
 ### FloatingWindow (shell for all windows)
