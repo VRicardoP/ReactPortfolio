@@ -15,7 +15,8 @@ export default defineConfig({
           if (id.includes('node_modules/react/')) return 'vendor-react';
           if (id.includes('node_modules/@tsparticles/') || id.includes('node_modules/tsparticles')) return 'vendor-particles';
           if (id.includes('node_modules/chart.js/') || id.includes('node_modules/react-chartjs-2/')) return 'vendor-charts';
-          if (id.includes('node_modules/leaflet/') || id.includes('node_modules/react-leaflet/')) return 'vendor-maps';
+          if (id.includes('node_modules/react-leaflet/')) return 'vendor-react';
+          if (id.includes('node_modules/leaflet/')) return 'vendor-maps';
         },
       },
     },

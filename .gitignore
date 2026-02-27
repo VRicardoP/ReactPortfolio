@@ -26,3 +26,8 @@ dist-ssr
 # Carpetas de dependencias (muy importante)
 node_modules/
 .env
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
