@@ -1,6 +1,6 @@
-import { render, screen, act } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { ThemeProvider, useTheme } from '../ThemeContext'
 
 // Helper component that exposes theme state and actions
