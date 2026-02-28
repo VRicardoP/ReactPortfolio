@@ -36,7 +36,7 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
       initialSize={{ width: 900, height: 600 }}
     >
       <div className="terminal-body" onClick={handleBodyClick}>
-        <div className="terminal-output" ref={outputRef}>
+        <div className="terminal-output" ref={outputRef} role="log" aria-live="polite" aria-label="Terminal output">
           {lines.map((line, i) => (
             <div key={i} className={`terminal-line terminal-line--${line.type}`}>
               {line.text}
@@ -44,7 +44,7 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
           ))}
         </div>
         <form className="terminal-input-row" onSubmit={handleSubmit}>
-          <span className="terminal-prompt">visitor@portfolio:~$</span>
+          <span className="terminal-prompt" aria-hidden="true">visitor@portfolio:~$</span>
           <input
             ref={inputRef}
             className="terminal-input"
@@ -52,6 +52,7 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
+            aria-label="Terminal command input"
             autoComplete="off"
             spellCheck={false}
             autoFocus

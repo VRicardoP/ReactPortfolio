@@ -11,6 +11,26 @@ vi.mock('../FloatingWindow', () => ({
   ),
 }))
 
+/**
+ * Creates a mock SSE ReadableStream response from an array of SSE event objects.
+ * Each object is serialized as "data: {json}\n\n".
+ */
+function createSSEResponse(events) {
+  const text = events.map(e => `data: ${JSON.stringify(e)}\n\n`).join('')
+  const encoder = new TextEncoder()
+  const stream = new ReadableStream({
+    start(controller) {
+      controller.enqueue(encoder.encode(text))
+      controller.close()
+    },
+  })
+  return {
+    ok: true,
+    headers: new Headers({ 'content-type': 'text/event-stream' }),
+    body: stream,
+  }
+}
+
 describe('ChatWindow', () => {
   const mockData = { name: 'Vicente' }
   const mockPosition = { x: 100, y: 100 }
@@ -39,11 +59,14 @@ describe('ChatWindow', () => {
     expect(sendButton).not.toBeDisabled()
   })
 
-  it('sends message and shows bot response', async () => {
-    global.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({ response: 'Test bot reply' }),
-    })
+  it('sends message and shows streamed bot response', async () => {
+    global.fetch.mockResolvedValueOnce(
+      createSSEResponse([
+        { type: 'chunk', content: 'Test ' },
+        { type: 'chunk', content: 'bot reply' },
+        { type: 'done', response_time_ms: 100 },
+      ])
+    )
 
     render(<ChatWindow data={mockData} initialPosition={mockPosition} />)
     const input = screen.getByPlaceholderText('Ask me anything...')

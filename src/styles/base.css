@@ -1,13 +1,40 @@
 body {
   margin: 0;
-  overflow: hidden;
   font-family: 'Courier New', monospace;
   background-color: #000000;
   color: #00ffff;
 }
 
+/* Desktop: fixed windows need overflow hidden */
+@media (min-width: 769px) {
+  body {
+    overflow: hidden;
+  }
+}
+
+/* Mobile: scrollable sections need vertical scroll */
+@media (max-width: 768px) {
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
+
 * {
   box-sizing: border-box;
+}
+
+/* Visually hidden but accessible to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Japanese CJK font support */

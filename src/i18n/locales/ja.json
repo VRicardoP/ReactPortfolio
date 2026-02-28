@@ -22,6 +22,7 @@
     "typing": "クサナギが入力中...",
     "placeholder": "何でも聞いてください...",
     "send": "送信",
+    "stop": "停止",
     "errorMessage": "エラーが発生しました。もう一度お試しください。",
     "errorConnection": "サーバーへの接続エラーが発生しました。しばらくしてからお試しください。"
   },
@@ -344,7 +345,19 @@
       "matchingSkills": "一致",
       "missingSkills": "不足",
       "noResults": "「AI分析を実行」をクリックして最適な求人を見つけましょう"
+    },
+    "tab": {
+      "overview": "概要",
+      "map": "地図",
+      "chat": "チャット",
+      "jobs": "求人",
+      "settings": "設定"
     }
+  },
+  "mobile": {
+    "menu": "メニュー",
+    "openChat": "チャットを開く",
+    "closeChat": "チャットを閉じる"
   },
   "terminal": {
     "title": "ターミナル",

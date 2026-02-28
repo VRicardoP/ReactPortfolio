@@ -22,6 +22,7 @@
     "typing": "Kusanagi is typing...",
     "placeholder": "Ask me anything...",
     "send": "Send",
+    "stop": "Stop",
     "errorMessage": "Sorry, I encountered an error. Please try again.",
     "errorConnection": "Sorry, I encountered an error connecting to the server. Please try again in a moment."
   },
@@ -344,7 +345,19 @@
       "matchingSkills": "Matching",
       "missingSkills": "Missing",
       "noResults": "Click 'Run AI Analysis' to find your best job matches"
+    },
+    "tab": {
+      "overview": "Overview",
+      "map": "Map",
+      "chat": "Chat",
+      "jobs": "Jobs",
+      "settings": "Settings"
     }
+  },
+  "mobile": {
+    "menu": "Menu",
+    "openChat": "Open chat",
+    "closeChat": "Close chat"
   },
   "terminal": {
     "title": "Terminal",

@@ -106,3 +106,30 @@
   font-size: 14px;
   font-family: 'Courier New', monospace;
 }
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 30px 20px;
+    margin: 0 12px;
+    max-width: calc(100vw - 24px);
+  }
+
+  .login-container h1 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+}
+
+/* Touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .login-container input[type="text"],
+  .login-container input[type="password"] {
+    min-height: 44px;
+  }
+
+  .login-container button {
+    min-height: 44px;
+  }
+}

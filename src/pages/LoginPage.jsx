@@ -59,24 +59,30 @@ const LoginPage = () => {
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
+                        <label htmlFor="login-username" className="sr-only">{t('login.usernamePlaceholder')}</label>
                         <input
+                            id="login-username"
                             type="text"
                             placeholder={t('login.usernamePlaceholder')}
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             disabled={loading}
                             autoComplete="username"
+                            aria-describedby={error ? 'login-error' : undefined}
                         />
                     </div>
 
                     <div className="form-group">
+                        <label htmlFor="login-password" className="sr-only">{t('login.passwordPlaceholder')}</label>
                         <input
+                            id="login-password"
                             type="password"
                             placeholder={t('login.passwordPlaceholder')}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             disabled={loading}
                             autoComplete="current-password"
+                            aria-describedby={error ? 'login-error' : undefined}
                         />
                     </div>
 
@@ -86,7 +92,7 @@ const LoginPage = () => {
                 </form>
 
                 {error && (
-                    <div className="error-message">
+                    <div id="login-error" className="error-message" role="alert">
                         ⚠️ {error}
                     </div>
                 )}

@@ -1,11 +1,13 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useWindowContext } from '../../context/WindowContext';
 import useDraggable from '../../hooks/useDraggable';
 import useResizable from '../../hooks/useResizable';
+import useIsMobile from '../../hooks/useIsMobile';
 import Tooltip from '../UI/Tooltip';
 import '../../styles/floating-window.css';
 
-const FloatingWindow = ({
+// Desktop: the original floating window with drag, resize, minimize, maximize
+const FloatingWindowDesktop = ({
     id,
     title,
     children,
@@ -185,6 +187,60 @@ const FloatingWindow = ({
             )}
         </div>
     );
+};
+
+// Mobile: a collapsible section that replaces the floating window
+const FloatingWindowMobile = ({ id, title, children, defaultExpanded = false }) => {
+    const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+
+    const handleToggle = () => setIsExpanded(prev => !prev);
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleToggle();
+        }
+    };
+
+    return (
+        <section
+            className={`mobile-section${isExpanded ? ' mobile-section-expanded' : ''}`}
+            aria-labelledby={`${id}-title`}
+        >
+            <div
+                className="mobile-section-header"
+                onClick={handleToggle}
+                onKeyDown={handleKeyDown}
+                role="button"
+                tabIndex={0}
+                aria-expanded={isExpanded}
+            >
+                <span className="mobile-section-title" id={`${id}-title`}>{title}</span>
+                <span
+                    className={`mobile-section-chevron${isExpanded ? ' rotated' : ''}`}
+                    aria-hidden="true"
+                >
+                    {'\u25B6'}
+                </span>
+            </div>
+            {isExpanded && (
+                <div className="mobile-section-content">
+                    {children}
+                </div>
+            )}
+        </section>
+    );
+};
+
+// Dispatcher: picks the right component based on screen size
+const FloatingWindow = (props) => {
+    const isMobile = useIsMobile();
+
+    if (isMobile) {
+        return <FloatingWindowMobile {...props} />;
+    }
+
+    return <FloatingWindowDesktop {...props} />;
 };
 
 export default FloatingWindow;

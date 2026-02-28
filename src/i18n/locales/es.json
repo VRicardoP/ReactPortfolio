@@ -22,6 +22,7 @@
     "typing": "Kusanagi est\u00e1 escribiendo...",
     "placeholder": "Preg\u00fantame lo que quieras...",
     "send": "Enviar",
+    "stop": "Parar",
     "errorMessage": "Lo siento, ocurri\u00f3 un error. Int\u00e9ntalo de nuevo.",
     "errorConnection": "Lo siento, ocurri\u00f3 un error al conectar con el servidor. Int\u00e9ntalo de nuevo en un momento."
   },
@@ -344,7 +345,19 @@
       "matchingSkills": "Coincidentes",
       "missingSkills": "Faltantes",
       "noResults": "Pulsa 'Ejecutar Análisis IA' para encontrar tus mejores ofertas"
+    },
+    "tab": {
+      "overview": "General",
+      "map": "Mapa",
+      "chat": "Chat",
+      "jobs": "Empleos",
+      "settings": "Ajustes"
     }
+  },
+  "mobile": {
+    "menu": "Menú",
+    "openChat": "Abrir chat",
+    "closeChat": "Cerrar chat"
   },
   "terminal": {
     "title": "Terminal",

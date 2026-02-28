@@ -64,6 +64,39 @@
   animation: typing-pulse 1.5s infinite;
 }
 
+.bot-message.streaming {
+  border-left: 2px solid #00ffff;
+}
+
+.streaming-cursor {
+  animation: cursor-blink 0.7s step-end infinite;
+  color: #00ffff;
+  font-weight: bold;
+}
+
+@keyframes cursor-blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.chat-send-btn.stop-btn {
+  background-color: #553333;
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.chat-send-btn.stop-btn:hover {
+  background-color: #774444;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+}
+
 @keyframes typing-pulse {
 
   0%,

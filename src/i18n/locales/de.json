@@ -22,6 +22,7 @@
     "typing": "Kusanagi schreibt...",
     "placeholder": "Fragen Sie mich etwas...",
     "send": "Senden",
+    "stop": "Stopp",
     "errorMessage": "Entschuldigung, ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
     "errorConnection": "Entschuldigung, ein Fehler bei der Verbindung zum Server ist aufgetreten. Bitte versuchen Sie es gleich noch einmal."
   },
@@ -344,7 +345,19 @@
       "matchingSkills": "Übereinstimmend",
       "missingSkills": "Fehlend",
       "noResults": "Klicken Sie auf 'KI-Analyse starten', um Ihre besten Stellenangebote zu finden"
+    },
+    "tab": {
+      "overview": "Übersicht",
+      "map": "Karte",
+      "chat": "Chat",
+      "jobs": "Stellen",
+      "settings": "Einstellungen"
     }
+  },
+  "mobile": {
+    "menu": "Menü",
+    "openChat": "Chat öffnen",
+    "closeChat": "Chat schließen"
   },
   "terminal": {
     "title": "Terminal",

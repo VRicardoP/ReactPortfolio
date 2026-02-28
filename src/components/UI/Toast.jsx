@@ -48,7 +48,7 @@ const Toast = () => {
     }, []);
 
     return (
-        <div className="toast-container">
+        <div className="toast-container" role="status" aria-live="polite">
             {toasts.map((toast, index) => (
                 <div
                     key={toast.id}

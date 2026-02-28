@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { useTheme } from '../../context/ThemeContext';
+import useIsMobile from '../../hooks/useIsMobile';
 
 // Lazy-load each effect so only the active one is downloaded
 const RainEffect = lazy(() => import('./RainEffect'));
@@ -18,7 +19,12 @@ const EFFECTS = {
 };
 
 const BackgroundEffect = () => {
+    const isMobile = useIsMobile();
     const { backgroundEffect } = useTheme();
+
+    // Skip heavy Three.js/Canvas effects on mobile (CSS gradient used instead)
+    if (isMobile) return null;
+
     const EffectComponent = EFFECTS[backgroundEffect] || RainEffect;
 
     return (

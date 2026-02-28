@@ -1,4 +1,4 @@
-import { lazy, Suspense, memo, useCallback } from 'react';
+import { lazy, Suspense, memo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
@@ -10,7 +10,10 @@ import { WindowProvider } from '../context/WindowContext';
 import useTypewriter from '../hooks/useTypewriter';
 import useWindowLayout from '../hooks/useWindowLayout';
 import { useSSENotifications } from '../hooks/useSSENotifications';
+import useIsMobile from '../hooks/useIsMobile';
+import Toast from '../components/UI/Toast';
 import '../styles/dashboard.css';
+import '../styles/mobile.css';
 
 // lazy load components only when needed so it's faster
 const StatsWindow = lazy(() => import('../components/Dashboard/StatsWindow'));
@@ -53,8 +56,8 @@ const DashboardLoader = memo(() => (
 
 DashboardLoader.displayName = 'DashboardLoader';
 
-// here are all the dashboard windows
-const DashboardContent = memo(({ stats, mapData, chatAnalytics, jobData, bookmarks, removeBookmark }) => {
+// Desktop: floating windows with drag/resize/minimize
+const DesktopDashboardContent = memo(({ stats, mapData, chatAnalytics, jobData, bookmarks, removeBookmark }) => {
     // Listen for SSE notifications (new jobs toast, etc.)
     useSSENotifications();
 
@@ -142,7 +145,128 @@ const DashboardContent = memo(({ stats, mapData, chatAnalytics, jobData, bookmar
     );
 });
 
-DashboardContent.displayName = 'DashboardContent';
+DesktopDashboardContent.displayName = 'DesktopDashboardContent';
+
+const DASHBOARD_TABS = [
+    { key: 'overview', icon: '📊' },
+    { key: 'map', icon: '🗺️' },
+    { key: 'chat', icon: '💬' },
+    { key: 'jobs', icon: '💼' },
+    { key: 'settings', icon: '⚙️' },
+];
+
+// Mobile: tabbed layout with collapsible sections
+const MobileDashboardLayout = memo(({ stats, mapData, chatAnalytics, jobData, bookmarks, removeBookmark, onLogout, onGoHome }) => {
+    const { t } = useTranslation();
+    const { cycleTheme, themeName, cycleBackground, backgroundEffect } = useTheme();
+    const [activeTab, setActiveTab] = useState('overview');
+
+    useSSENotifications();
+
+    return (
+        <>
+            <nav className="mobile-nav-header">
+                <span className="mobile-nav-title">{t('dashboard.title')}</span>
+            </nav>
+
+            <div className="mobile-dashboard-container">
+                <div className="mobile-dashboard-content">
+                    {activeTab === 'overview' && (
+                        <Suspense fallback={<DashboardLoader />}>
+                            <StatsWindow data={stats} defaultExpanded />
+                            <RecentVisitorsWindow data={stats} />
+                        </Suspense>
+                    )}
+
+                    {activeTab === 'map' && (
+                        <Suspense fallback={<DashboardLoader />}>
+                            <MapWindow data={mapData} defaultExpanded />
+                        </Suspense>
+                    )}
+
+                    {activeTab === 'chat' && (
+                        <Suspense fallback={<DashboardLoader />}>
+                            <ChatAnalyticsWindow data={chatAnalytics} defaultExpanded />
+                        </Suspense>
+                    )}
+
+                    {activeTab === 'jobs' && (
+                        <Suspense fallback={<DashboardLoader />}>
+                            <JobBoardTabbedWindow jobData={jobData} defaultExpanded />
+                            <JobMarketAnalyticsWindow jobData={jobData} />
+                            <BookmarkedJobsWindow bookmarks={bookmarks} onRemove={removeBookmark} />
+                            <JSearchLiveWindow />
+                            <SalaryAnalyticsWindow data={jobData.jsearch} />
+                            <JobFilterWindow />
+                            <SavedSearchesWindow />
+                            <KanbanWindow />
+                            <AIJobMatchWindow />
+                        </Suspense>
+                    )}
+
+                    {activeTab === 'settings' && (
+                        <div className="mobile-portfolio-container" style={{ padding: '12px' }}>
+                            <section className="mobile-section mobile-section-expanded">
+                                <div className="mobile-section-content">
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                        <button
+                                            className="mobile-nav-dropdown-item"
+                                            onClick={cycleTheme}
+                                        >
+                                            <span className="mobile-nav-dropdown-item-icon">
+                                                {themeName === 'cyan' ? '🔵' : themeName === 'silver' ? '⚪' : '🟠'}
+                                            </span>
+                                            {t('dashboard.theme')}
+                                        </button>
+                                        <button
+                                            className="mobile-nav-dropdown-item"
+                                            onClick={cycleBackground}
+                                        >
+                                            <span className="mobile-nav-dropdown-item-icon">🎨</span>
+                                            {t(`dashboard.${backgroundEffect === 'rain' ? 'bgRain' : backgroundEffect === 'parallax' ? 'bgParallax' : backgroundEffect === 'matrix' ? 'bgMatrix' : backgroundEffect === 'lensflare' ? 'bgLensflare' : backgroundEffect === 'cube' ? 'bgCube' : 'bgSmoke'}`)}
+                                        </button>
+                                        <button
+                                            className="mobile-nav-dropdown-item"
+                                            onClick={onGoHome}
+                                        >
+                                            <span className="mobile-nav-dropdown-item-icon">🏠</span>
+                                            {t('dashboard.backToPortfolio')}
+                                        </button>
+                                        <button
+                                            className="mobile-nav-dropdown-item"
+                                            onClick={onLogout}
+                                            style={{ color: '#ff6b6b' }}
+                                        >
+                                            <span className="mobile-nav-dropdown-item-icon">🚪</span>
+                                            {t('dashboard.logout')}
+                                        </button>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <Toast />
+
+            <div className="mobile-dashboard-tabs">
+                {DASHBOARD_TABS.map(tab => (
+                    <button
+                        key={tab.key}
+                        className={`mobile-dashboard-tab${activeTab === tab.key ? ' active' : ''}`}
+                        onClick={() => setActiveTab(tab.key)}
+                    >
+                        <span className="mobile-dashboard-tab-icon">{tab.icon}</span>
+                        <span>{t(`dashboard.tab.${tab.key}`)}</span>
+                    </button>
+                ))}
+            </div>
+        </>
+    );
+});
+
+MobileDashboardLayout.displayName = 'MobileDashboardLayout';
 
 const BACKGROUND_LABELS = {
     rain: 'bgRain',
@@ -167,6 +291,7 @@ const DashboardPage = () => {
     const { logout } = useAuth();
     const { theme, cycleTheme, themeName, backgroundEffect, cycleBackground } = useTheme();
     const navigate = useNavigate();
+    const isMobile = useIsMobile();
     const typedText = useTypewriter(t('dashboard.title'), 100);
     const { stats, mapData, chatAnalytics, jobData, loading, error } = useDashboardData();
     const { bookmarks, removeBookmark } = useJobBookmarks();
@@ -282,10 +407,26 @@ const DashboardPage = () => {
         );
     }
 
+    // Mobile dashboard: tabbed layout
+    if (isMobile) {
+        return (
+            <MobileDashboardLayout
+                stats={stats}
+                mapData={mapData}
+                chatAnalytics={chatAnalytics}
+                jobData={jobData}
+                bookmarks={bookmarks}
+                removeBookmark={removeBookmark}
+                onLogout={handleLogout}
+                onGoHome={handleGoHome}
+            />
+        );
+    }
+
     const bgKey = BACKGROUND_LABELS[backgroundEffect] || 'bgRain';
     const bgEmoji = BACKGROUND_EMOJIS[backgroundEffect] || '🌧️';
 
-    // when everything is ready show the complete dashboard
+    // Desktop: floating windows dashboard
     return (
         <>
             <BackgroundEffect />
@@ -331,7 +472,7 @@ const DashboardPage = () => {
             </div>
 
             <WindowProvider>
-                <DashboardContent
+                <DesktopDashboardContent
                     stats={stats}
                     mapData={mapData}
                     chatAnalytics={chatAnalytics}

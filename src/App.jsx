@@ -8,8 +8,12 @@ import useTypewriter from './hooks/useTypewriter';
 import usePortfolioData from './hooks/usePortfolioData';
 import useWindowLayout from './hooks/useWindowLayout';
 import useVisitorTracking from './hooks/useVisitorTracking';
+import useIsMobile from './hooks/useIsMobile';
+import MobileNav from './components/UI/MobileNav';
+import MobileChatSheet from './components/UI/MobileChatSheet';
 import './styles/base.css';
 import './styles/windows-content.css';
+import './styles/mobile.css';
 
 // lazy load windows only when needed so the page loads faster
 const WelcomeWindow = lazy(() => import('./components/Windows/WelcomeWindow'));
@@ -52,8 +56,8 @@ const WindowLoader = memo(() => (
 
 WindowLoader.displayName = 'WindowLoader';
 
-// this component contains all the portfolio windows
-const PortfolioContent = memo(({ portfolioData }) => {
+// Desktop: floating windows with drag/resize/minimize
+const DesktopPortfolioContent = memo(({ portfolioData }) => {
   const [showTerminal, setShowTerminal] = useState(false);
 
   const portfolioWindowIds = [
@@ -159,13 +163,87 @@ const PortfolioContent = memo(({ portfolioData }) => {
   );
 });
 
-PortfolioContent.displayName = 'PortfolioContent';
+DesktopPortfolioContent.displayName = 'DesktopPortfolioContent';
+
+// Mobile: scrollable sections with collapsible cards
+const MobilePortfolioLayout = memo(({ portfolioData }) => {
+  const { t } = useTranslation();
+  const [showTerminal, setShowTerminal] = useState(false);
+
+  const handleTerminalToggle = useCallback(() => {
+    setShowTerminal(prev => !prev);
+  }, []);
+
+  return (
+    <>
+      <MobileNav
+        title={portfolioData?.name || 'Portfolio'}
+        onTerminalToggle={handleTerminalToggle}
+      />
+
+      <div className="mobile-portfolio-container">
+        <header className="mobile-hero">
+          <h1 className="mobile-hero-name">{portfolioData?.name}</h1>
+          <p className="mobile-hero-title">{portfolioData?.title}</p>
+          <p className="mobile-hero-intro">{t('welcome.intro')}</p>
+        </header>
+
+        <Suspense fallback={<WindowLoader />}>
+          <ProfileWindow data={portfolioData} defaultExpanded />
+          <ExperienceWindow data={portfolioData} defaultExpanded />
+          <TechSkillsWindow data={portfolioData} />
+          <EducationWindow data={portfolioData} />
+          <PortfolioWindow data={portfolioData} />
+          <SoftSkillsWindow data={portfolioData} />
+          <LanguagesWindow data={portfolioData} />
+          <AchievementsWindow data={portfolioData} />
+          <FitMatrixWindow data={portfolioData} />
+          <ContactWindow data={portfolioData} defaultExpanded />
+        </Suspense>
+      </div>
+
+      <MobileChatSheet data={portfolioData} />
+      <Toast />
+
+      {showTerminal && (
+        <Suspense fallback={<WindowLoader />}>
+          <div className="mobile-terminal-sheet">
+            <div className="mobile-terminal-header">
+              <span className="mobile-terminal-header-title">Terminal</span>
+              <button
+                className="mobile-chat-close-btn"
+                onClick={() => setShowTerminal(false)}
+                aria-label="Close terminal"
+              >
+                {'\u00D7'}
+              </button>
+            </div>
+            <div className="mobile-terminal-body">
+              <TerminalWindow
+                portfolioData={portfolioData}
+                onClose={() => setShowTerminal(false)}
+              />
+            </div>
+          </div>
+        </Suspense>
+      )}
+    </>
+  );
+});
+
+MobilePortfolioLayout.displayName = 'MobilePortfolioLayout';
 
 function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isMobile = useIsMobile();
 
   // track the user's visit
   useVisitorTracking();
+
+  // Sync html lang attribute with current i18n language
+  useEffect(() => {
+    document.documentElement.lang = i18n.language;
+  }, [i18n.language]);
 
   // subtle console hint about the terminal easter egg
   useEffect(() => {
@@ -220,21 +298,27 @@ function App() {
     );
   }
 
+  // Mobile layout: scrollable sections, no floating windows
+  if (isMobile) {
+    return <MobilePortfolioLayout portfolioData={portfolioData} />;
+  }
+
+  // Desktop layout: floating windows with drag/resize
   return (
-    <>
+    <main>
       <BackgroundEffect />
 
       <h1 className="main-title">
         <span className="typewriter-container">{typedText}</span>
-        <span className="terminal-cursor"></span>
+        <span className="terminal-cursor" aria-hidden="true"></span>
       </h1>
 
       <Toast />
 
       <WindowProvider>
-        <PortfolioContent portfolioData={portfolioData} />
+        <DesktopPortfolioContent portfolioData={portfolioData} />
       </WindowProvider>
-    </>
+    </main>
   );
 }
 

@@ -22,6 +22,7 @@
     "typing": "Kusanagi écrit...",
     "placeholder": "Posez-moi une question...",
     "send": "Envoyer",
+    "stop": "Arrêter",
     "errorMessage": "Désolé, une erreur s'est produite. Veuillez réessayer.",
     "errorConnection": "Désolé, une erreur de connexion au serveur s'est produite. Veuillez réessayer dans un instant."
   },
@@ -344,7 +345,19 @@
       "matchingSkills": "Correspondantes",
       "missingSkills": "Manquantes",
       "noResults": "Cliquez sur 'Lancer l'analyse IA' pour trouver vos meilleures offres"
+    },
+    "tab": {
+      "overview": "Aperçu",
+      "map": "Carte",
+      "chat": "Chat",
+      "jobs": "Emplois",
+      "settings": "Paramètres"
     }
+  },
+  "mobile": {
+    "menu": "Menu",
+    "openChat": "Ouvrir le chat",
+    "closeChat": "Fermer le chat"
   },
   "terminal": {
     "title": "Terminal",
