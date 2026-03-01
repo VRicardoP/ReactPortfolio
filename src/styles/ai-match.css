@@ -1,0 +1,202 @@
+/* ===== AI JOB MATCH WINDOW ===== */
+/* Static layout styles extracted from AIJobMatchWindow.jsx */
+/* Dynamic theme colors (theme.primary, theme.text, etc.) remain as inline styles */
+/* Existing classes (ai-match-header, ai-match-analyze-btn, ai-match-meta, ai-match-loading, */
+/* ai-match-error, ai-match-score, ai-match-fit-badge, ai-match-skills-toggle, */
+/* ai-match-skills-detail, ai-match-skills-label, ai-match-reason) live in dashboard.css */
+
+.ai-match-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px;
+  gap: 8px;
+}
+
+.ai-match-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  opacity: 0.5;
+  text-align: center;
+  padding: 20px;
+}
+
+.ai-match-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.ai-match-pagination > div {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.ai-match-page-btn {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.ai-match-page-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.ai-match-results {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ai-match-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ai-match-results::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.ai-match-results::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.ai-match-card {
+  padding: 8px 10px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ai-match-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ai-match-card-title-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.ai-match-card-title {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ai-match-card-company {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.ai-match-card-score-col {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.ai-match-card-meta {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ai-match-card-meta-text {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.ai-match-card-meta-text.secondary {
+  opacity: 0.5;
+}
+
+.ai-match-skills-group {
+  margin-bottom: 6px;
+}
+
+.ai-match-skills-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 3px;
+}
+
+.ai-match-skill-tag-match {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  background: rgba(0, 255, 100, 0.1);
+  border: 1px solid rgba(0, 255, 100, 0.3);
+  color: #00ff64;
+}
+
+.ai-match-skill-tag-miss {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  background: rgba(255, 100, 100, 0.1);
+  border: 1px solid rgba(255, 100, 100, 0.3);
+  color: #ff6b6b;
+}
+
+.ai-match-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.ai-match-card-date {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  opacity: 0.5;
+}
+
+.ai-match-card-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.ai-match-card-actions .cv-gen-btn {
+  font-size: 10px;
+  padding: 2px 8px;
+}
+
+.ai-match-spinner {
+  width: 24px;
+  height: 24px;
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.ai-match-stage-info {
+  font-size: 10px;
+  opacity: 0.6;
+}

@@ -27,6 +27,9 @@ dist-ssr
 node_modules/
 .env
 
+# Test coverage
+coverage/
+
 # Playwright
 test-results/
 playwright-report/

@@ -6,6 +6,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { BACKEND_URL } from '../../config/api';
 import useJobApplication from '../../hooks/useJobApplication';
 import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
+import '../../styles/ai-match.css';
 
 const FIT_COLORS = {
     excellent: { bg: 'rgba(0, 255, 100, 0.15)', text: '#00ff64', border: 'rgba(0, 255, 100, 0.3)' },
@@ -28,7 +29,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
     const [error, setError] = useState(null);
     const [page, setPage] = useState(0);
     const [expandedId, setExpandedId] = useState(null);
-    const { handleApply, appliedIds } = useJobApplication();
+    const { handleApply, appliedIds, handleSave, savedIds } = useJobApplication();
 
     const runAnalysis = useCallback(async () => {
         setLoading(true);
@@ -52,17 +53,6 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
     const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
     const pagedResults = results.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
-    const btnStyle = {
-        background: `rgba(${theme.primaryRgb}, 0.2)`,
-        border: `1px solid ${theme.primary}`,
-        color: theme.primary,
-        padding: '2px 8px',
-        borderRadius: '3px',
-        fontFamily: 'Courier New, monospace',
-        fontSize: '11px',
-        cursor: 'pointer',
-    };
-
     return (
         <FloatingWindow
             id="ai-match-window"
@@ -70,7 +60,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
             initialPosition={initialPosition}
             initialSize={{ width: 700, height: 600 }}
         >
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '10px', gap: '8px' }}>
+            <div className="ai-match-content">
                 {/* Header: analyze button + metadata */}
                 <div className="ai-match-header">
                     <button
@@ -94,15 +84,12 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                 {/* Loading state */}
                 {loading && (
                     <div className="ai-match-loading">
-                        <div style={{
-                            width: '24px', height: '24px',
-                            border: `2px solid ${theme.primary}`,
-                            borderTopColor: 'transparent',
-                            borderRadius: '50%',
-                            animation: 'spin 1s linear infinite',
-                        }} />
+                        <div
+                            className="ai-match-spinner"
+                            style={{ borderColor: theme.primary }}
+                        />
                         <span>{t('dashboard.aiMatch.analyzing')}</span>
-                        <span style={{ fontSize: '10px', opacity: 0.6 }}>
+                        <span className="ai-match-stage-info">
                             {t('dashboard.aiMatch.stageInfo')}
                         </span>
                     </div>
@@ -112,11 +99,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
 
                 {/* No results placeholder */}
                 {!loading && !error && results.length === 0 && (
-                    <div style={{
-                        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: 'Courier New', fontSize: '12px', color: theme.text, opacity: 0.5,
-                        textAlign: 'center', padding: '20px',
-                    }}>
+                    <div className="ai-match-empty" style={{ color: theme.text }}>
                         {t('dashboard.aiMatch.noResults')}
                     </div>
                 )}
@@ -125,48 +108,58 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                 {results.length > 0 && (
                     <>
                         {/* Pagination header */}
-                        <div style={{
-                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                            fontFamily: 'Courier New', fontSize: '11px', color: theme.text, opacity: 0.7,
-                        }}>
+                        <div className="ai-match-pagination" style={{ color: theme.text }}>
                             <span>{results.length} {t('dashboard.jobFilter.resultsFound')}</span>
                             {totalPages > 1 && (
-                                <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                                    <button disabled={page === 0} onClick={() => setPage(p => p - 1)} style={btnStyle}>&lt;</button>
+                                <div>
+                                    <button
+                                        disabled={page === 0}
+                                        onClick={() => setPage(p => p - 1)}
+                                        className="ai-match-page-btn"
+                                        style={{
+                                            background: `rgba(${theme.primaryRgb}, 0.2)`,
+                                            border: `1px solid ${theme.primary}`,
+                                            color: theme.primary,
+                                        }}
+                                    >&lt;</button>
                                     <span>{page + 1}/{totalPages}</span>
-                                    <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)} style={btnStyle}>&gt;</button>
+                                    <button
+                                        disabled={page >= totalPages - 1}
+                                        onClick={() => setPage(p => p + 1)}
+                                        className="ai-match-page-btn"
+                                        style={{
+                                            background: `rgba(${theme.primaryRgb}, 0.2)`,
+                                            border: `1px solid ${theme.primary}`,
+                                            color: theme.primary,
+                                        }}
+                                    >&gt;</button>
                                 </div>
                             )}
                         </div>
 
-                        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div className="ai-match-results">
                             {pagedResults.map((job, idx) => {
                                 const fitStyle = FIT_COLORS[job.fit] || FIT_COLORS.unknown;
                                 const globalIdx = page * PAGE_SIZE + idx;
                                 const isExpanded = expandedId === globalIdx;
 
                                 return (
-                                    <div key={`${job.source}-${job.id}-${globalIdx}`} style={{
-                                        padding: '8px 10px',
-                                        border: `1px solid ${theme.borderLight}`,
-                                        borderRadius: '4px',
-                                        background: 'rgba(255,255,255,0.02)',
-                                    }}>
+                                    <div
+                                        key={`${job.source}-${job.id}-${globalIdx}`}
+                                        className="ai-match-card"
+                                        style={{ border: `1px solid ${theme.borderLight}` }}
+                                    >
                                         {/* Header: title + score + fit badge */}
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                                            <div style={{ flex: 1, minWidth: 0 }}>
-                                                <div style={{
-                                                    fontFamily: 'Courier New', fontSize: '13px',
-                                                    color: theme.textHighlight, fontWeight: 'bold',
-                                                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                                }}>
+                                        <div className="ai-match-card-header">
+                                            <div className="ai-match-card-title-col">
+                                                <div className="ai-match-card-title" style={{ color: theme.textHighlight }}>
                                                     {job.title}
                                                 </div>
-                                                <div style={{ fontFamily: 'Courier New', fontSize: '11px', color: theme.text, marginTop: '2px' }}>
+                                                <div className="ai-match-card-company" style={{ color: theme.text }}>
                                                     <CompanyResearchName company={job.company}>{job.company}</CompanyResearchName>
                                                 </div>
                                             </div>
-                                            <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
+                                            <div className="ai-match-card-score-col">
                                                 <span className="ai-match-score" style={{ color: theme.primary }}>
                                                     {job.ai_score}%
                                                 </span>
@@ -181,9 +174,9 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                         </div>
 
                                         {/* Meta: location, remote, source */}
-                                        <div style={{ display: 'flex', gap: '8px', marginTop: '4px', flexWrap: 'wrap', alignItems: 'center' }}>
+                                        <div className="ai-match-card-meta">
                                             {job.location && (
-                                                <span style={{ fontFamily: 'Courier New', fontSize: '10px', color: theme.text, opacity: 0.7 }}>
+                                                <span className="ai-match-card-meta-text" style={{ color: theme.text }}>
                                                     {job.location}
                                                 </span>
                                             )}
@@ -198,7 +191,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                                 {job.source}
                                             </span>
                                             {job.employment_type && (
-                                                <span style={{ fontFamily: 'Courier New', fontSize: '10px', color: theme.text, opacity: 0.5 }}>
+                                                <span className="ai-match-card-meta-text secondary" style={{ color: theme.text }}>
                                                     {job.employment_type}
                                                 </span>
                                             )}
@@ -217,34 +210,26 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                             <div className="ai-match-skills-detail">
                                                 {/* Matching skills (green) */}
                                                 {job.matching_skills?.length > 0 && (
-                                                    <div style={{ marginBottom: '6px' }}>
+                                                    <div className="ai-match-skills-group">
                                                         <span className="ai-match-skills-label" style={{ color: '#00ff64' }}>
                                                             ✓ {t('dashboard.aiMatch.matchingSkills')}:
                                                         </span>
-                                                        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginTop: '3px' }}>
+                                                        <div className="ai-match-skills-tags">
                                                             {job.matching_skills.map(s => (
-                                                                <span key={s} className="jobboard-skill-tag" style={{
-                                                                    background: 'rgba(0, 255, 100, 0.1)',
-                                                                    borderColor: 'rgba(0, 255, 100, 0.3)',
-                                                                    color: '#00ff64',
-                                                                }}>{s}</span>
+                                                                <span key={s} className="ai-match-skill-tag-match">{s}</span>
                                                             ))}
                                                         </div>
                                                     </div>
                                                 )}
                                                 {/* Missing skills (red) */}
                                                 {job.missing_skills?.length > 0 && (
-                                                    <div style={{ marginBottom: '6px' }}>
+                                                    <div className="ai-match-skills-group">
                                                         <span className="ai-match-skills-label" style={{ color: '#ff6b6b' }}>
                                                             ✗ {t('dashboard.aiMatch.missingSkills')}:
                                                         </span>
-                                                        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginTop: '3px' }}>
+                                                        <div className="ai-match-skills-tags">
                                                             {job.missing_skills.map(s => (
-                                                                <span key={s} className="jobboard-skill-tag" style={{
-                                                                    background: 'rgba(255, 100, 100, 0.1)',
-                                                                    borderColor: 'rgba(255, 100, 100, 0.3)',
-                                                                    color: '#ff6b6b',
-                                                                }}>{s}</span>
+                                                                <span key={s} className="ai-match-skill-tag-miss">{s}</span>
                                                             ))}
                                                         </div>
                                                     </div>
@@ -256,26 +241,35 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                             </div>
                                         )}
 
-                                        {/* Footer: date + apply button */}
-                                        <div style={{
-                                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                                            marginTop: '6px',
-                                        }}>
-                                            <span style={{ fontFamily: 'Courier New', fontSize: '10px', color: theme.text, opacity: 0.5 }}>
+                                        {/* Footer: date + save/apply buttons */}
+                                        <div className="ai-match-card-footer">
+                                            <span className="ai-match-card-date" style={{ color: theme.text }}>
                                                 {job.date ? new Date(job.date).toLocaleDateString() : ''}
                                                 <FreshnessBadge dateStr={job.date} />
                                             </span>
-                                            {job.url && (
+                                            <div className="ai-match-card-actions">
                                                 <button
-                                                    onClick={() => handleApply(job)}
-                                                    className={`jobboard-apply-btn ${appliedIds.has(job.id) ? 'applied' : ''}`}
+                                                    onClick={() => handleSave(job)}
+                                                    disabled={savedIds.has(job.id)}
+                                                    className={`cv-gen-btn ${savedIds.has(job.id) ? 'cv-gen-btn-applied' : 'cv-gen-btn-generate'}`}
                                                 >
-                                                    {appliedIds.has(job.id)
-                                                        ? t('dashboard.jobBoard.applied')
-                                                        : t('dashboard.jobBoard.apply')
+                                                    {savedIds.has(job.id)
+                                                        ? t('dashboard.aiMatch.saved')
+                                                        : t('dashboard.aiMatch.saveToBoard')
                                                     }
                                                 </button>
-                                            )}
+                                                {job.url && (
+                                                    <button
+                                                        onClick={() => handleApply(job)}
+                                                        className={`jobboard-apply-btn ${appliedIds.has(job.id) ? 'applied' : ''}`}
+                                                    >
+                                                        {appliedIds.has(job.id)
+                                                            ? t('dashboard.jobBoard.applied')
+                                                            : t('dashboard.jobBoard.apply')
+                                                        }
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 );

@@ -204,10 +204,48 @@
       "tabIctjobs": "ICTjobs",
       "applied": "Aplicado"
     },
+    "selectedOffers": {
+      "title": "Panel de Ofertas Seleccionadas",
+      "tab_saved": "Guardados",
+      "tab_applied": "Aplicados",
+      "tab_pipeline": "Pipeline",
+      "tab_documents": "Documentos"
+    },
     "bookmarks": {
       "title": "Empleos Guardados",
       "empty": "No hay empleos guardados. Haz clic en la estrella de cualquier empleo para guardarlo.",
-      "remove": "Quitar"
+      "remove": "Quitar",
+      "discard": "Descartar",
+      "alreadyApplied": "Ya Aplicado",
+      "addDescription": "Agregar Descripcion",
+      "descriptionPlaceholder": "Pega el texto completo de la oferta aqui...",
+      "save": "Guardar",
+      "cancel": "Cancelar"
+    },
+    "appliedJobs": {
+      "title": "Empleos Aplicados",
+      "empty": "No hay empleos aplicados. Aplica desde tus guardados para rastrearlos.",
+      "appliedAgo": "Aplicado {{time}}",
+      "viewDocs": "Ver Documentos",
+      "reject": "Rechazar",
+      "delete": "Eliminar"
+    },
+    "cvGeneration": {
+      "title": "Vista Previa de Documentos",
+      "generate": "Generar Docs IA",
+      "generating": "Generando...",
+      "documentsReady": "Documentos listos",
+      "noDocuments": "No hay documentos generados aun.",
+      "viewDocs": "Ver Docs",
+      "downloadPdf": "Descargar PDF",
+      "downloadJson": "Descargar JSON",
+      "regenerate": "Regenerar",
+      "tabCv": "CV",
+      "tabCoverLetter": "Carta de Presentacion",
+      "summary": "Resumen",
+      "skills": "Habilidades Clave",
+      "experience": "Experiencia",
+      "matchPoints": "Puntos de Coincidencia"
     },
     "jobAnalytics": {
       "title": "Anal\u00edticas del Mercado Laboral",
@@ -344,6 +382,8 @@
       "skillsAnalysis": "Análisis de habilidades",
       "matchingSkills": "Coincidentes",
       "missingSkills": "Faltantes",
+      "saveToBoard": "Guardar",
+      "saved": "Guardado \u2713",
       "noResults": "Pulsa 'Ejecutar Análisis IA' para encontrar tus mejores ofertas"
     },
     "tab": {

@@ -32,10 +32,6 @@ vi.mock('../hooks/useWindowLayout', () => ({
   default: () => {},
 }))
 
-vi.mock('../hooks/useJobBookmarks', () => ({
-  default: () => ({ bookmarks: [], removeBookmark: vi.fn() }),
-}))
-
 vi.mock('../hooks/useTypewriter', () => ({
   default: (text) => text,
 }))

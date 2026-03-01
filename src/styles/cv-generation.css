@@ -1,0 +1,166 @@
+/* CV Generation — action buttons and badges */
+.cv-gen-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.cv-gen-btn {
+    padding: 4px 10px;
+    border: 1px solid var(--primary, #00ffff);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--primary, #00ffff);
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.cv-gen-btn:hover:not(:disabled) {
+    background: var(--primary, #00ffff);
+    color: #000;
+}
+
+.cv-gen-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cv-gen-btn-generate {
+    border-color: #4caf50;
+    color: #4caf50;
+}
+
+.cv-gen-btn-generate:hover:not(:disabled) {
+    background: #4caf50;
+    color: #fff;
+}
+
+.cv-gen-btn-applied {
+    border-color: #2196f3;
+    color: #2196f3;
+}
+
+.cv-gen-btn-applied:hover {
+    background: #2196f3;
+    color: #fff;
+}
+
+.cv-gen-btn-view {
+    border-color: #ff9800;
+    color: #ff9800;
+}
+
+.cv-gen-btn-view:hover {
+    background: #ff9800;
+    color: #000;
+}
+
+.cv-gen-btn-reject {
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.cv-gen-btn-reject:hover {
+    background: #f44336;
+    color: #fff;
+}
+
+.cv-gen-btn-desc {
+    border-color: #9e9e9e;
+    color: #9e9e9e;
+    font-size: 10px;
+}
+
+.cv-gen-btn-download {
+    border-color: #00bcd4;
+    color: #00bcd4;
+}
+
+.cv-gen-btn-download:hover {
+    background: #00bcd4;
+    color: #000;
+}
+
+.cv-gen-btn-small {
+    padding: 3px 8px;
+    border: 1px solid var(--primary, #00ffff);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--primary, #00ffff);
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.cv-gen-btn-cancel {
+    border-color: #666;
+    color: #666;
+}
+
+/* Badges */
+.cv-gen-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    margin: 4px 0;
+}
+
+.cv-gen-badge-ready {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.cv-gen-badge-loading {
+    background: rgba(255, 152, 0, 0.15);
+    color: #ff9800;
+    border: 1px solid rgba(255, 152, 0, 0.3);
+    animation: pulse 1.5s infinite;
+}
+
+/* Description input */
+.cv-gen-description-input {
+    margin: 8px 0;
+}
+
+.cv-gen-textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    color: #e0e0e0;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 8px;
+    resize: vertical;
+}
+
+.cv-gen-textarea:focus {
+    outline: none;
+    border-color: var(--primary, #00ffff);
+}
+
+.cv-gen-description-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+/* Applied job time badge */
+.applied-job-time {
+    color: #9e9e9e;
+    font-size: 12px;
+    font-style: italic;
+    margin: 4px 0;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}

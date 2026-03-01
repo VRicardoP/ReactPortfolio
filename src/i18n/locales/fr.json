@@ -204,10 +204,48 @@
       "tabIctjobs": "ICTjobs",
       "applied": "Postulé"
     },
+    "selectedOffers": {
+      "title": "Offres Sélectionnées",
+      "tab_saved": "Sauvegardés",
+      "tab_applied": "Postulés",
+      "tab_pipeline": "Pipeline",
+      "tab_documents": "Documents"
+    },
     "bookmarks": {
       "title": "Emplois Enregistrés",
       "empty": "Aucun emploi enregistré. Cliquez sur l'étoile d'un emploi pour le sauvegarder.",
-      "remove": "Retirer"
+      "remove": "Retirer",
+      "discard": "Supprimer",
+      "alreadyApplied": "Déjà Postulé",
+      "addDescription": "Ajouter Description",
+      "descriptionPlaceholder": "Collez le texte complet de l'offre ici...",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
+    },
+    "appliedJobs": {
+      "title": "Emplois Postulés",
+      "empty": "Aucun emploi postulé. Postulez depuis vos enregistrés pour les suivre.",
+      "appliedAgo": "Postulé {{time}}",
+      "viewDocs": "Voir Documents",
+      "reject": "Rejeter",
+      "delete": "Supprimer"
+    },
+    "cvGeneration": {
+      "title": "Aperçu des Documents",
+      "generate": "Générer Docs IA",
+      "generating": "Génération...",
+      "documentsReady": "Documents prêts",
+      "noDocuments": "Aucun document généré.",
+      "viewDocs": "Voir Docs",
+      "downloadPdf": "Télécharger PDF",
+      "downloadJson": "Télécharger JSON",
+      "regenerate": "Régénérer",
+      "tabCv": "CV",
+      "tabCoverLetter": "Lettre de Motivation",
+      "summary": "Résumé",
+      "skills": "Compétences Clés",
+      "experience": "Expérience",
+      "matchPoints": "Points de Correspondance"
     },
     "jobAnalytics": {
       "title": "Analytiques du Marché de l'Emploi",
@@ -344,6 +382,8 @@
       "skillsAnalysis": "Analyse des compétences",
       "matchingSkills": "Correspondantes",
       "missingSkills": "Manquantes",
+      "saveToBoard": "Sauvegarder",
+      "saved": "Sauvegard\u00e9 \u2713",
       "noResults": "Cliquez sur 'Lancer l'analyse IA' pour trouver vos meilleures offres"
     },
     "tab": {

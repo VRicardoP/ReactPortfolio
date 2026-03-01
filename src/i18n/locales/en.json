@@ -204,10 +204,48 @@
       "tabIctjobs": "ICTjobs",
       "applied": "Applied"
     },
+    "selectedOffers": {
+      "title": "Selected Offers",
+      "tab_saved": "Saved",
+      "tab_applied": "Applied",
+      "tab_pipeline": "Pipeline",
+      "tab_documents": "Documents"
+    },
     "bookmarks": {
       "title": "Bookmarked Jobs",
       "empty": "No bookmarked jobs yet. Click the star on any job to save it.",
-      "remove": "Remove"
+      "remove": "Remove",
+      "discard": "Discard",
+      "alreadyApplied": "Already Applied",
+      "addDescription": "Add Description",
+      "descriptionPlaceholder": "Paste the full job posting text here...",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "appliedJobs": {
+      "title": "Applied Jobs",
+      "empty": "No applied jobs yet. Apply from bookmarks to track them.",
+      "appliedAgo": "Applied {{time}}",
+      "viewDocs": "View Documents",
+      "reject": "Reject",
+      "delete": "Delete"
+    },
+    "cvGeneration": {
+      "title": "Document Preview",
+      "generate": "Generate AI Docs",
+      "generating": "Generating...",
+      "documentsReady": "Documents ready",
+      "noDocuments": "No documents generated yet.",
+      "viewDocs": "View Docs",
+      "downloadPdf": "Download PDF",
+      "downloadJson": "Download JSON",
+      "regenerate": "Regenerate",
+      "tabCv": "CV",
+      "tabCoverLetter": "Cover Letter",
+      "summary": "Summary",
+      "skills": "Key Skills",
+      "experience": "Experience",
+      "matchPoints": "Key Match Points"
     },
     "jobAnalytics": {
       "title": "Job Market Analytics",
@@ -344,6 +382,8 @@
       "skillsAnalysis": "Skills Analysis",
       "matchingSkills": "Matching",
       "missingSkills": "Missing",
+      "saveToBoard": "Save",
+      "saved": "Saved \u2713",
       "noResults": "Click 'Run AI Analysis' to find your best job matches"
     },
     "tab": {

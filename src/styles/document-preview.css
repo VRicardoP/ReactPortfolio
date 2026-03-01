@@ -1,0 +1,153 @@
+/* Document Preview */
+.cv-gen-preview-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.cv-gen-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 12px;
+}
+
+.cv-gen-tab {
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #888;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.cv-gen-tab.active {
+    color: var(--primary, #00ffff);
+    border-bottom-color: var(--primary, #00ffff);
+}
+
+.cv-gen-tab:hover {
+    color: #ccc;
+}
+
+.cv-gen-preview-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 4px;
+}
+
+.cv-gen-download-bar {
+    display: flex;
+    gap: 8px;
+    padding: 10px 0 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 8px;
+}
+
+/* CV Preview sections */
+.cv-preview {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #d0d0d0;
+}
+
+.cv-preview-section {
+    margin-bottom: 16px;
+}
+
+.cv-preview-section h3 {
+    color: var(--primary, #00ffff);
+    font-size: 14px;
+    margin: 0 0 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 4px;
+}
+
+.cv-preview-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.cv-preview-skill-tag {
+    background: rgba(0, 188, 212, 0.12);
+    color: #00bcd4;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+}
+
+.cv-preview-entry {
+    margin: 8px 0;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cv-preview-entry strong {
+    color: #e0e0e0;
+}
+
+.cv-preview-date {
+    float: right;
+    color: #888;
+    font-size: 12px;
+}
+
+.cv-preview-entry p {
+    margin: 4px 0 0;
+    color: #aaa;
+    font-size: 12px;
+}
+
+/* Cover letter preview */
+.cover-letter-preview p {
+    margin: 10px 0;
+    text-align: justify;
+}
+
+.cl-greeting {
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.cl-signature {
+    margin-top: 20px;
+    color: #ccc;
+}
+
+/* Selected Offers Panel */
+.selected-offers-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.selected-offers-kanban {
+    flex: 1;
+    min-height: 0;
+}
+
+.selected-offers-kanban.with-preview {
+    flex: 1;
+    max-height: 55%;
+}
+
+/* Document preview panel (slides below kanban) */
+.cv-gen-doc-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cv-gen-doc-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}

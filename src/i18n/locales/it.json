@@ -204,10 +204,48 @@
       "tabIctjobs": "ICTjobs",
       "applied": "Candidato"
     },
+    "selectedOffers": {
+      "title": "Offerte Selezionate",
+      "tab_saved": "Salvati",
+      "tab_applied": "Candidature",
+      "tab_pipeline": "Pipeline",
+      "tab_documents": "Documenti"
+    },
     "bookmarks": {
       "title": "Lavori Salvati",
       "empty": "Nessun lavoro salvato. Clicca la stella su qualsiasi lavoro per salvarlo.",
-      "remove": "Rimuovi"
+      "remove": "Rimuovi",
+      "discard": "Scarta",
+      "alreadyApplied": "Già Candidato",
+      "addDescription": "Aggiungi Descrizione",
+      "descriptionPlaceholder": "Incolla il testo completo dell'offerta qui...",
+      "save": "Salva",
+      "cancel": "Annulla"
+    },
+    "appliedJobs": {
+      "title": "Lavori Candidati",
+      "empty": "Nessuna candidatura. Candidati dai lavori salvati per monitorarli.",
+      "appliedAgo": "Candidato {{time}}",
+      "viewDocs": "Vedi Documenti",
+      "reject": "Rifiuta",
+      "delete": "Elimina"
+    },
+    "cvGeneration": {
+      "title": "Anteprima Documenti",
+      "generate": "Genera Docs IA",
+      "generating": "Generazione...",
+      "documentsReady": "Documenti pronti",
+      "noDocuments": "Nessun documento generato.",
+      "viewDocs": "Vedi Docs",
+      "downloadPdf": "Scarica PDF",
+      "downloadJson": "Scarica JSON",
+      "regenerate": "Rigenera",
+      "tabCv": "CV",
+      "tabCoverLetter": "Lettera di Presentazione",
+      "summary": "Riepilogo",
+      "skills": "Competenze Chiave",
+      "experience": "Esperienza",
+      "matchPoints": "Punti di Corrispondenza"
     },
     "jobAnalytics": {
       "title": "Analitiche Mercato del Lavoro",
@@ -344,6 +382,8 @@
       "skillsAnalysis": "Analisi delle competenze",
       "matchingSkills": "Corrispondenti",
       "missingSkills": "Mancanti",
+      "saveToBoard": "Salva",
+      "saved": "Salvato \u2713",
       "noResults": "Clicca 'Avvia analisi IA' per trovare le migliori offerte per te"
     },
     "tab": {

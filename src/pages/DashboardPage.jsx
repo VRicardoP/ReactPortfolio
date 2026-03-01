@@ -1,272 +1,18 @@
-import { lazy, Suspense, memo, useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useDashboardData } from '../hooks/useDashboardData';
-import useJobBookmarks from '../hooks/useJobBookmarks';
 import BackgroundEffect from '../components/Background/BackgroundEffect';
 import { WindowProvider } from '../context/WindowContext';
 import useTypewriter from '../hooks/useTypewriter';
-import useWindowLayout from '../hooks/useWindowLayout';
-import { useSSENotifications } from '../hooks/useSSENotifications';
 import useIsMobile from '../hooks/useIsMobile';
-import Toast from '../components/UI/Toast';
+import DesktopDashboardContent from '../components/Dashboard/DesktopDashboardContent';
+import MobileDashboardLayout from '../components/Dashboard/MobileDashboardLayout';
 import '../styles/dashboard.css';
 import '../styles/mobile.css';
-
-// lazy load components only when needed so it's faster
-const StatsWindow = lazy(() => import('../components/Dashboard/StatsWindow'));
-const MapWindow = lazy(() => import('../components/Dashboard/MapWindow'));
-const ChatAnalyticsWindow = lazy(() => import('../components/Dashboard/ChatAnalyticsWindow'));
-const RecentVisitorsWindow = lazy(() => import('../components/Dashboard/RecentVisitorsWindow'));
-const JobBoardTabbedWindow = lazy(() => import('../components/Dashboard/JobBoardTabbedWindow'));
-const JobMarketAnalyticsWindow = lazy(() => import('../components/Dashboard/JobMarketAnalyticsWindow'));
-const BookmarkedJobsWindow = lazy(() => import('../components/Dashboard/BookmarkedJobsWindow'));
-const JSearchLiveWindow = lazy(() => import('../components/Dashboard/JSearchLiveWindow'));
-const SalaryAnalyticsWindow = lazy(() => import('../components/Dashboard/SalaryAnalyticsWindow'));
-const SavedSearchesWindow = lazy(() => import('../components/Dashboard/SavedSearchesWindow'));
-const JobFilterWindow = lazy(() => import('../components/Dashboard/JobFilterWindow'));
-const KanbanWindow = lazy(() => import('../components/Dashboard/KanbanWindow'));
-const AIJobMatchWindow = lazy(() => import('../components/Dashboard/AIJobMatchWindow'));
-
-// what is shown while the dashboard is loading
-const DashboardLoader = memo(() => (
-    <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
-        color: '#00ffff',
-        fontFamily: 'Courier New',
-        fontSize: '14px'
-    }}>
-        <div style={{ textAlign: 'center' }}>
-            <div style={{
-                fontSize: '24px',
-                marginBottom: '10px',
-                animation: 'pulse 1.5s infinite'
-            }}>
-                📊
-            </div>
-            Loading dashboard...
-        </div>
-    </div>
-));
-
-DashboardLoader.displayName = 'DashboardLoader';
-
-// Desktop: floating windows with drag/resize/minimize
-const DesktopDashboardContent = memo(({ stats, mapData, chatAnalytics, jobData, bookmarks, removeBookmark }) => {
-    // Listen for SSE notifications (new jobs toast, etc.)
-    useSSENotifications();
-
-    const dashboardWindowIds = [
-        'stats-window',
-        'recent-visitors-window',
-        'map-window',
-        'chat-analytics-window',
-        'job-board-window',
-        'job-analytics-window',
-        'bookmarked-jobs-window',
-        'jsearch-live-window',
-        'salary-analytics-window',
-        'job-filter-window',
-        'saved-searches-window',
-        'kanban-window',
-        'ai-match-window'
-    ];
-
-    useWindowLayout(dashboardWindowIds, 600);
-
-    return (
-        <Suspense fallback={<DashboardLoader />}>
-            <StatsWindow
-                data={stats}
-                initialPosition={{ x: 100, y: 120 }}
-            />
-
-            <RecentVisitorsWindow
-                data={stats}
-                initialPosition={{ x: 130, y: 130 }}
-            />
-
-            <MapWindow
-                data={mapData}
-                initialPosition={{ x: 160, y: 140 }}
-            />
-
-            <ChatAnalyticsWindow
-                data={chatAnalytics}
-                initialPosition={{ x: 190, y: 150 }}
-            />
-
-            <JobBoardTabbedWindow
-                jobData={jobData}
-                initialPosition={{ x: 220, y: 160 }}
-            />
-
-            <JobMarketAnalyticsWindow
-                jobData={jobData}
-                initialPosition={{ x: 250, y: 170 }}
-            />
-
-            <BookmarkedJobsWindow
-                bookmarks={bookmarks}
-                onRemove={removeBookmark}
-                initialPosition={{ x: 280, y: 180 }}
-            />
-
-            <JSearchLiveWindow
-                initialPosition={{ x: 310, y: 190 }}
-            />
-
-            <SalaryAnalyticsWindow
-                data={jobData.jsearch}
-                initialPosition={{ x: 340, y: 200 }}
-            />
-
-            <JobFilterWindow
-                initialPosition={{ x: 370, y: 210 }}
-            />
-
-            <SavedSearchesWindow
-                initialPosition={{ x: 400, y: 220 }}
-            />
-
-            <KanbanWindow
-                initialPosition={{ x: 430, y: 230 }}
-            />
-
-            <AIJobMatchWindow
-                initialPosition={{ x: 460, y: 240 }}
-            />
-        </Suspense>
-    );
-});
-
-DesktopDashboardContent.displayName = 'DesktopDashboardContent';
-
-const DASHBOARD_TABS = [
-    { key: 'overview', icon: '📊' },
-    { key: 'map', icon: '🗺️' },
-    { key: 'chat', icon: '💬' },
-    { key: 'jobs', icon: '💼' },
-    { key: 'settings', icon: '⚙️' },
-];
-
-// Mobile: tabbed layout with collapsible sections
-const MobileDashboardLayout = memo(({ stats, mapData, chatAnalytics, jobData, bookmarks, removeBookmark, onLogout, onGoHome }) => {
-    const { t } = useTranslation();
-    const { cycleTheme, themeName, cycleBackground, backgroundEffect } = useTheme();
-    const [activeTab, setActiveTab] = useState('overview');
-
-    useSSENotifications();
-
-    return (
-        <>
-            <nav className="mobile-nav-header">
-                <span className="mobile-nav-title">{t('dashboard.title')}</span>
-            </nav>
-
-            <div className="mobile-dashboard-container">
-                <div className="mobile-dashboard-content">
-                    {activeTab === 'overview' && (
-                        <Suspense fallback={<DashboardLoader />}>
-                            <StatsWindow data={stats} defaultExpanded />
-                            <RecentVisitorsWindow data={stats} />
-                        </Suspense>
-                    )}
-
-                    {activeTab === 'map' && (
-                        <Suspense fallback={<DashboardLoader />}>
-                            <MapWindow data={mapData} defaultExpanded />
-                        </Suspense>
-                    )}
-
-                    {activeTab === 'chat' && (
-                        <Suspense fallback={<DashboardLoader />}>
-                            <ChatAnalyticsWindow data={chatAnalytics} defaultExpanded />
-                        </Suspense>
-                    )}
-
-                    {activeTab === 'jobs' && (
-                        <Suspense fallback={<DashboardLoader />}>
-                            <JobBoardTabbedWindow jobData={jobData} defaultExpanded />
-                            <JobMarketAnalyticsWindow jobData={jobData} />
-                            <BookmarkedJobsWindow bookmarks={bookmarks} onRemove={removeBookmark} />
-                            <JSearchLiveWindow />
-                            <SalaryAnalyticsWindow data={jobData.jsearch} />
-                            <JobFilterWindow />
-                            <SavedSearchesWindow />
-                            <KanbanWindow />
-                            <AIJobMatchWindow />
-                        </Suspense>
-                    )}
-
-                    {activeTab === 'settings' && (
-                        <div className="mobile-portfolio-container" style={{ padding: '12px' }}>
-                            <section className="mobile-section mobile-section-expanded">
-                                <div className="mobile-section-content">
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                        <button
-                                            className="mobile-nav-dropdown-item"
-                                            onClick={cycleTheme}
-                                        >
-                                            <span className="mobile-nav-dropdown-item-icon">
-                                                {themeName === 'cyan' ? '🔵' : themeName === 'silver' ? '⚪' : '🟠'}
-                                            </span>
-                                            {t('dashboard.theme')}
-                                        </button>
-                                        <button
-                                            className="mobile-nav-dropdown-item"
-                                            onClick={cycleBackground}
-                                        >
-                                            <span className="mobile-nav-dropdown-item-icon">🎨</span>
-                                            {t(`dashboard.${backgroundEffect === 'rain' ? 'bgRain' : backgroundEffect === 'parallax' ? 'bgParallax' : backgroundEffect === 'matrix' ? 'bgMatrix' : backgroundEffect === 'lensflare' ? 'bgLensflare' : backgroundEffect === 'cube' ? 'bgCube' : 'bgSmoke'}`)}
-                                        </button>
-                                        <button
-                                            className="mobile-nav-dropdown-item"
-                                            onClick={onGoHome}
-                                        >
-                                            <span className="mobile-nav-dropdown-item-icon">🏠</span>
-                                            {t('dashboard.backToPortfolio')}
-                                        </button>
-                                        <button
-                                            className="mobile-nav-dropdown-item"
-                                            onClick={onLogout}
-                                            style={{ color: '#ff6b6b' }}
-                                        >
-                                            <span className="mobile-nav-dropdown-item-icon">🚪</span>
-                                            {t('dashboard.logout')}
-                                        </button>
-                                    </div>
-                                </div>
-                            </section>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            <Toast />
-
-            <div className="mobile-dashboard-tabs">
-                {DASHBOARD_TABS.map(tab => (
-                    <button
-                        key={tab.key}
-                        className={`mobile-dashboard-tab${activeTab === tab.key ? ' active' : ''}`}
-                        onClick={() => setActiveTab(tab.key)}
-                    >
-                        <span className="mobile-dashboard-tab-icon">{tab.icon}</span>
-                        <span>{t(`dashboard.tab.${tab.key}`)}</span>
-                    </button>
-                ))}
-            </div>
-        </>
-    );
-});
-
-MobileDashboardLayout.displayName = 'MobileDashboardLayout';
+import '../styles/cv-generation.css';
 
 const BACKGROUND_LABELS = {
     rain: 'bgRain',
@@ -294,9 +40,8 @@ const DashboardPage = () => {
     const isMobile = useIsMobile();
     const typedText = useTypewriter(t('dashboard.title'), 100);
     const { stats, mapData, chatAnalytics, jobData, loading, error } = useDashboardData();
-    const { bookmarks, removeBookmark } = useJobBookmarks();
 
-    // functions for the buttons
+    // Functions for the buttons
     const handleLogout = useCallback(() => {
         logout();
         navigate('/login');
@@ -306,7 +51,7 @@ const DashboardPage = () => {
         navigate('/');
     }, [navigate]);
 
-    // while loading data show this
+    // While loading data show this
     if (loading) {
         return (
             <>
@@ -334,7 +79,7 @@ const DashboardPage = () => {
         );
     }
 
-    // if there's a problem show this error
+    // If there's a problem show this error
     if (error) {
         return (
             <>
@@ -415,8 +160,6 @@ const DashboardPage = () => {
                 mapData={mapData}
                 chatAnalytics={chatAnalytics}
                 jobData={jobData}
-                bookmarks={bookmarks}
-                removeBookmark={removeBookmark}
                 onLogout={handleLogout}
                 onGoHome={handleGoHome}
             />
@@ -477,8 +220,6 @@ const DashboardPage = () => {
                     mapData={mapData}
                     chatAnalytics={chatAnalytics}
                     jobData={jobData}
-                    bookmarks={bookmarks}
-                    removeBookmark={removeBookmark}
                 />
             </WindowProvider>
         </>

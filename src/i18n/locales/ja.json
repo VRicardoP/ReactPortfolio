@@ -204,10 +204,48 @@
       "tabIctjobs": "ICTjobs",
       "applied": "応募済み"
     },
+    "selectedOffers": {
+      "title": "選択した求人",
+      "tab_saved": "保存済み",
+      "tab_applied": "応募済み",
+      "tab_pipeline": "パイプライン",
+      "tab_documents": "書類"
+    },
     "bookmarks": {
       "title": "ブックマークした求人",
       "empty": "ブックマークした求人はありません。星をクリックして保存してください。",
-      "remove": "削除"
+      "remove": "削除",
+      "discard": "破棄",
+      "alreadyApplied": "応募済み",
+      "addDescription": "説明を追加",
+      "descriptionPlaceholder": "求人の全文をここに貼り付けてください...",
+      "save": "保存",
+      "cancel": "キャンセル"
+    },
+    "appliedJobs": {
+      "title": "応募した求人",
+      "empty": "応募した求人はありません。ブックマークから応募して追跡しましょう。",
+      "appliedAgo": "{{time}}前に応募",
+      "viewDocs": "書類を表示",
+      "reject": "却下",
+      "delete": "削除"
+    },
+    "cvGeneration": {
+      "title": "書類プレビュー",
+      "generate": "AI書類生成",
+      "generating": "生成中...",
+      "documentsReady": "書類準備完了",
+      "noDocuments": "生成された書類はありません。",
+      "viewDocs": "書類表示",
+      "downloadPdf": "PDF ダウンロード",
+      "downloadJson": "JSON ダウンロード",
+      "regenerate": "再生成",
+      "tabCv": "履歴書",
+      "tabCoverLetter": "カバーレター",
+      "summary": "概要",
+      "skills": "主要スキル",
+      "experience": "経験",
+      "matchPoints": "適合ポイント"
     },
     "jobAnalytics": {
       "title": "求人市場アナリティクス",
@@ -344,6 +382,8 @@
       "skillsAnalysis": "スキル分析",
       "matchingSkills": "一致",
       "missingSkills": "不足",
+      "saveToBoard": "保存",
+      "saved": "保存済み \u2713",
       "noResults": "「AI分析を実行」をクリックして最適な求人を見つけましょう"
     },
     "tab": {

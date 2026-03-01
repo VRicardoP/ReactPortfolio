@@ -204,10 +204,48 @@
       "tabIctjobs": "ICTjobs",
       "applied": "Beworben"
     },
+    "selectedOffers": {
+      "title": "Ausgewählte Angebote",
+      "tab_saved": "Gespeichert",
+      "tab_applied": "Beworben",
+      "tab_pipeline": "Pipeline",
+      "tab_documents": "Dokumente"
+    },
     "bookmarks": {
       "title": "Gemerkte Stellen",
       "empty": "Noch keine gemerkten Stellen. Klicken Sie auf den Stern bei einer Stelle, um sie zu speichern.",
-      "remove": "Entfernen"
+      "remove": "Entfernen",
+      "discard": "Verwerfen",
+      "alreadyApplied": "Bereits Beworben",
+      "addDescription": "Beschreibung Hinzufügen",
+      "descriptionPlaceholder": "Fügen Sie den vollständigen Stellentext hier ein...",
+      "save": "Speichern",
+      "cancel": "Abbrechen"
+    },
+    "appliedJobs": {
+      "title": "Beworbene Stellen",
+      "empty": "Noch keine Bewerbungen. Bewerben Sie sich über Ihre gemerkten Stellen.",
+      "appliedAgo": "Beworben {{time}}",
+      "viewDocs": "Dokumente Anzeigen",
+      "reject": "Ablehnen",
+      "delete": "Löschen"
+    },
+    "cvGeneration": {
+      "title": "Dokumentenvorschau",
+      "generate": "KI-Docs Generieren",
+      "generating": "Wird generiert...",
+      "documentsReady": "Dokumente bereit",
+      "noDocuments": "Noch keine Dokumente generiert.",
+      "viewDocs": "Docs Anzeigen",
+      "downloadPdf": "PDF Herunterladen",
+      "downloadJson": "JSON Herunterladen",
+      "regenerate": "Neu Generieren",
+      "tabCv": "Lebenslauf",
+      "tabCoverLetter": "Anschreiben",
+      "summary": "Zusammenfassung",
+      "skills": "Schlüsselkompetenzen",
+      "experience": "Erfahrung",
+      "matchPoints": "Übereinstimmungspunkte"
     },
     "jobAnalytics": {
       "title": "Arbeitsmarkt-Analytik",
@@ -344,6 +382,8 @@
       "skillsAnalysis": "Kompetenzanalyse",
       "matchingSkills": "Übereinstimmend",
       "missingSkills": "Fehlend",
+      "saveToBoard": "Speichern",
+      "saved": "Gespeichert \u2713",
       "noResults": "Klicken Sie auf 'KI-Analyse starten', um Ihre besten Stellenangebote zu finden"
     },
     "tab": {
