@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 import { BACKEND_URL } from '../../config/api';
@@ -20,6 +20,19 @@ const ProfileWindow = ({ data, initialPosition }) => {
     const { t, i18n } = useTranslation();
     const [recruiterMode, setRecruiterMode] = useState(false);
     const [showCvMenu, setShowCvMenu] = useState(false);
+    const cvMenuRef = useRef(null);
+
+    // Close CV menu on outside click
+    useEffect(() => {
+        if (!showCvMenu) return;
+        const handleClickOutside = (e) => {
+            if (cvMenuRef.current && !cvMenuRef.current.contains(e.target)) {
+                setShowCvMenu(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [showCvMenu]);
 
     const handleExportJSON = useCallback(async () => {
         try {
@@ -92,7 +105,7 @@ const ProfileWindow = ({ data, initialPosition }) => {
                         {recruiterMode ? t('profile.normalView') : t('profile.recruiterView')}
                     </button>
 
-                    <div style={{ position: 'relative' }}>
+                    <div ref={cvMenuRef} style={{ position: 'relative' }}>
                         <button
                             className="profile-view-toggle"
                             onClick={() => setShowCvMenu(prev => !prev)}

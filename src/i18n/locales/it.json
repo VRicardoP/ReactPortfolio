@@ -298,7 +298,11 @@
       "followUp": "Follow-up",
       "empty": "Nessuna candidatura. Salva lavori dalla ricerca per monitorarli qui.",
       "deleteConfirm": "Eliminare questa candidatura?",
-      "addApplication": "Aggiungi Candidatura",
+      "addApplication": "Aggiungi candidatura",
+      "moveLeft": "Sposta alla colonna precedente",
+      "moveRight": "Sposta alla colonna successiva",
+      "errorMove": "Spostamento fallito",
+      "errorAdd": "Aggiunta fallita",
       "title_field": "Titolo Posizione",
       "company_field": "Azienda",
       "notes": "Note",
@@ -349,7 +353,10 @@
       "remoteOnly": "Solo remoto",
       "searching": "Ricerca...",
       "noResults": "Nessun risultato",
-      "resultsFound": "risultati trovati"
+      "resultsFound": "risultati trovati",
+      "errorCreate": "Creazione fallita",
+      "errorRun": "Esecuzione fallita",
+      "errorDelete": "Eliminazione fallita"
     },
     "jobFilter": {
       "title": "Filtro Avanzato",
@@ -368,7 +375,8 @@
       "searching": "Ricerca in corso...",
       "resultsFound": "risultati trovati",
       "noResults": "Nessun risultato corrisponde ai tuoi filtri",
-      "hint": "Imposta i filtri e clicca Cerca per trovare offerte da tutte le fonti"
+      "hint": "Imposta i filtri e clicca Cerca per trovare offerte da tutte le fonti",
+      "errorSearch": "Ricerca fallita"
     },
     "newJobs": {
       "toast": "{{count}} nuovi lavori da {{source}}"

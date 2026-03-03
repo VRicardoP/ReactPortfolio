@@ -9,6 +9,8 @@ const Tooltip = ({ children, text, position = 'top' }) => {
             className="tooltip-wrapper"
             onMouseEnter={() => setIsVisible(true)}
             onMouseLeave={() => setIsVisible(false)}
+            onFocus={() => setIsVisible(true)}
+            onBlur={() => setIsVisible(false)}
         >
             {children}
             {isVisible && text && (

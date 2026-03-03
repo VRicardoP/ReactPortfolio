@@ -129,6 +129,8 @@ export const ThemeProvider = ({ children }) => {
         root.style.setProperty('--theme-background', theme.background);
         root.style.setProperty('--theme-text', theme.text);
         root.style.setProperty('--theme-text-highlight', theme.textHighlight);
+        root.style.setProperty('--theme-border', theme.border);
+        root.style.setProperty('--theme-border-light', theme.borderLight);
     }, [theme]);
 
     const value = useMemo(() => ({

@@ -161,7 +161,7 @@ const FloatingWindowDesktop = ({
                         />
                     </Tooltip>
                 </div>
-                <div className="window-title" id={`${id}-title`}>{title}</div>
+                <span className="window-title" id={`${id}-title`} role="heading" aria-level="2">{title}</span>
             </div>
 
             {!isMinimized && (

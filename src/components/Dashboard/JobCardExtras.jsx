@@ -82,12 +82,15 @@ export const CompanyResearchName = memo(({ company, children }) => {
 
     return (
         <span style={{ position: 'relative', display: 'inline-block' }} ref={panelRef}>
-            <span
+            <button
+                type="button"
                 onClick={handleClick}
-                style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: 'dotted', textUnderlineOffset: '2px' }}
+                aria-expanded={showPanel}
+                aria-haspopup="true"
+                className="company-research-btn"
             >
                 {children || company}
-            </span>
+            </button>
             {showPanel && (
                 <div className="company-research-panel">
                     <a

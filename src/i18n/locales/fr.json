@@ -298,7 +298,11 @@
       "followUp": "Relance",
       "empty": "Aucune candidature pour le moment. Enregistrez des emplois depuis la recherche pour les suivre ici.",
       "deleteConfirm": "Supprimer cette candidature ?",
-      "addApplication": "Ajouter une Candidature",
+      "addApplication": "Ajouter une candidature",
+      "moveLeft": "Déplacer vers la colonne précédente",
+      "moveRight": "Déplacer vers la colonne suivante",
+      "errorMove": "Échec du déplacement",
+      "errorAdd": "Échec de l'ajout",
       "title_field": "Intitulé du Poste",
       "company_field": "Entreprise",
       "notes": "Notes",
@@ -349,7 +353,10 @@
       "remoteOnly": "Télétravail",
       "searching": "Recherche...",
       "noResults": "Aucun résultat",
-      "resultsFound": "résultats trouvés"
+      "resultsFound": "résultats trouvés",
+      "errorCreate": "Échec de la création",
+      "errorRun": "Échec de l'exécution",
+      "errorDelete": "Échec de la suppression"
     },
     "jobFilter": {
       "title": "Filtre Avanc\u00e9",
@@ -368,7 +375,8 @@
       "searching": "Recherche en cours...",
       "resultsFound": "r\u00e9sultats trouv\u00e9s",
       "noResults": "Aucun r\u00e9sultat ne correspond \u00e0 vos filtres",
-      "hint": "D\u00e9finissez les filtres et cliquez sur Rechercher pour trouver des offres dans toutes les sources"
+      "hint": "Définissez les filtres et cliquez sur Rechercher pour trouver des offres dans toutes les sources",
+      "errorSearch": "Échec de la recherche"
     },
     "newJobs": {
       "toast": "{{count}} nouveaux emplois de {{source}}"

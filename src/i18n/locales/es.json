@@ -298,7 +298,11 @@
       "followUp": "Seguimiento",
       "empty": "Sin aplicaciones a\u00fan. Guarda empleos desde la b\u00fasqueda para seguirlos aqu\u00ed.",
       "deleteConfirm": "\u00bfEliminar esta aplicaci\u00f3n?",
-      "addApplication": "A\u00f1adir Aplicaci\u00f3n",
+      "addApplication": "Añadir aplicación",
+      "moveLeft": "Mover a columna anterior",
+      "moveRight": "Mover a columna siguiente",
+      "errorMove": "Error al mover aplicación",
+      "errorAdd": "Error al añadir aplicación",
       "title_field": "T\u00edtulo del Puesto",
       "company_field": "Empresa",
       "notes": "Notas",
@@ -349,7 +353,10 @@
       "remoteOnly": "Solo remoto",
       "searching": "Buscando...",
       "noResults": "Sin resultados",
-      "resultsFound": "resultados encontrados"
+      "resultsFound": "resultados encontrados",
+      "errorCreate": "Error al crear búsqueda",
+      "errorRun": "Error al ejecutar búsqueda",
+      "errorDelete": "Error al eliminar búsqueda"
     },
     "jobFilter": {
       "title": "Filtro Avanzado",
@@ -368,7 +375,8 @@
       "searching": "Buscando...",
       "resultsFound": "resultados encontrados",
       "noResults": "Ning\u00fan resultado coincide con tus filtros",
-      "hint": "Configura los filtros y pulsa Buscar para encontrar ofertas en todas las fuentes"
+      "hint": "Configura los filtros y pulsa Buscar para encontrar ofertas en todas las fuentes",
+      "errorSearch": "Error en la búsqueda"
     },
     "newJobs": {
       "toast": "{{count}} nuevos empleos de {{source}}"

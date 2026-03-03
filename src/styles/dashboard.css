@@ -463,7 +463,7 @@
 }
 
 .jobboard-search::placeholder {
-  color: rgba(211, 211, 211, 0.5);
+  color: rgba(211, 211, 211, 0.65);
 }
 
 .jobboard-select {
@@ -559,7 +559,7 @@
 }
 
 .jobboard-page-btn:disabled {
-  opacity: 0.3;
+  opacity: 0.4;
   cursor: default;
 }
 
@@ -1105,6 +1105,20 @@
   background: rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Company research button — semantic replacement for clickable span */
+.company-research-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  line-height: inherit;
 }
 
 /* Company research panel (F28) */

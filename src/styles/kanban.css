@@ -68,13 +68,18 @@
 .kanban-input {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid;
-    padding: 4px 6px;
+    padding: 8px 10px;
     border-radius: 3px;
     font-family: 'Courier New', monospace;
     font-size: 11px;
     outline: none;
     width: 100%;
     box-sizing: border-box;
+}
+
+.kanban-input:focus {
+    border-color: var(--theme-primary, #00ffff);
+    outline: none;
 }
 
 .kanban-add-form-submit {
@@ -148,4 +153,34 @@
 
 .kanban-card-actions a.cv-gen-btn {
     text-decoration: none;
+}
+
+/* Keyboard move buttons — visible only on focus-within */
+.kanban-move-btns {
+    display: none;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.kanban-card:focus-within .kanban-move-btns {
+    display: flex;
+}
+
+.kanban-move-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+    color: inherit;
+    font-size: 10px;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.kanban-move-btn:hover,
+.kanban-move-btn:focus-visible {
+    background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.15);
+    border-color: var(--theme-primary, #00ffff);
+    outline: none;
 }

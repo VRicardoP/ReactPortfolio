@@ -1,204 +1,40 @@
-import { memo, useState, useCallback, useEffect } from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
-import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import { BACKEND_URL } from '../../config/api';
 import useJobApplication from '../../hooks/useJobApplication';
-import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
+import useSavedSearches from '../../hooks/useSavedSearches';
+import { CompanyResearchName } from './JobCardExtras';
+import '../../styles/dashboard-forms.css';
 
-const INITIAL_FORM = {
-    name: '',
-    q: '',
-    country: '',
-    city: '',
-    salaryMin: '',
-    salaryMax: '',
-    remoteOnly: false,
+// Format filter summary for display (pure rendering helper)
+const filterSummary = (filters) => {
+    if (!filters) return '';
+    const parts = [];
+    if (filters.q) parts.push(filters.q);
+    if (filters.country) parts.push(filters.country);
+    if (filters.city) parts.push(filters.city);
+    if (filters.salary_min || filters.salary_max) {
+        const min = filters.salary_min ? `$${Number(filters.salary_min).toLocaleString()}` : '';
+        const max = filters.salary_max ? `$${Number(filters.salary_max).toLocaleString()}` : '';
+        parts.push(min && max ? `${min}-${max}` : min || `≤${max}`);
+    }
+    if (filters.remote_only) parts.push('Remote');
+    // Legacy
+    if (filters.technologies?.length > 0) parts.push(filters.technologies.join(', '));
+    return parts.join(' | ');
 };
 
 const SavedSearchesWindow = memo(({ initialPosition }) => {
     const { t } = useTranslation();
-    const { authenticatedFetch } = useAuth();
     const { theme } = useTheme();
-
-    const [searches, setSearches] = useState([]);
-    const [showForm, setShowForm] = useState(false);
-    const [formData, setFormData] = useState(INITIAL_FORM);
-    const [loading, setLoading] = useState(false);
-    const [expandedId, setExpandedId] = useState(null);
-    const [searchResults, setSearchResults] = useState([]);
-    const [searchLoading, setSearchLoading] = useState(false);
-    const [resultsTotal, setResultsTotal] = useState(0);
     const { handleApply, appliedIds } = useJobApplication();
 
-    // Fetch saved searches on mount
-    const fetchSearches = useCallback(async () => {
-        setLoading(true);
-        try {
-            const response = await authenticatedFetch(`${BACKEND_URL}/api/v1/saved-searches/`);
-            const data = await response.json();
-            setSearches(Array.isArray(data) ? data : data.results || data.data || []);
-        } catch {
-            setSearches([]);
-        } finally {
-            setLoading(false);
-        }
-    }, [authenticatedFetch]);
-
-    useEffect(() => {
-        fetchSearches();
-    }, [fetchSearches]);
-
-    const handleFormChange = useCallback((field, value) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
-    }, []);
-
-    // Build an auto-name from filters when no explicit name given
-    const hasAnyFilter = formData.q || formData.country || formData.city || formData.salaryMin || formData.salaryMax || formData.remoteOnly;
-
-    const autoName = useCallback(() => {
-        const parts = [];
-        if (formData.q) parts.push(formData.q);
-        if (formData.country) parts.push(formData.country);
-        if (formData.city) parts.push(formData.city);
-        if (formData.salaryMin || formData.salaryMax) {
-            const min = formData.salaryMin || '0';
-            const max = formData.salaryMax || '...';
-            parts.push(`$${min}-${max}`);
-        }
-        if (formData.remoteOnly) parts.push('Remote');
-        return parts.join(' | ') || 'Search';
-    }, [formData]);
-
-    // Create a new saved search
-    const handleCreate = useCallback(async () => {
-        const name = formData.name.trim() || autoName();
-        if (!name) return;
-
-        try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/saved-searches/`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    name,
-                    filters: {
-                        q: formData.q || undefined,
-                        country: formData.country || undefined,
-                        city: formData.city || undefined,
-                        salary_min: formData.salaryMin ? Number(formData.salaryMin) : undefined,
-                        salary_max: formData.salaryMax ? Number(formData.salaryMax) : undefined,
-                        remote_only: formData.remoteOnly || undefined,
-                    },
-                }),
-            });
-
-            setFormData(INITIAL_FORM);
-            setShowForm(false);
-            fetchSearches();
-        } catch {
-            // Silently fail
-        }
-    }, [authenticatedFetch, formData, fetchSearches, autoName]);
-
-    // Run a saved search
-    const handleRun = useCallback(async (search) => {
-        if (expandedId === search.id) {
-            setExpandedId(null);
-            setSearchResults([]);
-            return;
-        }
-        setExpandedId(search.id);
-        setSearchLoading(true);
-        setSearchResults([]);
-
-        try {
-            const filters = search.filters || {};
-            const params = new URLSearchParams();
-            if (filters.q) params.set('q', filters.q);
-            if (filters.country) params.set('country', filters.country);
-            if (filters.city) params.set('city', filters.city);
-            if (filters.salary_min) params.set('salary_min', String(filters.salary_min));
-            if (filters.salary_max) params.set('salary_max', String(filters.salary_max));
-            if (filters.remote_only) params.set('remote_only', 'true');
-            // Also support legacy format
-            if (filters.technologies?.length > 0) params.set('q', filters.technologies.join(' '));
-            params.set('limit', '20');
-
-            const response = await authenticatedFetch(
-                `${BACKEND_URL}/api/v1/jobs/search?${params.toString()}`
-            );
-            const data = await response.json();
-            setSearchResults(data.data || []);
-            setResultsTotal(data.metadata?.total || 0);
-        } catch {
-            setSearchResults([]);
-            setResultsTotal(0);
-        } finally {
-            setSearchLoading(false);
-        }
-    }, [authenticatedFetch, expandedId]);
-
-    // Delete a saved search
-    const handleDelete = useCallback(async (id) => {
-        const confirmed = window.confirm(t('dashboard.savedSearches.confirmDelete'));
-        if (!confirmed) return;
-
-        try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/saved-searches/${id}`, {
-                method: 'DELETE',
-            });
-            setSearches(prev => prev.filter(s => s.id !== id));
-            if (expandedId === id) {
-                setExpandedId(null);
-                setSearchResults([]);
-            }
-        } catch {
-            fetchSearches();
-        }
-    }, [authenticatedFetch, fetchSearches, t, expandedId]);
-
-    // Format filter summary for display
-    const filterSummary = (filters) => {
-        if (!filters) return '';
-        const parts = [];
-        if (filters.q) parts.push(filters.q);
-        if (filters.country) parts.push(filters.country);
-        if (filters.city) parts.push(filters.city);
-        if (filters.salary_min || filters.salary_max) {
-            const min = filters.salary_min ? `$${Number(filters.salary_min).toLocaleString()}` : '';
-            const max = filters.salary_max ? `$${Number(filters.salary_max).toLocaleString()}` : '';
-            parts.push(min && max ? `${min}-${max}` : min || `≤${max}`);
-        }
-        if (filters.remote_only) parts.push('Remote');
-        // Legacy
-        if (filters.technologies?.length > 0) parts.push(filters.technologies.join(', '));
-        return parts.join(' | ');
-    };
-
-    const inputStyle = {
-        background: 'rgba(255,255,255,0.05)',
-        border: `1px solid ${theme.border}`,
-        color: theme.text,
-        padding: '6px 10px',
-        borderRadius: '3px',
-        fontFamily: 'Courier New, monospace',
-        fontSize: '12px',
-        outline: 'none',
-        width: '100%',
-        boxSizing: 'border-box',
-    };
-
-    const buttonStyle = (variant) => ({
-        background: variant === 'primary' ? `rgba(${theme.primaryRgb}, 0.2)` : 'transparent',
-        border: `1px solid ${variant === 'primary' ? theme.primary : theme.border}`,
-        color: variant === 'primary' ? theme.primary : theme.text,
-        padding: '4px 10px',
-        borderRadius: '3px',
-        fontFamily: 'Courier New, monospace',
-        fontSize: '11px',
-        cursor: 'pointer',
-        transition: 'all 0.2s ease',
-    });
+    const {
+        searches, loading, showForm, setShowForm, formData, hasAnyFilter,
+        handleFormChange, handleCreate, handleRun, handleDelete,
+        expandedId, searchResults, searchLoading, resultsTotal,
+    } = useSavedSearches();
 
     return (
         <FloatingWindow
@@ -210,11 +46,11 @@ const SavedSearchesWindow = memo(({ initialPosition }) => {
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '10px', gap: '10px' }}>
                 {/* Header with add button */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontFamily: 'Courier New', fontSize: '12px', color: theme.text, opacity: 0.7 }}>
+                    <span className="dash-label" style={{ fontSize: '12px' }}>
                         {searches.length} {t('dashboard.savedSearches.count')}
                     </span>
                     <button
-                        style={buttonStyle('primary')}
+                        className="dash-btn dash-btn-primary"
                         onClick={() => setShowForm(!showForm)}
                     >
                         {showForm ? t('dashboard.savedSearches.cancel') : t('dashboard.savedSearches.add')}
@@ -223,43 +59,35 @@ const SavedSearchesWindow = memo(({ initialPosition }) => {
 
                 {/* Create form */}
                 {showForm && (
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '6px',
-                        padding: '10px',
-                        border: `1px solid ${theme.border}`,
-                        borderRadius: '4px',
-                        background: 'rgba(255,255,255,0.02)',
-                    }}>
+                    <div className="dash-form-panel">
                         <input
                             type="text"
                             placeholder={t('dashboard.savedSearches.namePlaceholder')}
                             value={formData.name}
                             onChange={(e) => handleFormChange('name', e.target.value)}
-                            style={inputStyle}
+                            className="dash-input"
                         />
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                        <div className="dash-form-grid">
                             <input
                                 type="text"
                                 placeholder={t('dashboard.savedSearches.queryPlaceholder')}
                                 value={formData.q}
                                 onChange={(e) => handleFormChange('q', e.target.value)}
-                                style={inputStyle}
+                                className="dash-input"
                             />
                             <input
                                 type="text"
                                 placeholder={t('dashboard.savedSearches.countryPlaceholder')}
                                 value={formData.country}
                                 onChange={(e) => handleFormChange('country', e.target.value)}
-                                style={inputStyle}
+                                className="dash-input"
                             />
                             <input
                                 type="text"
                                 placeholder={t('dashboard.savedSearches.cityPlaceholder')}
                                 value={formData.city}
                                 onChange={(e) => handleFormChange('city', e.target.value)}
-                                style={inputStyle}
+                                className="dash-input"
                             />
                             <div style={{ display: 'flex', gap: '4px' }}>
                                 <input
@@ -267,22 +95,21 @@ const SavedSearchesWindow = memo(({ initialPosition }) => {
                                     placeholder={t('dashboard.savedSearches.salaryMinPH')}
                                     value={formData.salaryMin}
                                     onChange={(e) => handleFormChange('salaryMin', e.target.value)}
-                                    style={{ ...inputStyle, width: '50%' }}
+                                    className="dash-input"
+                                    style={{ width: '50%' }}
                                 />
                                 <input
                                     type="number"
                                     placeholder={t('dashboard.savedSearches.salaryMaxPH')}
                                     value={formData.salaryMax}
                                     onChange={(e) => handleFormChange('salaryMax', e.target.value)}
-                                    style={{ ...inputStyle, width: '50%' }}
+                                    className="dash-input"
+                                    style={{ width: '50%' }}
                                 />
                             </div>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <label style={{
-                                display: 'flex', alignItems: 'center', gap: '6px',
-                                fontSize: '11px', color: theme.text, fontFamily: 'Courier New', cursor: 'pointer',
-                            }}>
+                            <label className="dash-checkbox-row">
                                 <input
                                     type="checkbox"
                                     checked={formData.remoteOnly}
@@ -291,7 +118,7 @@ const SavedSearchesWindow = memo(({ initialPosition }) => {
                                 {t('dashboard.savedSearches.remoteOnly')}
                             </label>
                             <button
-                                style={buttonStyle('primary')}
+                                className="dash-btn dash-btn-primary"
                                 onClick={handleCreate}
                                 disabled={!formData.name.trim() && !hasAnyFilter}
                             >
@@ -304,13 +131,13 @@ const SavedSearchesWindow = memo(({ initialPosition }) => {
                 {/* Search list */}
                 <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                     {loading && (
-                        <div style={{ padding: '20px', color: theme.primary, fontFamily: 'Courier New', fontSize: '12px', textAlign: 'center' }}>
+                        <div className="dash-status-text dash-status-text--accent">
                             {t('dashboard.savedSearches.loading')}
                         </div>
                     )}
 
                     {!loading && searches.length === 0 && (
-                        <div style={{ padding: '20px', color: theme.text, fontFamily: 'Courier New', fontSize: '12px', textAlign: 'center', opacity: 0.6 }}>
+                        <div className="dash-status-text dash-status-text--muted">
                             {t('dashboard.savedSearches.empty')}
                         </div>
                     )}
@@ -329,7 +156,7 @@ const SavedSearchesWindow = memo(({ initialPosition }) => {
                                         ? `rgba(${theme.primaryRgb}, 0.05)`
                                         : 'rgba(255,255,255,0.02)',
                                     cursor: 'pointer',
-                                    transition: 'all 0.2s ease',
+                                    transition: 'border-color 0.2s ease, background-color 0.2s ease',
                                 }}
                                 onClick={() => handleRun(search)}
                             >
@@ -350,7 +177,7 @@ const SavedSearchesWindow = memo(({ initialPosition }) => {
                                 </div>
 
                                 <button
-                                    style={{ ...buttonStyle('secondary'), color: theme.error, borderColor: theme.error }}
+                                    className="dash-btn dash-btn-danger"
                                     onClick={(e) => { e.stopPropagation(); handleDelete(search.id); }}
                                 >
                                     {t('dashboard.savedSearches.delete')}
@@ -369,17 +196,17 @@ const SavedSearchesWindow = memo(({ initialPosition }) => {
                                     overflowY: 'auto',
                                 }}>
                                     {searchLoading && (
-                                        <div style={{ padding: '10px', color: theme.primary, fontFamily: 'Courier New', fontSize: '11px', textAlign: 'center' }}>
+                                        <div className="dash-status-text dash-status-text--accent" style={{ padding: '10px', fontSize: '11px' }}>
                                             {t('dashboard.savedSearches.searching')}
                                         </div>
                                     )}
                                     {!searchLoading && searchResults.length === 0 && (
-                                        <div style={{ padding: '10px', color: theme.text, fontFamily: 'Courier New', fontSize: '11px', textAlign: 'center', opacity: 0.5 }}>
+                                        <div className="dash-status-text dash-status-text--muted" style={{ padding: '10px', fontSize: '11px' }}>
                                             {t('dashboard.savedSearches.noResults')}
                                         </div>
                                     )}
                                     {!searchLoading && searchResults.length > 0 && (
-                                        <div style={{ fontFamily: 'Courier New', fontSize: '10px', color: theme.text, opacity: 0.6, marginBottom: '6px' }}>
+                                        <div className="dash-label" style={{ marginBottom: '6px' }}>
                                             {resultsTotal} {t('dashboard.savedSearches.resultsFound')}
                                         </div>
                                     )}

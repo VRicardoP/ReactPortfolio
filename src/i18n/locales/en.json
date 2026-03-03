@@ -298,7 +298,11 @@
       "followUp": "Follow-up",
       "empty": "No applications yet. Save jobs from the search to track them here.",
       "deleteConfirm": "Delete this application?",
-      "addApplication": "Add Application",
+      "addApplication": "Add application",
+      "moveLeft": "Move to previous column",
+      "moveRight": "Move to next column",
+      "errorMove": "Failed to move application",
+      "errorAdd": "Failed to add application",
       "title_field": "Job Title",
       "company_field": "Company",
       "notes": "Notes",
@@ -349,7 +353,10 @@
       "remoteOnly": "Remote only",
       "searching": "Searching...",
       "noResults": "No results",
-      "resultsFound": "results found"
+      "resultsFound": "results found",
+      "errorCreate": "Failed to create search",
+      "errorRun": "Failed to run search",
+      "errorDelete": "Failed to delete search"
     },
     "jobFilter": {
       "title": "Advanced Filter",
@@ -368,7 +375,8 @@
       "searching": "Searching...",
       "resultsFound": "results found",
       "noResults": "No results match your filters",
-      "hint": "Set filters and click Search to find jobs across all sources"
+      "hint": "Set filters and click Search to find jobs across all sources",
+      "errorSearch": "Search failed"
     },
     "newJobs": {
       "toast": "{{count}} new jobs from {{source}}"

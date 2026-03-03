@@ -6,6 +6,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { BACKEND_URL } from '../../config/api';
 import useJobApplication from '../../hooks/useJobApplication';
 import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
+import { AI_MATCH_PAGE_SIZE } from './dashboardConstants';
 import '../../styles/ai-match.css';
 
 const FIT_COLORS = {
@@ -15,8 +16,6 @@ const FIT_COLORS = {
     poor: { bg: 'rgba(255, 100, 100, 0.15)', text: '#ff8888', border: 'rgba(255, 100, 100, 0.2)' },
     unknown: { bg: 'rgba(150, 150, 150, 0.15)', text: '#999', border: 'rgba(150, 150, 150, 0.2)' },
 };
-
-const PAGE_SIZE = 10;
 
 const AIJobMatchWindow = memo(({ initialPosition }) => {
     const { t } = useTranslation();
@@ -50,8 +49,8 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
         }
     }, [authenticatedFetch]);
 
-    const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
-    const pagedResults = results.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+    const totalPages = Math.max(1, Math.ceil(results.length / AI_MATCH_PAGE_SIZE));
+    const pagedResults = results.slice(page * AI_MATCH_PAGE_SIZE, (page + 1) * AI_MATCH_PAGE_SIZE);
 
     return (
         <FloatingWindow
@@ -140,7 +139,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                         <div className="ai-match-results">
                             {pagedResults.map((job, idx) => {
                                 const fitStyle = FIT_COLORS[job.fit] || FIT_COLORS.unknown;
-                                const globalIdx = page * PAGE_SIZE + idx;
+                                const globalIdx = page * AI_MATCH_PAGE_SIZE + idx;
                                 const isExpanded = expandedId === globalIdx;
 
                                 return (

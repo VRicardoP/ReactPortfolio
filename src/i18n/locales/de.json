@@ -299,6 +299,10 @@
       "empty": "Noch keine Bewerbungen. Speichern Sie Stellen aus der Suche, um sie hier zu verfolgen.",
       "deleteConfirm": "Diese Bewerbung löschen?",
       "addApplication": "Bewerbung hinzufügen",
+      "moveLeft": "Zur vorherigen Spalte verschieben",
+      "moveRight": "Zur nächsten Spalte verschieben",
+      "errorMove": "Verschieben fehlgeschlagen",
+      "errorAdd": "Hinzufügen fehlgeschlagen",
       "title_field": "Stellenbezeichnung",
       "company_field": "Unternehmen",
       "notes": "Notizen",
@@ -349,7 +353,10 @@
       "remoteOnly": "Nur Remote",
       "searching": "Suche...",
       "noResults": "Keine Ergebnisse",
-      "resultsFound": "Ergebnisse gefunden"
+      "resultsFound": "Ergebnisse gefunden",
+      "errorCreate": "Erstellen fehlgeschlagen",
+      "errorRun": "Ausführung fehlgeschlagen",
+      "errorDelete": "Löschen fehlgeschlagen"
     },
     "jobFilter": {
       "title": "Erweiterter Filter",
@@ -368,7 +375,8 @@
       "searching": "Suche l\u00e4uft...",
       "resultsFound": "Ergebnisse gefunden",
       "noResults": "Keine Ergebnisse passen zu Ihren Filtern",
-      "hint": "Filter einstellen und auf Suchen klicken, um Jobs aus allen Quellen zu finden"
+      "hint": "Filter einstellen und auf Suchen klicken, um Jobs aus allen Quellen zu finden",
+      "errorSearch": "Suche fehlgeschlagen"
     },
     "newJobs": {
       "toast": "{{count}} neue Stellen von {{source}}"

@@ -19,6 +19,25 @@ vi.mock('../../config/jobSources', () => ({
   JOB_SOURCES: [
     { key: 'testjobs', urlPath: '/api/v1/test-jobs/recent' },
   ],
+  extractJobs: (data) => {
+    if (!data) return []
+    if (Array.isArray(data)) return data
+    if (Array.isArray(data.data)) return data.data
+    if (Array.isArray(data.jobs)) return data.jobs
+    return []
+  },
+  normalizeJob: (job, source) => ({
+    id: `${source}-${job.id}`,
+    title: job.title || '',
+    company: job.company || '',
+    location: job.location || '',
+    date: job.date || '',
+    url: job.url || '',
+    tags: job.tags || [],
+    remote: false,
+    source,
+    employmentType: '',
+  }),
 }))
 
 describe('useDashboardData', () => {
@@ -118,11 +137,25 @@ describe('useDashboardData', () => {
       expect(result.current.loading).toBe(false)
     })
 
-    // jobData loads progressively in the background
+    // jobData loads progressively in the background, normalized at fetch time
     await waitFor(() => {
       expect(result.current.jobData).toHaveProperty('testjobs')
     })
 
-    expect(result.current.jobData.testjobs).toEqual(mockJobData)
+    // Raw data is spread into the stored object alongside _normalized
+    expect(result.current.jobData.testjobs._normalized).toEqual([
+      {
+        id: 'testjobs-1',
+        title: 'React Developer',
+        company: '',
+        location: '',
+        date: '',
+        url: '',
+        tags: [],
+        remote: false,
+        source: 'testjobs',
+        employmentType: '',
+      },
+    ])
   })
 })

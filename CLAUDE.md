@@ -8,11 +8,17 @@ React 19 + Vite 7 + react-router-dom 7 + Three.js + tsparticles + Chart.js + Lea
 src/
   components/
     Background/     — 6 visual effects (Rain, Matrix, Parallax, Lensflare, Cube, Smoke)
-    Dashboard/      — 13 admin dashboard windows:
+    Dashboard/      — 12 admin dashboard windows + layout components:
       StatsWindow, MapWindow, ChatAnalyticsWindow, RecentVisitorsWindow
-      JobBoardTabbedWindow (12 sources in tabs), JobMarketAnalyticsWindow, BookmarkedJobsWindow
+      JobBoardTabbedWindow (12 sources in tabs), JobMarketAnalyticsWindow
+      SelectedOffersPanel (Kanban pipeline + document preview)
       JSearchLiveWindow, SalaryAnalyticsWindow, JobFilterWindow (unified search)
-      SavedSearchesWindow, KanbanWindow, AIJobMatchWindow (embeddings + LLM)
+      SavedSearchesWindow, AIJobMatchWindow (embeddings + LLM)
+      KanbanBoard.jsx — Drag-and-drop pipeline (saved/applied/interview/offer/rejected)
+      DocumentPreview.jsx — CV/Cover Letter preview with tabs + PDF/JSON download
+      DesktopDashboardContent.jsx — Desktop floating windows layout
+      MobileDashboardLayout.jsx — Mobile tabbed layout
+      dashboardConstants.js — Shared tab definitions + page size constants (JOBS_PAGE_SIZE, AI_MATCH_PAGE_SIZE)
       JobCardExtras.jsx — Shared freshness badges + company research popover
     Windows/        — 12 portfolio windows:
       WelcomeWindow, ProfileWindow, EducationWindow (timeline), ExperienceWindow (timeline)
@@ -32,16 +38,19 @@ src/
     useVisitorTracking.js     — POSTs to /analytics/track once per session
     useWindowLayout.js        — Animates windows into minimized grid on mount (3/2/1 cols responsive, named constants)
     useJobBoardControls.js    — Shared sort, pagination, cache age badge for job boards
-    useJobApplication.js      — Shared handleApply + appliedIds tracking (used by 4 dashboard windows)
-    useTerminalCommands.js    — Terminal command parsing, execution, history (19 commands)
+    useJobApplication.js      — Shared handleApply/handleSave + appliedIds/savedIds tracking (used by 4 dashboard windows)
+    useDocumentGeneration.js  — AI CV/Cover Letter generation lifecycle (generate, fetch, download PDF/JSON)
+    useTerminalCommands.js    — Terminal command dispatch via registry (builds context, delegates to terminalCommands.js)
+    useSavedSearches.js       — Extracted from SavedSearchesWindow: saved searches state + API logic
     useKanban.js              — Kanban pipeline state management and CRUD
+    useIsMobile.js            — Responsive breakpoint detection (mobile vs desktop)
   context/
     AuthContext.jsx    — JWT auth (access + refresh tokens), login/logout, authenticatedFetch (auto-logout on 401, auto-refresh)
-    WindowContext.jsx  — Global window state (position, size, z-index, minimize/maximize, activeWindowId for focus indicator)
+    WindowContext.jsx  — Split: WindowStateContext (windows, activeWindowId) + WindowCallbacksContext (11 stable callbacks). Backward-compatible useWindowContext() wrapper
     ThemeContext.jsx   — 3 themes (cyan/silver/amber), 6 backgrounds, persisted to localStorage
   pages/
     LoginPage.jsx      — i18n-enabled login form
-    DashboardPage.jsx  — Admin dashboard with 13 windows + theme controls
+    DashboardPage.jsx  — Orchestrator: delegates to DesktopDashboardContent or MobileDashboardLayout
   i18n/
     index.js           — i18next config with LanguageDetector
     locales/en.json    — English translations (~250 keys)
@@ -50,10 +59,12 @@ src/
     locales/de.json    — German translations
     locales/ja.json    — Japanese translations
     locales/it.json    — Italian translations
-  styles/              — CSS files (base, windows-content, floating-window, dashboard, chat, login, etc.)
+  styles/              — CSS files (base, windows-content, floating-window, dashboard, dashboard-forms,
+                         chat, login, kanban, ai-match, cv-generation, document-preview, mobile, etc.)
   config/
     api.js             — Backend URL centralized (reads VITE_API_BASE_URL, fallback: http://127.0.0.1:8001)
     jobSources.js      — Centralized registry for all 12 job sources (key, color, urlPath, normalize, skillsField, alwaysRemote)
+    terminalCommands.js — Command registry: 19 handlers as (args, ctx) => lines[] + ASCII_BANNER
   App.jsx              — Portfolio page with 12 lazy-loaded windows + Ctrl+`/Ctrl+ñ terminal toggle
   main.jsx             — Router setup, providers (Theme, Auth, ErrorBoundary)
 ```
@@ -62,7 +73,7 @@ src/
 ```
 /           → App.jsx (public portfolio, 12 windows)
 /login      → LoginPage
-/dashboard  → DashboardPage (requires auth via ProtectedRoute, 13 windows)
+/dashboard  → DashboardPage (requires auth via ProtectedRoute, 12 windows)
 *           → redirect to /
 ```
 
@@ -72,20 +83,22 @@ Every change must preserve or improve adherence to SRP, Cohesion, Low Coupling, 
 - **Components**: Render UI only. Extract logic (state, effects, handlers) to custom hooks. Target <150 lines per component.
 - **Hooks**: One concern per hook. `useJobApplication` handles apply logic, `useTerminalCommands` handles terminal logic. Don't mix unrelated state.
 - **No duplicated logic**: If 2+ components share behavior (handleApply, sort/pagination), extract to a shared hook.
-- **Registry pattern**: `jobSources.js` is the single source of truth for job sources. Colors, endpoints, normalizers — all there. Never duplicate source metadata in components.
-- **Named constants**: No magic numbers in layout/animation code. Use named constants (see `useWindowLayout.js`).
-- **CSS**: Never `transition: all` — always list specific properties. Keep selectors specific and colocated with their component.
+- **Registry pattern**: `jobSources.js` is the single source of truth for job sources. `terminalCommands.js` is the registry for terminal commands. Colors, endpoints, normalizers — all there. Never duplicate source metadata in components.
+- **Named constants**: No magic numbers in layout/animation code. Use named constants (see `useWindowLayout.js`, `dashboardConstants.js`).
+- **CSS**: Never `transition: all` — always list specific properties. Use shared CSS classes from `dashboard-forms.css` for form elements in dashboard windows. Keep selectors specific and colocated with their component.
 - **File size**: Target <200 lines per component, <300 lines per hook. If larger, split by responsibility.
 
 ## Key Patterns
 
 ### FloatingWindow (shell for all windows)
 Every window (portfolio and dashboard) renders inside `FloatingWindow`. It provides:
-- Dragging via `useDraggable` (CSS transitions only on box-shadow/border-color/opacity/width/height — never `transition: all`)
-- 8-direction resizing via `useResizable`
-- Minimize/maximize/fit-to-content buttons
+- Desktop: Dragging via `useDraggable`, 8-direction resize via `useResizable`, minimize/maximize/fit-to-content
+- Mobile: Collapsible sections (accordion) with expand/collapse toggle
 - Z-index management + active window glow via `WindowContext` (`activeWindowId`)
-- Accessibility: `role="dialog"`, `aria-label`, `tabIndex={0}`, Escape to minimize
+- CSS transitions only on box-shadow/border-color/opacity/width/height — never `transition: all`
+- `backdrop-filter: none` during drag (`.dragging` class) for smooth performance
+- Accessibility: `role="dialog"`, `aria-labelledby`, `role="heading" aria-level="2"` on titles, `tabIndex`, Escape to minimize
+- Mobile accessibility: `role="button"`, `aria-expanded`, `aria-labelledby`, keyboard Enter/Space toggle
 
 ### API Calls
 - **Portfolio data**: Static JSON at `public/portfolio-data.json` (no backend)
@@ -99,7 +112,7 @@ Imported by: `AuthContext.jsx`, `useDashboardData.js`, `useVisitorTracking.js`
 ### i18n
 Use `const { t } = useTranslation()` then `t('key')` for translatable text.
 Locale files: `src/i18n/locales/{en,es,fr,de,ja,it}.json`.
-Keys: `welcome.*`, `chat.*`, `contact.*`, `skills.*`, `windows.*`, `app.*`, `error.*`, `login.*`, `dashboard.*`, `terminal.*`
+Keys: `welcome.*`, `chat.*`, `contact.*`, `skills.*`, `windows.*`, `app.*`, `error.*`, `login.*`, `dashboard.*`, `terminal.*`, `dashboard.cvGeneration.*`, `dashboard.aiMatch.*`
 
 ### Code Splitting (vite.config.js)
 Manual chunks: `vendor-react`, `vendor-three`, `vendor-particles`, `vendor-charts`, `vendor-maps`
@@ -116,7 +129,7 @@ Warning limit: 700KB (Three.js core is ~522KB, lazy-loaded)
 - Freshness badges: <24h green "New", <72h cyan, >72h hidden
 - Company research: click company → popover with LinkedIn/Glassdoor/Crunchbase links
 - Skills matching: multi-factor score badge (% match) on each card
-- Favorites: localStorage-based bookmarks + BookmarkedJobsWindow
+- Pipeline: Backend-synced job pipeline via KanbanBoard (saved → applied → interview → offer → rejected) + AI CV/Cover Letter generation
 
 ## Running Tests
 ```bash
@@ -126,7 +139,7 @@ npx vitest           # watch mode
 
 ## Easter Egg
 - Ctrl+` (primary) or Ctrl+ñ (fallback) toggles the Terminal window (`TerminalWindow.jsx`)
-- Commands: help, about, skills, experience, education, ls, cat <file>, whoami, ping, sudo hire_me, history, clear
+- 19 commands defined in `config/terminalCommands.js` registry: help, about, skills, experience, education, ls, cat, whoami, ping, sudo, history, clear, theme, lang, background, date, neofetch, matrix, version
 - Fake filesystem maps filenames to portfolio data commands
 - All strings are i18n-ready via `terminal.*` keys
 
@@ -138,7 +151,10 @@ npx vitest           # watch mode
 
 ## Notes
 - AuthContext validates JWT `exp` claim on mount, auto-clears expired tokens. Refresh tokens auto-renew access tokens
-- useDashboardData returns `warnings` array for failed API sources (no longer silently swallows errors)
-- All previous known gaps (i18n in dashboard, centralized backend URL, job source duplication) have been resolved
+- useDashboardData normalizes jobs at fetch time (stores in `._normalized` field), eliminating O(2400) render-time operations
+- WindowContext is split into `WindowStateContext` + `WindowCallbacksContext` — consumers using only callbacks don't re-render on state changes. Use `useWindowContext()` for backward compat, or `useWindowState()`/`useWindowCallbacks()` for granular access
+- ErrorBoundary wraps each Suspense group in dashboard (overview, map, analytics, jobs) — one failure doesn't crash the entire dashboard
+- CSP meta tag in `index.html` restricts script-src, style-src, connect-src, etc.
+- `ThemeContext` exposes 8 CSS custom properties: `--theme-primary`, `--theme-primary-rgb`, `--theme-secondary`, `--theme-background`, `--theme-text`, `--theme-text-highlight`, `--theme-border`, `--theme-border-light`
 - Job source registry: `config/jobSources.js` is the single source of truth. To add a new source, only add an entry there
 - Background effects (Three.js/Canvas) use mount-only effects with `eslint-disable` — adding theme as dependency would destroy/recreate the entire 3D scene

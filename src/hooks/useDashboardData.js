@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
-import { JOB_SOURCES } from '../config/jobSources';
+import { JOB_SOURCES, extractJobs, normalizeJob } from '../config/jobSources';
 
 export const useDashboardData = () => {
   const { authenticatedFetch } = useAuth();
@@ -52,12 +52,16 @@ export const useDashboardData = () => {
           setLoading(false);
         }
 
-        // Job data — loads in background, windows update progressively
+        // Job data — loads in background, normalize at fetch time so render is cheap
         JOB_SOURCES.forEach(({ key, urlPath }) => {
           authenticatedFetch(`${BACKEND_URL}${urlPath}`)
             .then(res => res.json())
             .then(data => {
-              if (!aborted) setJobData(prev => ({ ...prev, [key]: data }));
+              if (!aborted) {
+                const raw = extractJobs(data);
+                const _normalized = raw.map(j => normalizeJob(j, key));
+                setJobData(prev => ({ ...prev, [key]: { ...data, _normalized } }));
+              }
             })
             .catch(() => { if (!aborted) failedSources.push(key); });
         });

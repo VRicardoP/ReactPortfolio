@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { BACKEND_URL } from '../../config/api';
+import { showToast } from '../UI/Toast';
 import '../../styles/kanban.css';
 
 const COLUMNS = [
@@ -80,8 +81,9 @@ const KanbanBoard = memo(({
             });
         } catch {
             setApplications(previousApps);
+            showToast(t('dashboard.kanban.errorMove'));
         }
-    }, [draggedId, applications, authenticatedFetch]);
+    }, [draggedId, applications, authenticatedFetch, t]);
 
     const handleAdd = useCallback(async (status) => {
         if (!newApp.title.trim() || !newApp.company.trim()) return;
@@ -101,13 +103,39 @@ const KanbanBoard = memo(({
             setNewApp(INITIAL_NEW_APP);
             setAddingTo(null);
         } catch {
-            // Silently fail
+            showToast(t('dashboard.kanban.errorAdd'));
         }
-    }, [authenticatedFetch, newApp]);
+    }, [authenticatedFetch, newApp, t]);
 
     const handleNewAppChange = useCallback((field, value) => {
         setNewApp(prev => ({ ...prev, [field]: value }));
     }, []);
+
+    // Keyboard: move card to adjacent column
+    const handleMoveCard = useCallback(async (appId, direction) => {
+        const app = applications.find(a => a.id === appId);
+        if (!app) return;
+
+        const colIndex = COLUMNS.findIndex(c => c.key === app.status);
+        const targetIndex = colIndex + direction;
+        if (targetIndex < 0 || targetIndex >= COLUMNS.length) return;
+
+        const targetStatus = COLUMNS[targetIndex].key;
+        const previousApps = [...applications];
+        setApplications(prev =>
+            prev.map(a => a.id === appId ? { ...a, status: targetStatus } : a)
+        );
+
+        try {
+            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/${appId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ status: targetStatus }),
+            });
+        } catch {
+            setApplications(previousApps);
+            showToast(t('dashboard.kanban.errorMove'));
+        }
+    }, [applications, authenticatedFetch, t]);
 
     // Group applications by status
     const grouped = {};
@@ -123,7 +151,7 @@ const KanbanBoard = memo(({
 
     return (
         <div className="kanban-board">
-            {COLUMNS.map(col => (
+            {COLUMNS.map((col, colIndex) => (
                 <div
                     key={col.key}
                     onDragOver={handleDragOver}
@@ -149,6 +177,7 @@ const KanbanBoard = memo(({
                             <button
                                 onClick={() => setAddingTo(addingTo === col.key ? null : col.key)}
                                 className="kanban-add-btn"
+                                aria-label={t('dashboard.kanban.addApplication')}
                                 style={{
                                     borderColor: `${col.color}55`,
                                     color: col.color,
@@ -253,6 +282,28 @@ const KanbanBoard = memo(({
                                             {t('dashboard.kanban.followUp')}: {app.follow_up_date}
                                         </div>
                                     )}
+
+                                    {/* Keyboard move buttons (visible on focus-within) */}
+                                    <div className="kanban-move-btns">
+                                        {colIndex > 0 && (
+                                            <button
+                                                className="kanban-move-btn"
+                                                aria-label={t('dashboard.kanban.moveLeft')}
+                                                onClick={(e) => { e.stopPropagation(); handleMoveCard(app.id, -1); }}
+                                            >
+                                                ◀
+                                            </button>
+                                        )}
+                                        {colIndex < COLUMNS.length - 1 && (
+                                            <button
+                                                className="kanban-move-btn"
+                                                aria-label={t('dashboard.kanban.moveRight')}
+                                                onClick={(e) => { e.stopPropagation(); handleMoveCard(app.id, 1); }}
+                                            >
+                                                ▶
+                                            </button>
+                                        )}
+                                    </div>
 
                                     {/* Document action buttons */}
                                     <div className="kanban-card-actions cv-gen-actions">

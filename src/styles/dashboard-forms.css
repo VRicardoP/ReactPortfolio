@@ -1,0 +1,131 @@
+/* Shared form styles for dashboard windows (SavedSearches, JobFilter, AIMatch) */
+
+.dash-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.15));
+    color: var(--theme-text, #d3d3d3);
+    padding: 6px 10px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.dash-input:focus {
+    border-color: var(--theme-primary, #00ffff);
+}
+
+.dash-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.15));
+    color: var(--theme-text, #d3d3d3);
+    padding: 6px 10px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    outline: none;
+}
+
+.dash-select:focus {
+    border-color: var(--theme-primary, #00ffff);
+}
+
+.dash-btn {
+    background: transparent;
+    border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.15));
+    color: var(--theme-text, #d3d3d3);
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.dash-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.dash-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.dash-btn-primary {
+    background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.2);
+    border-color: var(--theme-primary, #00ffff);
+    color: var(--theme-primary, #00ffff);
+}
+
+.dash-btn-primary:hover:not(:disabled) {
+    background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.35);
+}
+
+.dash-btn-danger {
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.dash-btn-danger:hover:not(:disabled) {
+    background: rgba(244, 67, 54, 0.15);
+}
+
+.dash-label {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--theme-text, #d3d3d3);
+    opacity: 0.7;
+}
+
+.dash-btn-lg {
+    padding: 6px 14px;
+    font-size: 12px;
+}
+
+.dash-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--theme-text, #d3d3d3);
+    cursor: pointer;
+}
+
+.dash-checkbox-row input[type="checkbox"] {
+    accent-color: var(--theme-primary, #00ffff);
+}
+
+.dash-form-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.15));
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.dash-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.dash-status-text {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--theme-text, #d3d3d3);
+    text-align: center;
+    padding: 20px;
+}
+
+.dash-status-text--muted {
+    opacity: 0.5;
+}
+
+.dash-status-text--accent {
+    color: var(--theme-primary, #00ffff);
+}

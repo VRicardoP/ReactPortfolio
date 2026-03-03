@@ -2,15 +2,34 @@ import { createContext, useContext, useState, useCallback, useRef, useMemo } fro
 import { showToast } from '../components/UI/Toast';
 import i18n from '../i18n';
 
-const WindowContext = createContext();
+const WindowStateContext = createContext();
+const WindowCallbacksContext = createContext();
 
+// Granular hooks — use these when you only need state OR callbacks
 // eslint-disable-next-line react-refresh/only-export-components
-export const useWindowContext = () => {
-    const context = useContext(WindowContext);
+export const useWindowState = () => {
+    const context = useContext(WindowStateContext);
     if (!context) {
-        throw new Error('useWindowContext must be used within WindowProvider');
+        throw new Error('useWindowState must be used within WindowProvider');
     }
     return context;
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useWindowCallbacks = () => {
+    const context = useContext(WindowCallbacksContext);
+    if (!context) {
+        throw new Error('useWindowCallbacks must be used within WindowProvider');
+    }
+    return context;
+};
+
+// Backward-compatible hook — combines both contexts
+// eslint-disable-next-line react-refresh/only-export-components
+export const useWindowContext = () => {
+    const state = useWindowState();
+    const callbacks = useWindowCallbacks();
+    return useMemo(() => ({ ...state, ...callbacks }), [state, callbacks]);
 };
 
 export const WindowProvider = ({ children }) => {
@@ -268,10 +287,8 @@ export const WindowProvider = ({ children }) => {
         });
     }, [activeWindowId]);
 
-    // combine everything so components can use it
-    const value = useMemo(() => ({
-        windows,
-        activeWindowId,
+    // Callbacks are stable (all wrapped in useCallback) — this value rarely changes
+    const callbacksValue = useMemo(() => ({
         registerWindow,
         unregisterWindow,
         bringToFront,
@@ -280,10 +297,10 @@ export const WindowProvider = ({ children }) => {
         fitToContent,
         updatePosition,
         updateSize,
-        focusNextWindow
+        focusNextWindow,
+        getWindowTitle,
+        showWindowToast
     }), [
-        windows,
-        activeWindowId,
         registerWindow,
         unregisterWindow,
         bringToFront,
@@ -292,12 +309,22 @@ export const WindowProvider = ({ children }) => {
         fitToContent,
         updatePosition,
         updateSize,
-        focusNextWindow
+        focusNextWindow,
+        getWindowTitle,
+        showWindowToast
     ]);
 
+    // State changes on every window mutation (position, size, z-index, minimize, maximize)
+    const stateValue = useMemo(() => ({
+        windows,
+        activeWindowId
+    }), [windows, activeWindowId]);
+
     return (
-        <WindowContext.Provider value={value}>
-            {children}
-        </WindowContext.Provider>
+        <WindowCallbacksContext.Provider value={callbacksValue}>
+            <WindowStateContext.Provider value={stateValue}>
+                {children}
+            </WindowStateContext.Provider>
+        </WindowCallbacksContext.Provider>
     );
 };

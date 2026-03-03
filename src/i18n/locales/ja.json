@@ -299,6 +299,10 @@
       "empty": "まだ応募はありません。検索から求人を保存してここで追跡しましょう。",
       "deleteConfirm": "この応募を削除しますか？",
       "addApplication": "応募を追加",
+      "moveLeft": "前の列に移動",
+      "moveRight": "次の列に移動",
+      "errorMove": "移動に失敗しました",
+      "errorAdd": "追加に失敗しました",
       "title_field": "職種名",
       "company_field": "会社名",
       "notes": "メモ",
@@ -349,7 +353,10 @@
       "remoteOnly": "リモートのみ",
       "searching": "検索中...",
       "noResults": "結果なし",
-      "resultsFound": "件の結果"
+      "resultsFound": "件の結果",
+      "errorCreate": "作成に失敗しました",
+      "errorRun": "実行に失敗しました",
+      "errorDelete": "削除に失敗しました"
     },
     "jobFilter": {
       "title": "詳細フィルター",
@@ -368,7 +375,8 @@
       "searching": "検索中...",
       "resultsFound": "件の結果",
       "noResults": "フィルターに一致する結果はありません",
-      "hint": "フィルターを設定し、検索をクリックしてすべてのソースから求人を検索します"
+      "hint": "フィルターを設定し、検索をクリックしてすべてのソースから求人を検索します",
+      "errorSearch": "検索に失敗しました"
     },
     "newJobs": {
       "toast": "{{source}}から{{count}}件の新しい求人"

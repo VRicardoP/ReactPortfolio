@@ -1,7 +1,7 @@
 import { memo, useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
-import { SOURCE_TAB_DATA, SOURCE_KEYS, SOURCE_COLOR_MAP, normalizeJob, extractJobs } from '../../config/jobSources';
+import { SOURCE_TAB_DATA, SOURCE_KEYS, SOURCE_COLOR_MAP } from '../../config/jobSources';
 import FloatingWindow from '../Windows/FloatingWindow';
 import JobBoardControls from './JobBoardControls';
 import useJobBoardControls from '../../hooks/useJobBoardControls';
@@ -15,13 +15,12 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
     const [search, setSearch] = useState('');
     const { handleApply, appliedIds } = useJobApplication();
 
-    // Normalize all jobs per source
+    // Use pre-normalized data from useDashboardData (normalized at fetch time)
     const normalizedBySource = useMemo(() => {
         if (!jobData) return {};
         const result = {};
         for (const source of SOURCE_KEYS) {
-            const raw = extractJobs(jobData[source]);
-            result[source] = raw.map(j => normalizeJob(j, source));
+            result[source] = jobData[source]?._normalized || [];
         }
         return result;
     }, [jobData]);
@@ -70,6 +69,32 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
         return SOURCE_COLOR_MAP[source] || theme.primary;
     }, [theme.primary]);
 
+    // WAI-ARIA tab keyboard navigation (ArrowLeft/Right, Home/End)
+    const handleTabKeyDown = useCallback((e) => {
+        const tabs = SOURCE_TAB_DATA;
+        const currentIdx = tabs.findIndex(t => t.key === activeTab);
+        let nextIdx;
+
+        if (e.key === 'ArrowRight') {
+            nextIdx = currentIdx >= tabs.length - 1 ? 0 : currentIdx + 1;
+        } else if (e.key === 'ArrowLeft') {
+            nextIdx = currentIdx <= 0 ? tabs.length - 1 : currentIdx - 1;
+        } else if (e.key === 'Home') {
+            nextIdx = 0;
+        } else if (e.key === 'End') {
+            nextIdx = tabs.length - 1;
+        } else {
+            return;
+        }
+
+        e.preventDefault();
+        handleTabChange(tabs[nextIdx].key);
+        // Focus the newly active tab button
+        const tabList = e.currentTarget;
+        const buttons = tabList.querySelectorAll('[role="tab"]');
+        buttons[nextIdx]?.focus();
+    }, [activeTab, handleTabChange]);
+
     return (
         <FloatingWindow
             id="job-board-window"
@@ -79,12 +104,13 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
         >
             <div className="jobboard-container">
                 {/* Tab bar */}
-                <div className="job-tabs" role="tablist" aria-label={t('dashboard.jobBoard.windowTitle', { defaultValue: 'Job Board' })}>
+                <div className="job-tabs" role="tablist" aria-label={t('dashboard.jobBoard.windowTitle', { defaultValue: 'Job Board' })} onKeyDown={handleTabKeyDown}>
                     {SOURCE_TAB_DATA.map(tab => (
                         <button
                             key={tab.key}
                             role="tab"
                             aria-selected={activeTab === tab.key}
+                            tabIndex={activeTab === tab.key ? 0 : -1}
                             className={`job-tab ${activeTab === tab.key ? 'active' : ''}`}
                             onClick={() => handleTabChange(tab.key)}
                             style={{

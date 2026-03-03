@@ -16,6 +16,7 @@
 .floating-window.dragging,
 .floating-window.resizing {
   transition: none !important;
+  backdrop-filter: none;
 }
 
 .floating-window:hover {
@@ -446,8 +447,19 @@
 /* Touch devices - Larger touch areas */
 @media (hover: none) and (pointer: coarse) {
   .control-btn {
-    width: 14px;
-    height: 14px;
+    width: 24px;
+    height: 24px;
+    position: relative;
+  }
+
+  .control-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
   }
 
   .window-header {

@@ -2,6 +2,7 @@ import { lazy, Suspense, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useWindowLayout from '../../hooks/useWindowLayout';
 import { useSSENotifications } from '../../hooks/useSSENotifications';
+import ErrorBoundary from '../ErrorBoundary';
 
 // Lazy load dashboard window components
 const StatsWindow = lazy(() => import('./StatsWindow'));
@@ -74,62 +75,74 @@ const DesktopDashboardContent = memo(({
     useWindowLayout(DASHBOARD_WINDOW_IDS, LAYOUT_ANIMATION_DELAY_MS);
 
     return (
-        <Suspense fallback={<DashboardLoader />}>
-            <StatsWindow
-                data={stats}
-                initialPosition={{ x: 100, y: 120 }}
-            />
+        <>
+            {/* Overview group */}
+            <ErrorBoundary>
+                <Suspense fallback={<DashboardLoader />}>
+                    <StatsWindow
+                        data={stats}
+                        initialPosition={{ x: 100, y: 120 }}
+                    />
+                    <RecentVisitorsWindow
+                        data={stats}
+                        initialPosition={{ x: 130, y: 130 }}
+                    />
+                </Suspense>
+            </ErrorBoundary>
 
-            <RecentVisitorsWindow
-                data={stats}
-                initialPosition={{ x: 130, y: 130 }}
-            />
+            {/* Map group */}
+            <ErrorBoundary>
+                <Suspense fallback={<DashboardLoader />}>
+                    <MapWindow
+                        data={mapData}
+                        initialPosition={{ x: 160, y: 140 }}
+                    />
+                </Suspense>
+            </ErrorBoundary>
 
-            <MapWindow
-                data={mapData}
-                initialPosition={{ x: 160, y: 140 }}
-            />
+            {/* Analytics group */}
+            <ErrorBoundary>
+                <Suspense fallback={<DashboardLoader />}>
+                    <ChatAnalyticsWindow
+                        data={chatAnalytics}
+                        initialPosition={{ x: 190, y: 150 }}
+                    />
+                    <JobMarketAnalyticsWindow
+                        jobData={jobData}
+                        initialPosition={{ x: 250, y: 170 }}
+                    />
+                </Suspense>
+            </ErrorBoundary>
 
-            <ChatAnalyticsWindow
-                data={chatAnalytics}
-                initialPosition={{ x: 190, y: 150 }}
-            />
-
-            <JobBoardTabbedWindow
-                jobData={jobData}
-                initialPosition={{ x: 220, y: 160 }}
-            />
-
-            <JobMarketAnalyticsWindow
-                jobData={jobData}
-                initialPosition={{ x: 250, y: 170 }}
-            />
-
-            <SelectedOffersPanel
-                initialPosition={{ x: 280, y: 180 }}
-            />
-
-            <JSearchLiveWindow
-                initialPosition={{ x: 370, y: 210 }}
-            />
-
-            <SalaryAnalyticsWindow
-                data={jobData.jsearch}
-                initialPosition={{ x: 400, y: 220 }}
-            />
-
-            <JobFilterWindow
-                initialPosition={{ x: 430, y: 230 }}
-            />
-
-            <SavedSearchesWindow
-                initialPosition={{ x: 460, y: 240 }}
-            />
-
-            <AIJobMatchWindow
-                initialPosition={{ x: 520, y: 260 }}
-            />
-        </Suspense>
+            {/* Jobs group */}
+            <ErrorBoundary>
+                <Suspense fallback={<DashboardLoader />}>
+                    <JobBoardTabbedWindow
+                        jobData={jobData}
+                        initialPosition={{ x: 220, y: 160 }}
+                    />
+                    <SelectedOffersPanel
+                        initialPosition={{ x: 280, y: 180 }}
+                    />
+                    <JSearchLiveWindow
+                        initialPosition={{ x: 370, y: 210 }}
+                    />
+                    <SalaryAnalyticsWindow
+                        data={jobData.jsearch}
+                        initialPosition={{ x: 400, y: 220 }}
+                    />
+                    <JobFilterWindow
+                        initialPosition={{ x: 430, y: 230 }}
+                    />
+                    <SavedSearchesWindow
+                        initialPosition={{ x: 460, y: 240 }}
+                    />
+                    <AIJobMatchWindow
+                        initialPosition={{ x: 520, y: 260 }}
+                    />
+                </Suspense>
+            </ErrorBoundary>
+        </>
     );
 });
 

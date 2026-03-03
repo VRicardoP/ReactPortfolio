@@ -4,6 +4,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useSSENotifications } from '../../hooks/useSSENotifications';
 import { DashboardLoader } from './DesktopDashboardContent';
 import { DASHBOARD_TABS } from './dashboardConstants';
+import ErrorBoundary from '../ErrorBoundary';
 import Toast from '../UI/Toast';
 
 // Lazy load dashboard window components
@@ -40,35 +41,43 @@ const MobileDashboardLayout = memo(({
             <div className="mobile-dashboard-container">
                 <div className="mobile-dashboard-content">
                     {activeTab === 'overview' && (
-                        <Suspense fallback={<DashboardLoader />}>
-                            <StatsWindow data={stats} defaultExpanded />
-                            <RecentVisitorsWindow data={stats} />
-                        </Suspense>
+                        <ErrorBoundary>
+                            <Suspense fallback={<DashboardLoader />}>
+                                <StatsWindow data={stats} defaultExpanded />
+                                <RecentVisitorsWindow data={stats} />
+                            </Suspense>
+                        </ErrorBoundary>
                     )}
 
                     {activeTab === 'map' && (
-                        <Suspense fallback={<DashboardLoader />}>
-                            <MapWindow data={mapData} defaultExpanded />
-                        </Suspense>
+                        <ErrorBoundary>
+                            <Suspense fallback={<DashboardLoader />}>
+                                <MapWindow data={mapData} defaultExpanded />
+                            </Suspense>
+                        </ErrorBoundary>
                     )}
 
                     {activeTab === 'chat' && (
-                        <Suspense fallback={<DashboardLoader />}>
-                            <ChatAnalyticsWindow data={chatAnalytics} defaultExpanded />
-                        </Suspense>
+                        <ErrorBoundary>
+                            <Suspense fallback={<DashboardLoader />}>
+                                <ChatAnalyticsWindow data={chatAnalytics} defaultExpanded />
+                            </Suspense>
+                        </ErrorBoundary>
                     )}
 
                     {activeTab === 'jobs' && (
-                        <Suspense fallback={<DashboardLoader />}>
-                            <JobBoardTabbedWindow jobData={jobData} defaultExpanded />
-                            <JobMarketAnalyticsWindow jobData={jobData} />
-                            <SelectedOffersPanel />
-                            <JSearchLiveWindow />
-                            <SalaryAnalyticsWindow data={jobData.jsearch} />
-                            <JobFilterWindow />
-                            <SavedSearchesWindow />
-                            <AIJobMatchWindow />
-                        </Suspense>
+                        <ErrorBoundary>
+                            <Suspense fallback={<DashboardLoader />}>
+                                <JobBoardTabbedWindow jobData={jobData} defaultExpanded />
+                                <JobMarketAnalyticsWindow jobData={jobData} />
+                                <SelectedOffersPanel />
+                                <JSearchLiveWindow />
+                                <SalaryAnalyticsWindow data={jobData.jsearch} />
+                                <JobFilterWindow />
+                                <SavedSearchesWindow />
+                                <AIJobMatchWindow />
+                            </Suspense>
+                        </ErrorBoundary>
                     )}
 
                     {activeTab === 'settings' && (
