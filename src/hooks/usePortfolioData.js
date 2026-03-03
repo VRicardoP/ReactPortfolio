@@ -14,11 +14,12 @@ const usePortfolioData = () => {
       const suffix = lang === 'en' ? '' : `-${lang}`;
 
       try {
-        const response = await fetch(`/portfolio-data${suffix}.json`);
+        const cacheBust = `?v=${__APP_VERSION__ || '1'}`; // eslint-disable-line no-undef
+        const response = await fetch(`/portfolio-data${suffix}.json${cacheBust}`);
         if (!response.ok) {
           // Fallback to English if translated file is missing (skip if already English)
           if (suffix) {
-            const fallback = await fetch('/portfolio-data.json');
+            const fallback = await fetch(`/portfolio-data.json${cacheBust}`);
             if (!fallback.ok) throw new Error('Failed to load portfolio data');
             setData(await fallback.json());
             return;
