@@ -129,6 +129,27 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
     }, []);
 
+    // Proactive session expiry check — refresh or logout before the user hits a 401
+    useEffect(() => {
+        if (!isAuthenticated || !token) return;
+
+        const CHECK_INTERVAL_MS = 60_000; // check every 60 seconds
+
+        const intervalId = setInterval(async () => {
+            const storedToken = sessionStorage.getItem('accessToken');
+            if (!storedToken || isTokenExpired(storedToken)) {
+                const newToken = await tryRefresh();
+                if (newToken) {
+                    setToken(newToken);
+                } else {
+                    logout();
+                }
+            }
+        }, CHECK_INTERVAL_MS);
+
+        return () => clearInterval(intervalId);
+    }, [isAuthenticated, token, tryRefresh, logout]);
+
     // to make requests to the server with the token
     const authenticatedFetch = useCallback(async (url, options = {}) => {
         if (!token) {

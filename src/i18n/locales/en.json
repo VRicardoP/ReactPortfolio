@@ -284,7 +284,8 @@
       "loading": "Searching...",
       "allSources": "All Sources",
       "prev": "Prev",
-      "next": "Next"
+      "next": "Next",
+      "errorSearch": "Search failed"
     },
     "kanban": {
       "title": "Application Pipeline",
@@ -306,7 +307,8 @@
       "title_field": "Job Title",
       "company_field": "Company",
       "notes": "Notes",
-      "noApplications": "Drop jobs here or click + to add"
+      "noApplications": "Drop jobs here or click + to add",
+      "errorLoad": "Failed to load applications"
     },
     "jsearchLive": {
       "title": "JSearch Live Search",
@@ -325,7 +327,8 @@
       "fulltime": "Full-time",
       "parttime": "Part-time",
       "contractor": "Contractor",
-      "intern": "Intern"
+      "intern": "Intern",
+      "errorSearch": "Search failed"
     },
     "salary": {
       "title": "Salary Analytics",
@@ -356,7 +359,8 @@
       "resultsFound": "results found",
       "errorCreate": "Failed to create search",
       "errorRun": "Failed to run search",
-      "errorDelete": "Failed to delete search"
+      "errorDelete": "Failed to delete search",
+      "errorLoad": "Failed to load saved searches"
     },
     "jobFilter": {
       "title": "Advanced Filter",

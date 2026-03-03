@@ -284,7 +284,8 @@
       "loading": "Buscando...",
       "allSources": "Todas las Fuentes",
       "prev": "Ant",
-      "next": "Sig"
+      "next": "Sig",
+      "errorSearch": "Error en la búsqueda"
     },
     "kanban": {
       "title": "Pipeline de Aplicaciones",
@@ -306,7 +307,8 @@
       "title_field": "T\u00edtulo del Puesto",
       "company_field": "Empresa",
       "notes": "Notas",
-      "noApplications": "Arrastra empleos aqu\u00ed o haz clic en + para a\u00f1adir"
+      "noApplications": "Arrastra empleos aqu\u00ed o haz clic en + para a\u00f1adir",
+      "errorLoad": "Error al cargar aplicaciones"
     },
     "jsearchLive": {
       "title": "JSearch B\u00fasqueda en Vivo",
@@ -325,7 +327,8 @@
       "fulltime": "Tiempo completo",
       "parttime": "Medio tiempo",
       "contractor": "Contratista",
-      "intern": "Becario"
+      "intern": "Becario",
+      "errorSearch": "Error en la búsqueda"
     },
     "salary": {
       "title": "Anal\u00edticas Salariales",
@@ -356,7 +359,8 @@
       "resultsFound": "resultados encontrados",
       "errorCreate": "Error al crear búsqueda",
       "errorRun": "Error al ejecutar búsqueda",
-      "errorDelete": "Error al eliminar búsqueda"
+      "errorDelete": "Error al eliminar búsqueda",
+      "errorLoad": "Error al cargar búsquedas guardadas"
     },
     "jobFilter": {
       "title": "Filtro Avanzado",

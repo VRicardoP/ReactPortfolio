@@ -1,9 +1,7 @@
-import { memo, useState, useCallback, useEffect } from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import { BACKEND_URL } from '../../config/api';
-import { showToast } from '../UI/Toast';
+import useKanban from '../../hooks/useKanban';
 import '../../styles/kanban.css';
 
 const COLUMNS = [
@@ -15,8 +13,6 @@ const COLUMNS = [
     { key: 'rejected', color: '#f44336' },
 ];
 
-const INITIAL_NEW_APP = { title: '', company: '', url: '' };
-
 const DRAGGED_OPACITY = 0.6;
 
 const KanbanBoard = memo(({
@@ -26,128 +22,21 @@ const KanbanBoard = memo(({
     onViewDocuments,
 }) => {
     const { t } = useTranslation();
-    const { authenticatedFetch } = useAuth();
     const { theme } = useTheme();
 
-    const [applications, setApplications] = useState([]);
-    const [draggedId, setDraggedId] = useState(null);
-    const [addingTo, setAddingTo] = useState(null);
-    const [newApp, setNewApp] = useState(INITIAL_NEW_APP);
-
-    const fetchApplications = useCallback(async () => {
-        try {
-            const response = await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/`);
-            const data = await response.json();
-            setApplications(Array.isArray(data) ? data : data.results || data.data || []);
-        } catch {
-            setApplications([]);
-        }
-    }, [authenticatedFetch]);
-
-    useEffect(() => {
-        fetchApplications();
-    }, [fetchApplications]);
-
-    const handleDragStart = useCallback((e, id) => {
-        setDraggedId(id);
-        e.dataTransfer.effectAllowed = 'move';
-    }, []);
-
-    const handleDragOver = useCallback((e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-    }, []);
-
-    const handleDrop = useCallback(async (e, targetStatus) => {
-        e.preventDefault();
-        if (!draggedId) return;
-
-        const app = applications.find(a => a.id === draggedId);
-        if (!app || app.status === targetStatus) {
-            setDraggedId(null);
-            return;
-        }
-
-        const previousApps = [...applications];
-        setApplications(prev =>
-            prev.map(a => a.id === draggedId ? { ...a, status: targetStatus } : a)
-        );
-        setDraggedId(null);
-
-        try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/${draggedId}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ status: targetStatus }),
-            });
-        } catch {
-            setApplications(previousApps);
-            showToast(t('dashboard.kanban.errorMove'));
-        }
-    }, [draggedId, applications, authenticatedFetch, t]);
-
-    const handleAdd = useCallback(async (status) => {
-        if (!newApp.title.trim() || !newApp.company.trim()) return;
-
-        try {
-            const response = await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    title: newApp.title.trim(),
-                    company: newApp.company.trim(),
-                    url: newApp.url.trim() || null,
-                    status,
-                }),
-            });
-            const created = await response.json();
-            setApplications(prev => [...prev, created]);
-            setNewApp(INITIAL_NEW_APP);
-            setAddingTo(null);
-        } catch {
-            showToast(t('dashboard.kanban.errorAdd'));
-        }
-    }, [authenticatedFetch, newApp, t]);
-
-    const handleNewAppChange = useCallback((field, value) => {
-        setNewApp(prev => ({ ...prev, [field]: value }));
-    }, []);
-
-    // Keyboard: move card to adjacent column
-    const handleMoveCard = useCallback(async (appId, direction) => {
-        const app = applications.find(a => a.id === appId);
-        if (!app) return;
-
-        const colIndex = COLUMNS.findIndex(c => c.key === app.status);
-        const targetIndex = colIndex + direction;
-        if (targetIndex < 0 || targetIndex >= COLUMNS.length) return;
-
-        const targetStatus = COLUMNS[targetIndex].key;
-        const previousApps = [...applications];
-        setApplications(prev =>
-            prev.map(a => a.id === appId ? { ...a, status: targetStatus } : a)
-        );
-
-        try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/${appId}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ status: targetStatus }),
-            });
-        } catch {
-            setApplications(previousApps);
-            showToast(t('dashboard.kanban.errorMove'));
-        }
-    }, [applications, authenticatedFetch, t]);
-
-    // Group applications by status
-    const grouped = {};
-    COLUMNS.forEach(col => { grouped[col.key] = []; });
-    applications.forEach(app => {
-        const key = app.status || 'saved';
-        if (grouped[key]) {
-            grouped[key].push(app);
-        } else {
-            grouped.saved.push(app);
-        }
-    });
+    const {
+        draggedId,
+        addingTo,
+        setAddingTo,
+        newApp,
+        grouped,
+        handleDragStart,
+        handleDragOver,
+        handleDrop,
+        handleAdd,
+        handleNewAppChange,
+        handleMoveCard,
+    } = useKanban();
 
     return (
         <div className="kanban-board">

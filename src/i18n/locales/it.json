@@ -284,7 +284,8 @@
       "loading": "Ricerca in corso...",
       "allSources": "Tutte le Fonti",
       "prev": "Prec",
-      "next": "Succ"
+      "next": "Succ",
+      "errorSearch": "Ricerca fallita"
     },
     "kanban": {
       "title": "Pipeline Candidature",
@@ -306,7 +307,8 @@
       "title_field": "Titolo Posizione",
       "company_field": "Azienda",
       "notes": "Note",
-      "noApplications": "Trascina lavori qui o clicca + per aggiungere"
+      "noApplications": "Trascina lavori qui o clicca + per aggiungere",
+      "errorLoad": "Impossibile caricare le candidature"
     },
     "jsearchLive": {
       "title": "JSearch Ricerca Live",
@@ -325,7 +327,8 @@
       "fulltime": "Full-time",
       "parttime": "Part-time",
       "contractor": "Contrattista",
-      "intern": "Stagista"
+      "intern": "Stagista",
+      "errorSearch": "Ricerca fallita"
     },
     "salary": {
       "title": "Analitiche Salariali",
@@ -356,7 +359,8 @@
       "resultsFound": "risultati trovati",
       "errorCreate": "Creazione fallita",
       "errorRun": "Esecuzione fallita",
-      "errorDelete": "Eliminazione fallita"
+      "errorDelete": "Eliminazione fallita",
+      "errorLoad": "Impossibile caricare le ricerche salvate"
     },
     "jobFilter": {
       "title": "Filtro Avanzato",

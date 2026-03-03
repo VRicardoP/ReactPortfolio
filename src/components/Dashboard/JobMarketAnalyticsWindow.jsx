@@ -130,7 +130,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         fontFamily: 'Courier New, monospace',
         fontSize: '12px',
         cursor: 'pointer',
-        transition: 'all 0.2s ease',
+        transition: 'background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease',
     });
 
     if (allJobs.length === 0) {

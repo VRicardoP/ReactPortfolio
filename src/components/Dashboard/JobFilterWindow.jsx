@@ -1,105 +1,22 @@
-import { memo, useState, useCallback } from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
-import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import { BACKEND_URL } from '../../config/api';
-import { showToast } from '../UI/Toast';
 import useJobApplication from '../../hooks/useJobApplication';
+import useJobFilter from '../../hooks/useJobFilter';
 import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
-import { JOBS_PAGE_SIZE } from './dashboardConstants';
 import '../../styles/dashboard-forms.css';
 
 const JobFilterWindow = memo(({ initialPosition, onSaveSearch }) => {
     const { t } = useTranslation();
-    const { authenticatedFetch } = useAuth();
     const { theme } = useTheme();
-
-    const [filters, setFilters] = useState({
-        country: '',
-        city: '',
-        salaryMin: '',
-        salaryMax: '',
-        q: '',
-        remoteOnly: false,
-    });
-    const [results, setResults] = useState([]);
-    const [total, setTotal] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [searched, setSearched] = useState(false);
-    const [page, setPage] = useState(0);
     const { handleApply, appliedIds } = useJobApplication();
 
-    const handleFilterChange = useCallback((field, value) => {
-        setFilters(prev => ({ ...prev, [field]: value }));
-    }, []);
-
-    const buildQueryParams = useCallback((offset = 0) => {
-        const params = new URLSearchParams();
-        if (filters.q) params.set('q', filters.q);
-        if (filters.country) params.set('country', filters.country);
-        if (filters.city) params.set('city', filters.city);
-        if (filters.salaryMin) params.set('salary_min', filters.salaryMin);
-        if (filters.salaryMax) params.set('salary_max', filters.salaryMax);
-        if (filters.remoteOnly) params.set('remote_only', 'true');
-        params.set('limit', String(JOBS_PAGE_SIZE));
-        params.set('offset', String(offset));
-        return params.toString();
-    }, [filters]);
-
-    const handleSearch = useCallback(async (newPage = 0) => {
-        setLoading(true);
-        setSearched(true);
-        setPage(newPage);
-        try {
-            const qs = buildQueryParams(newPage * JOBS_PAGE_SIZE);
-            const response = await authenticatedFetch(
-                `${BACKEND_URL}/api/v1/jobs/search?${qs}`
-            );
-            const data = await response.json();
-            setResults(data.data || []);
-            setTotal(data.metadata?.total || 0);
-        } catch {
-            showToast(t('dashboard.jobFilter.errorSearch'));
-            setResults([]);
-            setTotal(0);
-        } finally {
-            setLoading(false);
-        }
-    }, [authenticatedFetch, buildQueryParams, t]);
-
-    const handleClear = useCallback(() => {
-        setFilters({ country: '', city: '', salaryMin: '', salaryMax: '', q: '', remoteOnly: false });
-        setResults([]);
-        setTotal(0);
-        setSearched(false);
-        setPage(0);
-    }, []);
-
-    const handleSave = useCallback(() => {
-        if (onSaveSearch) {
-            onSaveSearch({
-                country: filters.country,
-                city: filters.city,
-                salaryMin: filters.salaryMin,
-                salaryMax: filters.salaryMax,
-                q: filters.q,
-                remoteOnly: filters.remoteOnly,
-            });
-        }
-    }, [onSaveSearch, filters]);
-
-    const totalPages = Math.ceil(total / JOBS_PAGE_SIZE);
-
-    const hasFilters = filters.country || filters.city || filters.salaryMin || filters.salaryMax || filters.q || filters.remoteOnly;
-
-    const formatSalary = (min, max, currency) => {
-        const cur = currency || 'USD';
-        if (min && max) return `${cur} ${Number(min).toLocaleString()} - ${Number(max).toLocaleString()}`;
-        if (min) return `${cur} ${Number(min).toLocaleString()}+`;
-        if (max) return `${cur} ≤${Number(max).toLocaleString()}`;
-        return '';
-    };
+    const {
+        filters, results, total, loading, searched, page,
+        totalPages, hasFilters,
+        handleFilterChange, handleSearch, handleClear, handleSave, formatSalary,
+    } = useJobFilter(onSaveSearch);
 
     return (
         <FloatingWindow

@@ -284,7 +284,8 @@
       "loading": "Recherche en cours...",
       "allSources": "Toutes les Sources",
       "prev": "Préc",
-      "next": "Suiv"
+      "next": "Suiv",
+      "errorSearch": "Échec de la recherche"
     },
     "kanban": {
       "title": "Pipeline de Candidatures",
@@ -306,7 +307,8 @@
       "title_field": "Intitulé du Poste",
       "company_field": "Entreprise",
       "notes": "Notes",
-      "noApplications": "Déposez des emplois ici ou cliquez sur + pour en ajouter"
+      "noApplications": "Déposez des emplois ici ou cliquez sur + pour en ajouter",
+      "errorLoad": "Échec du chargement des candidatures"
     },
     "jsearchLive": {
       "title": "JSearch Recherche en Direct",
@@ -325,7 +327,8 @@
       "fulltime": "Temps plein",
       "parttime": "Temps partiel",
       "contractor": "Freelance",
-      "intern": "Stagiaire"
+      "intern": "Stagiaire",
+      "errorSearch": "Échec de la recherche"
     },
     "salary": {
       "title": "Analytiques Salariales",
@@ -356,7 +359,8 @@
       "resultsFound": "résultats trouvés",
       "errorCreate": "Échec de la création",
       "errorRun": "Échec de l'exécution",
-      "errorDelete": "Échec de la suppression"
+      "errorDelete": "Échec de la suppression",
+      "errorLoad": "Échec du chargement des recherches"
     },
     "jobFilter": {
       "title": "Filtre Avanc\u00e9",

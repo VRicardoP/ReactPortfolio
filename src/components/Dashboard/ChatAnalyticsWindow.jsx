@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import FloatingWindow from '../Windows/FloatingWindow';
 import { useTheme } from '../../context/ThemeContext';
+import '../../styles/dashboard-forms.css';
 
 ChartJS.register(
     CategoryScale,
@@ -119,54 +120,6 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
         }
     }), [theme]);
 
-    const tabStyle = (isActive) => ({
-        padding: '6px 12px',
-        background: isActive ? `rgba(${theme.primaryRgb}, 0.2)` : 'transparent',
-        border: `1px solid ${isActive ? theme.primary : theme.border}`,
-        color: isActive ? theme.primary : theme.text,
-        cursor: 'pointer',
-        fontFamily: 'Courier New',
-        fontSize: '11px',
-        borderRadius: '4px',
-        transition: 'all 0.2s'
-    });
-
-    const statCardStyle = {
-        background: theme.backgroundLight,
-        border: `1px solid ${theme.border}`,
-        borderRadius: '6px',
-        padding: '12px',
-        textAlign: 'center'
-    };
-
-    const statLabelStyle = {
-        color: theme.text,
-        fontSize: '10px',
-        fontFamily: 'Courier New',
-        textTransform: 'uppercase',
-        marginBottom: '5px'
-    };
-
-    const statValueStyle = {
-        color: theme.primary,
-        fontSize: '20px',
-        fontFamily: 'Courier New',
-        fontWeight: 'bold'
-    };
-
-    const questionItemStyle = {
-        display: 'flex',
-        alignItems: 'center',
-        padding: '8px 10px',
-        background: theme.backgroundLight,
-        border: `1px solid ${theme.borderLight}`,
-        borderRadius: '4px',
-        marginBottom: '6px',
-        fontFamily: 'Courier New',
-        fontSize: '11px',
-        color: theme.text
-    };
-
     const hasData = data && (data.general || (data.top_questions && data.top_questions.length > 0) || (data.timeline_daily && data.timeline_daily.length > 0));
 
     return (
@@ -178,86 +131,78 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
         >
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {!hasData && (
-                    <div style={{
-                        background: `rgba(${theme.primaryRgb}, 0.1)`,
-                        border: `1px solid ${theme.border}`,
-                        borderRadius: '4px',
-                        padding: '8px 12px',
-                        fontSize: '11px',
-                        color: theme.warning,
-                        fontFamily: 'Courier New'
-                    }}>
+                    <div className="chat-notice" style={{ color: theme.warning }}>
                         {t('dashboard.chatAnalytics.waitingForQuestions')}
                     </div>
                 )}
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    <button style={tabStyle(activeTab === 'overview')} onClick={() => setActiveTab('overview')}>
+                    <button className={`dash-tab${activeTab === 'overview' ? ' dash-tab--active' : ''}`} onClick={() => setActiveTab('overview')}>
                         {t('dashboard.chatAnalytics.tabOverview')}
                     </button>
-                    <button style={tabStyle(activeTab === 'questions')} onClick={() => setActiveTab('questions')}>
+                    <button className={`dash-tab${activeTab === 'questions' ? ' dash-tab--active' : ''}`} onClick={() => setActiveTab('questions')}>
                         {t('dashboard.chatAnalytics.tabQuestions')}
                     </button>
-                    <button style={tabStyle(activeTab === 'timeline')} onClick={() => setActiveTab('timeline')}>
+                    <button className={`dash-tab${activeTab === 'timeline' ? ' dash-tab--active' : ''}`} onClick={() => setActiveTab('timeline')}>
                         {t('dashboard.chatAnalytics.tabTimeline')}
                     </button>
-                    <button style={tabStyle(activeTab === 'countries')} onClick={() => setActiveTab('countries')}>
+                    <button className={`dash-tab${activeTab === 'countries' ? ' dash-tab--active' : ''}`} onClick={() => setActiveTab('countries')}>
                         {t('dashboard.chatAnalytics.tabCountries')}
                     </button>
                 </div>
 
                 <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
                     {activeTab === 'overview' && (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', padding: '5px' }}>
-                            <div style={statCardStyle}>
-                                <div style={statLabelStyle}>{t('dashboard.chatAnalytics.totalQuestions')}</div>
-                                <div style={statValueStyle}>{stats?.total_questions || 0}</div>
+                        <div className="chat-stats-grid">
+                            <div className="chat-stat-card">
+                                <div className="chat-stat-label">{t('dashboard.chatAnalytics.totalQuestions')}</div>
+                                <div className="chat-stat-value">{stats?.total_questions || 0}</div>
                             </div>
-                            <div style={statCardStyle}>
-                                <div style={statLabelStyle}>{t('dashboard.chatAnalytics.successRate')}</div>
-                                <div style={statValueStyle}>
+                            <div className="chat-stat-card">
+                                <div className="chat-stat-label">{t('dashboard.chatAnalytics.successRate')}</div>
+                                <div className="chat-stat-value">
                                     {stats?.success_rate != null ? `${stats.success_rate.toFixed(1)}%` : 'N/A'}
                                 </div>
                             </div>
-                            <div style={statCardStyle}>
-                                <div style={statLabelStyle}>{t('dashboard.chatAnalytics.avgResponseTime')}</div>
-                                <div style={statValueStyle}>
+                            <div className="chat-stat-card">
+                                <div className="chat-stat-label">{t('dashboard.chatAnalytics.avgResponseTime')}</div>
+                                <div className="chat-stat-value">
                                     {stats?.avg_response_time_ms ? `${stats.avg_response_time_ms.toFixed(0)}ms` : 'N/A'}
                                 </div>
                             </div>
-                            <div style={statCardStyle}>
-                                <div style={statLabelStyle}>{t('dashboard.chatAnalytics.questionsToday')}</div>
-                                <div style={statValueStyle}>{stats?.questions_today || 0}</div>
+                            <div className="chat-stat-card">
+                                <div className="chat-stat-label">{t('dashboard.chatAnalytics.questionsToday')}</div>
+                                <div className="chat-stat-value">{stats?.questions_today || 0}</div>
                             </div>
-                            <div style={statCardStyle}>
-                                <div style={statLabelStyle}>{t('dashboard.chatAnalytics.thisWeek')}</div>
-                                <div style={statValueStyle}>{stats?.questions_this_week || 0}</div>
+                            <div className="chat-stat-card">
+                                <div className="chat-stat-label">{t('dashboard.chatAnalytics.thisWeek')}</div>
+                                <div className="chat-stat-value">{stats?.questions_this_week || 0}</div>
                             </div>
-                            <div style={statCardStyle}>
-                                <div style={statLabelStyle}>{t('dashboard.chatAnalytics.thisMonth')}</div>
-                                <div style={statValueStyle}>{stats?.questions_this_month || 0}</div>
+                            <div className="chat-stat-card">
+                                <div className="chat-stat-label">{t('dashboard.chatAnalytics.thisMonth')}</div>
+                                <div className="chat-stat-value">{stats?.questions_this_month || 0}</div>
                             </div>
                         </div>
                     )}
 
                     {activeTab === 'questions' && (
                         <div style={{ padding: '5px' }}>
-                            <div style={{ fontSize: '11px', color: theme.primary, marginBottom: '10px', fontFamily: 'Courier New' }}>
+                            <div className="chat-section-heading">
                                 {t('dashboard.chatAnalytics.mostFrequentQuestions')}
                             </div>
                             {topQuestions.length > 0 ? (
-                                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                                <ul className="chat-question-list">
                                     {topQuestions.map((q, i) => (
-                                        <li key={i} style={questionItemStyle}>
-                                            <span style={{ color: theme.primary, marginRight: '8px' }}>#{i + 1}</span>
-                                            <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        <li key={i} className="chat-question-item">
+                                            <span className="chat-question-rank">#{i + 1}</span>
+                                            <span className="chat-question-text">
                                                 {q.question}
                                             </span>
-                                            <span style={{ color: theme.primary, marginLeft: '8px' }}>x{q.count}</span>
+                                            <span className="chat-question-count">x{q.count}</span>
                                         </li>
                                     ))}
                                 </ul>
                             ) : (
-                                <div style={{ color: theme.text, textAlign: 'center', padding: '20px' }}>
+                                <div className="dash-status-text dash-status-text--muted">
                                     {t('dashboard.chatAnalytics.noQuestionsYet')}
                                 </div>
                             )}
@@ -269,7 +214,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
                             {dailyTimeline ? (
                                 <Bar data={dailyTimeline} options={chartOptions} />
                             ) : (
-                                <div style={{ color: theme.text, textAlign: 'center', padding: '20px' }}>
+                                <div className="dash-status-text dash-status-text--muted">
                                     {t('dashboard.chatAnalytics.noTimelineData')}
                                 </div>
                             )}
@@ -281,7 +226,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
                             {countryData ? (
                                 <Doughnut data={countryData} options={doughnutOptions} />
                             ) : (
-                                <div style={{ color: theme.text, textAlign: 'center', padding: '20px' }}>
+                                <div className="dash-status-text dash-status-text--muted">
                                     {t('dashboard.chatAnalytics.noCountryData')}
                                 </div>
                             )}

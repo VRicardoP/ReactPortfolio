@@ -129,3 +129,186 @@
 .dash-status-text--accent {
     color: var(--theme-primary, #00ffff);
 }
+
+/* Search button with cooldown state */
+.dash-btn-search {
+    background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.2);
+    border: 1px solid var(--theme-primary, #00ffff);
+    color: var(--theme-primary, #00ffff);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    align-self: flex-start;
+}
+
+.dash-btn-search:hover:not(:disabled) {
+    background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.35);
+}
+
+.dash-btn-search:disabled {
+    cursor: not-allowed;
+}
+
+.dash-btn-search.dash-btn-cooldown {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Location text in job cards */
+.jobboard-location {
+    font-size: 11px;
+    color: var(--theme-text, #d3d3d3);
+    opacity: 0.7;
+    font-family: 'Courier New', monospace;
+    margin-top: 2px;
+}
+
+/* Pagination container */
+.dash-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--theme-text, #d3d3d3);
+}
+
+/* Pagination buttons */
+.dash-page-btn {
+    background: transparent;
+    border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.15));
+    color: var(--theme-primary, #00ffff);
+    padding: 4px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.dash-page-btn:hover:not(:disabled) {
+    background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.1);
+}
+
+.dash-page-btn:disabled {
+    color: rgba(255, 255, 255, 0.3);
+    cursor: default;
+    opacity: 0.6;
+}
+
+/* Chat Analytics — Tabs */
+.dash-tab {
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.15));
+    color: var(--theme-text, #d3d3d3);
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.dash-tab:hover {
+    background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.1);
+}
+
+.dash-tab--active {
+    background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.2);
+    border-color: var(--theme-primary, #00ffff);
+    color: var(--theme-primary, #00ffff);
+}
+
+/* Chat Analytics — Stat cards */
+.chat-stat-card {
+    background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.05);
+    border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.15));
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+}
+
+.chat-stat-label {
+    color: var(--theme-text, #d3d3d3);
+    font-size: 10px;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.chat-stat-value {
+    color: var(--theme-primary, #00ffff);
+    font-size: 20px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+}
+
+/* Chat Analytics — Question items */
+.chat-question-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.05);
+    border: 1px solid var(--theme-border-light, rgba(255, 255, 255, 0.1));
+    border-radius: 4px;
+    margin-bottom: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--theme-text, #d3d3d3);
+}
+
+.chat-question-rank {
+    color: var(--theme-primary, #00ffff);
+    margin-right: 8px;
+}
+
+.chat-question-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chat-question-count {
+    color: var(--theme-primary, #00ffff);
+    margin-left: 8px;
+}
+
+/* Chat Analytics — Section heading */
+.chat-section-heading {
+    font-size: 11px;
+    color: var(--theme-primary, #00ffff);
+    margin-bottom: 10px;
+    font-family: 'Courier New', monospace;
+}
+
+/* Chat Analytics — Stats grid */
+.chat-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 5px;
+}
+
+/* Chat Analytics — Question list */
+.chat-question-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Chat Analytics — Warning notice */
+.chat-notice {
+    background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.1);
+    border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.15));
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+}

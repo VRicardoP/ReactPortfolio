@@ -284,7 +284,8 @@
       "loading": "Suche läuft...",
       "allSources": "Alle Quellen",
       "prev": "Zurück",
-      "next": "Weiter"
+      "next": "Weiter",
+      "errorSearch": "Suche fehlgeschlagen"
     },
     "kanban": {
       "title": "Bewerbungs-Pipeline",
@@ -306,7 +307,8 @@
       "title_field": "Stellenbezeichnung",
       "company_field": "Unternehmen",
       "notes": "Notizen",
-      "noApplications": "Stellen hierher ziehen oder auf + klicken"
+      "noApplications": "Stellen hierher ziehen oder auf + klicken",
+      "errorLoad": "Fehler beim Laden der Bewerbungen"
     },
     "jsearchLive": {
       "title": "JSearch Live-Suche",
@@ -325,7 +327,8 @@
       "fulltime": "Vollzeit",
       "parttime": "Teilzeit",
       "contractor": "Freiberuflich",
-      "intern": "Praktikant"
+      "intern": "Praktikant",
+      "errorSearch": "Suche fehlgeschlagen"
     },
     "salary": {
       "title": "Gehalts-Analytik",
@@ -356,7 +359,8 @@
       "resultsFound": "Ergebnisse gefunden",
       "errorCreate": "Erstellen fehlgeschlagen",
       "errorRun": "Ausführung fehlgeschlagen",
-      "errorDelete": "Löschen fehlgeschlagen"
+      "errorDelete": "Löschen fehlgeschlagen",
+      "errorLoad": "Fehler beim Laden der Suchen"
     },
     "jobFilter": {
       "title": "Erweiterter Filter",

@@ -284,7 +284,8 @@
       "loading": "検索中...",
       "allSources": "すべてのソース",
       "prev": "前へ",
-      "next": "次へ"
+      "next": "次へ",
+      "errorSearch": "検索に失敗しました"
     },
     "kanban": {
       "title": "応募パイプライン",
@@ -306,7 +307,8 @@
       "title_field": "職種名",
       "company_field": "会社名",
       "notes": "メモ",
-      "noApplications": "ここに求人をドロップするか+をクリックして追加"
+      "noApplications": "ここに求人をドロップするか+をクリックして追加",
+      "errorLoad": "応募の読み込みに失敗"
     },
     "jsearchLive": {
       "title": "JSearchライブ検索",
@@ -325,7 +327,8 @@
       "fulltime": "フルタイム",
       "parttime": "パートタイム",
       "contractor": "契約",
-      "intern": "インターン"
+      "intern": "インターン",
+      "errorSearch": "検索に失敗しました"
     },
     "salary": {
       "title": "給与アナリティクス",
@@ -356,7 +359,8 @@
       "resultsFound": "件の結果",
       "errorCreate": "作成に失敗しました",
       "errorRun": "実行に失敗しました",
-      "errorDelete": "削除に失敗しました"
+      "errorDelete": "削除に失敗しました",
+      "errorLoad": "保存された検索の読み込みに失敗"
     },
     "jobFilter": {
       "title": "詳細フィルター",

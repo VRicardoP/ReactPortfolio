@@ -41,10 +41,11 @@ const useSavedSearches = () => {
             setSearches(Array.isArray(data) ? data : data.results || data.data || []);
         } catch {
             setSearches([]);
+            showToast(t('dashboard.savedSearches.errorLoad'));
         } finally {
             setLoading(false);
         }
-    }, [authenticatedFetch]);
+    }, [authenticatedFetch, t]);
 
     useEffect(() => {
         fetchSearches();

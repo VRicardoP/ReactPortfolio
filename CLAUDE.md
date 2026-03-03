@@ -43,6 +43,9 @@ src/
     useTerminalCommands.js    — Terminal command dispatch via registry (builds context, delegates to terminalCommands.js)
     useSavedSearches.js       — Extracted from SavedSearchesWindow: saved searches state + API logic
     useKanban.js              — Kanban pipeline state management and CRUD
+    useJobFilter.js           — Extracted from JobFilterWindow: filters state, search/clear/save callbacks
+    useJSearchLive.js         — Extracted from JSearchLiveWindow: form state, cooldown, search handler
+    useUnifiedSearch.js       — Extracted from UnifiedJobSearchWindow: query/filters, debounced search, pagination
     useIsMobile.js            — Responsive breakpoint detection (mobile vs desktop)
   context/
     AuthContext.jsx    — JWT auth (access + refresh tokens), login/logout, authenticatedFetch (auto-logout on 401, auto-refresh)
@@ -150,7 +153,7 @@ npx vitest           # watch mode
 - Toast "Click on any window to explore!" after animation completes
 
 ## Notes
-- AuthContext validates JWT `exp` claim on mount, auto-clears expired tokens. Refresh tokens auto-renew access tokens
+- AuthContext validates JWT `exp` claim on mount, auto-clears expired tokens. Proactive session expiry checks token every 60s, auto-refreshes or logs out. Refresh tokens auto-renew access tokens
 - useDashboardData normalizes jobs at fetch time (stores in `._normalized` field), eliminating O(2400) render-time operations
 - WindowContext is split into `WindowStateContext` + `WindowCallbacksContext` — consumers using only callbacks don't re-render on state changes. Use `useWindowContext()` for backward compat, or `useWindowState()`/`useWindowCallbacks()` for granular access
 - ErrorBoundary wraps each Suspense group in dashboard (overview, map, analytics, jobs) — one failure doesn't crash the entire dashboard

@@ -197,13 +197,14 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                         </div>
 
                                         {/* Skills analysis toggle */}
-                                        <div
+                                        <button
                                             className="ai-match-skills-toggle"
                                             style={{ color: theme.primary }}
                                             onClick={() => setExpandedId(isExpanded ? null : globalIdx)}
+                                            aria-expanded={isExpanded}
                                         >
                                             {t('dashboard.aiMatch.skillsAnalysis')} {isExpanded ? '▲' : '▼'}
-                                        </div>
+                                        </button>
 
                                         {isExpanded && (
                                             <div className="ai-match-skills-detail">
