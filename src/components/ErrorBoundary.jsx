@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import i18n from '../i18n';
 
 class ErrorBoundary extends Component {
     constructor(props) {
@@ -25,7 +26,7 @@ class ErrorBoundary extends Component {
                     padding: '20px',
                     textAlign: 'center'
                 }}>
-                    <p>Something went wrong.</p>
+                    <p>{i18n.t('error.somethingWrong')}</p>
                     <button
                         onClick={() => this.setState({ hasError: false })}
                         style={{
@@ -38,7 +39,7 @@ class ErrorBoundary extends Component {
                             marginTop: '10px'
                         }}
                     >
-                        Try Again
+                        {i18n.t('error.tryAgain')}
                     </button>
                 </div>
             );

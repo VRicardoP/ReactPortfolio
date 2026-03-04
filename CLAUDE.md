@@ -8,12 +8,13 @@ React 19 + Vite 7 + react-router-dom 7 + Three.js + tsparticles + Chart.js + Lea
 src/
   components/
     Background/     — 6 visual effects (Rain, Matrix, Parallax, Lensflare, Cube, Smoke)
-    Dashboard/      — 12 admin dashboard windows + layout components:
+    Dashboard/      — 13 admin dashboard windows + layout components:
       StatsWindow, MapWindow, ChatAnalyticsWindow, RecentVisitorsWindow
       JobBoardTabbedWindow (12 sources in tabs), JobMarketAnalyticsWindow
       SelectedOffersPanel (Kanban pipeline + document preview)
       JSearchLiveWindow, SalaryAnalyticsWindow, JobFilterWindow (unified search)
-      SavedSearchesWindow, AIJobMatchWindow (embeddings + LLM)
+      SavedSearchesWindow, AIJobMatchWindow (embeddings + LLM + title translation)
+      HeatmapWindow (interaction heatmap canvas + engagement Chart.js graphs)
       KanbanBoard.jsx — Drag-and-drop pipeline (saved/applied/interview/offer/rejected)
       DocumentPreview.jsx — CV/Cover Letter preview with tabs + PDF/JSON download
       DesktopDashboardContent.jsx — Desktop floating windows layout
@@ -36,6 +37,8 @@ src/
     useResizable.js           — 8-direction resize for FloatingWindow
     useTypewriter.js          — Character-by-character animation
     useVisitorTracking.js     — POSTs to /analytics/track once per session
+    useInteractionTracking.js — Captures clicks + window focus events, batches via sendBeacon every 10s
+    useHeatmapData.js         — Fetches heatmap + engagement stats from dashboard (authenticatedFetch)
     useWindowLayout.js        — Animates windows into minimized grid on mount (3/2/1 cols responsive, named constants)
     useJobBoardControls.js    — Shared sort, pagination, cache age badge for job boards
     useJobApplication.js      — Shared handleApply/handleSave + appliedIds/savedIds tracking (used by 4 dashboard windows)
@@ -49,7 +52,7 @@ src/
     useIsMobile.js            — Responsive breakpoint detection (mobile vs desktop)
   context/
     AuthContext.jsx    — JWT auth (access + refresh tokens), login/logout, authenticatedFetch (auto-logout on 401, auto-refresh)
-    WindowContext.jsx  — Split: WindowStateContext (windows, activeWindowId) + WindowCallbacksContext (11 stable callbacks). Backward-compatible useWindowContext() wrapper
+    WindowContext.jsx  — Split: WindowStateContext (windows, activeWindowId) + WindowCallbacksContext (11 stable callbacks). Backward-compatible useWindowContext() wrapper. Dispatches window-focused/window-blurred CustomEvents on activeWindowId change
     ThemeContext.jsx   — 3 themes (cyan/silver/amber), 6 backgrounds, persisted to localStorage
   pages/
     LoginPage.jsx      — i18n-enabled login form
@@ -76,7 +79,7 @@ src/
 ```
 /           → App.jsx (public portfolio, 12 windows)
 /login      → LoginPage
-/dashboard  → DashboardPage (requires auth via ProtectedRoute, 12 windows)
+/dashboard  → DashboardPage (requires auth via ProtectedRoute, 13 windows)
 *           → redirect to /
 ```
 
@@ -107,6 +110,7 @@ Every window (portfolio and dashboard) renders inside `FloatingWindow`. It provi
 - **Portfolio data**: Static JSON at `public/portfolio-data.json` (no backend)
 - **Dashboard data**: Uses `authenticatedFetch()` from `AuthContext` (adds JWT header, auto-logout on 401)
 - **Visitor tracking**: `useVisitorTracking` hook, fires once per session
+- **Interaction tracking**: `useInteractionTracking` hook, captures clicks + window focus, batches via `sendBeacon` every 10s
 
 ### Backend URL
 Centralized in `src/config/api.js`. Reads `VITE_API_BASE_URL` env var, fallback: `http://127.0.0.1:8001`.
@@ -115,7 +119,7 @@ Imported by: `AuthContext.jsx`, `useDashboardData.js`, `useVisitorTracking.js`
 ### i18n
 Use `const { t } = useTranslation()` then `t('key')` for translatable text.
 Locale files: `src/i18n/locales/{en,es,fr,de,ja,it}.json`.
-Keys: `welcome.*`, `chat.*`, `contact.*`, `skills.*`, `windows.*`, `app.*`, `error.*`, `login.*`, `dashboard.*`, `terminal.*`, `dashboard.cvGeneration.*`, `dashboard.aiMatch.*`
+Keys: `welcome.*`, `chat.*`, `contact.*`, `skills.*`, `windows.*`, `app.*`, `error.*`, `login.*`, `dashboard.*`, `terminal.*`, `dashboard.cvGeneration.*`, `dashboard.aiMatch.*`, `dashboard.heatmap.*`
 
 ### Code Splitting (vite.config.js)
 Manual chunks: `vendor-react`, `vendor-three`, `vendor-particles`, `vendor-charts`, `vendor-maps`
@@ -133,6 +137,7 @@ Warning limit: 700KB (Three.js core is ~522KB, lazy-loaded)
 - Company research: click company → popover with LinkedIn/Glassdoor/Crunchbase links
 - Skills matching: multi-factor score badge (% match) on each card
 - Pipeline: Backend-synced job pipeline via KanbanBoard (saved → applied → interview → offer → rejected) + AI CV/Cover Letter generation
+- Title translation: Batch-translate non-EN/ES titles to English via Groq LLM in AIJobMatchWindow (with "Translated" badge + original title tooltip)
 
 ## Running Tests
 ```bash

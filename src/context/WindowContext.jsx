@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useRef, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import { showToast } from '../components/UI/Toast';
 import i18n from '../i18n';
 
@@ -37,6 +37,22 @@ export const WindowProvider = ({ children }) => {
     const [activeWindowId, setActiveWindowId] = useState(null);
     const highestZIndexRef = useRef(100);
     const toastTimeoutRef = useRef({});
+    const prevActiveRef = useRef(null);
+
+    // Dispatch custom events for interaction tracking (low coupling via DOM events)
+    useEffect(() => {
+        if (prevActiveRef.current && prevActiveRef.current !== activeWindowId) {
+            window.dispatchEvent(new CustomEvent('window-blurred', {
+                detail: { windowId: prevActiveRef.current }
+            }));
+        }
+        if (activeWindowId) {
+            window.dispatchEvent(new CustomEvent('window-focused', {
+                detail: { windowId: activeWindowId }
+            }));
+        }
+        prevActiveRef.current = activeWindowId;
+    }, [activeWindowId]);
 
     // to show notifications without duplicates
     const showWindowToast = useCallback((windowId, message) => {

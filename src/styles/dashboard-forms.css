@@ -312,3 +312,34 @@
     font-size: 11px;
     font-family: 'Courier New', monospace;
 }
+
+/* Heatmap canvas */
+.heatmap-canvas-container {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+}
+
+.heatmap-canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    display: block;
+}
+
+.heatmap-legend {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 10px;
+    font-family: 'Courier New', monospace;
+}
+
+.heatmap-legend-gradient {
+    width: 100px;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, #0044ff, #00ffc8, #ff5000);
+}

@@ -5,7 +5,7 @@
     "phone": "+34 644 213 173",
     "location": "カルカイシェント、バレンシア（スペイン）",
     "profile": {
-        "description": "システム管理、ネットワーク管理、フルスタックソフトウェア開発にわたる20年以上の経験を持つITプロフェッショナル。キャリアを通じて、重要なデータセンターインフラの移行・強化からAI搭載アプリケーションのゼロからの構築まで、エンドツーエンドの技術ソリューションを設計・提供。医療（Hospital de la Ribera）、自動車（Ford）、小売（Mercadona）などの高度に規制された分野で1,000台以上の端末環境を管理し、システムの保守・管理・セキュリティを担当。英語に堪能で、スペイン、イギリス、ヨーロッパ全域の国際チームで勤務 — DHL Supply Chainではスペイン、ドイツ、イギリス、ハンガリーのFord工場へのリモートサポートを担当。"
+        "description": "私はシステム管理、ネットワーク管理、フルスタックソフトウェア開発にわたる20年以上の経験を持つITプロフェッショナルです。キャリアを通じて、重要なデータセンターインフラの移行・強化からAI搭載アプリケーションのゼロからの構築まで、エンドツーエンドの技術ソリューションを設計・提供。医療（Hospital de la Ribera）、自動車（Ford）、小売（Mercadona）などの高度に規制された分野で1,000台以上の端末環境を管理し、システムの保守・管理・セキュリティを担当。英語に堪能で、スペイン、イギリス、ヨーロッパ全域の国際チームで勤務 — DHL Supply Chainではスペイン、ドイツ、イギリス、ハンガリーのFord工場へのリモートサポートを担当。"
     },
     "softSkills": [
         "コミットメントと責任感",
@@ -23,8 +23,8 @@
         "自己動機付けと自己管理"
     ],
     "education": [
-        {"title": "Webアプリケーション開発上級技術者（DAW）", "institution": "IES / FP — EQF Level 5", "date": "2025", "type": "degree", "description": "JavaScript、PHP、Node.js、React、REST API、データベース設計、Webデプロイメント、アクセシビリティ、ORM、Git、Odoo ERP"},
-        {"title": "マルチプラットフォームアプリ開発上級技術者（DAM）", "institution": "IES / FP — EQF Level 5", "date": "2024", "type": "degree", "description": "Java、Kotlin、Flutter、Android開発、ORM（Hibernate）、サービスとプロセス、2D/3Dゲームエンジン、UML、TDD"},
+        {"title": "Webアプリケーション開発上級技術者（DAW）", "institution": "IES / FP — EQF Level 5 · 120 ECTS · 2000時間 · Europass", "date": "2025", "type": "degree", "description": "クライアントサイド開発（JavaScript、DOM、非同期AJAX）、サーバーサイド開発（PHP、Node.js、MVC、RESTウェブサービス、セキュアなデータアクセス）、Webデプロイメントとサーバー管理、Webインターフェース設計（WCAGアクセシビリティ、ユーザビリティ、CSS3）、データベース（リレーショナル設計、SQL、ストアドプロシージャ、ORM）、OOP、マークアップ言語（HTML5、XML、JSON）、開発環境（テスト、UML）、ERP-CRM（Odoo）。大学進学資格取得。"},
+        {"title": "マルチプラットフォームアプリ開発上級技術者（DAM）", "institution": "IES / FP — EQF Level 5 · 120 ECTS · 2000時間 · Europass", "date": "2024", "type": "degree", "description": "Java OOP、データアクセス（JDBC、Hibernate ORM、オブジェクトリレーショナルおよびXMLデータベース）、モバイル開発（Android/Kotlin、Flutter/Dart）、サービスとプロセス（マルチスレッド、ソケット、ネットワークサービス、暗号化）、インターフェース開発（ユーザビリティ、レポート）、ERP-CRM（Odoo）、データベース（高度なSQL、ストアドプロシージャ）、開発環境（TDD、UML）、2D/3Dゲームエンジン。大学進学資格取得。"},
         {"title": "Reactブートキャンプ", "institution": "Geekshubs Academy", "date": "2023", "type": "bootcamp", "description": "React.jsコンポーネント、フック、ステート、コンテキスト、Redux、REST API統合、コンポーネントテスト"},
         {"title": "情報科学・経営学", "institution": "Universidad Politécnica de Valencia", "date": "2003 – 2005", "type": "degree", "description": ""},
         {"title": "サーバー管理コース", "institution": "", "date": "2002 – 2003", "type": "course", "description": ""},

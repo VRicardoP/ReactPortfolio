@@ -28,7 +28,8 @@
   },
   "contact": {
     "copyEmail": "Copy Email",
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "copyFailed": "Failed to copy to clipboard"
   },
   "skills": {
     "frontend": "FRONTEND",
@@ -277,6 +278,21 @@
       "noTimelineData": "No timeline data available",
       "noCountryData": "No country data available"
     },
+    "heatmap": {
+      "title": "Interaction Heatmap",
+      "tabHeatmap": "Heatmap",
+      "tabEngagement": "Engagement",
+      "tabTimeline": "Timeline",
+      "totalSessions": "Total Sessions",
+      "avgDuration": "Avg. Duration",
+      "totalClicks": "Total Clicks",
+      "focusEvents": "Focus Events",
+      "windowFocusTime": "Focus Time by Window",
+      "clickDistribution": "Click Distribution",
+      "sessionsPerDay": "Sessions per Day",
+      "noData": "No interaction data available yet",
+      "last30days": "Last 30 days"
+    },
     "unified": {
       "title": "Unified Job Search",
       "searchPlaceholder": "Search across all job sources...",
@@ -396,7 +412,11 @@
       "missingSkills": "Missing",
       "saveToBoard": "Save",
       "saved": "Saved \u2713",
-      "noResults": "Click 'Run AI Analysis' to find your best job matches"
+      "noResults": "Click 'Run AI Analysis' to find your best job matches",
+      "translateTitles": "Translate Titles",
+      "translating": "Translating...",
+      "translated": "Translated",
+      "translateTooltip": "Translate non-English/Spanish titles to English"
     },
     "tab": {
       "overview": "Overview",

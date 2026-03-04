@@ -54,16 +54,23 @@ Los temas se guardan en localStorage y cambian toda la interfaz al instante.
 
 ### Ventanas del dashboard (privado)
 
-8 ventanas con analiticas y ofertas de empleo:
+17 ventanas con analiticas, ofertas de empleo y herramientas:
 
 1. **Stats** - Total visitantes, paises, ciudades, top 5 paises
 2. **Recent Visitors** - Ultimos visitantes
 3. **Map** - Mapa interactivo con ubicaciones de visitantes (Leaflet)
 4. **Chat Analytics** - Estadisticas del chatbot (4 pestanas con graficos)
-5. **Jobicy Jobs** - Ofertas de empleo API Jobicy
-6. **Remotive Jobs** - Ofertas de empleo API Remotive
-7. **Arbeitnow Jobs** - Ofertas de empleo API Arbeitnow
-8. **JSearch Jobs** - Ofertas de empleo API JSearch
+5. **Job Board** - Agregacion tabulada de 12 APIs de empleo
+6. **Job Filter** - Busqueda avanzada con filtros
+7. **Unified Search** - Busqueda unificada multi-fuente
+8. **JSearch Live** - Busqueda en tiempo real via RapidAPI
+9. **AI Job Match** - Matching inteligente con IA (sentence-transformers + Groq)
+10. **Salary Analytics** - Analisis de salarios con graficos
+11. **Kanban Board** - Pipeline de aplicaciones tipo Kanban
+12. **Saved Searches** - Busquedas guardadas con ejecucion rapida
+13. **SSE Notifications** - Notificaciones en tiempo real
+14. **CV Generation** - Generacion de CV adaptado por oferta
+15. **Cover Letter** - Generacion de carta de presentacion por oferta
 
 ### Chatbot Kusanagi AI
 
@@ -121,7 +128,7 @@ Los archivos se generan en la carpeta `dist`.
 
 | Categoria | Tecnologia |
 |-----------|------------|
-| Framework | React 18 + Vite |
+| Framework | React 19 + Vite 7 |
 | 3D | Three.js |
 | Particulas | tsparticles |
 | Mapas | React-Leaflet + OpenStreetMap |
@@ -139,8 +146,10 @@ src/
     Dashboard/      # ventanas del dashboard
     UI/             # Toast, Tooltip
     Windows/        # ventanas flotantes del portfolio
-  context/          # AuthContext, ThemeContext, WindowContext
-  hooks/            # useDraggable, useResizable, useTypewriter, etc
+  config/           # jobSources, terminalCommands, api, dashboardConstants
+  context/          # AuthContext, ThemeContext, WindowContext (split state/callbacks)
+  hooks/            # useDraggable, useResizable, useTypewriter, useKanban, useJobFilter, etc
+  i18n/             # internacionalizacion (6 idiomas: en, es, fr, de, ja, it)
   pages/            # HomePage, LoginPage, DashboardPage
   styles/           # estilos CSS
 ```
@@ -161,8 +170,10 @@ Este frontend se conecta a un backend en FastAPI que gestiona:
 - Autenticacion JWT
 - Estadisticas y geolocalizacion de visitas
 - Chatbot con IA
-- Proxy a APIs de ofertas de empleo (Jobicy, Remotive, Arbeitnow, JSearch)
+- Proxy a 12 APIs de ofertas de empleo
+- AI Job Matching y generacion de CV/Cover Letter
 - Analytics del chat
+- Notificaciones SSE en tiempo real
 
 ## Variables de entorno
 

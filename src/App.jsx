@@ -8,6 +8,7 @@ import useTypewriter from './hooks/useTypewriter';
 import usePortfolioData from './hooks/usePortfolioData';
 import useWindowLayout from './hooks/useWindowLayout';
 import useVisitorTracking from './hooks/useVisitorTracking';
+import useInteractionTracking from './hooks/useInteractionTracking';
 import useIsMobile from './hooks/useIsMobile';
 import MobileNav from './components/UI/MobileNav';
 import MobileChatSheet from './components/UI/MobileChatSheet';
@@ -239,6 +240,7 @@ function App() {
 
   // track the user's visit
   useVisitorTracking();
+  useInteractionTracking();
 
   // Sync html lang attribute with current i18n language
   useEffect(() => {
@@ -247,7 +249,7 @@ function App() {
 
   // subtle console hint about the terminal easter egg
   useEffect(() => {
-    console.log('%c>_ Terminal access available. Try Ctrl+` or Ctrl+ñ', 'color: #00ffff; font-family: monospace; font-size: 12px;');
+    if (import.meta.env.DEV) console.log('%c>_ Terminal access available. Try Ctrl+` or Ctrl+ñ', 'color: #00ffff; font-family: monospace; font-size: 12px;');
   }, []);
 
   const { data: portfolioData, loading, error } = usePortfolioData();

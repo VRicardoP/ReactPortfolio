@@ -28,7 +28,8 @@
   },
   "contact": {
     "copyEmail": "E-Mail kopieren",
-    "copied": "Kopiert!"
+    "copied": "Kopiert!",
+    "copyFailed": "Kopieren in die Zwischenablage fehlgeschlagen"
   },
   "skills": {
     "frontend": "FRONTEND",
@@ -277,6 +278,21 @@
       "noTimelineData": "Keine Zeitverlaufsdaten verfügbar",
       "noCountryData": "Keine Länderdaten verfügbar"
     },
+    "heatmap": {
+      "title": "Interaktions-Heatmap",
+      "tabHeatmap": "Heatmap",
+      "tabEngagement": "Engagement",
+      "tabTimeline": "Zeitverlauf",
+      "totalSessions": "Gesamte Sitzungen",
+      "avgDuration": "Durchschn. Dauer",
+      "totalClicks": "Gesamte Klicks",
+      "focusEvents": "Fokus-Ereignisse",
+      "windowFocusTime": "Fokuszeit pro Fenster",
+      "clickDistribution": "Klickverteilung",
+      "sessionsPerDay": "Sitzungen pro Tag",
+      "noData": "Noch keine Interaktionsdaten verfügbar",
+      "last30days": "Letzte 30 Tage"
+    },
     "unified": {
       "title": "Einheitliche Stellensuche",
       "searchPlaceholder": "In allen Stellenquellen suchen...",
@@ -396,7 +412,11 @@
       "missingSkills": "Fehlend",
       "saveToBoard": "Speichern",
       "saved": "Gespeichert \u2713",
-      "noResults": "Klicken Sie auf 'KI-Analyse starten', um Ihre besten Stellenangebote zu finden"
+      "noResults": "Klicken Sie auf 'KI-Analyse starten', um Ihre besten Stellenangebote zu finden",
+      "translateTitles": "Titel übersetzen",
+      "translating": "Übersetze...",
+      "translated": "Übersetzt",
+      "translateTooltip": "Nicht-englische/spanische Titel ins Englische übersetzen"
     },
     "tab": {
       "overview": "Übersicht",

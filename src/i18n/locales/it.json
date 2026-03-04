@@ -28,7 +28,8 @@
   },
   "contact": {
     "copyEmail": "Copia Email",
-    "copied": "Copiato!"
+    "copied": "Copiato!",
+    "copyFailed": "Copia negli appunti non riuscita"
   },
   "skills": {
     "frontend": "FRONTEND",
@@ -277,6 +278,21 @@
       "noTimelineData": "Nessun dato timeline disponibile",
       "noCountryData": "Nessun dato per paese disponibile"
     },
+    "heatmap": {
+      "title": "Heatmap Interazioni",
+      "tabHeatmap": "Heatmap",
+      "tabEngagement": "Coinvolgimento",
+      "tabTimeline": "Cronologia",
+      "totalSessions": "Sessioni Totali",
+      "avgDuration": "Durata Media",
+      "totalClicks": "Click Totali",
+      "focusEvents": "Eventi Focus",
+      "windowFocusTime": "Tempo Focus per Finestra",
+      "clickDistribution": "Distribuzione Click",
+      "sessionsPerDay": "Sessioni al Giorno",
+      "noData": "Nessun dato di interazione disponibile",
+      "last30days": "Ultimi 30 giorni"
+    },
     "unified": {
       "title": "Ricerca Lavori Unificata",
       "searchPlaceholder": "Cerca in tutte le fonti di lavoro...",
@@ -396,7 +412,11 @@
       "missingSkills": "Mancanti",
       "saveToBoard": "Salva",
       "saved": "Salvato \u2713",
-      "noResults": "Clicca 'Avvia analisi IA' per trovare le migliori offerte per te"
+      "noResults": "Clicca 'Avvia analisi IA' per trovare le migliori offerte per te",
+      "translateTitles": "Traduci titoli",
+      "translating": "Traduzione...",
+      "translated": "Tradotto",
+      "translateTooltip": "Traduci i titoli non inglesi/spagnoli in inglese"
     },
     "tab": {
       "overview": "Panoramica",

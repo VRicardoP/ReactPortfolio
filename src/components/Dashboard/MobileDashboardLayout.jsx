@@ -20,6 +20,7 @@ const SalaryAnalyticsWindow = lazy(() => import('./SalaryAnalyticsWindow'));
 const SavedSearchesWindow = lazy(() => import('./SavedSearchesWindow'));
 const JobFilterWindow = lazy(() => import('./JobFilterWindow'));
 const AIJobMatchWindow = lazy(() => import('./AIJobMatchWindow'));
+const HeatmapWindow = lazy(() => import('./HeatmapWindow'));
 
 // Mobile: tabbed layout with collapsible sections
 const MobileDashboardLayout = memo(({
@@ -45,6 +46,7 @@ const MobileDashboardLayout = memo(({
                             <Suspense fallback={<DashboardLoader />}>
                                 <StatsWindow data={stats} defaultExpanded />
                                 <RecentVisitorsWindow data={stats} />
+                                <HeatmapWindow />
                             </Suspense>
                         </ErrorBoundary>
                     )}

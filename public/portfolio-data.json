@@ -25,17 +25,17 @@
     "education": [
         {
             "title": "Higher Technician in Web Application Development (DAW)",
-            "institution": "IES / FP — EQF Level 5",
+            "institution": "IES / FP — EQF Level 5 · 120 ECTS · 2000h · Europass",
             "date": "2025",
             "type": "degree",
-            "description": "JavaScript, PHP, Node.js, React, REST APIs, database design, web deployment, accessibility, ORM, Git, Odoo ERP"
+            "description": "Client-side development (JavaScript, DOM, async/AJAX), server-side development (PHP, Node.js, MVC, REST web services, secure data access), web deployment & server management, web interface design (WCAG accessibility, usability, CSS3), databases (relational design, SQL, stored procedures, ORM), OOP, markup languages (HTML5, XML, JSON), development environments (testing, UML), ERP-CRM (Odoo). Grants access to university studies."
         },
         {
             "title": "Higher Technician in Multiplatform App Development (DAM)",
-            "institution": "IES / FP — EQF Level 5",
+            "institution": "IES / FP — EQF Level 5 · 120 ECTS · 2000h · Europass",
             "date": "2024",
             "type": "degree",
-            "description": "Java, Kotlin, Flutter, Android development, ORM (Hibernate), services & processes, 2D/3D game engines, UML, TDD"
+            "description": "Java OOP, data access (JDBC, Hibernate ORM, object-relational & XML databases), mobile development (Android/Kotlin, Flutter/Dart), services & processes (multi-threading, sockets, network services, cryptography), GUI development (usability, reporting), ERP-CRM (Odoo), databases (advanced SQL, stored procedures), development environments (TDD, UML), 2D/3D game engines. Grants access to university studies."
         },
         {
             "title": "React Bootcamp",

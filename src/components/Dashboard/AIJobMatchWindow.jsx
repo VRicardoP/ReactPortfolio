@@ -28,6 +28,8 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
     const [error, setError] = useState(null);
     const [page, setPage] = useState(0);
     const [expandedId, setExpandedId] = useState(null);
+    const [translatedTitles, setTranslatedTitles] = useState({});
+    const [translating, setTranslating] = useState(false);
     const { handleApply, appliedIds, handleSave, savedIds } = useJobApplication();
 
     const runAnalysis = useCallback(async () => {
@@ -52,6 +54,32 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
     const totalPages = Math.max(1, Math.ceil(results.length / AI_MATCH_PAGE_SIZE));
     const pagedResults = results.slice(page * AI_MATCH_PAGE_SIZE, (page + 1) * AI_MATCH_PAGE_SIZE);
 
+    const translateTitles = useCallback(async () => {
+        const titlesToTranslate = pagedResults
+            .map(j => j.title)
+            .filter(title => !translatedTitles[title]);
+        if (titlesToTranslate.length === 0) return;
+
+        setTranslating(true);
+        try {
+            const response = await authenticatedFetch(
+                `${BACKEND_URL}/api/v1/ai-match/translate-titles`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ titles: titlesToTranslate }),
+                }
+            );
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            setTranslatedTitles(prev => ({ ...prev, ...data.translations }));
+        } catch (err) {
+            console.warn('Translation failed:', err.message);
+        } finally {
+            setTranslating(false);
+        }
+    }, [pagedResults, translatedTitles, authenticatedFetch]);
+
     return (
         <FloatingWindow
             id="ai-match-window"
@@ -70,6 +98,18 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                     >
                         {loading ? t('dashboard.aiMatch.analyzing') : t('dashboard.aiMatch.runAnalysis')}
                     </button>
+                    {results.length > 0 && !loading && (
+                        <button
+                            onClick={translateTitles}
+                            disabled={translating}
+                            className="ai-match-translate-btn"
+                            title={t('dashboard.aiMatch.translateTooltip')}
+                        >
+                            {translating
+                                ? t('dashboard.aiMatch.translating')
+                                : t('dashboard.aiMatch.translateTitles')}
+                        </button>
+                    )}
                     {metadata && !loading && (
                         <span className="ai-match-meta">
                             {t('dashboard.aiMatch.analyzed', {
@@ -152,7 +192,15 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                         <div className="ai-match-card-header">
                                             <div className="ai-match-card-title-col">
                                                 <div className="ai-match-card-title" style={{ color: theme.textHighlight }}>
-                                                    {job.title}
+                                                    {translatedTitles[job.title] || job.title}
+                                                    {translatedTitles[job.title] && (
+                                                        <span
+                                                            className="ai-match-translated-badge"
+                                                            title={job.title}
+                                                        >
+                                                            {t('dashboard.aiMatch.translated')}
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <div className="ai-match-card-company" style={{ color: theme.text }}>
                                                     <CompanyResearchName company={job.company}>{job.company}</CompanyResearchName>

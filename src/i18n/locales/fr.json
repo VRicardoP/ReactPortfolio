@@ -28,7 +28,8 @@
   },
   "contact": {
     "copyEmail": "Copier l'email",
-    "copied": "Copié !"
+    "copied": "Copié !",
+    "copyFailed": "Échec de la copie dans le presse-papiers"
   },
   "skills": {
     "frontend": "FRONTEND",
@@ -277,6 +278,21 @@
       "noTimelineData": "Aucune donnée chronologique disponible",
       "noCountryData": "Aucune donnée par pays disponible"
     },
+    "heatmap": {
+      "title": "Carte Thermique des Interactions",
+      "tabHeatmap": "Carte Thermique",
+      "tabEngagement": "Engagement",
+      "tabTimeline": "Chronologie",
+      "totalSessions": "Sessions Totales",
+      "avgDuration": "Durée Moyenne",
+      "totalClicks": "Clics Totaux",
+      "focusEvents": "Événements Focus",
+      "windowFocusTime": "Temps de Focus par Fenêtre",
+      "clickDistribution": "Distribution des Clics",
+      "sessionsPerDay": "Sessions par Jour",
+      "noData": "Aucune donnée d'interaction disponible",
+      "last30days": "30 derniers jours"
+    },
     "unified": {
       "title": "Recherche d'Emploi Unifiée",
       "searchPlaceholder": "Rechercher dans toutes les sources d'emploi...",
@@ -396,7 +412,11 @@
       "missingSkills": "Manquantes",
       "saveToBoard": "Sauvegarder",
       "saved": "Sauvegard\u00e9 \u2713",
-      "noResults": "Cliquez sur 'Lancer l'analyse IA' pour trouver vos meilleures offres"
+      "noResults": "Cliquez sur 'Lancer l'analyse IA' pour trouver vos meilleures offres",
+      "translateTitles": "Traduire les titres",
+      "translating": "Traduction...",
+      "translated": "Traduit",
+      "translateTooltip": "Traduire les titres non anglais/espagnol en anglais"
     },
     "tab": {
       "overview": "Aperçu",

@@ -201,6 +201,43 @@
   opacity: 0.6;
 }
 
+/* ===== TRANSLATE BUTTON & BADGE ===== */
+
+.ai-match-translate-btn {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  background: rgba(255, 200, 0, 0.15);
+  border: 1px solid rgba(255, 200, 0, 0.3);
+  color: #ffc800;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.ai-match-translate-btn:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+.ai-match-translate-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.ai-match-translated-badge {
+  display: inline-block;
+  font-size: 9px;
+  padding: 1px 5px;
+  margin-left: 6px;
+  border-radius: 3px;
+  background: rgba(255, 200, 0, 0.15);
+  border: 1px solid rgba(255, 200, 0, 0.25);
+  color: #ffc800;
+  font-weight: normal;
+  vertical-align: middle;
+  cursor: help;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ai-match-spinner {
     animation: none;

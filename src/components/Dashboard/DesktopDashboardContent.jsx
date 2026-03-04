@@ -17,6 +17,7 @@ const SalaryAnalyticsWindow = lazy(() => import('./SalaryAnalyticsWindow'));
 const SavedSearchesWindow = lazy(() => import('./SavedSearchesWindow'));
 const JobFilterWindow = lazy(() => import('./JobFilterWindow'));
 const AIJobMatchWindow = lazy(() => import('./AIJobMatchWindow'));
+const HeatmapWindow = lazy(() => import('./HeatmapWindow'));
 
 // What is shown while the dashboard is loading
 export const DashboardLoader = memo(() => {
@@ -61,6 +62,7 @@ const DASHBOARD_WINDOW_IDS = [
     'job-filter-window',
     'saved-searches-window',
     'ai-match-window',
+    'heatmap-window',
 ];
 
 const LAYOUT_ANIMATION_DELAY_MS = 600;
@@ -110,6 +112,9 @@ const DesktopDashboardContent = memo(({
                     <JobMarketAnalyticsWindow
                         jobData={jobData}
                         initialPosition={{ x: 250, y: 170 }}
+                    />
+                    <HeatmapWindow
+                        initialPosition={{ x: 310, y: 190 }}
                     />
                 </Suspense>
             </ErrorBoundary>

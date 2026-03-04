@@ -5,7 +5,7 @@
     "phone": "+34 644 213 173",
     "location": "Carcaixent, Valencia (España)",
     "profile": {
-        "description": "Profesional IT con más de 20 años de experiencia en administración de sistemas, administración de redes y desarrollo de software full-stack. He diseñado y entregado soluciones técnicas de extremo a extremo a lo largo de mi carrera — desde la migración y fortalecimiento de infraestructuras críticas de centros de datos hasta la creación de aplicaciones con inteligencia artificial desde cero. He gestionado entornos de más de 1.000 terminales en sectores altamente regulados como sanidad (Hospital de la Ribera), automoción (Ford) y retail (Mercadona), donde fui responsable del mantenimiento, administración y seguridad de los sistemas. Domino el inglés con fluidez, habiendo trabajado en equipos internacionales en España, Inglaterra y toda Europa — incluyendo soporte remoto para plantas de Ford en España, Alemania, Reino Unido y Hungría durante mi etapa en DHL Supply Chain."
+        "description": "Soy un profesional IT con más de 20 años de experiencia en administración de sistemas, administración de redes y desarrollo de software full-stack. He diseñado y entregado soluciones técnicas de extremo a extremo a lo largo de mi carrera — desde la migración y fortalecimiento de infraestructuras críticas de centros de datos hasta la creación de aplicaciones con inteligencia artificial desde cero. He gestionado entornos de más de 1.000 terminales en sectores altamente regulados como sanidad (Hospital de la Ribera), automoción (Ford) y retail (Mercadona), donde fui responsable del mantenimiento, administración y seguridad de los sistemas. Domino el inglés con fluidez, habiendo trabajado en equipos internacionales en España, Inglaterra y toda Europa — incluyendo soporte remoto para plantas de Ford en España, Alemania, Reino Unido y Hungría durante mi etapa en DHL Supply Chain."
     },
     "softSkills": [
         "Compromiso y Responsabilidad",
@@ -25,17 +25,17 @@
     "education": [
         {
             "title": "Técnico Superior en Desarrollo de Aplicaciones Web (DAW)",
-            "institution": "IES / FP — Nivel EQF 5",
+            "institution": "IES / FP — Nivel EQF 5 · 120 ECTS · 2000h · Europass",
             "date": "2025",
             "type": "degree",
-            "description": "JavaScript, PHP, Node.js, React, APIs REST, diseño de bases de datos, despliegue web, accesibilidad, ORM, Git, Odoo ERP"
+            "description": "Desarrollo web cliente (JavaScript, DOM, AJAX asíncrono), desarrollo web servidor (PHP, Node.js, MVC, servicios web REST, acceso seguro a datos), despliegue y gestión de servidores web, diseño de interfaces web (accesibilidad WCAG, usabilidad, CSS3), bases de datos (diseño relacional, SQL, procedimientos almacenados, ORM), POO, lenguajes de marcas (HTML5, XML, JSON), entornos de desarrollo (pruebas, UML), ERP-CRM (Odoo). Da acceso a estudios universitarios."
         },
         {
             "title": "Técnico Superior en Desarrollo de Aplicaciones Multiplataforma (DAM)",
-            "institution": "IES / FP — Nivel EQF 5",
+            "institution": "IES / FP — Nivel EQF 5 · 120 ECTS · 2000h · Europass",
             "date": "2024",
             "type": "degree",
-            "description": "Java, Kotlin, Flutter, desarrollo Android, ORM (Hibernate), servicios y procesos, motores de juegos 2D/3D, UML, TDD"
+            "description": "Java POO, acceso a datos (JDBC, ORM Hibernate, BBDD objeto-relacionales y XML), desarrollo móvil (Android/Kotlin, Flutter/Dart), servicios y procesos (multi-hilo, sockets, servicios en red, criptografía), desarrollo de interfaces (usabilidad, informes), ERP-CRM (Odoo), bases de datos (SQL avanzado, procedimientos almacenados), entornos de desarrollo (TDD, UML), motores de juegos 2D/3D. Da acceso a estudios universitarios."
         },
         {
             "title": "Bootcamp React",

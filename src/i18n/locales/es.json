@@ -28,7 +28,8 @@
   },
   "contact": {
     "copyEmail": "Copiar Email",
-    "copied": "\u00a1Copiado!"
+    "copied": "\u00a1Copiado!",
+    "copyFailed": "Error al copiar al portapapeles"
   },
   "skills": {
     "frontend": "FRONTEND",
@@ -277,6 +278,21 @@
       "noTimelineData": "No hay datos de timeline disponibles",
       "noCountryData": "No hay datos de pa\u00edses disponibles"
     },
+    "heatmap": {
+      "title": "Mapa de Calor de Interacciones",
+      "tabHeatmap": "Mapa de Calor",
+      "tabEngagement": "Interacci\u00f3n",
+      "tabTimeline": "Cronolog\u00eda",
+      "totalSessions": "Sesiones Totales",
+      "avgDuration": "Duraci\u00f3n Media",
+      "totalClicks": "Clicks Totales",
+      "focusEvents": "Eventos de Foco",
+      "windowFocusTime": "Tiempo de Foco por Ventana",
+      "clickDistribution": "Distribuci\u00f3n de Clicks",
+      "sessionsPerDay": "Sesiones por D\u00eda",
+      "noData": "A\u00fan no hay datos de interacci\u00f3n disponibles",
+      "last30days": "\u00daltimos 30 d\u00edas"
+    },
     "unified": {
       "title": "B\u00fasqueda Unificada de Empleos",
       "searchPlaceholder": "Buscar en todas las fuentes de empleo...",
@@ -396,7 +412,11 @@
       "missingSkills": "Faltantes",
       "saveToBoard": "Guardar",
       "saved": "Guardado \u2713",
-      "noResults": "Pulsa 'Ejecutar Análisis IA' para encontrar tus mejores ofertas"
+      "noResults": "Pulsa 'Ejecutar Análisis IA' para encontrar tus mejores ofertas",
+      "translateTitles": "Traducir títulos",
+      "translating": "Traduciendo...",
+      "translated": "Traducido",
+      "translateTooltip": "Traducir títulos no inglés/español al inglés"
     },
     "tab": {
       "overview": "General",

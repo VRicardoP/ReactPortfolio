@@ -19,8 +19,9 @@ const ContactWindow = ({ data, initialPosition }) => {
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                 })
-                .catch((err) => {
-                    console.warn('Failed to copy to clipboard:', err);
+                .catch(() => {
+                    setCopied(false);
+                    alert(t('contact.copyFailed'));
                 });
         }
     }, [data?.email]);
