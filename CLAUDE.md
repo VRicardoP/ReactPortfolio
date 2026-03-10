@@ -8,11 +8,11 @@ React 19 + Vite 7 + react-router-dom 7 + Three.js + tsparticles + Chart.js + Lea
 src/
   components/
     Background/     — 6 visual effects (Rain, Matrix, Parallax, Lensflare, Cube, Smoke)
-    Dashboard/      — 13 admin dashboard windows + layout components:
+    Dashboard/      — 12 admin dashboard windows + layout components:
       StatsWindow, MapWindow, ChatAnalyticsWindow, RecentVisitorsWindow
       JobBoardTabbedWindow (12 sources in tabs), JobMarketAnalyticsWindow
       SelectedOffersPanel (Kanban pipeline + document preview)
-      JSearchLiveWindow, SalaryAnalyticsWindow, JobFilterWindow (unified search)
+      JSearchLiveWindow, JobFilterWindow (unified search)
       SavedSearchesWindow, AIJobMatchWindow (embeddings + LLM + title translation)
       HeatmapWindow (interaction heatmap canvas + engagement Chart.js graphs)
       KanbanBoard.jsx — Drag-and-drop pipeline (saved/applied/interview/offer/rejected)
@@ -21,10 +21,10 @@ src/
       MobileDashboardLayout.jsx — Mobile tabbed layout
       dashboardConstants.js — Shared tab definitions + page size constants (JOBS_PAGE_SIZE, AI_MATCH_PAGE_SIZE)
       JobCardExtras.jsx — Shared freshness badges + company research popover
-    Windows/        — 12 portfolio windows:
+    Windows/        — 11 portfolio windows:
       WelcomeWindow, ProfileWindow, EducationWindow (timeline), ExperienceWindow (timeline)
-      TechSkillsWindow (bars + radar), LanguagesWindow, PortfolioWindow
-      ContactWindow, SoftSkillsWindow, AchievementsWindow, FitMatrixWindow (skills heatmap)
+      TechSkillsWindow (bars + radar + skills gap), LanguagesWindow, PortfolioWindow
+      ContactWindow, SoftSkillsWindow, AchievementsWindow
       TerminalWindow (easter egg), FloatingWindow (shell for all windows)
     UI/             — Toast, Tooltip
     ErrorBoundary.jsx
@@ -49,6 +49,7 @@ src/
     useJobFilter.js           — Extracted from JobFilterWindow: filters state, search/clear/save callbacks
     useJSearchLive.js         — Extracted from JSearchLiveWindow: form state, cooldown, search handler
     useUnifiedSearch.js       — Extracted from UnifiedJobSearchWindow: query/filters, debounced search, pagination
+    useSkillsGap.js           — Skills gap: aggregates missing skills from AI match, toggle add/remove to CV
     useIsMobile.js            — Responsive breakpoint detection (mobile vs desktop)
   context/
     AuthContext.jsx    — JWT auth (access + refresh tokens), login/logout, authenticatedFetch (auto-logout on 401, auto-refresh)
@@ -65,8 +66,9 @@ src/
     locales/de.json    — German translations
     locales/ja.json    — Japanese translations
     locales/it.json    — Italian translations
-  styles/              — CSS files (base, windows-content, floating-window, dashboard, dashboard-forms,
-                         chat, login, kanban, ai-match, cv-generation, document-preview, mobile, etc.)
+  styles/              — CSS files (base, floating-window, dashboard-layout, dashboard-forms, dashboard-jobboard,
+                         dashboard-job-extras, windows-profile-contact, windows-skills, windows-education-experience,
+                         windows-portfolio, chat, login, kanban, ai-match, cv-generation, document-preview, mobile, etc.)
   config/
     api.js             — Backend URL centralized (reads VITE_API_BASE_URL, fallback: http://127.0.0.1:8001)
     jobSources.js      — Centralized registry for all 12 job sources (key, color, urlPath, normalize, skillsField, alwaysRemote)
@@ -77,9 +79,9 @@ src/
 
 ## Routing
 ```
-/           → App.jsx (public portfolio, 12 windows)
+/           → App.jsx (public portfolio, 11 windows)
 /login      → LoginPage
-/dashboard  → DashboardPage (requires auth via ProtectedRoute, 13 windows)
+/dashboard  → DashboardPage (requires auth via ProtectedRoute, 12 windows)
 *           → redirect to /
 ```
 
