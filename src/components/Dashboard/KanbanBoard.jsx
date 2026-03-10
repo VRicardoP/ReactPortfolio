@@ -5,12 +5,12 @@ import useKanban from '../../hooks/useKanban';
 import '../../styles/kanban.css';
 
 const COLUMNS = [
-    { key: 'saved', color: '#888888' },
-    { key: 'applied', color: '#4CAF50' },
-    { key: 'phone_screen', color: '#FF9800' },
-    { key: 'technical', color: '#2196F3' },
-    { key: 'offer', color: '#00BCD4' },
-    { key: 'rejected', color: '#f44336' },
+    { key: 'saved', i18nKey: 'saved', color: '#888888' },
+    { key: 'applied', i18nKey: 'applied', color: '#4CAF50' },
+    { key: 'phone_screen', i18nKey: 'phoneScreen', color: '#FF9800' },
+    { key: 'technical', i18nKey: 'technical', color: '#2196F3' },
+    { key: 'offer', i18nKey: 'offer', color: '#00BCD4' },
+    { key: 'rejected', i18nKey: 'rejected', color: '#f44336' },
 ];
 
 const DRAGGED_OPACITY = 0.6;
@@ -20,6 +20,8 @@ const KanbanBoard = memo(({
     generatingIds,
     onGenerate,
     onViewDocuments,
+    onDownloadPdf,
+    onDelete,
 }) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
@@ -36,6 +38,8 @@ const KanbanBoard = memo(({
         handleAdd,
         handleNewAppChange,
         handleMoveCard,
+        handleDelete,
+        handleMarkApplied,
     } = useKanban();
 
     return (
@@ -57,7 +61,7 @@ const KanbanBoard = memo(({
                         }}
                     >
                         <span className="kanban-column-title" style={{ color: col.color }}>
-                            {t(`dashboard.kanban.${col.key}`)}
+                            {t(`dashboard.kanban.${col.i18nKey}`)}
                         </span>
                         <div className="kanban-column-actions">
                             <span className="kanban-count" style={{ color: theme.text }}>
@@ -194,38 +198,64 @@ const KanbanBoard = memo(({
                                         )}
                                     </div>
 
-                                    {/* Document action buttons */}
-                                    <div className="kanban-card-actions cv-gen-actions">
-                                        {hasDocs ? (
-                                            <button
-                                                className="cv-gen-btn cv-gen-btn-view"
-                                                onClick={(e) => { e.stopPropagation(); onViewDocuments(app.id); }}
-                                            >
-                                                {t('dashboard.cvGeneration.viewDocs')}
-                                            </button>
-                                        ) : (
-                                            <button
-                                                className="cv-gen-btn cv-gen-btn-generate"
-                                                disabled={isGenerating}
-                                                onClick={(e) => { e.stopPropagation(); onGenerate(app.id); }}
-                                            >
-                                                {isGenerating
-                                                    ? t('dashboard.cvGeneration.generating')
-                                                    : t('dashboard.cvGeneration.generate')
-                                                }
-                                            </button>
-                                        )}
-                                        {app.url && (
-                                            <a
-                                                href={app.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="cv-gen-btn cv-gen-btn-applied"
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                {t('dashboard.jobBoard.apply')}
-                                            </a>
-                                        )}
+                                    {/* Icon action buttons — all 5 always visible */}
+                                    <div className="kanban-card-actions kanban-icon-actions">
+                                        {/* 1. Generate / View docs */}
+                                        <button
+                                            className="kanban-icon-btn"
+                                            aria-label={hasDocs ? t('dashboard.kanban.viewDocs') : t('dashboard.kanban.generateDocs')}
+                                            title={hasDocs ? t('dashboard.kanban.viewDocs') : t('dashboard.kanban.generateDocs')}
+                                            disabled={isGenerating}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                hasDocs ? onViewDocuments(app.id) : onGenerate(app.id);
+                                            }}
+                                        >
+                                            {isGenerating ? '⏳' : hasDocs ? '📋' : '⚡'}
+                                        </button>
+                                        {/* 2. Download docs */}
+                                        <button
+                                            className="kanban-icon-btn"
+                                            aria-label={t('dashboard.kanban.downloadDocs')}
+                                            title={t('dashboard.kanban.downloadDocs')}
+                                            disabled={!hasDocs}
+                                            onClick={(e) => { e.stopPropagation(); onDownloadPdf(app.id); }}
+                                        >
+                                            ⬇
+                                        </button>
+                                        {/* 3. Open URL (does NOT move to applied) */}
+                                        <a
+                                            href={app.url || '#'}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={`kanban-icon-btn${!app.url ? ' disabled' : ''}`}
+                                            aria-label={t('dashboard.kanban.openUrl')}
+                                            title={t('dashboard.kanban.openUrl')}
+                                            aria-disabled={!app.url}
+                                            tabIndex={app.url ? 0 : -1}
+                                            onClick={(e) => { e.stopPropagation(); if (!app.url) e.preventDefault(); }}
+                                        >
+                                            🔗
+                                        </a>
+                                        {/* 4. Mark as applied */}
+                                        <button
+                                            className="kanban-icon-btn kanban-icon-applied"
+                                            aria-label={t('dashboard.kanban.markApplied')}
+                                            title={t('dashboard.kanban.markApplied')}
+                                            disabled={app.status === 'applied'}
+                                            onClick={(e) => { e.stopPropagation(); handleMarkApplied(app.id); }}
+                                        >
+                                            ✓
+                                        </button>
+                                        {/* 5. Delete */}
+                                        <button
+                                            className="kanban-icon-btn kanban-icon-delete"
+                                            aria-label={t('dashboard.kanban.deleteApp')}
+                                            title={t('dashboard.kanban.deleteApp')}
+                                            onClick={(e) => { e.stopPropagation(); handleDelete(app.id); onDelete?.(app.id); }}
+                                        >
+                                            ✕
+                                        </button>
                                     </div>
                                 </div>
                             );

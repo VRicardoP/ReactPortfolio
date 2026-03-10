@@ -37,7 +37,8 @@
     "databases": "DATENBANKEN",
     "others": "SONSTIGES",
     "viewBars": "Balken",
-    "viewRadar": "Radar"
+    "viewRadar": "Radar",
+    "viewMatrix": "Matrix"
   },
   "profile": {
     "yearsExp": "20+ Jahre",
@@ -203,7 +204,9 @@
       "tabZentraljob": "Zentraljob",
       "tabSwisstechjobs": "SwissTech",
       "tabIctjobs": "ICTjobs",
-      "applied": "Beworben"
+      "applied": "Beworben",
+      "save": "Speichern",
+      "saved": "Gespeichert"
     },
     "selectedOffers": {
       "title": "Ausgewählte Angebote",
@@ -256,7 +259,9 @@
       "topSkills": "Meistgefragte Fähigkeiten",
       "remoteRatio": "Remote vs Vor Ort",
       "jobsBySource": "Stellen nach Quelle",
-      "noData": "Keine Stellendaten für Analysen verfügbar"
+      "noData": "Keine Stellendaten für Analysen verfügbar",
+      "sectionMarket": "Markt",
+      "sectionSalary": "Gehälter"
     },
     "chatAnalytics": {
       "title": "Chat-Analytik - Recruiter-Einblicke",
@@ -324,7 +329,14 @@
       "company_field": "Unternehmen",
       "notes": "Notizen",
       "noApplications": "Stellen hierher ziehen oder auf + klicken",
-      "errorLoad": "Fehler beim Laden der Bewerbungen"
+      "errorLoad": "Fehler beim Laden der Bewerbungen",
+      "errorDelete": "Fehler beim Löschen",
+      "viewDocs": "Dokumente anzeigen",
+      "generateDocs": "Dokumente generieren",
+      "downloadDocs": "Dokumente herunterladen",
+      "openUrl": "Stellenanzeige öffnen",
+      "markApplied": "Als beworben markieren",
+      "deleteApp": "Bewerbung löschen"
     },
     "jsearchLive": {
       "title": "JSearch Live-Suche",
@@ -416,7 +428,16 @@
       "translateTitles": "Titel übersetzen",
       "translating": "Übersetze...",
       "translated": "Übersetzt",
-      "translateTooltip": "Nicht-englische/spanische Titel ins Englische übersetzen"
+      "translateTooltip": "Nicht-englische/spanische Titel ins Englische übersetzen",
+      "resultsTab": "Ergebnisse",
+      "skillsGapTab": "Fehlende Skills",
+      "skillsGapEmpty": "Starten Sie eine Analyse, um fehlende Skills zu sehen",
+      "skillsGapDesc": "Skills, die in Ihrem CV laut analysierten Stellen fehlen. Umschalten zum Hinzufügen/Entfernen aus Ihrem CV.",
+      "addingSkill": "Hinzufügen...",
+      "removingSkill": "Entfernen...",
+      "skillAdded": "Skill zu Ihrem CV hinzugefügt",
+      "skillRemoved": "Skill aus Ihrem CV entfernt",
+      "skillToggleError": "Skill-Aktualisierung fehlgeschlagen"
     },
     "tab": {
       "overview": "Übersicht",
@@ -503,6 +524,7 @@
     "invalidCredentials": "Ungültige Anmeldedaten",
     "authenticating": "Authentifizierung läuft...",
     "login": "Anmelden",
-    "backToPortfolio": "← Zurück zum Portfolio"
+    "backToPortfolio": "← Zurück zum Portfolio",
+    "sessionExpiredInactivity": "Sitzung wegen Inaktivität abgelaufen"
   }
 }

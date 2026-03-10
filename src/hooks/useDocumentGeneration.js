@@ -70,6 +70,23 @@ export default function useDocumentGeneration() {
         }
     }, [authenticatedFetch]);
 
+    const fetchAllDocuments = useCallback(async () => {
+        try {
+            const resp = await authenticatedFetch(`${BACKEND_URL}/api/v1/cv-generation/`);
+            const docs = await resp.json();
+            const indexed = {};
+            for (const doc of docs) {
+                const appId = doc.application_id;
+                if (!indexed[appId]) indexed[appId] = {};
+                if (doc.doc_type === 'cv') indexed[appId].cv = doc;
+                if (doc.doc_type === 'cover_letter') indexed[appId].coverLetter = doc;
+            }
+            setDocuments(indexed);
+        } catch (err) {
+            logger.warn('Failed to fetch all documents', err);
+        }
+    }, [authenticatedFetch]);
+
     const getDocumentsFor = useCallback((applicationId) => {
         return documents[applicationId] || null;
     }, [documents]);
@@ -134,6 +151,7 @@ export default function useDocumentGeneration() {
     return {
         generate,
         fetchDocuments,
+        fetchAllDocuments,
         getDocumentsFor,
         downloadPdf,
         downloadJson,

@@ -107,6 +107,18 @@
   font-family: 'Courier New', monospace;
 }
 
+.inactivity-message {
+  color: #d29922;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(210, 153, 34, 0.1);
+  border: 1px solid #d29922;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  text-align: center;
+}
+
 /* ===== RESPONSIVE ===== */
 
 @media (max-width: 480px) {

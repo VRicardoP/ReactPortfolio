@@ -13,7 +13,7 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
     const { theme } = useTheme();
     const [activeTab, setActiveTab] = useState('all');
     const [search, setSearch] = useState('');
-    const { handleApply, appliedIds } = useJobApplication();
+    const { appliedIds, handleSave, savedIds } = useJobApplication();
 
     // Use pre-normalized data from useDashboardData (normalized at fetch time)
     const normalizedBySource = useMemo(() => {
@@ -229,17 +229,28 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
                                         {job.date ? new Date(job.date).toLocaleDateString() : ''}
                                         <FreshnessBadge dateStr={job.date} />
                                     </span>
-                                    {job.url && (
+                                    <div className="jobboard-card-btns">
+                                        {job.url && (
+                                            <a
+                                                href={job.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="jobboard-apply-btn"
+                                            >
+                                                {t('dashboard.jobBoard.apply')}
+                                            </a>
+                                        )}
                                         <button
-                                            onClick={() => handleApply(job)}
-                                            className={`jobboard-apply-btn ${appliedIds.has(job.id) ? 'applied' : ''}`}
+                                            onClick={() => handleSave(job)}
+                                            disabled={savedIds.has(job.id) || appliedIds.has(job.id)}
+                                            className={`jobboard-save-btn ${savedIds.has(job.id) || appliedIds.has(job.id) ? 'saved' : ''}`}
                                         >
-                                            {appliedIds.has(job.id)
-                                                ? t('dashboard.jobBoard.applied')
-                                                : t('dashboard.jobBoard.apply')
+                                            {savedIds.has(job.id) || appliedIds.has(job.id)
+                                                ? t('dashboard.jobBoard.saved')
+                                                : t('dashboard.jobBoard.save')
                                             }
                                         </button>
-                                    )}
+                                    </div>
                                 </div>
                             </div>
                         ))

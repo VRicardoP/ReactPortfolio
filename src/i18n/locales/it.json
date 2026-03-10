@@ -37,7 +37,8 @@
     "databases": "DATABASE",
     "others": "ALTRO",
     "viewBars": "Barre",
-    "viewRadar": "Radar"
+    "viewRadar": "Radar",
+    "viewMatrix": "Matrice"
   },
   "profile": {
     "yearsExp": "20+ anni",
@@ -203,7 +204,9 @@
       "tabZentraljob": "Zentraljob",
       "tabSwisstechjobs": "SwissTech",
       "tabIctjobs": "ICTjobs",
-      "applied": "Candidato"
+      "applied": "Candidato",
+      "save": "Salva",
+      "saved": "Salvato"
     },
     "selectedOffers": {
       "title": "Offerte Selezionate",
@@ -256,7 +259,9 @@
       "topSkills": "Competenze Più Richieste",
       "remoteRatio": "Remoto vs In sede",
       "jobsBySource": "Lavori per Fonte",
-      "noData": "Nessun dato disponibile per le analitiche"
+      "noData": "Nessun dato disponibile per le analitiche",
+      "sectionMarket": "Mercato",
+      "sectionSalary": "Stipendi"
     },
     "chatAnalytics": {
       "title": "Analitiche Chat - Insights Recruiter",
@@ -324,7 +329,14 @@
       "company_field": "Azienda",
       "notes": "Note",
       "noApplications": "Trascina lavori qui o clicca + per aggiungere",
-      "errorLoad": "Impossibile caricare le candidature"
+      "errorLoad": "Impossibile caricare le candidature",
+      "errorDelete": "Errore durante l'eliminazione",
+      "viewDocs": "Visualizza documenti",
+      "generateDocs": "Genera documenti",
+      "downloadDocs": "Scarica documenti",
+      "openUrl": "Apri offerta di lavoro",
+      "markApplied": "Segna come candidato",
+      "deleteApp": "Elimina candidatura"
     },
     "jsearchLive": {
       "title": "JSearch Ricerca Live",
@@ -416,7 +428,16 @@
       "translateTitles": "Traduci titoli",
       "translating": "Traduzione...",
       "translated": "Tradotto",
-      "translateTooltip": "Traduci i titoli non inglesi/spagnoli in inglese"
+      "translateTooltip": "Traduci i titoli non inglesi/spagnoli in inglese",
+      "resultsTab": "Risultati",
+      "skillsGapTab": "Competenze mancanti",
+      "skillsGapEmpty": "Avvia un'analisi per vedere le competenze mancanti",
+      "skillsGapDesc": "Competenze mancanti nel tuo CV secondo le offerte analizzate. Attiva/disattiva per aggiungere/rimuovere dal tuo CV.",
+      "addingSkill": "Aggiunta...",
+      "removingSkill": "Rimozione...",
+      "skillAdded": "Competenza aggiunta al tuo CV",
+      "skillRemoved": "Competenza rimossa dal tuo CV",
+      "skillToggleError": "Aggiornamento competenza fallito"
     },
     "tab": {
       "overview": "Panoramica",
@@ -503,6 +524,7 @@
     "invalidCredentials": "Credenziali non valide",
     "authenticating": "Autenticazione in corso...",
     "login": "Accedi",
-    "backToPortfolio": "← Torna al Portfolio"
+    "backToPortfolio": "← Torna al Portfolio",
+    "sessionExpiredInactivity": "Sessione scaduta per inattività"
   }
 }

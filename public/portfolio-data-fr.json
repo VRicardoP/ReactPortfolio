@@ -1,99 +1,224 @@
 {
     "name": "Vicente Ricardo Pau Valero",
-    "title": "Développeur Full-Stack & Ingénieur Systèmes Informatiques",
+    "title": "Administrateur systèmes senior & Développeur IA conversationnelle",
     "email": "vicente.pau@hotmail.com",
-    "phone": "+34 644 213 173",
-    "location": "Carcaixent, Valence (Espagne)",
+    "location": "Valence, Espagne (citoyen UE — fuseau horaire CET)",
     "profile": {
-        "description": "Je suis un professionnel IT avec plus de 20 ans d'expérience en administration systèmes, administration réseau et développement logiciel full-stack. J'ai conçu et livré des solutions techniques de bout en bout tout au long de ma carrière — de la migration et du renforcement d'infrastructures critiques de data centres à la création d'applications alimentées par l'IA. J'ai géré des environnements de plus de 1 000 terminaux dans des secteurs fortement réglementés incluant la santé (Hospital de la Ribera), l'automobile (Ford) et la grande distribution (Mercadona), où j'étais responsable de la maintenance, de l'administration et de la sécurité des systèmes. Bilingue en anglais, j'ai travaillé au sein d'équipes internationales en Espagne, en Angleterre et à travers l'Europe — incluant le support à distance pour les usines Ford en Espagne, Allemagne, Royaume-Uni et Hongrie chez DHL Supply Chain."
+        "description": "Professionnel IT avec plus de 25 ans d'expérience continue en administration systèmes, infrastructures critiques et développement logiciel. Profil dual : solidité éprouvée en infrastructure d'entreprise haute disponibilité — hôpitaux, centres de données nationaux, réseaux de santé régionaux — combinée à un développement full-stack moderne et à la conception d'agents conversationnels par intelligence artificielle. Citoyen de l'Union européenne, disponible pour des postes à distance avec couverture complète des heures d'affaires CET. À la recherche d'organisations partageant des valeurs de précision technique, de fiabilité et de qualité durable."
     },
     "softSkills": [
-        "Engagement et responsabilité",
-        "Esprit critique et analytique",
-        "Intégrité professionnelle",
-        "Empathie et orientation utilisateur",
-        "Résolution constructive des conflits",
-        "Apprentissage continu",
-        "Travail d'équipe efficace",
-        "Initiative et proactivité",
-        "Gestion du stress",
-        "Adaptabilité",
-        "Résolution de problèmes complexes",
-        "Communication claire",
-        "Motivation personnelle et autogestion"
+        "Prise de décision autonome dans des environnements critiques sans supervision directe",
+        "Initiative proactive — améliorations proposées et mises en œuvre sans demande préalable",
+        "Anglais professionnel C1 pour la communication technique et les escalades internationales",
+        "Résolution structurée de problèmes en conditions de forte pression",
+        "Documentation technique comme pratique systématique intégrée au travail quotidien",
+        "Formation continue soutenue en parallèle d'un emploi à temps plein",
+        "Responsabilité de bout en bout sur les projets techniques",
+        "Travail à distance 100 % efficace depuis 2020"
     ],
     "education": [
-        {"title": "Technicien Supérieur en Développement d'Applications Web (DAW)", "institution": "IES / FP — EQF Level 5 · 120 ECTS · 2000h · Europass", "date": "2025", "type": "degree", "description": "Développement web côté client (JavaScript, DOM, AJAX asynchrone), développement web côté serveur (PHP, Node.js, MVC, services web REST, accès sécurisé aux données), déploiement et gestion de serveurs web, conception d'interfaces web (accessibilité WCAG, utilisabilité, CSS3), bases de données (conception relationnelle, SQL, procédures stockées, ORM), POO, langages de balisage (HTML5, XML, JSON), environnements de développement (tests, UML), ERP-CRM (Odoo). Donne accès aux études universitaires."},
-        {"title": "Technicien Supérieur en Développement d'Applications Multiplateformes (DAM)", "institution": "IES / FP — EQF Level 5 · 120 ECTS · 2000h · Europass", "date": "2024", "type": "degree", "description": "Java POO, accès aux données (JDBC, ORM Hibernate, bases de données objet-relationnelles et XML), développement mobile (Android/Kotlin, Flutter/Dart), services et processus (multi-threading, sockets, services réseau, cryptographie), développement d'interfaces (utilisabilité, rapports), ERP-CRM (Odoo), bases de données (SQL avancé, procédures stockées), environnements de développement (TDD, UML), moteurs de jeux 2D/3D. Donne accès aux études universitaires."},
-        {"title": "Bootcamp React", "institution": "Geekshubs Academy", "date": "2023", "type": "bootcamp", "description": "Composants React.js, hooks, état, contexte, Redux, intégration d'API REST, tests de composants"},
-        {"title": "Informatique et gestion", "institution": "Universidad Politécnica de Valencia", "date": "2003 – 2005", "type": "degree", "description": ""},
-        {"title": "Formation en administration de serveurs", "institution": "", "date": "2002 – 2003", "type": "course", "description": ""},
-        {"title": "Technicien spécialiste en gestion informatique", "institution": "", "date": "1997 – 2000", "type": "degree", "description": ""}
+        {
+            "title": "Brevet de technicien supérieur en développement d'applications web (DAW)",
+            "institution": "IES Jaume II el Just — Tabernes de la Valldigna, Valence, Espagne — EQF niveau 5 | 120 ECTS | Europass",
+            "date": "2024 – 2025",
+            "type": "degree",
+            "description": "Diplôme officiel de niveau EQF 5 avec supplément Europass, reconnu dans toute l'Union européenne. Modules principaux : développement web côté client et serveur (JavaScript, PHP, Node.js), déploiement d'applications web, conception d'interfaces accessibles (HTML5, CSS3), bases de données relationnelles et ERP/CRM avec Odoo."
+        },
+        {
+            "title": "Brevet de technicien supérieur en développement d'applications multiplateformes (DAM)",
+            "institution": "IES Jaume II el Just — Tabernes de la Valldigna, Valence, Espagne — EQF niveau 5 | 120 ECTS | Europass",
+            "date": "2021 – 2024",
+            "type": "degree",
+            "description": "Diplôme officiel de niveau EQF 5 avec supplément Europass, reconnu dans toute l'Union européenne. Modules principaux : programmation orientée objet en Java, développement mobile (Android/Kotlin, Flutter/Dart), accès aux données avec Hibernate et ORM, ERP/CRM Odoo, TDD et UML. Obtenu en parallèle d'un emploi à temps plein."
+        },
+        {
+            "title": "Bootcamp React.js",
+            "institution": "Geekshubs Academy, Espagne",
+            "date": "2023",
+            "type": "bootcamp",
+            "description": "Formation intensive en React.js : composants fonctionnels, hooks, gestion d'état avec Redux, intégration d'API REST et tests de composants."
+        },
+        {
+            "title": "Certificat de technicien supérieur en gestion informatique (FPII)",
+            "institution": "Espagne",
+            "date": "1997 – 2000",
+            "type": "degree",
+            "description": "Base formelle de la carrière technique. Fondamentaux de la programmation, systèmes d'exploitation, réseaux et gestion d'entreprise."
+        }
     ],
     "experience": [
-        {"title": "Développeur logiciel (Projet IA) — Stage", "company": "Cook-Code System Startup", "location": "Valencia", "date": "2025 – 2026", "description": "Développement intégral de « Minichef » : un assistant vocal IA pour la gestion de cuisines professionnelles. Conception d'un pipeline complet en Python intégrant la reconnaissance vocale en temps réel (Vosk), le traitement du langage naturel, les opérations en base de données et la synthèse vocale (gTTS/Pygame) — permettant un accès conversationnel mains libres aux stocks, recettes et données fournisseurs."},
-        {"title": "Technicien support informatique — Réseau de santé", "company": "Telefónica / Consellería de Sanidad", "location": "Comunitat Valenciana", "date": "2022 – 2025", "description": "Maintien d'une disponibilité de plus de 99 % pour l'infrastructure réseau desservant hôpitaux et centres de santé dans 3 provinces. Gestion de routeurs, pare-feu et VPN Cisco et Fortigate. Traitement des incidents via Jira, Confluence et applications de ticketing dédiées."},
-        {"title": "Spécialiste support — Opérations européennes Ford", "company": "DHL Supply Chain", "location": "Valencia", "date": "2020 – 2021", "description": "Support informatique à distance pour les usines Ford dans 4 pays (Espagne, Allemagne, Royaume-Uni, Hongrie). Optimisation de la gestion du cycle de vie des utilisateurs Active Directory. Administration de serveurs virtualisés hébergés en Inde pour la planification automatisée des tâches. Interventions critiques à distance sur les serveurs hébergés en Inde pour exécuter des scripts de nettoyage de base de données en cas d'erreurs — un processus critique, car l'échec de la purge des données obsolètes bloquerait le flux d'informations vers les usines européennes et risquerait d'arrêter les chaînes de production."},
-        {"title": "Technicien support N2 & Développeur junior", "company": "Temática Software", "location": "Valencia", "date": "2019", "description": "Déploiement de la supervision Zabbix sur l'infrastructure Linux et Windows. Mise en place de la virtualisation VMware ESXi et de l'infrastructure cloud AWS. Contribution en tant que développeur junior en Python et Java. Support de bases de données Oracle SQL. Méthodologie Agile/Scrum avec l'ITI de l'Université de Valence."},
-        {"title": "Administrateur systèmes", "company": "Postres Lácteos Romar S.L.", "location": "Valencia", "date": "2016 – 2018", "description": "Amélioration de 60 % des performances de l'infrastructure grâce à la refonte complète du centre de données. Introduction de la première couche de sécurité de l'entreprise (pare-feu Cisco/Sophos). Pilotage de la sélection et de l'acquisition du système ERP. Gestion de l'ensemble des opérations IT en autonomie : ESXi, VPN/AD, Linux, SQL."},
-        {"title": "Administrateur informatique — Opérations CPD", "company": "Tecnocom (Ford & Mercadona)", "location": "Valencia", "date": "2016", "description": "Exploitation de centres de données critiques pour Ford (usine de moteurs) et Mercadona (grande distribution nationale). Supervision de l'infrastructure avec HP OVO, automatisation des workflows avec Axway. Gestion des sauvegardes avec HP Dataprotector et CommVault avec zéro perte de données."},
-        {"title": "Administrateur et technicien informatique", "company": "VSL Support Ltd", "location": "Sud de l'Angleterre, Royaume-Uni", "date": "2013 – 2015", "description": "Gestion des systèmes informatiques et réseaux pour des hôpitaux du NHS, des chaînes hôtelières, des groupes de restauration et des concessions automobiles dans le sud de l'Angleterre. Déploiement d'infrastructures réseau et serveur complètes pour les nouveaux sites clients."},
-        {"title": "Administrateur systèmes — Informatique hospitalière", "company": "Hospital de la Ribera", "location": "Alzira, Valencia", "date": "2009 – 2011", "description": "Seul responsable informatique durant les quarts de nuit, assurant la continuité 24h/24 et 7j/7 de l'infrastructure IT hospitalière critique (Citrix, Exchange, systèmes virtualisés, routeurs, pare-feu)."}
+        {
+            "title": "Ingénieur IA conversationnelle & Développeur full-stack",
+            "company": "Sfera-AI",
+            "location": "Barcelone, Espagne (100 % à distance)",
+            "date": "2025 – Présent",
+            "description": "Conception, développement et déploiement d'agents conversationnels téléphoniques reposant sur l'API Claude (Anthropic) pour des clients de secteurs variés. Gestion de 4 agents en production traitant des dizaines d'appels simultanés. Développement du tableau de bord de métriques client avec React, Python et PostgreSQL, et mise en place d'automatisations métier via n8n auto-hébergé. Seul responsable technique du produit : architecture, développement, tests et déploiements."
+        },
+        {
+            "title": "Développeur logiciel — Stage DAW (Projet Minichef)",
+            "company": "Cook-Code System",
+            "location": "Espagne",
+            "date": "2025",
+            "description": "Développement intégral de Minichef — un assistant vocal IA pour les cuisines professionnelles. Pipeline Python complète : Vosk (reconnaissance vocale temps réel) → Groq LLM → gTTS + Pygame (synthèse vocale), avec backend MySQL et opérations CRUD complètes par commande vocale. Le projet a été adopté et poursuivi activement par l'entreprise après le stage."
+        },
+        {
+            "title": "Technicien support IT — Infrastructure réseau de santé",
+            "company": "Telefónica / Conselleria de Sanitat CV",
+            "location": "Valence, Espagne",
+            "date": "2023 – 2024",
+            "description": "Support technique de l'infrastructure réseau critique des 25 départements de santé de la Communauté valencienne (provinces d'Alicante, Castellón et Valence). Gestion de routeurs, pare-feu et VPN Cisco et Fortigate. Volume de ~100 tickets/mois en conditions normales, montant à 300–400 en situation de crise. Seul anglophone d'une équipe de 6 : responsable exclusif de toutes les communications techniques en anglais avec Cisco et Fortigate."
+        },
+        {
+            "title": "Technicien IT & Administrateur systèmes",
+            "company": "BigBuy",
+            "location": "Valence, Espagne",
+            "date": "2022 – 2023",
+            "description": "Administration d'un réseau Cisco comprenant ~350 équipements et VLANs chez l'un des plus grands grossistes B2B e-commerce d'Europe. Proposition et déploiement d'OCS Inventory NG (premier inventaire IT automatisé de l'entreprise) et de Zabbix (première supervision d'infrastructure), tous deux approuvés sur base de coût zéro. Récupération de l'accès administrateur MySQL sur AWS via --skip-grant-tables sans perte de données, en l'absence de toute procédure de récupération existante."
+        },
+        {
+            "title": "Spécialiste support IT — Ford European LLP",
+            "company": "DHL Supply Chain",
+            "location": "Valence, Espagne (100 % à distance)",
+            "date": "2020 – 2021",
+            "description": "Support IT entièrement à distance pour les usines Ford en Espagne, Allemagne, Royaume-Uni et Hongrie, ainsi que ~15 environnements virtualisés en Inde. Administration d'Active Directory à l'échelle européenne, VPN et bases de données d'usine. Automatisation de la vérification quotidienne des sauvegardes et des alertes en Java/Node.js, éliminant une tâche de vérification manuelle récurrente."
+        },
+        {
+            "title": "Technicien support N2 & Administrateur systèmes",
+            "company": "Temática Software",
+            "location": "Valence, Espagne",
+            "date": "2019",
+            "description": "Support technique pour plus de 3 000 clients opticiens en Espagne sur la plateforme ERP propriétaire de l'entreprise. Administration de Zabbix, VMware ESXi et Amazon AWS. Participation aux migrations de bases de données Oracle SQL. Méthodologie agile avec Jira et Scrum en collaboration avec l'institut de recherche ITI de l'UPV."
+        },
+        {
+            "title": "Administrateur systèmes IT",
+            "company": "Postres Lácteos Romar S.L.",
+            "location": "Valence, Espagne",
+            "date": "2016 – 2018",
+            "description": "Seul responsable IT d'une entreprise agroalimentaire d'environ 200 employés. Mise en place de l'infrastructure de sécurité IT complète depuis zéro : pare-feu Cisco et Sophos dans une entreprise dépourvue de tout système de sécurité. Conduite du processus d'adoption de Microsoft Dynamics 365 en coordination directe avec Microsoft. Refonte du centre de données, aboutissant à une amélioration de 60 % des performances d'infrastructure."
+        },
+        {
+            "title": "Opérateur IT — Centre de données national",
+            "company": "Tecnocom / Mercadona",
+            "location": "Valence, Espagne",
+            "date": "2016",
+            "description": "Exploitation du centre de données national desservant ~1 500 magasins Mercadona en Espagne et plus de 15 000 entités supervisées. Outils : HP OVO, Axway Automaton, HP Dataprotector, CommVault. Gestion quotidienne d'incidents de niveau 2 dans un environnement zéro-interruption avec des équipements d'une valeur supérieure à 1 M EUR par unité."
+        },
+        {
+            "title": "Administrateur systèmes IT & Technicien",
+            "company": "VSL Support Ltd",
+            "location": "Brighton, sud de l'Angleterre, Royaume-Uni",
+            "date": "2013 – 2015",
+            "description": "Support IT pour ~15 clients simultanés dans le sud de l'Angleterre : hôpitaux NHS, chaînes de restaurants et d'hôtels, ateliers automobiles. Travail intégralement en anglais. Installation et configuration de serveurs, Active Directory, Terminal Server et Citrix sur plusieurs sites clients. Deux ans d'expérience internationale ayant consolidé l'anglais au niveau C1 professionnel."
+        },
+        {
+            "title": "Administrateur systèmes & Développeur web",
+            "company": "Design Queen",
+            "location": "Nouvelle-Zélande (100 % à distance)",
+            "date": "2011 – 2012",
+            "description": "Gestion à distance de 4 clients web durant une année passée en Nouvelle-Zélande. Développement avec HTML, CSS, JavaScript, Node.js et MySQL. Administration de serveurs FTP. Première expérience de travail entièrement à distance dans un contexte international."
+        },
+        {
+            "title": "Technicien systèmes IT — Quart de nuit",
+            "company": "Hospital de la Ribera",
+            "location": "Alzira, Valence, Espagne",
+            "date": "2009 – 2011",
+            "description": "Seul responsable IT de nuit pour le premier hôpital public à gestion privée d'Espagne : 301 lits, 1 200 collaborateurs. Gestion autonome de Citrix, Active Directory, Terminal Server, pare-feu et sauvegardes critiques transmises à l'autorité régionale de santé. Résolution en autonomie d'une panne massive de sauvegarde survenue en quart de nuit dans un environnement de mission critique."
+        }
     ],
     "languages": [
-        {"language": "Espagnol", "level": "Langue maternelle"},
-        {"language": "Anglais", "level": "Bilingue / C1+"},
-        {"language": "Italien", "level": "Débutant"}
+        { "language": "Espagnol", "level": "Langue maternelle" },
+        { "language": "Valencien", "level": "Langue maternelle" },
+        { "language": "Catalan", "level": "Langue maternelle / bilingue" },
+        { "language": "Anglais", "level": "C1 — professionnel (technique et conversationnel)" },
+        { "language": "Italien", "level": "A2 — élémentaire" }
     ],
     "techSkills": {
         "frontend": [
-            {"name": "HTML5 / CSS3 / XML", "level": 95},
-            {"name": "JavaScript", "level": 90},
-            {"name": "React.js", "level": 88},
-            {"name": "Three.js / WebGL", "level": 78},
-            {"name": "Flutter / Kotlin (Mobile)", "level": 75}
+            { "name": "React.js", "level": 85 },
+            { "name": "JavaScript (ES6+)", "level": 90 },
+            { "name": "HTML5 / CSS3", "level": 85 },
+            { "name": "n8n (automatisation)", "level": 80 }
         ],
         "backend": [
-            {"name": "Python / FastAPI", "level": 90},
-            {"name": "Java / Spring", "level": 85},
-            {"name": "Node.js / Express", "level": 85},
-            {"name": "PHP", "level": 80}
+            { "name": "Python", "level": 88 },
+            { "name": "Node.js", "level": 80 },
+            { "name": "Bash / Shell scripting", "level": 88 },
+            { "name": "Java", "level": 70 },
+            { "name": "PHP", "level": 60 }
         ],
         "databases": [
-            {"name": "Oracle SQL", "level": 88},
-            {"name": "MySQL / PostgreSQL", "level": 88},
-            {"name": "Microsoft SQL Server", "level": 82},
-            {"name": "SQLAlchemy / Alembic (ORM)", "level": 85},
-            {"name": "Redis", "level": 72}
+            { "name": "MySQL", "level": 88 },
+            { "name": "PostgreSQL", "level": 82 },
+            { "name": "Microsoft SQL Server", "level": 70 },
+            { "name": "Oracle SQL", "level": 65 }
         ],
         "others": [
-            {"name": "Windows Server / Linux Admin", "level": 95},
-            {"name": "VMware / ESXi", "level": 92},
-            {"name": "Network Security (Cisco, Sophos, Fortigate)", "level": 90},
-            {"name": "Active Directory / VPN", "level": 90},
-            {"name": "Git / GitHub", "level": 88},
-            {"name": "Docker / AWS", "level": 78},
-            {"name": "Agile / Scrum (Jira, Confluence)", "level": 85},
-            {"name": "IA / ML (sentence-transformers, Groq, NLP)", "level": 75}
+            { "name": "Linux (Ubuntu / CentOS / Debian)", "level": 95 },
+            { "name": "Windows Server / Active Directory", "level": 95 },
+            { "name": "VMware ESXi", "level": 90 },
+            { "name": "Cisco Networking / VLANs / VPN", "level": 90 },
+            { "name": "Pare-feu (Cisco / Sophos / Fortigate)", "level": 88 },
+            { "name": "Claude API / intégration LLM", "level": 88 },
+            { "name": "Docker", "level": 82 },
+            { "name": "Zabbix", "level": 85 },
+            { "name": "Git", "level": 85 },
+            { "name": "Jira / Confluence", "level": 88 },
+            { "name": "Amazon AWS", "level": 75 },
+            { "name": "Kubernetes", "level": 72 },
+            { "name": "CI/CD (GitHub Actions)", "level": 72 },
+            { "name": "Microsoft Dynamics 365", "level": 70 }
         ]
     },
     "portfolio": [
-        {"title": "Minichef — Assistant vocal IA", "tech": ["Python", "Vosk", "gTTS", "Pygame", "SQLite"], "description": "Assistant vocal IA pour la gestion de cuisines professionnelles avec reconnaissance vocale en temps réel, traitement du langage naturel et synthèse vocale.", "github": "", "demo": "", "status": "completed"},
-        {"title": "Portfolio interactif", "tech": ["React", "FastAPI", "PostgreSQL", "Three.js", "Chart.js", "Docker", "sentence-transformers", "Groq AI"], "description": "Portfolio full-stack avec métaphore de bureau à fenêtres. Chatbot IA, analytiques visiteurs avec cartes, agrégation d'emplois de 8 APIs (Jobicy, Remotive, Arbeitnow, JSearch, RemoteOK, Himalayas, Adzuna, WeWorkRemotely) avec recherche unifiée, matching d'emplois par IA (sentence-transformers + LLM re-ranking), pipeline Kanban, analytiques salariales, notifications SSE en temps réel, auth JWT avec refresh tokens, 6 fonds Three.js/Canvas, terminal easter egg, i18n complet (6 langues) et accessibilité WCAG.", "github": "", "demo": "", "status": "completed"},
-        {"title": "Gestion de réseau de santé", "tech": ["Cisco", "Fortigate", "VPN", "Jira", "Confluence"], "description": "Gestion d'infrastructure pour des hôpitaux dans 3 provinces, maintenant une disponibilité de plus de 99 % pour les services de santé critiques.", "github": "", "demo": "", "status": "completed"}
+        {
+            "title": "Minichef — Assistant vocal IA pour cuisines professionnelles",
+            "tech": ["Python", "Vosk STT", "Groq LLM", "gTTS", "MySQL", "Pygame"],
+            "description": "Assistant conversationnel à commande vocale pour la gestion de cuisines professionnelles. Pipeline vocale complète : reconnaissance vocale temps réel → traitement LLM → réponse vocale. Opérations CRUD complètes par commande vocale sur inventaire, recettes et fournisseurs. Développé intégralement en autonomie durant le stage DAW ; poursuivi activement par l'entreprise.",
+            "github": "",
+            "demo": "",
+            "status": "En développement actif"
+        },
+        {
+            "title": "Tableau de bord de métriques — Sfera-AI",
+            "tech": ["React.js", "Python", "PostgreSQL", "Claude API"],
+            "description": "Tableau de bord web pour les clients de Sfera-AI affichant en temps réel les performances des agents IA : volume d'appels, taux de résolution, durée moyenne de traitement et métriques métier configurables par client.",
+            "github": "",
+            "demo": "",
+            "status": "En production"
+        },
+        {
+            "title": "Agents conversationnels téléphoniques IA",
+            "tech": ["Claude API", "Python", "n8n", "PostgreSQL"],
+            "description": "Quatre agents téléphoniques IA en production pour des entreprises de secteurs variés, capables de traiter des dizaines d'appels simultanés avec résolution autonome. Intégrés à des automatisations de suivi : e-mail, WhatsApp, SMS et prise de rendez-vous automatique via n8n.",
+            "github": "",
+            "demo": "",
+            "status": "En production"
+        },
+        {
+            "title": "Déploiement OCS Inventory + Zabbix — BigBuy",
+            "tech": ["OCS Inventory NG", "Zabbix", "Linux", "MySQL", "AWS"],
+            "description": "Proposition, conception et déploiement des premiers systèmes de gestion d'inventaire IT et de supervision d'infrastructure chez BigBuy, l'un des plus grands grossistes B2B e-commerce d'Europe (~350 employés). Initiative personnelle : les deux projets ont été présentés, approuvés et réalisés sans demande préalable.",
+            "github": "",
+            "demo": "",
+            "status": "Achevé"
+        }
     ],
     "achievements": [
-        {"metric": "Disponibilité réseau", "value": "99%+", "icon": "NET"},
-        {"metric": "Gain de performance infra", "value": "60%", "icon": "UP"},
-        {"metric": "Terminaux gérés", "value": "1,000+", "icon": "SYS"},
-        {"metric": "Pays (à distance)", "value": "4", "icon": "GEO"},
-        {"metric": "Perte de données", "value": "Zero", "icon": "SEC"},
-        {"metric": "Années d'expérience", "value": "20+", "icon": "EXP"},
-        {"metric": "Profondeur stack technique", "value": "19+", "icon": "DEV"},
-        {"metric": "Systèmes de santé", "value": "3 Provinces", "icon": "MED"}
+        { "metric": "Années d'expérience continue", "value": "25+", "icon": "EXP" },
+        { "metric": "Agents IA en production", "value": "4", "icon": "DEV" },
+        { "metric": "Magasins supervisés (CPD Mercadona)", "value": "1 500+", "icon": "SYS" },
+        { "metric": "Départements de santé soutenus", "value": "25", "icon": "MED" },
+        { "metric": "Clients opticiens soutenus (Temática)", "value": "3 000+", "icon": "NET" },
+        { "metric": "Gain de performances infrastructure", "value": "+60 %", "icon": "UP" },
+        { "metric": "Travail à distance international depuis", "value": "2020", "icon": "GEO" },
+        { "metric": "Langues de travail", "value": "4", "icon": "SEC" }
     ],
     "contact": {
-        "message": "Intéressé par une collaboration ? Contactez-moi par e-mail :",
-        "social": {"linkedin": "", "github": "", "twitter": "", "instagram": ""}
+        "message": "Vous recherchez un profil IT senior combinant expérience en infrastructures critiques et intelligence artificielle conversationnelle pour un poste à distance ? N'hésitez pas à me contacter directement ou à utiliser le chatbot pour explorer mon parcours en détail.",
+        "social": {
+            "linkedin": "",
+            "github": "",
+            "twitter": ""
+        }
     }
 }

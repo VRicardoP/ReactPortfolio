@@ -46,6 +46,21 @@ const useKanban = () => {
         fetchApplications();
     }, [fetchApplications]);
 
+    // Listen for saves/applies from other windows (e.g. AIJobMatchWindow)
+    useEffect(() => {
+        const handleExternalChange = (e) => {
+            const app = e.detail;
+            if (app?.id) {
+                setApplications(prev => {
+                    if (prev.some(a => a.id === app.id)) return prev;
+                    return [...prev, app];
+                });
+            }
+        };
+        window.addEventListener('application-changed', handleExternalChange);
+        return () => window.removeEventListener('application-changed', handleExternalChange);
+    }, []);
+
     const handleDragStart = useCallback((e, id) => {
         setDraggedId(id);
         e.dataTransfer.effectAllowed = 'move';
@@ -135,6 +150,40 @@ const useKanban = () => {
         }
     }, [applications, authenticatedFetch, t]);
 
+    // Delete an application from the pipeline
+    const handleDelete = useCallback(async (appId) => {
+        const previousApps = [...applications];
+        setApplications(prev => prev.filter(a => a.id !== appId));
+        try {
+            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/${appId}`, {
+                method: 'DELETE',
+            });
+        } catch {
+            setApplications(previousApps);
+            showToast(t('dashboard.kanban.errorDelete'));
+        }
+    }, [applications, authenticatedFetch, t]);
+
+    // Mark a card as "applied" status
+    const handleMarkApplied = useCallback(async (appId) => {
+        const app = applications.find(a => a.id === appId);
+        if (!app || app.status === 'applied') return;
+
+        const previousApps = [...applications];
+        setApplications(prev =>
+            prev.map(a => a.id === appId ? { ...a, status: 'applied' } : a)
+        );
+        try {
+            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/${appId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ status: 'applied' }),
+            });
+        } catch {
+            setApplications(previousApps);
+            showToast(t('dashboard.kanban.errorMove'));
+        }
+    }, [applications, authenticatedFetch, t]);
+
     // Group applications by status
     const grouped = useMemo(() => {
         const groups = {};
@@ -164,6 +213,8 @@ const useKanban = () => {
         handleAdd,
         handleNewAppChange,
         handleMoveCard,
+        handleDelete,
+        handleMarkApplied,
     };
 };
 

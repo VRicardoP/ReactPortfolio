@@ -1,8 +1,11 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 
 import { BACKEND_URL } from '../config/api';
 
 const AuthContext = createContext();
+
+const INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
+const ACTIVITY_EVENTS = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
@@ -149,6 +152,40 @@ export const AuthProvider = ({ children }) => {
 
         return () => clearInterval(intervalId);
     }, [isAuthenticated, token, tryRefresh, logout]);
+
+    // Inactivity timeout — logout after 15 minutes of no user interaction
+    const inactivityTimerRef = useRef(null);
+
+    useEffect(() => {
+        if (!isAuthenticated) return;
+
+        const resetTimer = () => {
+            if (inactivityTimerRef.current) {
+                clearTimeout(inactivityTimerRef.current);
+            }
+            inactivityTimerRef.current = setTimeout(() => {
+                sessionStorage.setItem('logoutReason', 'inactivity');
+                logout();
+            }, INACTIVITY_TIMEOUT_MS);
+        };
+
+        // Start the timer immediately
+        resetTimer();
+
+        // Reset on any user activity
+        for (const event of ACTIVITY_EVENTS) {
+            window.addEventListener(event, resetTimer, { passive: true });
+        }
+
+        return () => {
+            if (inactivityTimerRef.current) {
+                clearTimeout(inactivityTimerRef.current);
+            }
+            for (const event of ACTIVITY_EVENTS) {
+                window.removeEventListener(event, resetTimer);
+            }
+        };
+    }, [isAuthenticated, logout]);
 
     // to make requests to the server with the token
     const authenticatedFetch = useCallback(async (url, options = {}) => {

@@ -13,7 +13,6 @@ const JobBoardTabbedWindow = lazy(() => import('./JobBoardTabbedWindow'));
 const JobMarketAnalyticsWindow = lazy(() => import('./JobMarketAnalyticsWindow'));
 const SelectedOffersPanel = lazy(() => import('./SelectedOffersPanel'));
 const JSearchLiveWindow = lazy(() => import('./JSearchLiveWindow'));
-const SalaryAnalyticsWindow = lazy(() => import('./SalaryAnalyticsWindow'));
 const SavedSearchesWindow = lazy(() => import('./SavedSearchesWindow'));
 const JobFilterWindow = lazy(() => import('./JobFilterWindow'));
 const AIJobMatchWindow = lazy(() => import('./AIJobMatchWindow'));
@@ -58,7 +57,6 @@ const DASHBOARD_WINDOW_IDS = [
     'job-analytics-window',
     'selected-offers-panel',
     'jsearch-live-window',
-    'salary-analytics-window',
     'job-filter-window',
     'saved-searches-window',
     'ai-match-window',
@@ -131,10 +129,6 @@ const DesktopDashboardContent = memo(({
                     />
                     <JSearchLiveWindow
                         initialPosition={{ x: 370, y: 210 }}
-                    />
-                    <SalaryAnalyticsWindow
-                        data={jobData.jsearch}
-                        initialPosition={{ x: 400, y: 220 }}
                     />
                     <JobFilterWindow
                         initialPosition={{ x: 430, y: 230 }}

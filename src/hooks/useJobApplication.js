@@ -19,7 +19,7 @@ export default function useJobApplication() {
         }
         if (appliedIds.has(job.id)) return;
         try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/`, {
+            const response = await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/`, {
                 method: 'POST',
                 body: JSON.stringify({
                     title: job.title,
@@ -29,7 +29,9 @@ export default function useJobApplication() {
                     status: 'applied',
                 }),
             });
+            const created = await response.json();
             setAppliedIds(prev => new Set(prev).add(job.id));
+            window.dispatchEvent(new CustomEvent('application-changed', { detail: created }));
         } catch {
             // URL already opened — silently fail
         }
@@ -51,7 +53,9 @@ export default function useJobApplication() {
                 }),
             });
             if (response.ok) {
+                const created = await response.json();
                 setSavedIds(prev => new Set(prev).add(job.id));
+                window.dispatchEvent(new CustomEvent('application-changed', { detail: created }));
             }
         } catch {
             // Save failed — silently fail

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
@@ -10,9 +10,19 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [inactivityMessage, setInactivityMessage] = useState('');
     const { login } = useAuth();
     const navigate = useNavigate();
     const { t } = useTranslation();
+
+    // Show inactivity message if redirected after timeout
+    useEffect(() => {
+        const reason = sessionStorage.getItem('logoutReason');
+        if (reason === 'inactivity') {
+            setInactivityMessage(t('login.sessionExpiredInactivity'));
+            sessionStorage.removeItem('logoutReason');
+        }
+    }, [t]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -56,6 +66,12 @@ const LoginPage = () => {
                 }}>
                     {t('login.subtitle')}
                 </p>
+
+                {inactivityMessage && (
+                    <div className="inactivity-message" role="status">
+                        {inactivityMessage}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">

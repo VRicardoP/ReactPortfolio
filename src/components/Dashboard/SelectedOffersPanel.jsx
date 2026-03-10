@@ -1,4 +1,4 @@
-import { memo, useState, useCallback } from 'react';
+import { memo, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
 import KanbanBoard from './KanbanBoard';
@@ -10,6 +10,11 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
     const docGen = useDocumentGeneration();
     const [previewAppId, setPreviewAppId] = useState(null);
 
+    // Pre-load document status for all applications so icon buttons render correctly
+    useEffect(() => {
+        docGen.fetchAllDocuments();
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
     const handleViewDocs = useCallback((appId) => {
         docGen.fetchDocuments(appId);
         setPreviewAppId(appId);
@@ -18,6 +23,23 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
     const handleClosePreview = useCallback(() => {
         setPreviewAppId(null);
     }, []);
+
+    const handleDownloadPdf = useCallback(async (appId) => {
+        let docs = docGen.getDocumentsFor(appId);
+        if (!docs) {
+            docs = await docGen.fetchDocuments(appId);
+        }
+        if (docs?.cv) {
+            docGen.downloadPdf(docs.cv.id, 'cv_adapted.pdf');
+        }
+        if (docs?.coverLetter) {
+            docGen.downloadPdf(docs.coverLetter.id, 'cover_letter.pdf');
+        }
+    }, [docGen]);
+
+    const handleDeleteApp = useCallback((appId) => {
+        if (previewAppId === appId) setPreviewAppId(null);
+    }, [previewAppId]);
 
     return (
         <FloatingWindow
@@ -33,6 +55,8 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
                         generatingIds={docGen.generatingSet}
                         onGenerate={docGen.generate}
                         onViewDocuments={handleViewDocs}
+                        onDownloadPdf={handleDownloadPdf}
+                        onDelete={handleDeleteApp}
                     />
                 </div>
 

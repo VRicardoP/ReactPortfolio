@@ -1,0 +1,412 @@
+/* Education & Experience Windows */
+
+/* Education Window */
+.education-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.education-item {
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+.education-item:last-child {
+  border-bottom: none;
+}
+
+.education-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #D3D3D3;
+  margin-bottom: 5px;
+}
+
+.education-institution {
+  font-size: 16px;
+  color: #D3D3D3;
+  opacity: 0.8;
+  margin-bottom: 3px;
+}
+
+.education-date {
+  font-size: 14px;
+  font-style: italic;
+  color: #D3D3D3;
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+.education-description {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #D3D3D3;
+}
+
+/* Education type badges */
+.education-badge {
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.education-badge-degree {
+  background: rgba(0, 255, 255, 0.15);
+  color: #00ffff;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+.education-badge-bootcamp {
+  background: rgba(138, 43, 226, 0.15);
+  color: #bf7fff;
+  border: 1px solid rgba(138, 43, 226, 0.3);
+}
+
+.education-badge-cert {
+  background: rgba(0, 255, 100, 0.15);
+  color: #00ff64;
+  border: 1px solid rgba(0, 255, 100, 0.3);
+}
+
+.education-badge-course {
+  background: rgba(255, 200, 0, 0.15);
+  color: #ffc800;
+  border: 1px solid rgba(255, 200, 0, 0.3);
+}
+
+/* Experience Window — Timeline (F8) */
+.experience-content {
+  height: 100%;
+}
+
+.career-span-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 16px;
+}
+
+.career-span-label {
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  color: #00ffff;
+  flex-shrink: 0;
+}
+
+.career-span-track {
+  flex: 1;
+  height: 4px;
+  background: rgba(0, 255, 255, 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.career-span-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 255, 255, 0.3), #00ffff);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+}
+
+.timeline {
+  position: relative;
+  padding-left: 24px;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #00ffff, rgba(0, 255, 255, 0.2));
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.4);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -21px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #0a0e17;
+  border: 2px solid #00ffff;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+  z-index: 1;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.timeline-item:hover .timeline-dot,
+.timeline-item.expanded .timeline-dot {
+  background: #00ffff;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
+}
+
+.timeline-date {
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  color: rgba(0, 255, 255, 0.7);
+  margin-bottom: 4px;
+}
+
+.timeline-card {
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 255, 255, 0.15);
+  border-radius: 6px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.timeline-item:hover .timeline-card {
+  border-color: rgba(0, 255, 255, 0.4);
+  background: rgba(0, 255, 255, 0.05);
+}
+
+.timeline-card-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #D3D3D3;
+  margin-bottom: 2px;
+}
+
+.timeline-card-company {
+  font-size: 13px;
+  color: #00ffff;
+}
+
+.timeline-card-location {
+  font-size: 12px;
+  color: #D3D3D3;
+  opacity: 0.7;
+}
+
+.timeline-card-description {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, margin-top 0.4s ease;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #D3D3D3;
+  margin-top: 0;
+}
+
+.timeline-card-description.show {
+  max-height: 200px;
+  margin-top: 8px;
+}
+
+.timeline-expand-hint {
+  font-size: 11px;
+  color: rgba(0, 255, 255, 0.5);
+  font-family: 'Courier New', monospace;
+  float: right;
+  margin-top: 4px;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+
+  .experience-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+/* Small tablets and large mobile (481px - 768px) */
+@media (max-width: 768px) {
+
+  .education-content {
+    gap: 15px;
+  }
+
+  /* Education */
+  .education-title {
+    font-size: 16px;
+  }
+
+  .education-institution {
+    font-size: 14px;
+  }
+
+  .education-date {
+    font-size: 13px;
+  }
+
+  .education-description {
+    font-size: 14px;
+  }
+
+  /* Experience */
+  .experience-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .experience-item {
+    padding: 12px;
+  }
+
+  .experience-title {
+    font-size: 15px;
+  }
+
+  .experience-company {
+    font-size: 14px;
+  }
+
+  .experience-location {
+    font-size: 13px;
+  }
+
+  .experience-date {
+    font-size: 12px;
+  }
+
+  .experience-description {
+    font-size: 13px;
+  }
+}
+
+/* Mobile (320px - 480px) */
+@media (max-width: 480px) {
+
+  .education-content {
+    gap: 12px;
+  }
+
+  /* Education */
+  .education-item {
+    padding-bottom: 12px;
+  }
+
+  .education-title {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .education-institution {
+    font-size: 13px;
+  }
+
+  .education-date {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .education-description {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  /* Experience */
+  .experience-grid {
+    gap: 10px;
+  }
+
+  .experience-item {
+    padding: 10px;
+  }
+
+  .experience-title {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .experience-company {
+    font-size: 13px;
+  }
+
+  .experience-location {
+    font-size: 12px;
+  }
+
+  .experience-date {
+    font-size: 11px;
+    margin: 6px 0;
+  }
+
+  .experience-description {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+
+/* Very small mobile (< 320px) */
+@media (max-width: 320px) {
+
+  .education-title,
+  .experience-title {
+    font-size: 14px;
+  }
+
+  .experience-description {
+    font-size: 11px;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+
+  .education-content {
+    gap: 10px;
+  }
+
+  .education-item {
+    margin-bottom: 10px;
+  }
+
+  .experience-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+/* Touch devices */
+@media (hover: none) and (pointer: coarse) {
+
+  .experience-item {
+    padding: 14px;
+  }
+
+  .experience-item:active {
+    background: rgba(0, 255, 255, 0.15);
+  }
+}
+
+/* Large screens (> 1440px) */
+@media (min-width: 1440px) {
+
+  .education-title {
+    font-size: 20px;
+  }
+
+  .education-institution {
+    font-size: 18px;
+  }
+
+  .education-description {
+    font-size: 17px;
+  }
+
+  .experience-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}

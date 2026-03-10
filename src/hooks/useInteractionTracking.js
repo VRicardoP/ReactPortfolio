@@ -34,7 +34,8 @@ const useInteractionTracking = () => {
         }
 
         // --- Flush batched events to backend ---
-        const flush = () => {
+        // useBeacon=true for beforeunload (fire-and-forget), false for interval flush
+        const flush = (useBeacon = false) => {
             if (bufferRef.current.length === 0) return;
 
             const payload = JSON.stringify({
@@ -42,10 +43,10 @@ const useInteractionTracking = () => {
                 events: bufferRef.current.splice(0),
             });
 
-            if (navigator.sendBeacon) {
+            if (useBeacon && navigator.sendBeacon) {
                 navigator.sendBeacon(
                     INTERACTIONS_ENDPOINT,
-                    new Blob([payload], { type: 'application/json' })
+                    new Blob([payload], { type: 'text/plain' })
                 );
             } else {
                 fetch(INTERACTIONS_ENDPOINT, {
@@ -115,7 +116,7 @@ const useInteractionTracking = () => {
                     duration_ms: Date.now() - parseInt(sessionStart, 10),
                 });
             }
-            flush();
+            flush(true);
         };
 
         // Register all listeners
@@ -123,7 +124,7 @@ const useInteractionTracking = () => {
         window.addEventListener('window-focused', handleWindowFocus);
         window.addEventListener('window-blurred', handleWindowBlur);
         window.addEventListener('beforeunload', handleUnload);
-        const interval = setInterval(flush, FLUSH_INTERVAL_MS);
+        const interval = setInterval(() => flush(false), FLUSH_INTERVAL_MS);
 
         return () => {
             document.removeEventListener('click', handleClick);

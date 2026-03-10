@@ -37,7 +37,8 @@
     "databases": "BASES DE DONNÉES",
     "others": "AUTRES",
     "viewBars": "Barres",
-    "viewRadar": "Radar"
+    "viewRadar": "Radar",
+    "viewMatrix": "Matrice"
   },
   "profile": {
     "yearsExp": "20+ ans",
@@ -203,7 +204,9 @@
       "tabZentraljob": "Zentraljob",
       "tabSwisstechjobs": "SwissTech",
       "tabIctjobs": "ICTjobs",
-      "applied": "Postulé"
+      "applied": "Postulé",
+      "save": "Sauvegarder",
+      "saved": "Sauvegardé"
     },
     "selectedOffers": {
       "title": "Offres Sélectionnées",
@@ -256,7 +259,9 @@
       "topSkills": "Compétences les Plus Demandées",
       "remoteRatio": "Télétravail vs Sur site",
       "jobsBySource": "Emplois par Source",
-      "noData": "Aucune donnée d'emploi disponible pour les analytiques"
+      "noData": "Aucune donnée d'emploi disponible pour les analytiques",
+      "sectionMarket": "Marché",
+      "sectionSalary": "Salaires"
     },
     "chatAnalytics": {
       "title": "Analytiques du Chat - Recruteurs",
@@ -324,7 +329,14 @@
       "company_field": "Entreprise",
       "notes": "Notes",
       "noApplications": "Déposez des emplois ici ou cliquez sur + pour en ajouter",
-      "errorLoad": "Échec du chargement des candidatures"
+      "errorLoad": "Échec du chargement des candidatures",
+      "errorDelete": "Erreur lors de la suppression",
+      "viewDocs": "Voir les documents",
+      "generateDocs": "Générer des documents",
+      "downloadDocs": "Télécharger les documents",
+      "openUrl": "Ouvrir l'offre d'emploi",
+      "markApplied": "Marquer comme postulé",
+      "deleteApp": "Supprimer la candidature"
     },
     "jsearchLive": {
       "title": "JSearch Recherche en Direct",
@@ -416,7 +428,16 @@
       "translateTitles": "Traduire les titres",
       "translating": "Traduction...",
       "translated": "Traduit",
-      "translateTooltip": "Traduire les titres non anglais/espagnol en anglais"
+      "translateTooltip": "Traduire les titres non anglais/espagnol en anglais",
+      "resultsTab": "Résultats",
+      "skillsGapTab": "Compétences manquantes",
+      "skillsGapEmpty": "Lancez une analyse pour voir les compétences manquantes",
+      "skillsGapDesc": "Compétences manquantes dans votre CV selon les offres analysées. Activez/désactivez pour ajouter/supprimer de votre CV.",
+      "addingSkill": "Ajout...",
+      "removingSkill": "Suppression...",
+      "skillAdded": "Compétence ajoutée à votre CV",
+      "skillRemoved": "Compétence supprimée de votre CV",
+      "skillToggleError": "Échec de la mise à jour de la compétence"
     },
     "tab": {
       "overview": "Aperçu",
@@ -503,6 +524,7 @@
     "invalidCredentials": "Identifiants invalides",
     "authenticating": "Authentification...",
     "login": "Se connecter",
-    "backToPortfolio": "← Retour au Portfolio"
+    "backToPortfolio": "← Retour au Portfolio",
+    "sessionExpiredInactivity": "Session expirée pour inactivité"
   }
 }

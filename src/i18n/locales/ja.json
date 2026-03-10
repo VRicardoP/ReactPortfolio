@@ -37,7 +37,8 @@
     "databases": "データベース",
     "others": "その他",
     "viewBars": "バー",
-    "viewRadar": "レーダー"
+    "viewRadar": "レーダー",
+    "viewMatrix": "マトリックス"
   },
   "profile": {
     "yearsExp": "20年以上",
@@ -203,7 +204,9 @@
       "tabZentraljob": "Zentraljob",
       "tabSwisstechjobs": "SwissTech",
       "tabIctjobs": "ICTjobs",
-      "applied": "応募済み"
+      "applied": "応募済み",
+      "save": "保存",
+      "saved": "保存済み"
     },
     "selectedOffers": {
       "title": "選択した求人",
@@ -256,7 +259,9 @@
       "topSkills": "最も需要の高いスキル",
       "remoteRatio": "リモート vs オンサイト",
       "jobsBySource": "ソース別求人数",
-      "noData": "アナリティクス用の求人データがありません"
+      "noData": "アナリティクス用の求人データがありません",
+      "sectionMarket": "市場",
+      "sectionSalary": "給与"
     },
     "chatAnalytics": {
       "title": "チャットアナリティクス - リクルーターインサイト",
@@ -324,7 +329,14 @@
       "company_field": "会社名",
       "notes": "メモ",
       "noApplications": "ここに求人をドロップするか+をクリックして追加",
-      "errorLoad": "応募の読み込みに失敗"
+      "errorLoad": "応募の読み込みに失敗",
+      "errorDelete": "削除に失敗しました",
+      "viewDocs": "書類を表示",
+      "generateDocs": "書類を生成",
+      "downloadDocs": "書類をダウンロード",
+      "openUrl": "求人を開く",
+      "markApplied": "応募済みにする",
+      "deleteApp": "応募を削除"
     },
     "jsearchLive": {
       "title": "JSearchライブ検索",
@@ -416,7 +428,16 @@
       "translateTitles": "タイトルを翻訳",
       "translating": "翻訳中...",
       "translated": "翻訳済み",
-      "translateTooltip": "英語・スペイン語以外のタイトルを英語に翻訳"
+      "translateTooltip": "英語・スペイン語以外のタイトルを英語に翻訳",
+      "resultsTab": "結果",
+      "skillsGapTab": "不足スキル",
+      "skillsGapEmpty": "不足スキルを表示するには分析を実行してください",
+      "skillsGapDesc": "分析された求人で不足しているスキル。CVに追加/削除するにはトグルしてください。",
+      "addingSkill": "追加中...",
+      "removingSkill": "削除中...",
+      "skillAdded": "スキルをCVに追加しました",
+      "skillRemoved": "スキルをCVから削除しました",
+      "skillToggleError": "スキルの更新に失敗しました"
     },
     "tab": {
       "overview": "概要",
@@ -503,6 +524,7 @@
     "invalidCredentials": "認証情報が無効です",
     "authenticating": "認証中...",
     "login": "ログイン",
-    "backToPortfolio": "← ポートフォリオに戻る"
+    "backToPortfolio": "← ポートフォリオに戻る",
+    "sessionExpiredInactivity": "無操作のためセッションが期限切れになりました"
   }
 }

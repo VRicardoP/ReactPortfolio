@@ -37,7 +37,7 @@ describe('useInteractionTracking', () => {
     expect(sessionStorage.getItem('interaction_session_start')).toBeTruthy()
   })
 
-  it('captures click events and flushes on interval', () => {
+  it('captures click events and flushes on interval via fetch', () => {
     renderHook(() => useInteractionTracking())
 
     // Simulate a click
@@ -49,15 +49,17 @@ describe('useInteractionTracking', () => {
       }))
     })
 
-    // Advance timer to trigger flush (10s)
+    // Advance timer to trigger flush (10s) — interval uses fetch
     act(() => {
       vi.advanceTimersByTime(10000)
     })
 
-    expect(sendBeaconSpy).toHaveBeenCalledTimes(1)
-    const [url, blob] = sendBeaconSpy.mock.calls[0]
+    expect(global.fetch).toHaveBeenCalledTimes(1)
+    const [url, options] = global.fetch.mock.calls[0]
     expect(url).toContain('/api/v1/analytics/interactions')
-    expect(blob).toBeInstanceOf(Blob)
+    expect(options.method).toBe('POST')
+    expect(options.keepalive).toBe(true)
+    expect(sendBeaconSpy).not.toHaveBeenCalled()
   })
 
   it('does not flush when buffer is empty', () => {
@@ -67,6 +69,7 @@ describe('useInteractionTracking', () => {
       vi.advanceTimersByTime(10000)
     })
 
+    expect(global.fetch).not.toHaveBeenCalled()
     expect(sendBeaconSpy).not.toHaveBeenCalled()
   })
 
@@ -91,15 +94,15 @@ describe('useInteractionTracking', () => {
       }))
     })
 
-    // Flush
+    // Flush via interval (uses fetch)
     act(() => {
       vi.advanceTimersByTime(10000)
     })
 
-    expect(sendBeaconSpy).toHaveBeenCalledTimes(1)
+    expect(global.fetch).toHaveBeenCalledTimes(1)
   })
 
-  it('flushes all pending data on beforeunload', () => {
+  it('flushes all pending data on beforeunload via sendBeacon', () => {
     renderHook(() => useInteractionTracking())
 
     // Add a click
@@ -111,12 +114,15 @@ describe('useInteractionTracking', () => {
       }))
     })
 
-    // Trigger unload
+    // Trigger unload — uses sendBeacon
     act(() => {
       window.dispatchEvent(new Event('beforeunload'))
     })
 
     expect(sendBeaconSpy).toHaveBeenCalledTimes(1)
+    const [url, blob] = sendBeaconSpy.mock.calls[0]
+    expect(url).toContain('/api/v1/analytics/interactions')
+    expect(blob).toBeInstanceOf(Blob)
   })
 
   it('includes session_end event on beforeunload', () => {
@@ -147,10 +153,11 @@ describe('useInteractionTracking', () => {
       vi.advanceTimersByTime(10000)
     })
 
+    expect(global.fetch).not.toHaveBeenCalled()
     expect(sendBeaconSpy).not.toHaveBeenCalled()
   })
 
-  it('falls back to fetch when sendBeacon is not available', () => {
+  it('falls back to fetch when sendBeacon is not available on unload', () => {
     delete navigator.sendBeacon
 
     renderHook(() => useInteractionTracking())
@@ -163,8 +170,9 @@ describe('useInteractionTracking', () => {
       }))
     })
 
+    // beforeunload without sendBeacon falls back to fetch
     act(() => {
-      vi.advanceTimersByTime(10000)
+      window.dispatchEvent(new Event('beforeunload'))
     })
 
     expect(global.fetch).toHaveBeenCalledTimes(1)

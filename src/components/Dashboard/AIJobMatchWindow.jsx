@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { BACKEND_URL } from '../../config/api';
 import useJobApplication from '../../hooks/useJobApplication';
+import useSkillsGap from '../../hooks/useSkillsGap';
 import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
 import { AI_MATCH_PAGE_SIZE } from './dashboardConstants';
 import '../../styles/ai-match.css';
@@ -16,6 +17,9 @@ const FIT_COLORS = {
     poor: { bg: 'rgba(255, 100, 100, 0.15)', text: '#ff8888', border: 'rgba(255, 100, 100, 0.2)' },
     unknown: { bg: 'rgba(150, 150, 150, 0.15)', text: '#999', border: 'rgba(150, 150, 150, 0.2)' },
 };
+
+const TAB_RESULTS = 'results';
+const TAB_SKILLS_GAP = 'skills-gap';
 
 const AIJobMatchWindow = memo(({ initialPosition }) => {
     const { t } = useTranslation();
@@ -30,7 +34,9 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
     const [expandedId, setExpandedId] = useState(null);
     const [translatedTitles, setTranslatedTitles] = useState({});
     const [translating, setTranslating] = useState(false);
+    const [activeTab, setActiveTab] = useState(TAB_RESULTS);
     const { handleApply, appliedIds, handleSave, savedIds } = useJobApplication();
+    const { missingSkills, addedSkills, togglingSkill, toggleSkill, lastError: skillError } = useSkillsGap(results);
 
     const runAnalysis = useCallback(async () => {
         setLoading(true);
@@ -98,7 +104,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                     >
                         {loading ? t('dashboard.aiMatch.analyzing') : t('dashboard.aiMatch.runAnalysis')}
                     </button>
-                    {results.length > 0 && !loading && (
+                    {results.length > 0 && !loading && activeTab === TAB_RESULTS && (
                         <button
                             onClick={translateTitles}
                             disabled={translating}
@@ -119,6 +125,26 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                         </span>
                     )}
                 </div>
+
+                {/* Tabs */}
+                {results.length > 0 && (
+                    <div className="ai-match-tabs">
+                        <button
+                            className={`ai-match-tab ${activeTab === TAB_RESULTS ? 'active' : ''}`}
+                            onClick={() => setActiveTab(TAB_RESULTS)}
+                            style={activeTab === TAB_RESULTS ? { color: theme.primary, borderColor: theme.primary } : {}}
+                        >
+                            {t('dashboard.aiMatch.resultsTab')} ({results.length})
+                        </button>
+                        <button
+                            className={`ai-match-tab ${activeTab === TAB_SKILLS_GAP ? 'active' : ''}`}
+                            onClick={() => setActiveTab(TAB_SKILLS_GAP)}
+                            style={activeTab === TAB_SKILLS_GAP ? { color: theme.primary, borderColor: theme.primary } : {}}
+                        >
+                            {t('dashboard.aiMatch.skillsGapTab')} ({missingSkills.length})
+                        </button>
+                    </div>
+                )}
 
                 {/* Loading state */}
                 {loading && (
@@ -143,10 +169,9 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                     </div>
                 )}
 
-                {/* Results list */}
-                {results.length > 0 && (
+                {/* Results tab */}
+                {results.length > 0 && activeTab === TAB_RESULTS && (
                     <>
-                        {/* Pagination header */}
                         <div className="ai-match-pagination" style={{ color: theme.text }}>
                             <span>{results.length} {t('dashboard.jobFilter.resultsFound')}</span>
                             {totalPages > 1 && (
@@ -188,7 +213,6 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                         className="ai-match-card"
                                         style={{ border: `1px solid ${theme.borderLight}` }}
                                     >
-                                        {/* Header: title + score + fit badge */}
                                         <div className="ai-match-card-header">
                                             <div className="ai-match-card-title-col">
                                                 <div className="ai-match-card-title" style={{ color: theme.textHighlight }}>
@@ -220,7 +244,6 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                             </div>
                                         </div>
 
-                                        {/* Meta: location, remote, source */}
                                         <div className="ai-match-card-meta">
                                             {job.location && (
                                                 <span className="ai-match-card-meta-text" style={{ color: theme.text }}>
@@ -244,7 +267,6 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                             )}
                                         </div>
 
-                                        {/* Skills analysis toggle */}
                                         <button
                                             className="ai-match-skills-toggle"
                                             style={{ color: theme.primary }}
@@ -256,7 +278,6 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
 
                                         {isExpanded && (
                                             <div className="ai-match-skills-detail">
-                                                {/* Matching skills (green) */}
                                                 {job.matching_skills?.length > 0 && (
                                                     <div className="ai-match-skills-group">
                                                         <span className="ai-match-skills-label" style={{ color: '#00ff64' }}>
@@ -269,7 +290,6 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                                         </div>
                                                     </div>
                                                 )}
-                                                {/* Missing skills (red) */}
                                                 {job.missing_skills?.length > 0 && (
                                                     <div className="ai-match-skills-group">
                                                         <span className="ai-match-skills-label" style={{ color: '#ff6b6b' }}>
@@ -282,14 +302,12 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                                         </div>
                                                     </div>
                                                 )}
-                                                {/* Reason */}
                                                 {job.reason && (
                                                     <p className="ai-match-reason">{job.reason}</p>
                                                 )}
                                             </div>
                                         )}
 
-                                        {/* Footer: date + save/apply buttons */}
                                         <div className="ai-match-card-footer">
                                             <span className="ai-match-card-date" style={{ color: theme.text }}>
                                                 {job.date ? new Date(job.date).toLocaleDateString() : ''}
@@ -324,6 +342,45 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                             })}
                         </div>
                     </>
+                )}
+
+                {/* Skills Gap tab */}
+                {results.length > 0 && activeTab === TAB_SKILLS_GAP && (
+                    <div className="ai-match-skills-gap">
+                        <p className="ai-match-skills-gap-desc" style={{ color: theme.text }}>
+                            {t('dashboard.aiMatch.skillsGapDesc')}
+                        </p>
+                        {skillError && (
+                            <div className="ai-match-error">{t('dashboard.aiMatch.skillToggleError')}: {skillError}</div>
+                        )}
+                        {missingSkills.length === 0 ? (
+                            <div className="ai-match-empty" style={{ color: theme.text }}>
+                                {t('dashboard.aiMatch.skillsGapEmpty')}
+                            </div>
+                        ) : (
+                            <div className="ai-match-skills-gap-list">
+                                {missingSkills.map(skill => {
+                                    const isAdded = addedSkills.has(skill);
+                                    const isToggling = togglingSkill === skill;
+                                    return (
+                                        <button
+                                            key={skill}
+                                            className={`ai-match-skill-toggle-btn ${isAdded ? 'added' : ''}`}
+                                            onClick={() => toggleSkill(skill)}
+                                            disabled={isToggling}
+                                            style={isAdded ? {
+                                                background: 'rgba(0, 255, 100, 0.1)',
+                                                borderColor: 'rgba(0, 255, 100, 0.3)',
+                                                color: '#00ff64',
+                                            } : {}}
+                                        >
+                                            {isToggling ? '...' : isAdded ? '✓' : '+'} {skill}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
                 )}
             </div>
         </FloatingWindow>

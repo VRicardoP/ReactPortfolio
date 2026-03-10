@@ -37,7 +37,8 @@
     "databases": "DATABASES",
     "others": "OTHERS",
     "viewBars": "Bars",
-    "viewRadar": "Radar"
+    "viewRadar": "Radar",
+    "viewMatrix": "Matrix"
   },
   "profile": {
     "yearsExp": "20+ yrs",
@@ -203,7 +204,9 @@
       "tabZentraljob": "Zentraljob",
       "tabSwisstechjobs": "SwissTech",
       "tabIctjobs": "ICTjobs",
-      "applied": "Applied"
+      "applied": "Applied",
+      "save": "Save",
+      "saved": "Saved"
     },
     "selectedOffers": {
       "title": "Selected Offers",
@@ -256,7 +259,9 @@
       "topSkills": "Most Demanded Skills",
       "remoteRatio": "Remote vs On-site",
       "jobsBySource": "Jobs by Source",
-      "noData": "No job data available for analytics"
+      "noData": "No job data available for analytics",
+      "sectionMarket": "Market",
+      "sectionSalary": "Salary"
     },
     "chatAnalytics": {
       "title": "Chat Analytics - Recruiter Insights",
@@ -324,7 +329,14 @@
       "company_field": "Company",
       "notes": "Notes",
       "noApplications": "Drop jobs here or click + to add",
-      "errorLoad": "Failed to load applications"
+      "errorLoad": "Failed to load applications",
+      "errorDelete": "Failed to delete application",
+      "viewDocs": "View documents",
+      "generateDocs": "Generate documents",
+      "downloadDocs": "Download documents",
+      "openUrl": "Open job posting",
+      "markApplied": "Mark as applied",
+      "deleteApp": "Delete application"
     },
     "jsearchLive": {
       "title": "JSearch Live Search",
@@ -416,7 +428,16 @@
       "translateTitles": "Translate Titles",
       "translating": "Translating...",
       "translated": "Translated",
-      "translateTooltip": "Translate non-English/Spanish titles to English"
+      "translateTooltip": "Translate non-English/Spanish titles to English",
+      "resultsTab": "Results",
+      "skillsGapTab": "Skills Gap",
+      "skillsGapEmpty": "Run an analysis first to see missing skills",
+      "skillsGapDesc": "Skills found missing across all analyzed jobs. Toggle to add/remove from your CV.",
+      "addingSkill": "Adding...",
+      "removingSkill": "Removing...",
+      "skillAdded": "Skill added to your CV",
+      "skillRemoved": "Skill removed from your CV",
+      "skillToggleError": "Failed to update skill"
     },
     "tab": {
       "overview": "Overview",
@@ -503,6 +524,7 @@
     "invalidCredentials": "Invalid credentials",
     "authenticating": "Authenticating...",
     "login": "Login",
-    "backToPortfolio": "\u2190 Back to Portfolio"
+    "backToPortfolio": "\u2190 Back to Portfolio",
+    "sessionExpiredInactivity": "Session expired due to inactivity"
   }
 }

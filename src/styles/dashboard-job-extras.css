@@ -1,0 +1,245 @@
+/* Dashboard Job Extras — JSearch, Freshness Badges, Company Research, Tabs */
+
+/* ===== JSEARCH JOB BOARD - LinkedIn blue color ===== */
+.jsearch-card {
+  border-color: rgba(10, 102, 194, 0.3);
+}
+
+.jsearch-card:hover {
+  background: rgba(10, 102, 194, 0.06);
+  border-color: rgba(10, 102, 194, 0.5);
+}
+
+.jsearch-card .jobboard-title {
+  color: #0a66c2;
+}
+
+.jsearch-card .jobboard-type {
+  background: rgba(10, 102, 194, 0.15);
+  color: #0a66c2;
+}
+
+.jsearch-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.jsearch-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.jsearch-remote {
+  background: rgba(46, 204, 113, 0.15) !important;
+  color: #2ecc71 !important;
+}
+
+.jsearch-onsite {
+  background: rgba(10, 102, 194, 0.15) !important;
+  color: #0a66c2 !important;
+}
+
+.jsearch-salary {
+  font-size: 12px;
+  color: #2ecc71;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.jsearch-salary::before {
+  content: '💰 ';
+}
+
+.jsearch-source {
+  margin-bottom: 8px;
+}
+
+.jsearch-source-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  background: rgba(10, 102, 194, 0.1);
+  border: 1px solid rgba(10, 102, 194, 0.3);
+  border-radius: 10px;
+  color: #0a66c2;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.jsearch-source-tag:hover {
+  background: rgba(10, 102, 194, 0.2);
+  border-color: #0a66c2;
+}
+
+.jsearch-apply {
+  background: #0a66c2;
+}
+
+.jsearch-apply:hover {
+  background: #004182;
+  box-shadow: 0 0 10px rgba(10, 102, 194, 0.5);
+}
+
+/* Freshness badges for job cards (F27) */
+.freshness-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.freshness-new {
+  background: rgba(0, 255, 100, 0.15);
+  color: #00ff64;
+  border: 1px solid rgba(0, 255, 100, 0.3);
+}
+
+.freshness-recent {
+  background: rgba(0, 255, 255, 0.12);
+  color: #00ffff;
+  border: 1px solid rgba(0, 255, 255, 0.25);
+}
+
+.freshness-old {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Company research button — semantic replacement for clickable span */
+.company-research-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  line-height: inherit;
+}
+
+/* Company research panel (F28) */
+.company-research-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: rgba(15, 15, 25, 0.95);
+  border: 1px solid rgba(var(--theme-primary-rgb, 0, 255, 255), 0.4);
+  border-radius: 4px;
+  padding: 8px;
+  z-index: 200;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.company-research-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 3px;
+  color: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.9);
+  text-decoration: none;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  transition: background 0.15s ease;
+}
+
+.company-research-link:hover {
+  background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.12);
+}
+
+/* ===== JOB BOARD TABS ===== */
+.job-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 4px 6px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+.job-tabs::-webkit-scrollbar {
+  height: 3px;
+}
+
+.job-tabs::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+}
+
+.job-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(255,255,255,0.5);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease, background-color 0.2s ease, border-bottom-color 0.2s ease;
+}
+
+.job-tab:hover {
+  color: var(--tab-color, #fff);
+  background: rgba(255,255,255,0.05);
+}
+
+.job-tab.active {
+  color: var(--tab-color, #fff);
+  border-bottom-color: var(--tab-color, #fff);
+  background: rgba(255,255,255,0.06);
+}
+
+.job-tab-badge {
+  padding: 1px 5px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  line-height: 1.2;
+}
+
+/* Source badge on job cards */
+.jobboard-source-badge {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  border: 1px solid;
+  text-transform: capitalize;
+}
+
+/* Remote badge on job cards */
+.jobboard-remote-badge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  background: rgba(0,255,0,0.12);
+  color: #00ff00;
+  border: 1px solid rgba(0,255,0,0.25);
+}

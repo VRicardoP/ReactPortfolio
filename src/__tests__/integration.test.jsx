@@ -250,6 +250,123 @@ describe('Integration: Logout flow', () => {
   })
 })
 
+describe('Integration: Inactivity timeout', () => {
+  beforeEach(() => {
+    sessionStorage.clear()
+    global.fetch = vi.fn()
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('logs out after 15 minutes of inactivity and redirects to login', async () => {
+    sessionStorage.setItem('accessToken', VALID_ACCESS_TOKEN)
+    sessionStorage.setItem('refreshToken', VALID_REFRESH_TOKEN)
+    sessionStorage.setItem('tokenType', 'bearer')
+
+    render(
+      <ThemeProvider>
+        <AuthProvider>
+          <MemoryRouter initialEntries={['/dashboard']}>
+            <Routes>
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <div data-testid="protected-content">Dashboard</div>
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/login" element={<div data-testid="login-redirect">Login</div>} />
+            </Routes>
+          </MemoryRouter>
+        </AuthProvider>
+      </ThemeProvider>
+    )
+
+    // Should be authenticated initially
+    await waitFor(() => {
+      expect(screen.getByTestId('protected-content')).toBeInTheDocument()
+    })
+
+    // Advance 15 minutes (inactivity timeout)
+    vi.advanceTimersByTime(15 * 60 * 1000)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('login-redirect')).toBeInTheDocument()
+    })
+
+    // Session should be cleared and reason set
+    expect(sessionStorage.getItem('accessToken')).toBeNull()
+    expect(sessionStorage.getItem('logoutReason')).toBe('inactivity')
+  })
+
+  it('resets inactivity timer on user interaction', async () => {
+    sessionStorage.setItem('accessToken', VALID_ACCESS_TOKEN)
+    sessionStorage.setItem('refreshToken', VALID_REFRESH_TOKEN)
+    sessionStorage.setItem('tokenType', 'bearer')
+
+    render(
+      <ThemeProvider>
+        <AuthProvider>
+          <MemoryRouter initialEntries={['/dashboard']}>
+            <Routes>
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <div data-testid="protected-content">Dashboard</div>
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/login" element={<div data-testid="login-redirect">Login</div>} />
+            </Routes>
+          </MemoryRouter>
+        </AuthProvider>
+      </ThemeProvider>
+    )
+
+    await waitFor(() => {
+      expect(screen.getByTestId('protected-content')).toBeInTheDocument()
+    })
+
+    // Advance 14 minutes (just before timeout)
+    vi.advanceTimersByTime(14 * 60 * 1000)
+
+    // User interacts — simulate a click to reset the timer
+    window.dispatchEvent(new Event('click'))
+
+    // Advance another 14 minutes — should still be within the NEW 15-min window
+    vi.advanceTimersByTime(14 * 60 * 1000)
+
+    // Should still be authenticated (14 min after the reset, not 15)
+    expect(screen.getByTestId('protected-content')).toBeInTheDocument()
+
+    // Now advance 2 more minutes (total 16 min since last activity) — should expire
+    vi.advanceTimersByTime(2 * 60 * 1000)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('login-redirect')).toBeInTheDocument()
+    })
+  })
+
+  it('shows inactivity message on login page after timeout', async () => {
+    // Simulate that AuthContext set the reason before redirect
+    sessionStorage.setItem('logoutReason', 'inactivity')
+
+    renderLoginPage()
+
+    await waitFor(() => {
+      expect(screen.getByText('Session expired due to inactivity')).toBeInTheDocument()
+    })
+
+    // The reason should be cleared after display
+    expect(sessionStorage.getItem('logoutReason')).toBeNull()
+  })
+})
+
 // ---------------------------------------------------------------------------
 // Test helpers
 // ---------------------------------------------------------------------------

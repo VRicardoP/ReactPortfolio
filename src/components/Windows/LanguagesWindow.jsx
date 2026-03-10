@@ -3,7 +3,19 @@ import FloatingWindow from './FloatingWindow';
 
 const LEVEL_MAP = {
     'native': 5,
+    'nativo': 5,
+    'nativa': 5,
+    'madrelingua': 5,
+    '母語': 5,
+    '母国語': 5,
+    'muttersprache': 5,
+    'maternel': 5,
+    'maternelle': 5,
     'bilingual': 5,
+    'bilingüe': 5,
+    'bilingue': 5,
+    'zweisprachig': 5,
+    'バイリンガル': 5,
     'c2': 5,
     'c1': 4,
     'b2': 3,
@@ -11,6 +23,10 @@ const LEVEL_MAP = {
     'a2': 1,
     'a1': 1,
     'beginner': 1,
+    'básico': 1,
+    'base': 1,
+    'grundkenntnisse': 1,
+    '基礎': 1,
 };
 
 const getLevelDots = (levelStr) => {

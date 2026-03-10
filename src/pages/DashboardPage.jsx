@@ -10,7 +10,9 @@ import useTypewriter from '../hooks/useTypewriter';
 import useIsMobile from '../hooks/useIsMobile';
 import DesktopDashboardContent from '../components/Dashboard/DesktopDashboardContent';
 import MobileDashboardLayout from '../components/Dashboard/MobileDashboardLayout';
-import '../styles/dashboard.css';
+import '../styles/dashboard-layout.css';
+import '../styles/dashboard-jobboard.css';
+import '../styles/dashboard-job-extras.css';
 import '../styles/mobile.css';
 import '../styles/cv-generation.css';
 

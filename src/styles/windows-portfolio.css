@@ -1,0 +1,273 @@
+/* Portfolio & Achievements Windows */
+
+/* Portfolio Window */
+.portfolio-content {
+  height: 100%;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.portfolio-item {
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 5px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.portfolio-item:hover {
+  background: rgba(0, 255, 255, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+}
+
+.portfolio-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #D3D3D3;
+  margin-bottom: 5px;
+}
+
+.portfolio-tech {
+  font-size: 14px;
+  color: #00ffff;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.portfolio-description {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #D3D3D3;
+}
+
+/* Portfolio Window — Enriched Cards (F11) */
+.portfolio-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.portfolio-status-badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.portfolio-status-badge.status-completed {
+  background: rgba(0, 255, 0, 0.15);
+  border: 1px solid rgba(0, 255, 0, 0.4);
+  color: #00ff00;
+}
+
+.portfolio-status-badge.status-in-progress {
+  background: rgba(255, 165, 0, 0.15);
+  border: 1px solid rgba(255, 165, 0, 0.4);
+  color: #ffa500;
+}
+
+.portfolio-tech-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.portfolio-tech-pill {
+  padding: 2px 8px;
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 10px;
+  font-size: 11px;
+  color: #00ffff;
+}
+
+.portfolio-links {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.portfolio-link {
+  color: #00ffff;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.portfolio-link:hover {
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+}
+
+/* Achievements Window (F12) */
+.achievements-content {
+  height: 100%;
+  padding: 8px;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.achievement-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 10px;
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 8px;
+  text-align: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.achievement-card:hover {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: rgba(0, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+}
+
+.achievement-icon {
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  color: rgba(0, 255, 255, 0.5);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+.achievement-value {
+  font-size: 22px;
+  font-weight: bold;
+  color: #00ffff;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  margin-bottom: 4px;
+}
+
+.achievement-metric {
+  font-size: 11px;
+  color: #D3D3D3;
+  line-height: 1.3;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+
+  .portfolio-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+/* Small tablets and large mobile (481px - 768px) */
+@media (max-width: 768px) {
+
+  /* Portfolio */
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .portfolio-item {
+    padding: 12px;
+  }
+
+  .portfolio-title {
+    font-size: 16px;
+  }
+
+  .portfolio-tech,
+  .portfolio-description {
+    font-size: 13px;
+  }
+}
+
+/* Mobile (320px - 480px) */
+@media (max-width: 480px) {
+
+  /* Portfolio */
+  .portfolio-grid {
+    gap: 10px;
+  }
+
+  .portfolio-item {
+    padding: 10px;
+  }
+
+  .portfolio-item:hover {
+    transform: translateY(-2px);
+  }
+
+  .portfolio-title {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .portfolio-tech {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .portfolio-description {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+
+/* Very small mobile (< 320px) */
+@media (max-width: 320px) {
+
+  .portfolio-title {
+    font-size: 14px;
+  }
+
+  .portfolio-tech,
+  .portfolio-description {
+    font-size: 11px;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+
+  .portfolio-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+/* Touch devices */
+@media (hover: none) and (pointer: coarse) {
+
+  .portfolio-item {
+    padding: 14px;
+  }
+
+  /* Increase touch area for hover effects */
+  .portfolio-item:active {
+    background: rgba(0, 255, 255, 0.15);
+    transform: scale(0.98);
+  }
+}
+
+/* Large screens (> 1440px) */
+@media (min-width: 1440px) {
+
+  .portfolio-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}

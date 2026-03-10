@@ -1,99 +1,224 @@
 {
-    "name": "Vicente Ricardo Pau Valero",
-    "title": "フルスタック開発者 & ITシステムエンジニア",
+    "name": "ビセンテ・リカルド・パウ・バレロ",
+    "title": "シニアシステムエンジニア / 会話型AIエンジニア",
     "email": "vicente.pau@hotmail.com",
-    "phone": "+34 644 213 173",
-    "location": "カルカイシェント、バレンシア（スペイン）",
+    "location": "バレンシア、スペイン（EU市民 — CETタイムゾーン）",
     "profile": {
-        "description": "私はシステム管理、ネットワーク管理、フルスタックソフトウェア開発にわたる20年以上の経験を持つITプロフェッショナルです。キャリアを通じて、重要なデータセンターインフラの移行・強化からAI搭載アプリケーションのゼロからの構築まで、エンドツーエンドの技術ソリューションを設計・提供。医療（Hospital de la Ribera）、自動車（Ford）、小売（Mercadona）などの高度に規制された分野で1,000台以上の端末環境を管理し、システムの保守・管理・セキュリティを担当。英語に堪能で、スペイン、イギリス、ヨーロッパ全域の国際チームで勤務 — DHL Supply Chainではスペイン、ドイツ、イギリス、ハンガリーのFord工場へのリモートサポートを担当。"
+        "description": "システム管理、重要インフラ、ソフトウェア開発において25年以上の継続的な実務経験を持つITエンジニアです。大規模インフラの安定運用（病院、全国CPD、医療ネットワーク）とモダンなフルスタック開発・AIエージェント設計を組み合わせた複合的なスキルセットを備えています。EU市民として、スイス企業とのリモート契約に対応可能です（CETビジネスアワー完全対応）。精密さ、信頼性、継続的な技術向上を重視する組織への貢献を希望しています。"
     },
     "softSkills": [
-        "コミットメントと責任感",
-        "批判的・分析的思考",
-        "職業的誠実さ",
-        "共感とユーザー志向",
-        "建設的な紛争解決",
-        "継続的な学習",
-        "効果的なチームワーク",
-        "主体性と積極性",
-        "ストレスマネジメント",
-        "適応力",
-        "複雑な問題解決",
-        "明確なコミュニケーション",
-        "自己動機付けと自己管理"
+        "重要システムにおける自律的な判断と責任ある対応",
+        "継続的な自己研鑽（就業中の学習継続・資格取得）",
+        "英語による高度な技術コミュニケーション（C1レベル）",
+        "組織への貢献を意識した体系的な問題解決",
+        "将来の担当者を意識した技術文書の作成・整備",
+        "リモート環境での効果的な非同期コミュニケーション",
+        "エンドツーエンドの責任感と主体的な改善提案",
+        "危機対応における冷静かつ体系的な判断"
     ],
     "education": [
-        {"title": "Webアプリケーション開発上級技術者（DAW）", "institution": "IES / FP — EQF Level 5 · 120 ECTS · 2000時間 · Europass", "date": "2025", "type": "degree", "description": "クライアントサイド開発（JavaScript、DOM、非同期AJAX）、サーバーサイド開発（PHP、Node.js、MVC、RESTウェブサービス、セキュアなデータアクセス）、Webデプロイメントとサーバー管理、Webインターフェース設計（WCAGアクセシビリティ、ユーザビリティ、CSS3）、データベース（リレーショナル設計、SQL、ストアドプロシージャ、ORM）、OOP、マークアップ言語（HTML5、XML、JSON）、開発環境（テスト、UML）、ERP-CRM（Odoo）。大学進学資格取得。"},
-        {"title": "マルチプラットフォームアプリ開発上級技術者（DAM）", "institution": "IES / FP — EQF Level 5 · 120 ECTS · 2000時間 · Europass", "date": "2024", "type": "degree", "description": "Java OOP、データアクセス（JDBC、Hibernate ORM、オブジェクトリレーショナルおよびXMLデータベース）、モバイル開発（Android/Kotlin、Flutter/Dart）、サービスとプロセス（マルチスレッド、ソケット、ネットワークサービス、暗号化）、インターフェース開発（ユーザビリティ、レポート）、ERP-CRM（Odoo）、データベース（高度なSQL、ストアドプロシージャ）、開発環境（TDD、UML）、2D/3Dゲームエンジン。大学進学資格取得。"},
-        {"title": "Reactブートキャンプ", "institution": "Geekshubs Academy", "date": "2023", "type": "bootcamp", "description": "React.jsコンポーネント、フック、ステート、コンテキスト、Redux、REST API統合、コンポーネントテスト"},
-        {"title": "情報科学・経営学", "institution": "Universidad Politécnica de Valencia", "date": "2003 – 2005", "type": "degree", "description": ""},
-        {"title": "サーバー管理コース", "institution": "", "date": "2002 – 2003", "type": "course", "description": ""},
-        {"title": "IT管理スペシャリスト技術者", "institution": "", "date": "1997 – 2000", "type": "degree", "description": ""}
+        {
+            "title": "上級技術者資格 Webアプリケーション開発 (DAW)",
+            "institution": "IES Jaume II el Just — タベルネス・デ・ラ・バジディグナ校（スペイン・バレンシア）— EQF レベル5 | 120 ECTS | Europass認定",
+            "date": "2024年 – 2025年",
+            "type": "degree",
+            "description": "EU全域で有効なEQFレベル5の公式資格（Europassサプリメント付）。主要科目：クライアント・サーバーサイドWeb開発（JavaScript、PHP、Node.js）、Webアプリケーションデプロイ、アクセシブルインターフェース設計（HTML5、CSS3）、リレーショナルデータベース、ERP/CRM（Odoo）。"
+        },
+        {
+            "title": "上級技術者資格 マルチプラットフォームアプリケーション開発 (DAM)",
+            "institution": "IES Jaume II el Just — タベルネス・デ・ラ・バジディグナ校（スペイン・バレンシア）— EQF レベル5 | 120 ECTS | Europass認定",
+            "date": "2021年 – 2024年",
+            "type": "degree",
+            "description": "EU全域で有効なEQFレベル5の公式資格（Europassサプリメント付）。主要科目：Javaによるオブジェクト指向プログラミング、モバイル開発（Android/Kotlin、Flutter/Dart）、HibernateによるORMデータアクセス、ERP/CRM（Odoo）、TDD、UML。在職中に取得。"
+        },
+        {
+            "title": "Reactブートキャンプ",
+            "institution": "Geekshubs Academy（スペイン）",
+            "date": "2023年",
+            "type": "bootcamp",
+            "description": "React.jsの集中研修：関数コンポーネント、Hooks、Reduxによる状態管理、REST API連携、コンポーネントテスト。"
+        },
+        {
+            "title": "情報管理技術者資格（FPII）",
+            "institution": "スペイン",
+            "date": "1997年 – 2000年",
+            "type": "degree",
+            "description": "技術キャリアの基盤となる公式資格。プログラミング基礎、オペレーティングシステム、ネットワーク、業務管理システムを修了。"
+        }
     ],
     "experience": [
-        {"title": "ソフトウェア開発者（AIプロジェクト）— インターンシップ", "company": "Cook-Code System Startup", "location": "バレンシア", "date": "2025 – 2026", "description": "'Minichef'をゼロから構築：プロの厨房管理のためのAI音声アシスタント。リアルタイム音声認識（Vosk）、自然言語処理、データベース操作、音声合成（gTTS/Pygame）を統合した完全なPythonパイプラインを開発し、在庫、レシピ、仕入先データへのハンズフリーの会話型アクセスを実現。"},
-        {"title": "ITサポート技術者 — 医療ネットワーク", "company": "Telefónica / Consellería de Sanidad", "location": "バレンシア州", "date": "2022 – 2025", "description": "3つの州にわたる病院と医療センターのネットワークインフラで99%以上の稼働率を維持。CiscoおよびFortigateルーター、ファイアウォール、VPNを管理。Jira、Confluence、カスタムチケッティングアプリによるインシデント管理。"},
-        {"title": "サポートスペシャリスト — フォード欧州事業", "company": "DHL Supply Chain", "location": "バレンシア", "date": "2020 – 2021", "description": "4カ国（スペイン、ドイツ、イギリス、ハンガリー）のフォード製造工場へのリモートITサポート。Active Directoryユーザーライフサイクル管理の効率化。インドにホストされた仮想サーバーの管理。エラー発生時にインドのサーバーでデータベースクリーンアップスクリプトを実行する重要なリモート介入を実施 — これはミッションクリティカルなプロセスであり、古いデータのクリアに失敗するとヨーロッパの工場への情報フローが遮断され、生産ラインが停止するリスクがあった。"},
-        {"title": "N2サポート技術者 & ジュニア開発者", "company": "Temática Software", "location": "バレンシア", "date": "2019", "description": "LinuxおよびWindowsインフラ全体にZabbixモニタリングを導入。VMware ESXi仮想化とAWSクラウドインフラを構築。PythonとJavaのジュニア開発者として貢献。Oracle SQLデータベースサポート。バレンシア大学ITIとのAgile/Scrum。"},
-        {"title": "システム管理者", "company": "Postres Lácteos Romar S.L.", "location": "バレンシア", "date": "2016 – 2018", "description": "データセンターをゼロから再設計し、インフラ性能を60%向上。企業初のセキュリティレイヤー（Cisco/Sophosファイアウォール）を導入。ERPシステムの選定・調達を主導。すべてのIT運用を単独で管理：ESXi、VPN/AD、Linux、SQL。"},
-        {"title": "IT管理者 — データセンター運用", "company": "Tecnocom (Ford & Mercadona)", "location": "バレンシア", "date": "2016", "description": "フォード（エンジン工場）とMercadona（全国小売）のミッションクリティカルなデータセンターを運用。HP OVOによるインフラ監視、Axwayによるワークフロー自動化。HP DataprotectorとCommVaultによるバックアップ管理でデータ損失ゼロ。"},
-        {"title": "IT管理者 & 技術者", "company": "VSL Support Ltd", "location": "イングランド南部、イギリス", "date": "2013 – 2015", "description": "イングランド南部のNHS病院、ホテルチェーン、レストラングループ、自動車フランチャイズのITシステムとネットワークを管理。新規クライアントサイトへの完全なネットワークおよびサーバーインフラの導入。"},
-        {"title": "システム管理者 — 病院IT", "company": "Hospital de la Ribera", "location": "アルシラ、バレンシア", "date": "2009 – 2011", "description": "夜間シフトの唯一のIT担当者として、重要な医療ITインフラ（Citrix、Exchange、仮想化システム、ルーター、ファイアウォール）の24時間365日の継続性を確保。"}
+        {
+            "title": "会話型AIエンジニア / フルスタック開発者",
+            "company": "Sfera-AI",
+            "location": "バルセロナ、スペイン（完全リモート勤務）",
+            "date": "2025年 – 現在",
+            "description": "Claude API（Anthropic社）を基盤とした電話対応型会話AIエージェントの設計・開発・デプロイを担当しています。4つのエージェントが本番環境で稼働し、多業種の企業において大量の同時通話処理を実現しています。React・Python・PostgreSQLによるメトリクスダッシュボードの開発、n8nを活用した業務フロー自動化も担当。KubernetesとCI/CDパイプラインの導入を進めており、製品全体の技術的責任を担っています。"
+        },
+        {
+            "title": "ソフトウェア開発者 — 実習（Minichefプロジェクト）",
+            "company": "Cook-Code System",
+            "location": "スペイン",
+            "date": "2025年",
+            "description": "プロフェッショナルキッチン向け音声AIアシスタント「Minichef」を単独で開発しました。Pythonによる音声認識（Vosk STT）→ LLM処理（Groq）→ 音声合成（gTTS + Pygame）の完全パイプラインを構築。MySQLバックエンドとの音声によるCRUD操作を実装し、包括的な技術ドキュメントを整備しました。実習終了後も企業による開発が継続されています。"
+        },
+        {
+            "title": "ITサポート技術者 — 医療ネットワーク基幹インフラ",
+            "company": "Telefónica / バレンシア州保健局",
+            "location": "バレンシア、スペイン",
+            "date": "2023年 – 2024年",
+            "description": "バレンシア州の25医療機関（アリカンテ・カステリョン・バレンシア3省）の基幹ネットワークインフラのサポートを担当しました。CiscoおよびFortigateのルーター・ファイアウォール・VPNの構成・維持管理に従事。通常月約100チケット、危機的状況時には300〜400件に対応しました。チーム内唯一の英語対応者として、CiscoおよびFortigateとの全技術的英語コミュニケーションを担当しました。"
+        },
+        {
+            "title": "ITサポート技術者 — システム管理",
+            "company": "BigBuy",
+            "location": "バレンシア、スペイン",
+            "date": "2022年 – 2023年",
+            "description": "欧州最大級のB2B eコマース卸売業者（従業員約350名）にて、約350台のデバイスを管理するCiscoネットワーク（VLANを含む）の維持管理を担当しました。ITインベントリ管理システム（OCS Inventory NG）と監視システム（Zabbix）を自主的に提案・導入し、初の体系的インフラ可視化を実現しました。AWS上のMySQL管理者パスワードの緊急復旧作業を担当者不在の状況下で完遂しました。"
+        },
+        {
+            "title": "ITサポートスペシャリスト — Ford欧州拠点",
+            "company": "DHL Supply Chain",
+            "location": "バレンシア、スペイン（完全リモート勤務）",
+            "date": "2020年 – 2021年",
+            "description": "スペイン・ドイツ・イギリス・ハンガリーのFord工場およびインドの仮想環境約15台を対象に、完全リモートでITサポートを提供しました。欧州全体のActive Directory管理、VPN、工場データベースの運用を担当。Java/Node.jsによるバックアップ確認と自動アラートシステムを開発し、日々の手作業確認業務を自動化しました。"
+        },
+        {
+            "title": "システム管理者 / L2サポート技術者",
+            "company": "Temática Software",
+            "location": "バレンシア、スペイン",
+            "date": "2019年",
+            "description": "自社製光学機器業界向けERPを使用するスペイン全国3,000以上の光学店舗へのITサポートを担当しました。Zabbix・VMware ESXi・Amazon AWSの管理に加え、Oracle SQLデータベースの移行作業に参加。バレンシア大学ITI研究所との協働のもと、JiraとScrumを活用したアジャイル開発環境で業務を遂行しました。"
+        },
+        {
+            "title": "ITシステム管理者",
+            "company": "Postres Lácteos Romar S.L.",
+            "location": "バレンシア、スペイン",
+            "date": "2016年 – 2018年",
+            "description": "従業員約200名の食品企業において、IT部門を単独で担当しました。セキュリティシステムが皆無だった同社に対し、Cisco・SophosファイアウォールによるITセキュリティ基盤をゼロから構築。Microsoft社と直接連携しMicrosoft Dynamics 365の導入プロセス全体を主導し、データセンターの再設計によりインフラパフォーマンスを60%向上させました。"
+        },
+        {
+            "title": "ITオペレーター — 全国データセンター",
+            "company": "Tecnocom / Mercadona",
+            "location": "バレンシア、スペイン",
+            "date": "2016年",
+            "description": "スペイン最大の小売チェーンの全国データセンターにて、約1,500店舗・15,000以上のエンティティを管理するインフラの監視・運用を担当しました。HP OVO、Axwayオートメーション、HP Dataprotector、CommVaultを使用した高可用性環境での日常的な障害対応を経験しました。"
+        },
+        {
+            "title": "ITシステム管理者 / 技術者",
+            "company": "VSL Support Ltd",
+            "location": "ブライトン、イングランド南部、イギリス",
+            "date": "2013年 – 2015年",
+            "description": "イングランド南部の複数クライアント（NHS病院、飲食チェーン、自動車整備）約15社に対して、英語のみでITサポートを提供しました。サーバーのインストール・構成、Active Directory、Terminal Server、Citrixの管理を担当。2年間の海外勤務を通じ、英語技術コミュニケーション能力をC1レベルまで確立しました。"
+        },
+        {
+            "title": "システム管理者 / Webデベロッパー",
+            "company": "Design Queen（ニュージーランド）",
+            "location": "ニュージーランド（完全リモート勤務）",
+            "date": "2011年 – 2012年",
+            "description": "ニュージーランド滞在中に、4社のWebクライアントのシステム管理と開発業務を完全リモートで担当しました。HTML、CSS、JavaScript、Node.js、MySQLを使用。FTPサーバーの管理も担当し、国際的なリモートワーク環境での業務遂行能力を培いました。"
+        },
+        {
+            "title": "ITシステム技術者 — 夜間シフト担当",
+            "company": "Hospital de la Ribera（リベラ病院）",
+            "location": "アルジラ、バレンシア、スペイン",
+            "date": "2009年 – 2011年",
+            "description": "スペイン初の民間委託公立病院（病床数301床、職員数1,200名）の夜間シフトを単独で担当しました。Citrix、Active Directory、Terminal Server、ファイアウォールおよび行政向けバックアップシステムの管理・運用に責任を持ちました。夜間の大規模バックアップ障害を、上長不在の状況下で独立して診断・解決した実績があります。"
+        }
     ],
     "languages": [
-        {"language": "スペイン語", "level": "ネイティブ"},
-        {"language": "英語", "level": "バイリンガル / C1+"},
-        {"language": "イタリア語", "level": "初級"}
+        { "language": "スペイン語", "level": "母国語" },
+        { "language": "バレンシア語", "level": "母国語" },
+        { "language": "カタルーニャ語", "level": "母国語 / バイリンガル" },
+        { "language": "英語", "level": "C1 — ビジネスレベル（高度な技術コミュニケーション対応）" },
+        { "language": "イタリア語", "level": "A2 — 基礎レベル" }
     ],
     "techSkills": {
         "frontend": [
-            {"name": "HTML5 / CSS3 / XML", "level": 95},
-            {"name": "JavaScript", "level": 90},
-            {"name": "React.js", "level": 88},
-            {"name": "Three.js / WebGL", "level": 78},
-            {"name": "Flutter / Kotlin (Mobile)", "level": 75}
+            { "name": "React.js", "level": 85 },
+            { "name": "JavaScript (ES6+)", "level": 90 },
+            { "name": "HTML5 / CSS3", "level": 85 },
+            { "name": "n8n（業務自動化）", "level": 80 }
         ],
         "backend": [
-            {"name": "Python / FastAPI", "level": 90},
-            {"name": "Java / Spring", "level": 85},
-            {"name": "Node.js / Express", "level": 85},
-            {"name": "PHP", "level": 80}
+            { "name": "Python", "level": 88 },
+            { "name": "Node.js", "level": 80 },
+            { "name": "Bash / シェルスクリプト", "level": 88 },
+            { "name": "Java", "level": 70 },
+            { "name": "PHP", "level": 60 }
         ],
         "databases": [
-            {"name": "Oracle SQL", "level": 88},
-            {"name": "MySQL / PostgreSQL", "level": 88},
-            {"name": "Microsoft SQL Server", "level": 82},
-            {"name": "SQLAlchemy / Alembic (ORM)", "level": 85},
-            {"name": "Redis", "level": 72}
+            { "name": "MySQL", "level": 88 },
+            { "name": "PostgreSQL", "level": 82 },
+            { "name": "Microsoft SQL Server", "level": 70 },
+            { "name": "Oracle SQL", "level": 65 }
         ],
         "others": [
-            {"name": "Windows Server / Linux Admin", "level": 95},
-            {"name": "VMware / ESXi", "level": 92},
-            {"name": "Network Security (Cisco, Sophos, Fortigate)", "level": 90},
-            {"name": "Active Directory / VPN", "level": 90},
-            {"name": "Git / GitHub", "level": 88},
-            {"name": "Docker / AWS", "level": 78},
-            {"name": "Agile / Scrum (Jira, Confluence)", "level": 85},
-            {"name": "AI / ML (sentence-transformers, Groq, NLP)", "level": 75}
+            { "name": "Linux（Ubuntu / CentOS / Debian）", "level": 95 },
+            { "name": "Windows Server / Active Directory", "level": 95 },
+            { "name": "VMware ESXi", "level": 90 },
+            { "name": "Ciscoネットワーク / VLAN / VPN", "level": 90 },
+            { "name": "ファイアウォール（Cisco / Sophos / Fortigate）", "level": 88 },
+            { "name": "Claude API / LLM統合", "level": 88 },
+            { "name": "Docker", "level": 82 },
+            { "name": "Zabbix", "level": 85 },
+            { "name": "Git", "level": 85 },
+            { "name": "Jira / Confluence", "level": 88 },
+            { "name": "Amazon AWS", "level": 75 },
+            { "name": "Kubernetes", "level": 72 },
+            { "name": "CI/CD（GitHub Actions）", "level": 72 },
+            { "name": "Microsoft Dynamics 365", "level": 70 }
         ]
     },
     "portfolio": [
-        {"title": "Minichef — AI音声アシスタント", "tech": ["Python", "Vosk", "gTTS", "Pygame", "SQLite"], "description": "リアルタイム音声認識、自然言語処理、音声合成によるプロの厨房管理のためのAI音声アシスタント。", "github": "", "demo": "", "status": "completed"},
-        {"title": "インタラクティブポートフォリオ", "tech": ["React", "FastAPI", "PostgreSQL", "Three.js", "Chart.js", "Docker", "sentence-transformers", "Groq AI"], "description": "デスクトップウィンドウUIメタファーのフルスタックポートフォリオ。AIチャットボット、マップ付き訪問者分析、8つのAPI（Jobicy、Remotive、Arbeitnow、JSearch、RemoteOK、Himalayas、Adzuna、WeWorkRemotely）からの求人集約と統合検索、AIジョブマッチング（sentence-transformers + LLM再ランキング）、カンバンパイプライン、給与分析、SSEリアルタイム通知、リフレッシュトークン付きJWT認証、6つのThree.js/Canvas背景、ターミナルイースターエッグ、完全なi18n（6言語）、WCAGアクセシビリティ。", "github": "", "demo": "", "status": "completed"},
-        {"title": "医療ネットワーク管理", "tech": ["Cisco", "Fortigate", "VPN", "Jira", "Confluence"], "description": "3つの州にわたる病院のインフラ管理、重要な医療サービスで99%以上の稼働率を維持。", "github": "", "demo": "", "status": "completed"}
+        {
+            "title": "Minichef — プロキッチン向け音声AIアシスタント",
+            "tech": ["Python", "Vosk STT", "Groq LLM", "gTTS", "MySQL", "Pygame"],
+            "description": "プロフェッショナルキッチンの業務管理を支援する音声操作型AIアシスタント。音声認識→LLM処理→音声応答の完全パイプラインをPythonで構築。音声コマンドによる在庫・レシピ・仕入先のCRUD操作を実現。実習期間中に単独で開発し、終了後も企業により継続的に改善が進められています。",
+            "github": "",
+            "demo": "",
+            "status": "継続中"
+        },
+        {
+            "title": "メトリクスダッシュボード — Sfera-AI",
+            "tech": ["React.js", "Python", "PostgreSQL", "Claude API"],
+            "description": "Sfera-AIの顧客企業向けWebダッシュボード。電話対応型AIエージェントのパフォーマンスをリアルタイムで可視化：通話量、解決率、平均対応時間、顧客別ビジネスメトリクス。",
+            "github": "",
+            "demo": "",
+            "status": "本番稼働中"
+        },
+        {
+            "title": "電話対応型会話AIエージェント",
+            "tech": ["Claude API", "Python", "n8n", "PostgreSQL"],
+            "description": "多業種の企業向けに構築された4つの電話AIエージェント。大量の同時通話を自律的に処理し、n8nを通じてEメール・WhatsApp・SMS・予約管理と自動連携。企業の顧客対応業務の効率化に貢献しています。",
+            "github": "",
+            "demo": "",
+            "status": "本番稼働中"
+        },
+        {
+            "title": "OCS Inventory + Zabbix 導入 — BigBuy社",
+            "tech": ["OCS Inventory NG", "Zabbix", "Linux", "MySQL", "AWS"],
+            "description": "欧州最大級のB2B eコマース卸売業者（従業員約350名）に対し、ITインベントリ管理システムと監視システムを自主提案により導入。Excelによる手作業管理を自動化し、社内初のインフラ可視化基盤を整備しました。",
+            "github": "",
+            "demo": "",
+            "status": "導入完了"
+        }
     ],
     "achievements": [
-        {"metric": "ネットワーク稼働率", "value": "99%+", "icon": "NET"},
-        {"metric": "インフラ性能向上", "value": "60%", "icon": "UP"},
-        {"metric": "管理端末数", "value": "1,000+", "icon": "SYS"},
-        {"metric": "対応国数（リモート）", "value": "4", "icon": "GEO"},
-        {"metric": "データ損失", "value": "ゼロ", "icon": "SEC"},
-        {"metric": "経験年数", "value": "20+", "icon": "EXP"},
-        {"metric": "テックスタック深度", "value": "19+", "icon": "DEV"},
-        {"metric": "医療システム", "value": "3州", "icon": "MED"}
+        { "metric": "継続的な実務経験年数", "value": "25年以上", "icon": "EXP" },
+        { "metric": "本番稼働中のAIエージェント数", "value": "4", "icon": "DEV" },
+        { "metric": "監視対象店舗数（Mercadona CPD）", "value": "1,500以上", "icon": "SYS" },
+        { "metric": "サポート対象医療機関数", "value": "25", "icon": "MED" },
+        { "metric": "サポート対象クライアント数（Temática）", "value": "3,000以上", "icon": "NET" },
+        { "metric": "CPDパフォーマンス向上（Romar社）", "value": "+60%", "icon": "UP" },
+        { "metric": "国際リモート勤務開始年", "value": "2020年", "icon": "GEO" },
+        { "metric": "実務使用言語数", "value": "4", "icon": "SEC" }
     ],
     "contact": {
-        "message": "コラボレーションに興味がありますか？メールでご連絡ください：",
-        "social": {"linkedin": "", "github": "", "twitter": "", "instagram": ""}
+        "message": "重要インフラ管理と会話型AI開発の両方の専門知識を持つITエンジニアをお探しでしょうか。お気軽にご連絡いただくか、チャットボットを通じて経歴の詳細をご確認ください。",
+        "social": {
+            "linkedin": "",
+            "github": "",
+            "twitter": ""
+        }
     }
 }

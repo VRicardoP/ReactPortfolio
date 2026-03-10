@@ -1,9 +1,9 @@
 /* ===== AI JOB MATCH WINDOW ===== */
 /* Static layout styles extracted from AIJobMatchWindow.jsx */
 /* Dynamic theme colors (theme.primary, theme.text, etc.) remain as inline styles */
-/* Existing classes (ai-match-header, ai-match-analyze-btn, ai-match-meta, ai-match-loading, */
+/* Card-level styles (ai-match-header, ai-match-analyze-btn, ai-match-meta, ai-match-loading, */
 /* ai-match-error, ai-match-score, ai-match-fit-badge, ai-match-skills-toggle, */
-/* ai-match-skills-detail, ai-match-skills-label, ai-match-reason) live in dashboard.css */
+/* ai-match-skills-detail, ai-match-skills-label, ai-match-reason) are at the bottom of this file */
 
 .ai-match-content {
   display: flex;
@@ -238,8 +238,197 @@
   cursor: help;
 }
 
+/* ===== TABS ===== */
+
+.ai-match-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ai-match-tab {
+  padding: 6px 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.ai-match-tab:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.ai-match-tab.active {
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+}
+
+/* ===== SKILLS GAP TAB ===== */
+
+.ai-match-skills-gap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.ai-match-skills-gap-desc {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  opacity: 0.6;
+  margin: 0 0 10px 0;
+}
+
+.ai-match-skills-gap-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ai-match-skill-toggle-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 100, 100, 0.3);
+  background: rgba(255, 100, 100, 0.08);
+  color: #ff6b6b;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.ai-match-skill-toggle-btn:hover:not(:disabled) {
+  background: rgba(255, 100, 100, 0.18);
+}
+
+.ai-match-skill-toggle-btn.added {
+  border-color: rgba(0, 255, 100, 0.3);
+  background: rgba(0, 255, 100, 0.1);
+  color: #00ff64;
+}
+
+.ai-match-skill-toggle-btn.added:hover:not(:disabled) {
+  background: rgba(0, 255, 100, 0.2);
+}
+
+.ai-match-skill-toggle-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ai-match-spinner {
     animation: none;
   }
+}
+
+/* AI Match — Card-level styles (from dashboard) */
+
+.ai-match-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ai-match-analyze-btn {
+  padding: 8px 20px;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.ai-match-analyze-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ai-match-meta {
+  font-size: 11px;
+  color: rgba(211, 211, 211, 0.6);
+  font-family: 'Courier New', monospace;
+}
+
+.ai-match-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 30px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.ai-match-score {
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+}
+
+.ai-match-fit-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.ai-match-skills-toggle {
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px 0;
+  font-family: 'Courier New', monospace;
+  opacity: 0.8;
+  user-select: none;
+}
+
+.ai-match-skills-toggle:hover {
+  opacity: 1;
+}
+
+.ai-match-skills-detail {
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+.ai-match-skills-label {
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.ai-match-reason {
+  font-size: 11px;
+  color: rgba(211, 211, 211, 0.8);
+  font-family: 'Courier New', monospace;
+  margin: 6px 0 0 0;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.ai-match-error {
+  padding: 10px;
+  color: #ff6b6b;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  text-align: center;
+  background: rgba(255, 100, 100, 0.1);
+  border-radius: 4px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

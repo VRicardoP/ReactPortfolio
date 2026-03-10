@@ -17,12 +17,41 @@ import FloatingWindow from '../Windows/FloatingWindow';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
+const SALARY_BUCKETS = [
+    { label: '<50k', min: 0, max: 50000 },
+    { label: '50-75k', min: 50000, max: 75000 },
+    { label: '75-100k', min: 75000, max: 100000 },
+    { label: '100-150k', min: 100000, max: 150000 },
+    { label: '150k+', min: 150000, max: Infinity },
+];
+
+const getMidSalary = (job) => {
+    const minSal = job.job_min_salary || job.min_salary || 0;
+    const maxSal = job.job_max_salary || job.max_salary || 0;
+    if (minSal > 0 && maxSal > 0) return (minSal + maxSal) / 2;
+    return minSal || maxSal;
+};
+
+const MARKET_TABS = ['skills', 'remote', 'sources'];
+const SALARY_TABS = ['ranges', 'byType', 'bySource'];
+
+const TAB_I18N_KEY = {
+    skills: 'dashboard.jobAnalytics.tabSkills',
+    remote: 'dashboard.jobAnalytics.tabRemote',
+    sources: 'dashboard.jobAnalytics.tabSources',
+    ranges: 'dashboard.salary.tabRanges',
+    byType: 'dashboard.salary.tabByType',
+    bySource: 'dashboard.salary.tabBySource',
+};
+
 const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
-    const [activeTab, setActiveTab] = useState('skills');
+    const [section, setSection] = useState('market');
+    const [marketTab, setMarketTab] = useState('skills');
+    const [salaryTab, setSalaryTab] = useState('ranges');
 
-    // Aggregate all jobs from all sources using the centralized registry
+    // Aggregate all jobs from all sources
     const allJobs = useMemo(() => {
         if (!jobData) return [];
         const jobs = [];
@@ -31,6 +60,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
             rawJobs.forEach(j => {
                 const skills = skillsField ? (j[skillsField] || j.tags || []) : [];
                 jobs.push({
+                    ...j,
                     skills,
                     remote: alwaysRemote || j.remote === true,
                     source: key.charAt(0).toUpperCase() + key.slice(1),
@@ -40,7 +70,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         return jobs;
     }, [jobData]);
 
-    // Top skills
+    // --- Market charts ---
     const skillsChartData = useMemo(() => {
         const counts = {};
         allJobs.forEach(j => {
@@ -62,7 +92,6 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         };
     }, [allJobs, theme, t]);
 
-    // Remote vs on-site
     const remoteChartData = useMemo(() => {
         let remote = 0, onsite = 0;
         allJobs.forEach(j => j.remote ? remote++ : onsite++);
@@ -80,7 +109,6 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         };
     }, [allJobs, theme, t]);
 
-    // Jobs by source
     const sourceChartData = useMemo(() => {
         const counts = {};
         allJobs.forEach(j => { counts[j.source] = (counts[j.source] || 0) + 1; });
@@ -99,6 +127,85 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         };
     }, [allJobs, theme, t]);
 
+    // --- Salary charts ---
+    const jobsWithSalary = useMemo(() => {
+        return allJobs.filter(job => {
+            const minSal = job.job_min_salary || job.min_salary || 0;
+            const maxSal = job.job_max_salary || job.max_salary || 0;
+            return minSal > 0 || maxSal > 0;
+        });
+    }, [allJobs]);
+
+    const rangesChartData = useMemo(() => {
+        const counts = SALARY_BUCKETS.map(() => 0);
+        jobsWithSalary.forEach(job => {
+            const mid = getMidSalary(job);
+            for (let i = 0; i < SALARY_BUCKETS.length; i++) {
+                if (mid >= SALARY_BUCKETS[i].min && mid < SALARY_BUCKETS[i].max) {
+                    counts[i]++;
+                    break;
+                }
+            }
+        });
+        return {
+            labels: SALARY_BUCKETS.map(b => b.label),
+            datasets: [{
+                label: t('dashboard.salary.jobCount'),
+                data: counts,
+                backgroundColor: `rgba(${theme.primaryRgb}, 0.6)`,
+                borderColor: theme.primary,
+                borderWidth: 1,
+            }],
+        };
+    }, [jobsWithSalary, theme, t]);
+
+    const byTypeChartData = useMemo(() => {
+        const grouped = {};
+        jobsWithSalary.forEach(job => {
+            const empType = job.job_employment_type || job.employment_type || 'Unknown';
+            if (!grouped[empType]) grouped[empType] = { total: 0, count: 0 };
+            grouped[empType].total += getMidSalary(job);
+            grouped[empType].count++;
+        });
+        const labels = Object.keys(grouped).sort();
+        const averages = labels.map(l => Math.round(grouped[l].total / grouped[l].count));
+        return {
+            labels,
+            datasets: [{
+                label: t('dashboard.salary.avgSalary'),
+                data: averages,
+                backgroundColor: `rgba(${theme.primaryRgb}, 0.6)`,
+                borderColor: theme.primary,
+                borderWidth: 1,
+            }],
+        };
+    }, [jobsWithSalary, theme, t]);
+
+    const bySourceChartData = useMemo(() => {
+        const grouped = {};
+        jobsWithSalary.forEach(job => {
+            const source = job.job_publisher || job.publisher || job.source || 'Unknown';
+            if (!grouped[source]) grouped[source] = { total: 0, count: 0 };
+            grouped[source].total += getMidSalary(job);
+            grouped[source].count++;
+        });
+        const labels = Object.keys(grouped).sort();
+        const averages = labels.map(l => Math.round(grouped[l].total / grouped[l].count));
+        return {
+            labels,
+            datasets: [{
+                label: t('dashboard.salary.avgSalary'),
+                data: averages,
+                backgroundColor: (theme.chartColors || []).slice(0, labels.length).map(c =>
+                    c || `rgba(${theme.primaryRgb}, 0.6)`
+                ),
+                borderColor: theme.primary,
+                borderWidth: 1,
+            }],
+        };
+    }, [jobsWithSalary, theme, t]);
+
+    // --- Shared chart options ---
     const chartOptions = useMemo(() => ({
         responsive: true,
         maintainAspectRatio: false,
@@ -121,25 +228,13 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         },
     }), [theme]);
 
-    const tabStyle = (isActive) => ({
-        padding: '6px 14px',
-        background: isActive ? `rgba(${theme.primaryRgb}, 0.2)` : 'transparent',
-        border: `1px solid ${isActive ? theme.primary : 'rgba(255,255,255,0.15)'}`,
-        borderRadius: '4px',
-        color: isActive ? theme.primary : theme.text,
-        fontFamily: 'Courier New, monospace',
-        fontSize: '12px',
-        cursor: 'pointer',
-        transition: 'background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease',
-    });
-
     if (allJobs.length === 0) {
         return (
             <FloatingWindow
                 id="job-analytics-window"
                 title={t('dashboard.jobAnalytics.title')}
                 initialPosition={initialPosition}
-                initialSize={{ width: 550, height: 400 }}
+                initialSize={{ width: 600, height: 500 }}
             >
                 <div style={{ padding: '20px', color: theme.text, fontFamily: 'Courier New', textAlign: 'center' }}>
                     {t('dashboard.jobAnalytics.noData')}
@@ -148,33 +243,77 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         );
     }
 
+    const activeTab = section === 'market' ? marketTab : salaryTab;
+    const setActiveTab = section === 'market' ? setMarketTab : setSalaryTab;
+    const tabs = section === 'market' ? MARKET_TABS : SALARY_TABS;
+
+    const renderChart = () => {
+        if (section === 'market') {
+            if (marketTab === 'skills') return <Bar data={skillsChartData} options={chartOptions} />;
+            if (marketTab === 'remote') return <Doughnut data={remoteChartData} options={doughnutOptions} />;
+            if (marketTab === 'sources') return <Bar data={sourceChartData} options={chartOptions} />;
+        }
+        if (jobsWithSalary.length === 0) {
+            return (
+                <div style={{ padding: '20px', color: theme.text, fontFamily: 'Courier New', textAlign: 'center' }}>
+                    {t('dashboard.salary.noData')}
+                </div>
+            );
+        }
+        if (salaryTab === 'ranges') return <Bar data={rangesChartData} options={chartOptions} />;
+        if (salaryTab === 'byType') return <Bar data={byTypeChartData} options={chartOptions} />;
+        if (salaryTab === 'bySource') return <Bar data={bySourceChartData} options={chartOptions} />;
+        return null;
+    };
+
     return (
         <FloatingWindow
             id="job-analytics-window"
             title={t('dashboard.jobAnalytics.title')}
             initialPosition={initialPosition}
-            initialSize={{ width: 580, height: 480 }}
+            initialSize={{ width: 600, height: 500 }}
         >
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '10px', gap: '10px' }}>
-                <div style={{ display: 'flex', gap: '8px' }} role="tablist" aria-label={t('dashboard.jobAnalytics.title')}>
-                    <button role="tab" aria-selected={activeTab === 'skills'} style={tabStyle(activeTab === 'skills')} onClick={() => setActiveTab('skills')}>
-                        {t('dashboard.jobAnalytics.tabSkills')}
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '10px', gap: '8px' }}>
+                {/* Section selector */}
+                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <button
+                        className={`dash-tab${section === 'market' ? ' dash-tab--active' : ''}`}
+                        onClick={() => setSection('market')}
+                    >
+                        {t('dashboard.jobAnalytics.sectionMarket')}
                     </button>
-                    <button role="tab" aria-selected={activeTab === 'remote'} style={tabStyle(activeTab === 'remote')} onClick={() => setActiveTab('remote')}>
-                        {t('dashboard.jobAnalytics.tabRemote')}
-                    </button>
-                    <button role="tab" aria-selected={activeTab === 'sources'} style={tabStyle(activeTab === 'sources')} onClick={() => setActiveTab('sources')}>
-                        {t('dashboard.jobAnalytics.tabSources')}
+                    <button
+                        className={`dash-tab${section === 'salary' ? ' dash-tab--active' : ''}`}
+                        onClick={() => setSection('salary')}
+                    >
+                        {t('dashboard.jobAnalytics.sectionSalary')}
                     </button>
                     <span style={{ marginLeft: 'auto', fontSize: '11px', color: theme.text, opacity: 0.6, fontFamily: 'Courier New' }}>
-                        {allJobs.length} jobs
+                        {section === 'market'
+                            ? `${allJobs.length} jobs`
+                            : `${jobsWithSalary.length} ${t('dashboard.salary.jobsWithSalary')}`
+                        }
                     </span>
                 </div>
 
+                {/* Sub-tabs */}
+                <div style={{ display: 'flex', gap: '6px' }} role="tablist" aria-label={t('dashboard.jobAnalytics.title')}>
+                    {tabs.map(tab => (
+                        <button
+                            key={tab}
+                            role="tab"
+                            aria-selected={activeTab === tab}
+                            className={`dash-tab${activeTab === tab ? ' dash-tab--active' : ''}`}
+                            onClick={() => setActiveTab(tab)}
+                        >
+                            {t(TAB_I18N_KEY[tab])}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Chart */}
                 <div style={{ flex: 1, minHeight: 0 }}>
-                    {activeTab === 'skills' && <Bar data={skillsChartData} options={chartOptions} />}
-                    {activeTab === 'remote' && <Doughnut data={remoteChartData} options={doughnutOptions} />}
-                    {activeTab === 'sources' && <Bar data={sourceChartData} options={chartOptions} />}
+                    {renderChart()}
                 </div>
             </div>
         </FloatingWindow>

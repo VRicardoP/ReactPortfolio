@@ -13,7 +13,10 @@ import useIsMobile from './hooks/useIsMobile';
 import MobileNav from './components/UI/MobileNav';
 import MobileChatSheet from './components/UI/MobileChatSheet';
 import './styles/base.css';
-import './styles/windows-content.css';
+import './styles/windows-profile-contact.css';
+import './styles/windows-skills.css';
+import './styles/windows-education-experience.css';
+import './styles/windows-portfolio.css';
 import './styles/mobile.css';
 
 // lazy load windows only when needed so the page loads faster
@@ -29,7 +32,6 @@ const ExperienceWindow = lazy(() => import('./components/Windows/ExperienceWindo
 const AchievementsWindow = lazy(() => import('./components/Windows/AchievementsWindow'));
 const ChatWindow = lazy(() => import('./components/Windows/ChatWindow'));
 const TerminalWindow = lazy(() => import('./components/Windows/TerminalWindow'));
-const FitMatrixWindow = lazy(() => import('./components/Windows/FitMatrixWindow'));
 
 // this is what is shown while a window is loading
 const WindowLoader = memo(() => (
@@ -71,8 +73,7 @@ const DesktopPortfolioContent = memo(({ portfolioData }) => {
     'portfolio-window',
     'achievements-window',
     'contact-window',
-    'chat-window',
-    'fit-matrix-window'
+    'chat-window'
   ];
 
   useWindowLayout(portfolioWindowIds, 500);
@@ -145,10 +146,6 @@ const DesktopPortfolioContent = memo(({ portfolioData }) => {
         initialPosition={{ x: 550, y: 300 }}
       />
 
-      <FitMatrixWindow
-        data={portfolioData}
-        initialPosition={{ x: 600, y: 320 }}
-      />
     </Suspense>
 
     {showTerminal && (
@@ -198,7 +195,6 @@ const MobilePortfolioLayout = memo(({ portfolioData }) => {
           <SoftSkillsWindow data={portfolioData} />
           <LanguagesWindow data={portfolioData} />
           <AchievementsWindow data={portfolioData} />
-          <FitMatrixWindow data={portfolioData} />
           <ContactWindow data={portfolioData} defaultExpanded />
         </Suspense>
       </div>

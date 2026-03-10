@@ -1,0 +1,444 @@
+/* Profile & Contact Windows */
+
+/* Profile Window */
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-description {
+  line-height: 1.6;
+  font-size: 16px;
+  margin: 0;
+}
+
+.profile-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+.profile-contact p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Contact Window */
+.contact-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  height: 100%;
+}
+
+.contact-message {
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.contact-email {
+  font-size: 18px;
+  color: #00ffff;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.contact-copy-btn {
+  margin-top: auto;
+  align-self: center;
+  padding: 8px 20px;
+  background: transparent;
+  border: 1px solid #00ffff;
+  border-radius: 20px;
+  color: #00ffff;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.contact-copy-btn:hover {
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.contact-copy-btn.copied {
+  background: transparent;
+  border-color: #00ff00;
+  color: #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+}
+
+/* Profile Window — Enriched (F10 + F17) */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.profile-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(0, 255, 255, 0.15);
+  border: 2px solid #00ffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #00ffff;
+  flex-shrink: 0;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.profile-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.profile-title-text {
+  font-size: 13px;
+  color: #00ffff;
+  opacity: 0.8;
+}
+
+.profile-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profile-chip {
+  padding: 3px 10px;
+  border: 1px solid rgba(0, 255, 255, 0.4);
+  border-radius: 12px;
+  font-size: 11px;
+  color: #00ffff;
+  background: rgba(0, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
+.profile-view-toggle {
+  align-self: flex-start;
+  padding: 4px 12px;
+  background: transparent;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 4px;
+  color: #D3D3D3;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.profile-view-toggle:hover,
+.profile-view-toggle.active {
+  border-color: #00ffff;
+  color: #00ffff;
+  background: rgba(0, 255, 255, 0.08);
+}
+
+.recruiter-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recruiter-section-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #00ffff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.recruiter-list {
+  margin: 0;
+  padding-left: 16px;
+  list-style: none;
+}
+
+.recruiter-list li {
+  position: relative;
+  padding-left: 10px;
+  font-size: 13px;
+  color: #D3D3D3;
+  line-height: 1.6;
+}
+
+.recruiter-list li::before {
+  content: '>';
+  position: absolute;
+  left: 0;
+  color: #00ffff;
+}
+
+/* Contact Window — Enriched (F18) */
+.contact-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contact-info-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #D3D3D3;
+}
+
+.contact-info-icon {
+  color: #00ffff;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  font-size: 14px;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.contact-email-text {
+  color: #00ffff;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contact-copy-btn-inline {
+  padding: 2px 10px;
+  background: transparent;
+  border: 1px solid rgba(0, 255, 255, 0.4);
+  border-radius: 10px;
+  color: #00ffff;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.contact-copy-btn-inline:hover {
+  background: rgba(0, 255, 255, 0.1);
+}
+
+.contact-copy-btn-inline.copied {
+  border-color: #00ff00;
+  color: #00ff00;
+}
+
+.contact-social-links {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 255, 255, 0.15);
+}
+
+.contact-social-link {
+  color: #00ffff;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.contact-social-link:hover {
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+}
+
+.contact-social-link.disabled {
+  color: rgba(255, 255, 255, 0.2);
+  cursor: default;
+}
+
+/* CV Export Menu */
+.cv-export-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: rgba(15, 15, 25, 0.95);
+  border: 1px solid rgba(var(--theme-primary-rgb, 0, 255, 255), 0.4);
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 100;
+  min-width: 130px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.cv-export-option {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  color: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.9);
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.cv-export-option:hover {
+  background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.15);
+}
+
+.cv-export-option + .cv-export-option {
+  border-top: 1px solid rgba(var(--theme-primary-rgb, 0, 255, 255), 0.15);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+
+  .profile-description,
+  .contact-message {
+    font-size: 15px;
+  }
+
+  .contact-email {
+    font-size: 17px;
+  }
+}
+
+/* Small tablets and large mobile (481px - 768px) */
+@media (max-width: 768px) {
+
+  .profile-content {
+    gap: 15px;
+  }
+
+  .profile-description {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .profile-contact p {
+    font-size: 14px;
+  }
+
+  /* Contact */
+  .contact-message {
+    font-size: 14px;
+  }
+
+  .contact-email {
+    font-size: 16px;
+  }
+
+  .contact-copy-btn {
+    padding: 7px 18px;
+    font-size: 12px;
+  }
+}
+
+/* Mobile (320px - 480px) */
+@media (max-width: 480px) {
+
+  .profile-content {
+    gap: 12px;
+  }
+
+  .profile-description {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .profile-contact {
+    padding-top: 12px;
+    gap: 6px;
+  }
+
+  .profile-contact p {
+    font-size: 13px;
+  }
+
+  /* Contact */
+  .contact-content {
+    gap: 12px;
+  }
+
+  .contact-message {
+    font-size: 13px;
+  }
+
+  .contact-email {
+    font-size: 15px;
+  }
+
+  .contact-copy-btn {
+    padding: 6px 16px;
+    font-size: 11px;
+  }
+}
+
+/* Very small mobile (< 320px) */
+@media (max-width: 320px) {
+
+  .profile-description {
+    font-size: 12px;
+  }
+
+  .contact-message {
+    font-size: 12px;
+  }
+
+  .contact-copy-btn {
+    padding: 5px 14px;
+    font-size: 10px;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+
+  .profile-content {
+    gap: 10px;
+  }
+}
+
+/* Touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .contact-copy-btn {
+    padding: 10px 22px;
+    min-height: 40px;
+  }
+}
+
+/* Large screens (> 1440px) */
+@media (min-width: 1440px) {
+
+  .profile-description {
+    font-size: 18px;
+  }
+
+  .contact-message {
+    font-size: 18px;
+  }
+
+  .contact-email {
+    font-size: 20px;
+  }
+
+  .contact-copy-btn {
+    padding: 10px 24px;
+    font-size: 14px;
+  }
+}
