@@ -59,7 +59,14 @@ export const useDashboardData = () => {
             .then(data => {
               if (!aborted) {
                 const raw = extractJobs(data);
-                const _normalized = raw.map(j => normalizeJob(j, key));
+                const _normalized = raw.reduce((acc, j) => {
+                    try {
+                        acc.push(normalizeJob(j, key));
+                    } catch (e) {
+                        if (import.meta.env.DEV) console.warn(`[useDashboardData] Failed to normalize job from ${key}:`, j, e);
+                    }
+                    return acc;
+                }, []);
                 setJobData(prev => ({ ...prev, [key]: { ...data, _normalized } }));
               }
             })

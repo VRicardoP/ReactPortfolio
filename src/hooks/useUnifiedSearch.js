@@ -29,6 +29,13 @@ const useUnifiedSearch = () => {
     const [filters, setFilters] = useState(INITIAL_FILTERS);
 
     const debounceRef = useRef(null);
+    const isMountedRef = useRef(true);
+
+    // Track mount state to prevent setState after unmount
+    useEffect(() => {
+        isMountedRef.current = true;
+        return () => { isMountedRef.current = false; };
+    }, []);
 
     /** Build the search URL from current query and filters. */
     const buildSearchUrl = useCallback((searchQuery, currentFilters) => {
@@ -52,13 +59,19 @@ const useUnifiedSearch = () => {
             const url = buildSearchUrl(searchQuery, currentFilters);
             const response = await authenticatedFetch(url);
             const data = await response.json();
-            setResults(Array.isArray(data) ? data : data.results || data.data || []);
-            setPage(0);
+            if (isMountedRef.current) {
+                setResults(Array.isArray(data) ? data : data.results || data.data || []);
+                setPage(0);
+            }
         } catch {
-            setResults([]);
-            showToast(t('dashboard.unified.errorSearch'));
+            if (isMountedRef.current) {
+                setResults([]);
+                showToast(t('dashboard.unified.errorSearch'));
+            }
         } finally {
-            setLoading(false);
+            if (isMountedRef.current) {
+                setLoading(false);
+            }
         }
     }, [authenticatedFetch, buildSearchUrl, t]);
 

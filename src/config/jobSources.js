@@ -11,7 +11,7 @@ export const JOB_SOURCES = [
     skillsField: 'skills',
     alwaysRemote: true,
     normalize: (job) => ({
-      id: `jobicy-${job.id}`,
+      id: job.id ? `jobicy-${job.id}` : `jobicy-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: job.title || '',
       company: job.company || '',
       location: job.country || '',
@@ -30,7 +30,7 @@ export const JOB_SOURCES = [
     skillsField: 'tags',
     alwaysRemote: true,
     normalize: (job) => ({
-      id: `remotive-${job.id}`,
+      id: job.id ? `remotive-${job.id}` : `remotive-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: job.title || '',
       company: job.company || '',
       location: job.location || 'Worldwide',
@@ -49,7 +49,7 @@ export const JOB_SOURCES = [
     skillsField: 'tags',
     alwaysRemote: false,
     normalize: (job) => ({
-      id: `arbeitnow-${job.slug || job.id}`,
+      id: (job.slug || job.id) ? `arbeitnow-${job.slug || job.id}` : `arbeitnow-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: job.title || '',
       company: job.company || '',
       location: job.location || '',
@@ -68,7 +68,7 @@ export const JOB_SOURCES = [
     skillsField: null, // JSearch has no skills field
     alwaysRemote: false,
     normalize: (job) => ({
-      id: `jsearch-${job.job_id || job.id}`,
+      id: (job.job_id || job.id) ? `jsearch-${job.job_id || job.id}` : `jsearch-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: job.job_title || job.title || '',
       company: job.employer_name || job.employer || '',
       location: job.job_city || job.city || job.location || '',
@@ -87,7 +87,7 @@ export const JOB_SOURCES = [
     skillsField: 'tags',
     alwaysRemote: true,
     normalize: (job) => ({
-      id: `remoteok-${job.id}`,
+      id: job.id ? `remoteok-${job.id}` : `remoteok-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: job.position || job.title || '',
       company: job.company || '',
       location: job.location || 'Remote',
@@ -106,7 +106,7 @@ export const JOB_SOURCES = [
     skillsField: 'categories',
     alwaysRemote: true,
     normalize: (job) => ({
-      id: `himalayas-${job.id || job.guid}`,
+      id: (job.id || job.guid) ? `himalayas-${job.id || job.guid}` : `himalayas-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: job.title || '',
       company: job.companyName || job.company || '',
       location: job.location || (job.locationRestrictions || []).join(', ') || 'Remote',
@@ -125,7 +125,7 @@ export const JOB_SOURCES = [
     skillsField: 'tags',
     alwaysRemote: false,
     normalize: (job) => ({
-      id: `adzuna-${job.id}`,
+      id: job.id ? `adzuna-${job.id}` : `adzuna-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: job.title || '',
       company: job.company || '',
       location: job.location || '',
@@ -144,7 +144,7 @@ export const JOB_SOURCES = [
     skillsField: 'tags',
     alwaysRemote: true,
     normalize: (job) => ({
-      id: `weworkremotely-${job.id || job.guid}`,
+      id: (job.id || job.guid) ? `weworkremotely-${job.id || job.guid}` : `weworkremotely-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: job.title || '',
       company: job.company || '',
       location: job.location || 'Remote',
@@ -163,7 +163,7 @@ export const JOB_SOURCES = [
     skillsField: 'tags',
     alwaysRemote: false,
     normalize: (job) => ({
-      id: `ostjob-${job.id}`,
+      id: job.id ? `ostjob-${job.id}` : `ostjob-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: job.title || '',
       company: job.company || '',
       location: job.location || 'Switzerland',
@@ -182,7 +182,7 @@ export const JOB_SOURCES = [
     skillsField: 'tags',
     alwaysRemote: false,
     normalize: (job) => ({
-      id: `zentraljob-${job.id}`,
+      id: job.id ? `zentraljob-${job.id}` : `zentraljob-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: job.title || '',
       company: job.company || '',
       location: job.location || 'Switzerland',
@@ -201,7 +201,7 @@ export const JOB_SOURCES = [
     skillsField: 'tags',
     alwaysRemote: false,
     normalize: (job) => ({
-      id: `swisstechjobs-${job.id}`,
+      id: job.id ? `swisstechjobs-${job.id}` : `swisstechjobs-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: job.title || '',
       company: job.company || '',
       location: job.location || 'Switzerland',
@@ -220,7 +220,7 @@ export const JOB_SOURCES = [
     skillsField: 'tags',
     alwaysRemote: false,
     normalize: (job) => ({
-      id: `ictjobs-${job.id}`,
+      id: job.id ? `ictjobs-${job.id}` : `ictjobs-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: job.title || '',
       company: job.company || '',
       location: job.location || 'Switzerland',

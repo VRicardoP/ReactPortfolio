@@ -29,7 +29,8 @@ const useVisitorTracking = () => {
                     sessionStorage.setItem('visit_tracked', 'true');
                 }
             } catch (error) {
-                // if tracking fails it's fine, don't want to break the page
+                // prevent retry loops on failure — mark as tracked even on error
+                sessionStorage.setItem('visit_tracked', 'true');
                 console.warn('Failed to track visit:', error.message);
             }
         };

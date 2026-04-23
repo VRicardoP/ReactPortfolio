@@ -179,7 +179,7 @@ const MobilePortfolioLayout = memo(({ portfolioData }) => {
         onTerminalToggle={handleTerminalToggle}
       />
 
-      <div className="mobile-portfolio-container">
+      <div id="main-content" className="mobile-portfolio-container">
         <header className="mobile-hero">
           <h1 className="mobile-hero-name">{portfolioData?.name}</h1>
           <p className="mobile-hero-title">{portfolioData?.title}</p>
@@ -303,7 +303,7 @@ function App() {
 
   // Desktop layout: floating windows with drag/resize
   return (
-    <main>
+    <main id="main-content">
       <BackgroundEffect />
 
       <h1 className="main-title">

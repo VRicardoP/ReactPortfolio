@@ -24,7 +24,11 @@ export const useWindowCallbacks = () => {
     return context;
 };
 
-// Backward-compatible hook — combines both contexts
+// Backward-compatible hook — combines both contexts.
+// NOTE: Every state change (window position, size, z-index, minimize, maximize) re-renders ALL
+// consumers of this hook. If your component only needs callbacks (openWindow, closeWindow, etc.)
+// and does NOT read `windows`, `activeWindowId`, or `loading`, use `useWindowCallbacks()` directly
+// to avoid unnecessary re-renders.
 // eslint-disable-next-line react-refresh/only-export-components
 export const useWindowContext = () => {
     const state = useWindowState();
