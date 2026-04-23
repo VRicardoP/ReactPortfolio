@@ -32,7 +32,14 @@ export const useSSENotifications = () => {
                     signal: controller.signal,
                 });
 
-                if (!response.ok) return;
+                if (!response.ok) {
+                    if (!controller.signal.aborted) {
+                        const delay = Math.min(5000 * Math.pow(2, reconnectAttempts.current), 30000);
+                        reconnectAttempts.current++;
+                        reconnectTimerRef.current = setTimeout(connectSSE, delay);
+                    }
+                    return;
+                }
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
@@ -81,6 +88,11 @@ export const useSSENotifications = () => {
             } catch (err) {
                 if (err.name !== 'AbortError') {
                     console.error('SSE connection error:', err);
+                    if (!controller.signal.aborted) {
+                        const delay = Math.min(5000 * Math.pow(2, reconnectAttempts.current), 30000);
+                        reconnectAttempts.current++;
+                        reconnectTimerRef.current = setTimeout(connectSSE, delay);
+                    }
                 }
             }
         };
