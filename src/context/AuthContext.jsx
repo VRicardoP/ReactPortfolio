@@ -35,28 +35,44 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
+    // Semaphore: if a refresh is already in flight, all callers share the same promise.
+    // Prevents 12 parallel dashboard fetches from consuming the refresh token simultaneously.
+    const refreshPromiseRef = useRef(null);
+
     // try to get a new access token using the refresh token
     const tryRefresh = useCallback(async () => {
         const refreshToken = sessionStorage.getItem('refreshToken');
         if (!refreshToken || isTokenExpired(refreshToken)) {
             return null;
         }
-        try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/auth/refresh`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${refreshToken}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            if (!response.ok) return null;
-            const data = await response.json();
-            sessionStorage.setItem('accessToken', data.access_token);
-            sessionStorage.setItem('refreshToken', data.refresh_token);
-            return data.access_token;
-        } catch {
-            return null;
+
+        if (refreshPromiseRef.current) {
+            return refreshPromiseRef.current;
         }
+
+        const doRefresh = async () => {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/v1/auth/refresh`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${refreshToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                if (!response.ok) return null;
+                const data = await response.json();
+                sessionStorage.setItem('accessToken', data.access_token);
+                sessionStorage.setItem('refreshToken', data.refresh_token);
+                return data.access_token;
+            } catch {
+                return null;
+            } finally {
+                refreshPromiseRef.current = null;
+            }
+        };
+
+        refreshPromiseRef.current = doRefresh();
+        return refreshPromiseRef.current;
     }, []);
 
     // when the page loads check if there's already a saved token

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { AuthProvider, useAuth } from '../AuthContext'
@@ -133,6 +133,54 @@ describe('AuthContext', () => {
     await waitFor(() => {
       expect(screen.getByTestId('auth')).toHaveTextContent('no')
     })
+  })
+
+  it('concurrent 401s trigger only one refresh request', async () => {
+    sessionStorage.setItem('accessToken', makeTestToken(Math.floor(Date.now() / 1000) - 1))
+    sessionStorage.setItem('refreshToken', makeTestToken())
+
+    let refreshCallCount = 0
+    const newToken = makeTestToken()
+
+    global.fetch = vi.fn(async (url) => {
+      if (url.includes('/auth/refresh')) {
+        refreshCallCount++
+        await new Promise(r => setTimeout(r, 10)) // simulate network delay
+        return {
+          ok: true,
+          json: () => Promise.resolve({ access_token: newToken, refresh_token: makeTestToken() }),
+        }
+      }
+      return { ok: true, json: () => Promise.resolve({}) }
+    })
+
+    const TestConcurrent = () => {
+      const { authenticatedFetch, isAuthenticated, loading } = useAuth()
+      return (
+        <div>
+          <span data-testid="auth">{isAuthenticated ? 'yes' : 'no'}</span>
+          <span data-testid="loading">{loading ? 'yes' : 'no'}</span>
+          <button onClick={() => {
+            Promise.all([
+              authenticatedFetch('/api/test1').catch(() => {}),
+              authenticatedFetch('/api/test2').catch(() => {}),
+              authenticatedFetch('/api/test3').catch(() => {}),
+            ])
+          }}>Trigger</button>
+        </div>
+      )
+    }
+
+    const user = userEvent.setup()
+    render(<AuthProvider><TestConcurrent /></AuthProvider>)
+    await waitFor(() => expect(screen.getByTestId('loading')).toHaveTextContent('no'))
+
+    await act(async () => {
+      await user.click(screen.getByText('Trigger'))
+      await new Promise(r => setTimeout(r, 50))
+    })
+
+    expect(refreshCallCount).toBe(1)
   })
 
   it('logs out and clears storage', async () => {
