@@ -57,7 +57,7 @@ describe('useSSENotifications', () => {
       start(controller) {
         controller.enqueue(
           new TextEncoder().encode(
-            'data: {"type":"new_jobs","source":"remotive","count":5}\n\n'
+            'data: {"type":"new_jobs","data":{"source":"remotive","count":5},"timestamp":"2024-01-01T00:00:00.000Z"}\n\n'
           )
         )
         // Don't close immediately — let the hook process the data
@@ -93,7 +93,7 @@ describe('useSSENotifications', () => {
       start(controller) {
         controller.enqueue(
           new TextEncoder().encode(
-            'data: {"type":"new_jobs","source":"jobicy","count":3}\n\ndata: {"type":"new_jobs","source":"remotive","count":7}\n\n'
+            'data: {"type":"new_jobs","data":{"source":"jobicy","count":3},"timestamp":"2024-01-01T00:00:00.000Z"}\n\ndata: {"type":"new_jobs","data":{"source":"remotive","count":7},"timestamp":"2024-01-01T00:00:01.000Z"}\n\n'
           )
         )
         setTimeout(() => controller.close(), 50)
@@ -161,7 +161,7 @@ describe('useSSENotifications', () => {
       start(controller) {
         controller.enqueue(
           new TextEncoder().encode(
-            'data: {"type":"new_jobs","source":"remotive","count":5}\n\n'
+            'data: {"type":"new_jobs","data":{"source":"remotive","count":5},"timestamp":"2024-01-01T00:00:00.000Z"}\n\n'
           )
         )
         setTimeout(() => controller.close(), 50)

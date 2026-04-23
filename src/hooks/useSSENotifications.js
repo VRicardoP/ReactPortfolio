@@ -49,17 +49,19 @@ export const useSSENotifications = () => {
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
                             try {
-                                const data = JSON.parse(line.slice(6));
+                                // Backend wraps all events as {"type":"...","data":{...},"timestamp":"..."}
+                                const message = JSON.parse(line.slice(6));
+                                const payload = message?.data ?? {};
                                 reconnectAttempts.current = 0;
 
                                 // Show toast for new jobs events
-                                if (data.type === 'new_jobs' && data.source && data.count) {
-                                    const sourceName = data.source.charAt(0).toUpperCase() + data.source.slice(1);
-                                    showToast(i18n.t('dashboard.newJobs.toast', { count: data.count, source: sourceName }), 4000);
+                                if (message.type === 'new_jobs' && payload.source && payload.count) {
+                                    const sourceName = payload.source.charAt(0).toUpperCase() + payload.source.slice(1);
+                                    showToast(i18n.t('dashboard.newJobs.toast', { count: payload.count, source: sourceName }), 4000);
                                 }
 
                                 setNotifications(prev => [
-                                    { id: Date.now() + Math.random(), ...data },
+                                    { id: Date.now() + Math.random(), type: message.type, timestamp: message.timestamp, ...payload },
                                     ...prev.slice(0, 19)
                                 ]);
                             } catch {
