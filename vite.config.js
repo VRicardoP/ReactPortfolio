@@ -7,6 +7,14 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(Date.now().toString()),
   },
   plugins: [react()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:8001',
+        changeOrigin: true,
+      },
+    },
+  },
   build: {
     chunkSizeWarningLimit: 700, // Three.js core is ~600KB, lazy-loaded
     rollupOptions: {

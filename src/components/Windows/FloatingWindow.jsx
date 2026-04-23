@@ -59,7 +59,7 @@ const FloatingWindowDesktop = ({
         handleBringToFront
     );
 
-    const { handleResizeStart } = useResizable(
+    const { handleResizeStart, handleKeyboardResize } = useResizable(
         windowRef,
         windowState?.isMinimized,
         windowState?.isMaximized,
@@ -173,14 +173,26 @@ const FloatingWindowDesktop = ({
                     {/* borders for resizing */}
                     {!isMaximized && (
                         <>
-                            <div className="resize-handle resize-handle-n" onMouseDown={(e) => handleResizeStart(e, 'n')} />
-                            <div className="resize-handle resize-handle-s" onMouseDown={(e) => handleResizeStart(e, 's')} />
-                            <div className="resize-handle resize-handle-e" onMouseDown={(e) => handleResizeStart(e, 'e')} />
-                            <div className="resize-handle resize-handle-w" onMouseDown={(e) => handleResizeStart(e, 'w')} />
-                            <div className="resize-handle resize-handle-ne" onMouseDown={(e) => handleResizeStart(e, 'ne')} />
-                            <div className="resize-handle resize-handle-nw" onMouseDown={(e) => handleResizeStart(e, 'nw')} />
-                            <div className="resize-handle resize-handle-se" onMouseDown={(e) => handleResizeStart(e, 'se')} />
-                            <div className="resize-handle resize-handle-sw" onMouseDown={(e) => handleResizeStart(e, 'sw')} />
+                            {[
+                                { dir: 'n', label: 'north edge' },
+                                { dir: 's', label: 'south edge' },
+                                { dir: 'e', label: 'east edge' },
+                                { dir: 'w', label: 'west edge' },
+                                { dir: 'ne', label: 'northeast corner' },
+                                { dir: 'nw', label: 'northwest corner' },
+                                { dir: 'se', label: 'southeast corner' },
+                                { dir: 'sw', label: 'southwest corner' },
+                            ].map(({ dir, label }) => (
+                                <div
+                                    key={dir}
+                                    className={`resize-handle resize-handle-${dir}`}
+                                    role="separator"
+                                    aria-label={`Resize window ${label}`}
+                                    tabIndex={0}
+                                    onMouseDown={(e) => handleResizeStart(e, dir)}
+                                    onKeyDown={(e) => handleKeyboardResize(e, dir)}
+                                />
+                            ))}
                         </>
                     )}
                 </>

@@ -58,6 +58,7 @@ export const AuthProvider = ({ children }) => {
                         'Authorization': `Bearer ${refreshToken}`,
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                 });
                 if (!response.ok) return null;
                 const data = await response.json();
@@ -112,7 +113,8 @@ export const AuthProvider = ({ children }) => {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: formData.toString()
+                body: formData.toString(),
+                credentials: 'include',
             });
 
             if (!response.ok) {
@@ -139,8 +141,16 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-    // log out and clear everything
+    // log out and clear everything — fire-and-forget token revocation to keep logout synchronous
     const logout = useCallback(() => {
+        const refreshToken = sessionStorage.getItem('refreshToken');
+        if (refreshToken) {
+            fetch(`${BACKEND_URL}/api/v1/auth/logout`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${refreshToken}` },
+                credentials: 'include',
+            })?.catch(() => {});
+        }
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('refreshToken');
         sessionStorage.removeItem('tokenType');
@@ -215,7 +225,7 @@ export const AuthProvider = ({ children }) => {
             'Content-Type': 'application/json',
         };
 
-        let response = await fetch(url, { ...options, headers });
+        let response = await fetch(url, { ...options, headers, credentials: 'include' });
 
         // if 401, try refreshing the token before giving up
         if (response.status === 401) {
@@ -227,7 +237,7 @@ export const AuthProvider = ({ children }) => {
                     'Authorization': `Bearer ${newToken}`,
                     'Content-Type': 'application/json',
                 };
-                response = await fetch(url, { ...options, headers: retryHeaders });
+                response = await fetch(url, { ...options, headers: retryHeaders, credentials: 'include' });
             }
             if (!newToken || response.status === 401) {
                 logout();
