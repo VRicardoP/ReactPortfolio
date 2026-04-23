@@ -55,6 +55,36 @@ describe('AuthContext', () => {
     expect(screen.getByTestId('auth')).toHaveTextContent('yes')
   })
 
+  it('does not restore malformed token from sessionStorage', async () => {
+    sessionStorage.setItem('accessToken', 'not-a-jwt')
+    render(
+      <AuthProvider>
+        <TestConsumer />
+      </AuthProvider>
+    )
+    await waitFor(() => {
+      expect(screen.getByTestId('loading')).toHaveTextContent('no')
+    })
+    expect(screen.getByTestId('auth')).toHaveTextContent('no')
+    expect(sessionStorage.getItem('accessToken')).toBeNull()
+  })
+
+  it('does not restore token without exp claim', async () => {
+    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
+    const payload = btoa(JSON.stringify({ sub: 'admin' }))
+    sessionStorage.setItem('accessToken', `${header}.${payload}.fake-signature`)
+    render(
+      <AuthProvider>
+        <TestConsumer />
+      </AuthProvider>
+    )
+    await waitFor(() => {
+      expect(screen.getByTestId('loading')).toHaveTextContent('no')
+    })
+    expect(screen.getByTestId('auth')).toHaveTextContent('no')
+    expect(sessionStorage.getItem('accessToken')).toBeNull()
+  })
+
   it('logs in successfully', async () => {
     global.fetch.mockResolvedValueOnce({
       ok: true,
