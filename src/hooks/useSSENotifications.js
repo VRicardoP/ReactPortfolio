@@ -23,6 +23,7 @@ export const useSSENotifications = () => {
         if (!isAuthenticated || !token) return;
 
         const controller = new AbortController();
+        let mounted = true;
         controllerRef.current = controller;
 
         const connectSSE = async () => {
@@ -67,10 +68,12 @@ export const useSSENotifications = () => {
                                     showToast(i18n.t('dashboard.newJobs.toast', { count: payload.count, source: sourceName }), 4000);
                                 }
 
-                                setNotifications(prev => [
-                                    { id: Date.now() + Math.random(), type: message.type, timestamp: message.timestamp, ...payload },
-                                    ...prev.slice(0, 19)
-                                ]);
+                                if (mounted) {
+                                    setNotifications(prev => [
+                                        { id: Date.now() + Math.random(), type: message.type, timestamp: message.timestamp, ...payload },
+                                        ...prev.slice(0, 19)
+                                    ]);
+                                }
                             } catch {
                                 // Ignore malformed data
                             }
@@ -100,6 +103,7 @@ export const useSSENotifications = () => {
         connectSSE();
 
         return () => {
+            mounted = false;
             controller.abort();
             controllerRef.current = null;
             if (reconnectTimerRef.current) {

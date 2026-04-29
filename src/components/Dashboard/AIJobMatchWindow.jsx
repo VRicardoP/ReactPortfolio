@@ -1,4 +1,4 @@
-import { memo, useState, useCallback } from 'react';
+import { memo, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
 import { useAuth } from '../../context/AuthContext';
@@ -37,6 +37,14 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
     const [activeTab, setActiveTab] = useState(TAB_RESULTS);
     const { handleApply, appliedIds, handleSave, savedIds } = useJobApplication();
     const { missingSkills, addedSkills, togglingSkill, toggleSkill, lastError: skillError } = useSkillsGap(results);
+
+    const llmUnavailable = results.length > 0 && results.some(j => j.llm_unavailable);
+
+    useEffect(() => {
+        if (llmUnavailable && activeTab === TAB_SKILLS_GAP) {
+            setActiveTab(TAB_RESULTS);
+        }
+    }, [llmUnavailable, activeTab]);
 
     const runAnalysis = useCallback(async () => {
         setLoading(true);
@@ -137,8 +145,10 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                             {t('dashboard.aiMatch.resultsTab')} ({results.length})
                         </button>
                         <button
-                            className={`ai-match-tab ${activeTab === TAB_SKILLS_GAP ? 'active' : ''}`}
-                            onClick={() => setActiveTab(TAB_SKILLS_GAP)}
+                            className={`ai-match-tab ${activeTab === TAB_SKILLS_GAP ? 'active' : ''} ${llmUnavailable ? 'disabled' : ''}`}
+                            onClick={() => !llmUnavailable && setActiveTab(TAB_SKILLS_GAP)}
+                            disabled={llmUnavailable}
+                            title={llmUnavailable ? t('dashboard.aiMatch.skillsGapUnavailable') : undefined}
                             style={activeTab === TAB_SKILLS_GAP ? { color: theme.primary, borderColor: theme.primary } : {}}
                         >
                             {t('dashboard.aiMatch.skillsGapTab')} ({missingSkills.length})

@@ -58,7 +58,7 @@ const useSkillsGap = (results) => {
       return !isAdded;
     } catch (err) {
       setLastError(err.message || 'Toggle failed');
-      if (process.env.NODE_ENV !== 'production') {
+      if (import.meta.env.DEV) {
         console.error('Skill toggle error:', err);
       }
       return null;

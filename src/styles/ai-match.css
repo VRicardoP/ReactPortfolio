@@ -267,6 +267,17 @@
   border-bottom-style: solid;
 }
 
+.ai-match-tab:disabled,
+.ai-match-tab.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ai-match-tab:disabled:hover,
+.ai-match-tab.disabled:hover {
+  color: rgba(255, 255, 255, 0.5);
+}
+
 /* ===== SKILLS GAP TAB ===== */
 
 .ai-match-skills-gap {

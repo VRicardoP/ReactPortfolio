@@ -432,6 +432,7 @@
       "resultsTab": "結果",
       "skillsGapTab": "不足スキル",
       "skillsGapEmpty": "不足スキルを表示するには分析を実行してください",
+      "skillsGapUnavailable": "LLM利用不可 — スキルギャップ分析にはLLMリランキングが必要です",
       "skillsGapDesc": "分析された求人で不足しているスキル。CVに追加/削除するにはトグルしてください。",
       "addingSkill": "追加中...",
       "removingSkill": "削除中...",

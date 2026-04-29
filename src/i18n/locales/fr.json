@@ -432,6 +432,7 @@
       "resultsTab": "Résultats",
       "skillsGapTab": "Compétences manquantes",
       "skillsGapEmpty": "Lancez une analyse pour voir les compétences manquantes",
+      "skillsGapUnavailable": "LLM indisponible — l'analyse des compétences nécessite le re-ranking LLM",
       "skillsGapDesc": "Compétences manquantes dans votre CV selon les offres analysées. Activez/désactivez pour ajouter/supprimer de votre CV.",
       "addingSkill": "Ajout...",
       "removingSkill": "Suppression...",

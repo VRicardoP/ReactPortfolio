@@ -70,7 +70,7 @@ export const useDashboardData = () => {
                 setJobData(prev => ({ ...prev, [key]: { ...data, _normalized } }));
               }
             })
-            .catch(() => { if (!aborted) failedSources.push(key); });
+            .catch(() => { if (!aborted) setWarnings(prev => [...prev, key]); });
         });
 
       } catch (err) {

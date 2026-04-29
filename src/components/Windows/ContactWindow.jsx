@@ -24,7 +24,7 @@ const ContactWindow = ({ data, initialPosition }) => {
                     alert(t('contact.copyFailed'));
                 });
         }
-    }, [data?.email]);
+    }, [data?.email, t]);
 
     if (!data) return null;
 

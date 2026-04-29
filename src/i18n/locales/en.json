@@ -432,6 +432,7 @@
       "resultsTab": "Results",
       "skillsGapTab": "Skills Gap",
       "skillsGapEmpty": "Run an analysis first to see missing skills",
+      "skillsGapUnavailable": "LLM scoring unavailable — skills gap requires LLM re-ranking",
       "skillsGapDesc": "Skills found missing across all analyzed jobs. Toggle to add/remove from your CV.",
       "addingSkill": "Adding...",
       "removingSkill": "Removing...",
