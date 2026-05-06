@@ -8,7 +8,7 @@
  * Uses navigator.sendBeacon for reliable delivery on unload.
  */
 import { useEffect, useRef } from 'react';
-import { BACKEND_URL } from '../config/api';
+import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
 
 const FLUSH_INTERVAL_MS = 10000;
 const MAX_BATCH_SIZE = 50;
@@ -51,7 +51,7 @@ const useInteractionTracking = () => {
             } else {
                 fetch(INTERACTIONS_ENDPOINT, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', ...DEFAULT_HEADERS },
                     body: payload,
                     keepalive: true,
                 }).catch(() => {});

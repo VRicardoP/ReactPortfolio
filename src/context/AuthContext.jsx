@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 
-import { BACKEND_URL } from '../config/api';
+import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
 
 const AuthContext = createContext();
 
@@ -57,6 +57,7 @@ export const AuthProvider = ({ children }) => {
                     headers: {
                         'Authorization': `Bearer ${refreshToken}`,
                         'Content-Type': 'application/json',
+                        ...DEFAULT_HEADERS,
                     },
                     credentials: 'include',
                 });
@@ -112,6 +113,7 @@ export const AuthProvider = ({ children }) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
+                    ...DEFAULT_HEADERS,
                 },
                 body: formData.toString(),
                 credentials: 'include',
@@ -147,7 +149,7 @@ export const AuthProvider = ({ children }) => {
         if (refreshToken) {
             fetch(`${BACKEND_URL}/api/v1/auth/logout`, {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${refreshToken}` },
+                headers: { 'Authorization': `Bearer ${refreshToken}`, ...DEFAULT_HEADERS },
                 credentials: 'include',
             })?.catch(() => {});
         }
@@ -220,6 +222,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         const headers = {
+            ...DEFAULT_HEADERS,
             ...options.headers,
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -233,6 +236,7 @@ export const AuthProvider = ({ children }) => {
             if (newToken) {
                 setToken(newToken);
                 const retryHeaders = {
+                    ...DEFAULT_HEADERS,
                     ...options.headers,
                     'Authorization': `Bearer ${newToken}`,
                     'Content-Type': 'application/json',

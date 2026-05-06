@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKEND_URL } from '../config/api';
+import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
 
 const PORTFOLIO_API_URL = `${BACKEND_URL}/api/v1/cv-profiles/portfolio-data`;
 
@@ -17,7 +17,7 @@ const usePortfolioData = () => {
 
       try {
         // Try API first (serves from database)
-        const apiResponse = await fetch(`${PORTFOLIO_API_URL}?lang=${lang}`);
+        const apiResponse = await fetch(`${PORTFOLIO_API_URL}?lang=${lang}`, { headers: DEFAULT_HEADERS });
         if (apiResponse.ok) {
           const apiData = await apiResponse.json();
           if (apiData && Object.keys(apiData).length > 0) {

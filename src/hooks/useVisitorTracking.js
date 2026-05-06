@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BACKEND_URL } from '../config/api';
+import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
 
 // this hook tracks the user's visit in the backend
 const useVisitorTracking = () => {
@@ -16,6 +16,7 @@ const useVisitorTracking = () => {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        ...DEFAULT_HEADERS,
                     },
                     body: JSON.stringify({
                         page_url: window.location.href,
