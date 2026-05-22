@@ -34,3 +34,12 @@ coverage/
 test-results/
 playwright-report/
 blob-report/
+
+# AI assistant tooling (not part of the codebase)
+CLAUDE.md
+.claude/
+.ai/
+.codex/
+.zencoder/
+codex.md
+.cursorrules

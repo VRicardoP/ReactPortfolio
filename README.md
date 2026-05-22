@@ -1,186 +1,132 @@
-# DigitalCV - Frontend
+# Portfolio Frontend
 
-Portfolio interactivo con estilo cyberpunk. Una web donde muestro mi curriculum de forma diferente, con ventanas flotantes arrastrables y redimensionables como si fuera un sistema operativo.
+Interactive developer portfolio for Vicente Pau, live at [vicentepau.is-a.dev](https://vicentepau.is-a.dev).
 
-## Funcionalidades principales
+Built with a desktop OS metaphor: draggable, resizable floating windows, 6 immersive 3D backgrounds, an AI chatbot, and a private admin dashboard with job aggregation and AI-powered tools.
 
-### Sistema de ventanas flotantes
+## Features
 
-Las ventanas funcionan como un escritorio de sistema operativo:
+### Portfolio (public)
 
-- **Arrastrar**: Click en la barra de titulo y mueve libremente
-- **Redimensionar**: 8 puntos de redimensionamiento (esquinas y lados)
-- **Minimizar**: Se reduce a 40px de altura y se coloca en barra superior
-- **Maximizar**: Pantalla completa o restaurar tamaño anterior
-- **Ajustar al contenido**: Calcula el tamaño optimo automaticamente
-- **Z-Index automatico**: Click en una ventana la trae al frente
+- **Floating window system** — drag, resize (8 directions), minimize, maximize, fit-to-content, z-index management
+- **6 interactive backgrounds** — Rain (Three.js), Matrix (Canvas 2D), Parallax (tsparticles), Lensflare (Three.js), Cube (Three.js), Smoke (Three.js)
+- **3 color themes** — Cyan, Silver, Amber — persisted to localStorage
+- **11 portfolio windows** — Welcome, Profile, Soft Skills, Education, Experience, Languages, Tech Skills, Portfolio, Achievements, Chat, Terminal (easter egg)
+- **AI Chatbot** — Kusanagi assistant powered by Groq, responds in the visitor's language
+- **Internationalization** — 6 locales: English, Spanish, French, German, Italian, Japanese
+- **Visitor tracking** — geolocation and device data sent to backend once per session
+- **Interaction heatmap** — click and focus events batched via `sendBeacon` every 10s
 
-### Efectos de fondo 3D
+### Dashboard (admin only)
 
-6 efectos visuales intercambiables:
+- **Analytics** — visitor stats, interactive map, chat statistics, interaction heatmap
+- **Job Board** — 12 job API sources in a tabbed interface with sort, pagination, and cache age badges
+- **Unified Search** — cross-source job search with filters and debounced queries
+- **AI Job Match** — sentence-transformers + Groq LLM re-ranking against CV profile; Skills Gap tab shows missing skills
+- **Kanban Pipeline** — drag-and-drop job application tracker (saved → applied → interview → offer → rejected)
+- **AI CV / Cover Letter** — generate, preview, and download PDF/JSON documents adapted to each job offer
+- **Saved Searches** — store and re-run job search configurations
+- **SSE Notifications** — real-time alerts for new visitors, chat messages, and job cache updates
 
-| Efecto | Descripcion |
-|--------|-------------|
-| **Rain** | Lluvia 3D con Three.js (3000 gotas), camara interactiva con el raton |
-| **Matrix** | Caracteres katakana/numeros cayendo estilo Matrix, Canvas 2D |
-| **Parallax** | Particulas interactivas con tsparticles, conexiones visuales |
-| **Lensflare** | 3000 cubos flotantes con efectos de lens flare, control de camara 6DOF |
-| **Cube** | Cubo 3D con bordes redondeados y 20 barras de luz animadas |
-| **Smoke** | 150 planos de humo rotando en 3D |
+## Tech Stack
 
-### Temas de colores
+| Category | Technology |
+|----------|------------|
+| Framework | React 19 + Vite 7 |
+| 3D / Canvas | Three.js |
+| Particles | tsparticles |
+| Maps | React-Leaflet + OpenStreetMap |
+| Charts | Chart.js + react-chartjs-2 |
+| Routing | React Router v7 |
+| State | React Context API (split state/callbacks) |
+| i18n | react-i18next (6 locales) |
+| Testing | Vitest + @testing-library/react (313 tests) |
+| E2E | Playwright (17 tests) |
+| Styles | Pure CSS (no CSS-in-JS) |
+| Hosting | Cloudflare Pages |
 
-3 temas completos con paletas personalizadas:
-
-- **Cyan**: Azul cian futurista (default)
-- **Silver**: Gris elegante y corporativo
-- **Amber**: Tonos dorados y calidos
-
-Los temas se guardan en localStorage y cambian toda la interfaz al instante.
-
-### Ventanas del portfolio
-
-9 ventanas con informacion profesional:
-
-1. **Welcome** - Tutorial de navegacion
-2. **Profile** - Descripcion y contacto
-3. **Soft Skills** - Habilidades blandas
-4. **Education** - Historial educativo
-5. **Experience** - Experiencia laboral
-6. **Languages** - Idiomas
-7. **Tech Skills** - Tecnologias
-8. **Portfolio** - Proyectos realizados
-9. **Chat (Kusanagi AI)** - Chatbot con IA
-
-### Ventanas del dashboard (privado)
-
-17 ventanas con analiticas, ofertas de empleo y herramientas:
-
-1. **Stats** - Total visitantes, paises, ciudades, top 5 paises
-2. **Recent Visitors** - Ultimos visitantes
-3. **Map** - Mapa interactivo con ubicaciones de visitantes (Leaflet)
-4. **Chat Analytics** - Estadisticas del chatbot (4 pestanas con graficos)
-5. **Job Board** - Agregacion tabulada de 12 APIs de empleo
-6. **Job Filter** - Busqueda avanzada con filtros
-7. **Unified Search** - Busqueda unificada multi-fuente
-8. **JSearch Live** - Busqueda en tiempo real via RapidAPI
-9. **AI Job Match** - Matching inteligente con IA (sentence-transformers + Groq)
-10. **Salary Analytics** - Analisis de salarios con graficos
-11. **Kanban Board** - Pipeline de aplicaciones tipo Kanban
-12. **Saved Searches** - Busquedas guardadas con ejecucion rapida
-13. **SSE Notifications** - Notificaciones en tiempo real
-14. **CV Generation** - Generacion de CV adaptado por oferta
-15. **Cover Letter** - Generacion de carta de presentacion por oferta
-
-### Chatbot Kusanagi AI
-
-- Chat en tiempo real con backend
-- Indicador "typing" mientras responde
-- Auto-scroll y auto-focus
-- Enter para enviar, Shift+Enter para saltos de linea
-
-### Sistema de autenticacion
-
-- Login con JWT tokens
-- Rutas protegidas para el dashboard
-- Token en localStorage con auto-logout en expiracion
-
-### Tracking de visitantes
-
-- Registro automatico de visitas (una por sesion)
-- Datos: URL, referrer, user agent
-- Geolocalizacion para el mapa
-
-## Optimizaciones de rendimiento
-
-- **Lazy Loading**: Componentes se cargan solo cuando se necesitan
-- **React.memo**: Evita re-renders innecesarios
-- **useMemo/useCallback**: Calculos y funciones memoizadas
-- **DOM directo**: Drag y resize fluidos sin re-renders
-- **requestAnimationFrame**: Animaciones a 60fps
-- **Cleanup**: Liberacion de memoria en efectos 3D
-
-## Como arrancarlo
-
-Instala las dependencias:
+## Getting Started
 
 ```bash
+# Clone and enter the directory
+git clone https://github.com/VRicardoP/ReactPortfolio.git
+cd ReactPortfolio/frontend
+
+# Install dependencies
 npm install
-```
 
-Ejecuta en modo desarrollo:
+# Configure environment (optional — defaults to http://127.0.0.1:8001)
+cp .env.example .env
+# Set VITE_API_BASE_URL to your backend URL
 
-```bash
+# Start development server
 npm run dev
 ```
 
-Se abre en http://localhost:5173
+Opens at `http://localhost:5173`
 
-## Para produccion
+### Production Build
 
 ```bash
 npm run build
+# Output in dist/
 ```
 
-Los archivos se generan en la carpeta `dist`.
+### Environment Variables
 
-## Tecnologias
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `VITE_API_BASE_URL` | Backend API base URL | `http://127.0.0.1:8001` |
 
-| Categoria | Tecnologia |
-|-----------|------------|
-| Framework | React 19 + Vite 7 |
-| 3D | Three.js |
-| Particulas | tsparticles |
-| Mapas | React-Leaflet + OpenStreetMap |
-| Graficos | Chart.js + react-chartjs-2 |
-| Routing | React Router |
-| Estado | React Context API |
-| Estilos | CSS puro (sin frameworks) |
+> When deploying to Cloudflare Pages, set `VITE_API_BASE_URL` in the project's environment variables and trigger a new deployment.
 
-## Estructura de carpetas
+## Testing
 
-```
-src/
-  components/
-    Background/     # efectos de fondo (Rain, Matrix, Parallax, etc)
-    Dashboard/      # ventanas del dashboard
-    UI/             # Toast, Tooltip
-    Windows/        # ventanas flotantes del portfolio
-  config/           # jobSources, terminalCommands, api, dashboardConstants
-  context/          # AuthContext, ThemeContext, WindowContext (split state/callbacks)
-  hooks/            # useDraggable, useResizable, useTypewriter, useKanban, useJobFilter, etc
-  i18n/             # internacionalizacion (6 idiomas: en, es, fr, de, ja, it)
-  pages/            # HomePage, LoginPage, DashboardPage
-  styles/           # estilos CSS
+```bash
+# Unit + integration tests
+npx vitest run
+
+# E2E tests (requires production build)
+npm run build
+npx playwright test
 ```
 
-## APIs externas
-
-El frontend consume:
-
-- **OpenStreetMap** - Tiles para mapas
-- **Leaflet CDN** - Iconos de marcadores
-- **AWS S3** - Texturas (humo)
-- **Unsplash** - Texturas para cubos 3D
-
-## El backend
-
-Este frontend se conecta a un backend en FastAPI que gestiona:
-
-- Autenticacion JWT
-- Estadisticas y geolocalizacion de visitas
-- Chatbot con IA
-- Proxy a 12 APIs de ofertas de empleo
-- AI Job Matching y generacion de CV/Cover Letter
-- Analytics del chat
-- Notificaciones SSE en tiempo real
-
-## Variables de entorno
-
-See `.env.example` for reference. Create a `.env` file:
+## Project Structure
 
 ```
-VITE_API_BASE_URL=http://127.0.0.1:8001
+frontend/
+├── public/
+│   ├── portfolio-data.json   # Static portfolio data (fallback)
+│   └── _redirects            # Cloudflare Pages SPA routing
+├── src/
+│   ├── components/
+│   │   ├── Background/       # 6 visual effects
+│   │   ├── Dashboard/        # 12 admin windows
+│   │   ├── Windows/          # 11 portfolio windows
+│   │   └── UI/               # Toast, Tooltip
+│   ├── config/
+│   │   ├── api.js            # Centralized backend URL
+│   │   ├── jobSources.js     # Registry for all 12 job sources
+│   │   └── terminalCommands.js # Terminal command registry (19 commands)
+│   ├── context/
+│   │   ├── AuthContext.jsx   # JWT auth + authenticatedFetch
+│   │   ├── WindowContext.jsx # Split state/callbacks context
+│   │   └── ThemeContext.jsx  # Theme + background
+│   ├── hooks/                # 20+ custom hooks
+│   ├── i18n/                 # react-i18next + 6 locale files
+│   ├── pages/                # LoginPage, DashboardPage
+│   └── styles/               # CSS files per component/feature
+├── e2e/                      # Playwright E2E tests
+├── .env.example
+├── vite.config.js
+└── vitest.config.js
 ```
 
-If not configured, defaults to `http://127.0.0.1:8001`.
+## Performance
+
+- All 25 windows lazy-loaded via `React.lazy` + `Suspense`
+- Manual Vite chunks: `vendor-react`, `vendor-three`, `vendor-particles`, `vendor-charts`, `vendor-maps`
+- Main bundle: ~210KB gzipped
+- `WindowContext` split into state and callbacks contexts — callback consumers don't re-render on state changes
+- Job data normalized at fetch time, eliminating O(2400) render-time operations
+- `backdrop-filter` removed during drag via `.dragging` class for smooth 60fps performance
