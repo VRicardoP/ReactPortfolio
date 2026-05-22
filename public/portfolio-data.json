@@ -171,36 +171,52 @@
     },
     "portfolio": [
         {
-            "title": "Minichef — Voice AI Assistant for Professional Kitchens",
-            "tech": ["Python", "Vosk STT", "Groq LLM", "gTTS", "MySQL", "Pygame"],
-            "description": "Voice-operated conversational AI assistant for professional kitchen management. Full voice-to-voice pipeline: real-time speech recognition → LLM processing → spoken response. Complete voice-operated CRUD across inventory, recipes and suppliers. Developed entirely solo during the DAW internship; actively continued by the company afterwards.",
-            "github": "",
+            "title": "CookCode System — Restaurant & Kitchen Management Suite",
+            "tech": ["PHP 8.2", "MySQL 8", "WordPress", "WooCommerce", "Python", "PySide6", "Docker", "MQTT"],
+            "description": "End-to-end gastronomy platform unifying central kitchen, restaurant POS and e-commerce under a single source of truth. Four interconnected services — WordPress shop with custom WooCommerce APIs, kitchen app with batch traceability and QR labels, restaurant POS with MQTT scanner integration, and the MiniChef voice assistant (PySide6 + Vosk + Coqui TTS + Gemini) — orchestrated by a single docker-compose with six containers.",
+            "github": "https://gitlab.com/lotharsan/cookcodesystem",
             "demo": "",
-            "status": "Active development"
+            "status": "completed"
         },
         {
-            "title": "Client Metrics Dashboard — Sfera-AI",
-            "tech": ["React.js", "Python", "PostgreSQL", "Claude API"],
-            "description": "Web dashboard for Sfera-AI clients showing real-time AI agent performance: call volume, resolution rates, average handling time and configurable business metrics per client.",
-            "github": "",
-            "demo": "",
-            "status": "Production"
+            "title": "Portfolio Frontend — vicentepau.is-a.dev",
+            "tech": ["React 19", "Vite 7", "Three.js", "Chart.js", "Leaflet", "i18next", "Vitest", "Playwright"],
+            "description": "This very portfolio. Desktop-OS UI metaphor with draggable, resizable floating windows, six interactive 3D backgrounds, three color themes, a Groq-powered AI chatbot, six locales, visitor tracking and a private admin dashboard with job aggregation, AI matching, Kanban pipeline and AI-generated CVs. 313 vitest + 17 Playwright tests. Deployed on Cloudflare Pages.",
+            "github": "https://gitlab.com/lotharsan/reactportfolio-front",
+            "demo": "https://vicentepau.is-a.dev",
+            "status": "in-progress"
         },
         {
-            "title": "Telephone Conversational AI Agents",
-            "tech": ["Claude API", "Python", "n8n", "PostgreSQL"],
-            "description": "Four production telephone AI agents serving clients across multiple sectors, capable of handling tens of simultaneous calls with autonomous resolution. Integrated with follow-up automations: email, WhatsApp, SMS and automatic appointment scheduling via n8n.",
-            "github": "",
+            "title": "Parakeet — Budgie Phone Integration",
+            "tech": ["Vala", "GTK 3", "Meson", "D-Bus", "KDE Connect"],
+            "description": "Budgie Desktop panel applet that brings an Android phone into the Linux workflow via KDE Connect. One-click popover shows device status, battery level, the last ten notifications, find-my-phone and an SFTP file browser — all driven by D-Bus signals from the KDE Connect daemon, with no polling or background services.",
+            "github": "https://gitlab.com/lotharsan/parakeet",
             "demo": "",
-            "status": "Production"
+            "status": "in-progress"
         },
         {
-            "title": "OCS Inventory + Zabbix Deployment — BigBuy",
-            "tech": ["OCS Inventory NG", "Zabbix", "Linux", "MySQL", "AWS"],
-            "description": "Self-proposed, designed and deployed the first IT asset management and infrastructure monitoring systems at BigBuy, one of Europe's largest B2B e-commerce wholesalers (~350 employees). Both initiatives were presented, approved and executed without prior request.",
-            "github": "",
+            "title": "Photoloop — NAS-Streaming Digital Photo Frame",
+            "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
+            "description": "Flutter Android app that turns any phone, tablet or Android TV into a digital photo frame. Streams photos from a SMB-enabled NAS with zero-config subnet discovery and a sliding cache, or reads from local storage. Three transition styles, orientation filtering, wakelock during playback and secure credential storage via the Android Keystore.",
+            "github": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
-            "status": "Completed"
+            "status": "completed"
+        },
+        {
+            "title": "Reddit Gallery — Android Multimedia Client",
+            "tech": ["Flutter", "Dart", "Provider", "Dio", "Reddit JSON API"],
+            "description": "Lightweight Flutter Android client to browse and download images and videos from Reddit without an account, as a replacement for the discontinued Gallery for Reddit. Combined feed of your subscriptions with infinite scroll, full-screen media viewer with zoom, support for v.redd.it / Redgifs / Imgur / Streamable, configurable filters and JSON backup/restore of subscriptions.",
+            "github": "https://gitlab.com/lotharsan/reddit_gallery",
+            "demo": "",
+            "status": "completed"
+        },
+        {
+            "title": "Movies React — TMDB Browser SPA",
+            "tech": ["React 18", "Vite", "React Router 6", "Axios", "Vitest"],
+            "description": "Single-page application built on React 18 + Vite that browses The Movie Database (TMDB). Authentication with 30-minute session expiry, favourites persisted to localStorage, debounced search with cancellable requests via AbortController, incremental pagination, skeleton loaders, protected routes and a fully tested business layer.",
+            "github": "https://gitlab.com/lotharsan/movies-react",
+            "demo": "",
+            "status": "completed"
         }
     ],
     "achievements": [

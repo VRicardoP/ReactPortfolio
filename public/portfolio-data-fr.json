@@ -171,36 +171,52 @@
     },
     "portfolio": [
         {
-            "title": "Minichef — Assistant vocal IA pour cuisines professionnelles",
-            "tech": ["Python", "Vosk STT", "Groq LLM", "gTTS", "MySQL", "Pygame"],
-            "description": "Assistant conversationnel à commande vocale pour la gestion de cuisines professionnelles. Pipeline vocale complète : reconnaissance vocale temps réel → traitement LLM → réponse vocale. Opérations CRUD complètes par commande vocale sur inventaire, recettes et fournisseurs. Développé intégralement en autonomie durant le stage DAW ; poursuivi activement par l'entreprise.",
-            "github": "",
+            "title": "CookCode System — Gestion intégrée de restaurant et cuisine",
+            "tech": ["PHP 8.2", "MySQL 8", "WordPress", "WooCommerce", "Python", "PySide6", "Docker", "MQTT"],
+            "description": "Plateforme gastronomique de bout en bout qui unifie cuisine centrale, caisse de restaurant et boutique en ligne autour d'une source de vérité unique. Quatre services interconnectés — boutique WordPress avec APIs WooCommerce sur mesure, application de cuisine avec traçabilité par lots et étiquettes QR, caisse de restaurant avec scanner MQTT, et l'assistant vocal MiniChef (PySide6 + Vosk + Coqui TTS + Gemini) — orchestrés par un unique docker-compose à six conteneurs.",
+            "github": "https://gitlab.com/lotharsan/cookcodesystem",
             "demo": "",
-            "status": "En développement actif"
+            "status": "completed"
         },
         {
-            "title": "Tableau de bord de métriques — Sfera-AI",
-            "tech": ["React.js", "Python", "PostgreSQL", "Claude API"],
-            "description": "Tableau de bord web pour les clients de Sfera-AI affichant en temps réel les performances des agents IA : volume d'appels, taux de résolution, durée moyenne de traitement et métriques métier configurables par client.",
-            "github": "",
-            "demo": "",
-            "status": "En production"
+            "title": "Portfolio Frontend — vicentepau.is-a.dev",
+            "tech": ["React 19", "Vite 7", "Three.js", "Chart.js", "Leaflet", "i18next", "Vitest", "Playwright"],
+            "description": "Ce portfolio. Métaphore d'OS de bureau avec fenêtres flottantes déplaçables et redimensionnables, six arrière-plans 3D interactifs, trois thèmes de couleurs, un chatbot IA propulsé par Groq, six langues, suivi des visiteurs et un dashboard d'administration privé avec agrégation d'offres d'emploi, matching IA, pipeline Kanban et CVs générés par IA. 313 tests vitest + 17 Playwright. Déployé sur Cloudflare Pages.",
+            "github": "https://gitlab.com/lotharsan/reactportfolio-front",
+            "demo": "https://vicentepau.is-a.dev",
+            "status": "in-progress"
         },
         {
-            "title": "Agents conversationnels téléphoniques IA",
-            "tech": ["Claude API", "Python", "n8n", "PostgreSQL"],
-            "description": "Quatre agents téléphoniques IA en production pour des entreprises de secteurs variés, capables de traiter des dizaines d'appels simultanés avec résolution autonome. Intégrés à des automatisations de suivi : e-mail, WhatsApp, SMS et prise de rendez-vous automatique via n8n.",
-            "github": "",
+            "title": "Parakeet — Intégration téléphone pour Budgie",
+            "tech": ["Vala", "GTK 3", "Meson", "D-Bus", "KDE Connect"],
+            "description": "Applet du panneau Budgie qui intègre un téléphone Android au flux de travail Linux via KDE Connect. Un clic ouvre une popover affichant l'état de l'appareil, le niveau de batterie, les dix dernières notifications, la fonction « find my phone » et un explorateur de fichiers SFTP — le tout piloté par signaux D-Bus du démon KDE Connect, sans polling ni services en arrière-plan.",
+            "github": "https://gitlab.com/lotharsan/parakeet",
             "demo": "",
-            "status": "En production"
+            "status": "in-progress"
         },
         {
-            "title": "Déploiement OCS Inventory + Zabbix — BigBuy",
-            "tech": ["OCS Inventory NG", "Zabbix", "Linux", "MySQL", "AWS"],
-            "description": "Proposition, conception et déploiement des premiers systèmes de gestion d'inventaire IT et de supervision d'infrastructure chez BigBuy, l'un des plus grands grossistes B2B e-commerce d'Europe (~350 employés). Initiative personnelle : les deux projets ont été présentés, approuvés et réalisés sans demande préalable.",
-            "github": "",
+            "title": "Photoloop — Cadre photo numérique avec streaming NAS",
+            "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
+            "description": "Application Flutter Android qui transforme tout téléphone, tablette ou Android TV en cadre photo numérique. Streaming depuis un NAS SMB avec découverte automatique du sous-réseau et cache glissant, ou lecture depuis le stockage local. Trois styles de transition, filtre d'orientation, wakelock pendant la lecture et stockage sécurisé des identifiants SMB via l'Android Keystore.",
+            "github": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
-            "status": "Achevé"
+            "status": "completed"
+        },
+        {
+            "title": "Reddit Gallery — Client multimédia Android",
+            "tech": ["Flutter", "Dart", "Provider", "Dio", "API JSON Reddit"],
+            "description": "Client Flutter Android léger pour parcourir et télécharger images et vidéos de Reddit sans compte, en remplacement de Gallery for Reddit (discontinuée). Flux combiné de vos abonnements avec défilement infini, visionneuse plein écran avec zoom, prise en charge de v.redd.it / Redgifs / Imgur / Streamable, filtres configurables et sauvegarde/restauration des abonnements au format JSON.",
+            "github": "https://gitlab.com/lotharsan/reddit_gallery",
+            "demo": "",
+            "status": "completed"
+        },
+        {
+            "title": "Movies React — SPA d'exploration TMDB",
+            "tech": ["React 18", "Vite", "React Router 6", "Axios", "Vitest"],
+            "description": "Application single-page React 18 + Vite qui interroge The Movie Database (TMDB). Authentification avec session de 30 minutes, favoris persistés dans localStorage, recherche avec debounce et requêtes annulables via AbortController, pagination incrémentale, skeleton loaders, routes protégées et couche métier entièrement testée.",
+            "github": "https://gitlab.com/lotharsan/movies-react",
+            "demo": "",
+            "status": "completed"
         }
     ],
     "achievements": [

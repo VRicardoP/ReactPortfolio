@@ -171,36 +171,52 @@
     },
     "portfolio": [
         {
-            "title": "Minichef — プロキッチン向け音声AIアシスタント",
-            "tech": ["Python", "Vosk STT", "Groq LLM", "gTTS", "MySQL", "Pygame"],
-            "description": "プロフェッショナルキッチンの業務管理を支援する音声操作型AIアシスタント。音声認識→LLM処理→音声応答の完全パイプラインをPythonで構築。音声コマンドによる在庫・レシピ・仕入先のCRUD操作を実現。実習期間中に単独で開発し、終了後も企業により継続的に改善が進められています。",
-            "github": "",
+            "title": "CookCode System — レストラン・厨房統合管理スイート",
+            "tech": ["PHP 8.2", "MySQL 8", "WordPress", "WooCommerce", "Python", "PySide6", "Docker", "MQTT"],
+            "description": "中央厨房、店舗POS、ECサイトを単一の信頼できる情報源として統合するエンドツーエンドのガストロノミー基盤。WordPress製ショップ＋独自WooCommerce API、ロット追跡とQRラベルを備えた厨房アプリ、MQTTスキャナ連携の店舗POS、そして音声アシスタント MiniChef（PySide6 + Vosk + Coqui TTS + Gemini）の4サービスを、6コンテナの単一 docker-compose で統合運用。",
+            "github": "https://gitlab.com/lotharsan/cookcodesystem",
             "demo": "",
-            "status": "継続中"
+            "status": "completed"
         },
         {
-            "title": "メトリクスダッシュボード — Sfera-AI",
-            "tech": ["React.js", "Python", "PostgreSQL", "Claude API"],
-            "description": "Sfera-AIの顧客企業向けWebダッシュボード。電話対応型AIエージェントのパフォーマンスをリアルタイムで可視化：通話量、解決率、平均対応時間、顧客別ビジネスメトリクス。",
-            "github": "",
-            "demo": "",
-            "status": "本番稼働中"
+            "title": "ポートフォリオ・フロントエンド — vicentepau.is-a.dev",
+            "tech": ["React 19", "Vite 7", "Three.js", "Chart.js", "Leaflet", "i18next", "Vitest", "Playwright"],
+            "description": "本ポートフォリオそのもの。デスクトップOS風UIにドラッグ＆リサイズ可能なフローティングウィンドウ、6種のインタラクティブ3D背景、3つのカラーテーマ、Groqを用いたAIチャットボット、6言語対応、訪問者トラッキング、求人集約・AIマッチング・カンバンパイプライン・AI生成CVを備えた管理者ダッシュボードを実装。Vitest 313件 + Playwright 17件のテスト。Cloudflare Pages にデプロイ。",
+            "github": "https://gitlab.com/lotharsan/reactportfolio-front",
+            "demo": "https://vicentepau.is-a.dev",
+            "status": "in-progress"
         },
         {
-            "title": "電話対応型会話AIエージェント",
-            "tech": ["Claude API", "Python", "n8n", "PostgreSQL"],
-            "description": "多業種の企業向けに構築された4つの電話AIエージェント。大量の同時通話を自律的に処理し、n8nを通じてEメール・WhatsApp・SMS・予約管理と自動連携。企業の顧客対応業務の効率化に貢献しています。",
-            "github": "",
+            "title": "Parakeet — Budgie 向けスマートフォン連携アプレット",
+            "tech": ["Vala", "GTK 3", "Meson", "D-Bus", "KDE Connect"],
+            "description": "Budgie デスクトップのパネル用アプレット。KDE Connect 経由で Android 端末を Linux のワークフローに統合する。アイコンをクリックすると、端末状態・バッテリー残量・直近10件の通知・端末位置確認・SFTP ファイルブラウザを表示。すべて KDE Connect デーモンの D-Bus シグナルで駆動し、ポーリングやバックグラウンドサービスは不要。",
+            "github": "https://gitlab.com/lotharsan/parakeet",
             "demo": "",
-            "status": "本番稼働中"
+            "status": "in-progress"
         },
         {
-            "title": "OCS Inventory + Zabbix 導入 — BigBuy社",
-            "tech": ["OCS Inventory NG", "Zabbix", "Linux", "MySQL", "AWS"],
-            "description": "欧州最大級のB2B eコマース卸売業者（従業員約350名）に対し、ITインベントリ管理システムと監視システムを自主提案により導入。Excelによる手作業管理を自動化し、社内初のインフラ可視化基盤を整備しました。",
-            "github": "",
+            "title": "Photoloop — NAS ストリーミング対応のデジタルフォトフレーム",
+            "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
+            "description": "任意のスマートフォン・タブレット・Android TV をデジタルフォトフレーム化する Flutter Android アプリ。SMB 対応 NAS からゼロ設定でサブネット検出とスライディングキャッシュを用いた写真ストリーミングに対応。ローカルストレージ読み込みも可能。3種のトランジション、向き判定、再生中の Wakelock、SMB 認証情報の Android Keystore による安全な保管を提供。",
+            "github": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
-            "status": "導入完了"
+            "status": "completed"
+        },
+        {
+            "title": "Reddit Gallery — Android 向けマルチメディアクライアント",
+            "tech": ["Flutter", "Dart", "Provider", "Dio", "Reddit JSON API"],
+            "description": "アカウント不要で Reddit の画像と動画を閲覧・ダウンロードできる軽量な Flutter Android クライアント。サービス終了した Gallery for Reddit の代替を目指す。サブスクリプションを統合した無限スクロールフィード、全画面ズーム対応ビューワ、v.redd.it / Redgifs / Imgur / Streamable サポート、設定可能なフィルタ、サブスクリプション一覧の JSON バックアップ／復元機能を備える。",
+            "github": "https://gitlab.com/lotharsan/reddit_gallery",
+            "demo": "",
+            "status": "completed"
+        },
+        {
+            "title": "Movies React — TMDB 探索 SPA",
+            "tech": ["React 18", "Vite", "React Router 6", "Axios", "Vitest"],
+            "description": "React 18 + Vite で構築した The Movie Database（TMDB）を閲覧するシングルページアプリケーション。30分のセッション有効期限を持つ認証、localStorage による永続化お気に入り、AbortController によるキャンセル可能なデバウンス検索、増分ページネーション、スケルトンローダー、保護ルート、テストで網羅されたビジネスロジック層を実装。",
+            "github": "https://gitlab.com/lotharsan/movies-react",
+            "demo": "",
+            "status": "completed"
         }
     ],
     "achievements": [

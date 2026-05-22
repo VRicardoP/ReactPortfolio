@@ -45,7 +45,7 @@ const PortfolioWindow = ({ data, initialPosition }) => {
                                 <div className="portfolio-links">
                                     {project.github && (
                                         <a href={project.github} target="_blank" rel="noopener noreferrer"
-                                            className="portfolio-link">[GitHub]</a>
+                                            className="portfolio-link">[Repo]</a>
                                     )}
                                     {project.demo && (
                                         <a href={project.demo} target="_blank" rel="noopener noreferrer"

@@ -171,36 +171,52 @@
     },
     "portfolio": [
         {
-            "title": "Minichef — KI-Sprachassistent für professionelle Küchen",
-            "tech": ["Python", "Vosk STT", "Groq LLM", "gTTS", "MySQL", "Pygame"],
-            "description": "Sprachgesteuerter KI-Assistent für professionelles Küchenmanagement. Vollständige Sprach-Pipeline: Echtzeit-Spracherkennung → LLM-Verarbeitung → Sprachausgabe. Vollständige sprachgesteuerte CRUD-Operationen für Inventar, Rezepte und Lieferanten. Eigenständig während des DAW-Praktikums entwickelt; vom Unternehmen aktiv weitergeführt.",
-            "github": "",
+            "title": "CookCode System — Restaurant- und Küchenmanagement-Suite",
+            "tech": ["PHP 8.2", "MySQL 8", "WordPress", "WooCommerce", "Python", "PySide6", "Docker", "MQTT"],
+            "description": "Durchgängige Gastronomie-Plattform, die Zentralküche, Restaurant-Kasse und Online-Shop unter einer gemeinsamen Datengrundlage vereint. Vier vernetzte Dienste — WordPress-Shop mit eigenen WooCommerce-APIs, Küchen-App mit Chargenrückverfolgung und QR-Etiketten, Restaurant-Kasse mit MQTT-Scanner sowie der MiniChef-Sprachassistent (PySide6 + Vosk + Coqui TTS + Gemini) — orchestriert durch ein einziges docker-compose mit sechs Containern.",
+            "github": "https://gitlab.com/lotharsan/cookcodesystem",
             "demo": "",
-            "status": "In aktiver Entwicklung"
+            "status": "completed"
         },
         {
-            "title": "Kunden-Metrik-Dashboard — Sfera-AI",
-            "tech": ["React.js", "Python", "PostgreSQL", "Claude API"],
-            "description": "Web-Dashboard für Sfera-AI-Kunden mit Echtzeit-Darstellung der KI-Agenten-Leistung: Anrufvolumen, Lösungsquoten, durchschnittliche Bearbeitungszeit und konfigurierbare Geschäftskennzahlen pro Kunde.",
-            "github": "",
-            "demo": "",
-            "status": "In Produktion"
+            "title": "Portfolio Frontend — vicentepau.is-a.dev",
+            "tech": ["React 19", "Vite 7", "Three.js", "Chart.js", "Leaflet", "i18next", "Vitest", "Playwright"],
+            "description": "Dieses Portfolio. Desktop-OS-Metapher mit ziehbaren, grössenveränderbaren Fenstern, sechs interaktiven 3D-Hintergründen, drei Farbthemen, einem Groq-basierten KI-Chatbot, sechs Sprachen, Besuchertracking und einem privaten Admin-Dashboard mit Job-Aggregation, KI-Matching, Kanban-Pipeline und KI-generierten Lebensläufen. 313 Vitest- + 17 Playwright-Tests. Ausgerollt auf Cloudflare Pages.",
+            "github": "https://gitlab.com/lotharsan/reactportfolio-front",
+            "demo": "https://vicentepau.is-a.dev",
+            "status": "in-progress"
         },
         {
-            "title": "Telefonische Conversational-AI-Agenten",
-            "tech": ["Claude API", "Python", "n8n", "PostgreSQL"],
-            "description": "Vier telefonische KI-Agenten im Produktionsbetrieb für Unternehmen verschiedener Branchen, fähig zur gleichzeitigen Bearbeitung dutzender Anrufe mit autonomer Lösung. Integriert mit Folge-Automatisierungen: E-Mail, WhatsApp, SMS und automatische Terminvereinbarung via n8n.",
-            "github": "",
+            "title": "Parakeet — Smartphone-Integration für Budgie",
+            "tech": ["Vala", "GTK 3", "Meson", "D-Bus", "KDE Connect"],
+            "description": "Budgie-Panel-Applet, das ein Android-Telefon über KDE Connect in den Linux-Arbeitsablauf integriert. Ein Klick zeigt Gerätestatus, Akkustand, die letzten zehn Benachrichtigungen, «Find my phone» und einen SFTP-Dateibrowser — alles gesteuert über D-Bus-Signale des KDE-Connect-Daemons, ohne Polling und ohne Hintergrunddienste.",
+            "github": "https://gitlab.com/lotharsan/parakeet",
             "demo": "",
-            "status": "In Produktion"
+            "status": "in-progress"
         },
         {
-            "title": "OCS Inventory + Zabbix — Einführung bei BigBuy",
-            "tech": ["OCS Inventory NG", "Zabbix", "Linux", "MySQL", "AWS"],
-            "description": "Eigeninitiativ vorgeschlagen, geplant und umgesetzt: die ersten IT-Inventar- und Infrastrukturüberwachungssysteme bei BigBuy, einem der grössten B2B-E-Commerce-Grosshändler Europas (ca. 350 Mitarbeitende). Beide Initiativen wurden ohne vorherigen Auftrag präsentiert, genehmigt und realisiert.",
-            "github": "",
+            "title": "Photoloop — Digitaler Bilderrahmen mit NAS-Streaming",
+            "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
+            "description": "Flutter-Android-App, die jedes Handy, Tablet oder Android TV in einen digitalen Bilderrahmen verwandelt. Streamt Fotos von einem SMB-fähigen NAS mit automatischer Subnetz-Erkennung und gleitendem Cache oder liest sie aus dem lokalen Speicher. Drei Übergangsstile, Orientierungsfilter, Wakelock während der Wiedergabe und sichere Ablage der SMB-Zugangsdaten im Android Keystore.",
+            "github": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
-            "status": "Abgeschlossen"
+            "status": "completed"
+        },
+        {
+            "title": "Reddit Gallery — Android-Multimedia-Client",
+            "tech": ["Flutter", "Dart", "Provider", "Dio", "Reddit JSON API"],
+            "description": "Schlanker Flutter-Android-Client zum Stöbern und Herunterladen von Bildern und Videos aus Reddit ohne Konto — als Ersatz für die eingestellte Gallery for Reddit. Kombinierter Feed der Abonnements mit endlosem Scrollen, Vollbild-Mediaviewer mit Zoom, Unterstützung von v.redd.it / Redgifs / Imgur / Streamable, konfigurierbare Filter und JSON-Backup/Restore der Abonnements.",
+            "github": "https://gitlab.com/lotharsan/reddit_gallery",
+            "demo": "",
+            "status": "completed"
+        },
+        {
+            "title": "Movies React — TMDB-Browser-SPA",
+            "tech": ["React 18", "Vite", "React Router 6", "Axios", "Vitest"],
+            "description": "Single-Page-Anwendung mit React 18 + Vite, die The Movie Database (TMDB) durchsucht. Authentifizierung mit 30-minütiger Sitzung, Favoriten im localStorage, Suche mit Debounce und abbrechbaren Requests via AbortController, inkrementelle Paginierung, Skeleton-Loader, geschützte Routen und eine vollständig getestete Business-Schicht.",
+            "github": "https://gitlab.com/lotharsan/movies-react",
+            "demo": "",
+            "status": "completed"
         }
     ],
     "achievements": [
