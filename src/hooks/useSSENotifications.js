@@ -74,6 +74,13 @@ export const useSSENotifications = () => {
                                         ...prev.slice(0, 19)
                                     ]);
                                 }
+
+                                // Tell the dashboard its data is stale so it refetches
+                                if (message.type === 'new_visitor' || message.type === 'new_chat') {
+                                    window.dispatchEvent(new CustomEvent('dashboard-data-stale', {
+                                        detail: { scope: message.type },
+                                    }));
+                                }
                             } catch {
                                 // Ignore malformed data
                             }

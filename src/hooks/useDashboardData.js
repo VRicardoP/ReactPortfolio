@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
 import { JOB_SOURCES, extractJobs, normalizeJob } from '../config/jobSources';
+
+const SSE_REFETCH_DEBOUNCE_MS = 3000;
 
 export const useDashboardData = () => {
   const { authenticatedFetch } = useAuth();
@@ -13,78 +15,91 @@ export const useDashboardData = () => {
   const [error, setError] = useState(null);
   const [warnings, setWarnings] = useState([]);
 
+  const fetchCritical = useCallback(async ({ silent = false } = {}) => {
+    if (!silent) {
+      setLoading(true);
+      setError(null);
+    }
+    const failedSources = [];
+
+    const promises = [
+      authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/stats?days=30`)
+        .then(res => res.json())
+        .catch(() => { failedSources.push('stats'); return null; }),
+
+      authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/map-data`)
+        .then(res => res.json())
+        .catch(() => { failedSources.push('map'); return []; }),
+
+      authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/chat/full-stats`)
+        .then(res => res.ok
+          ? res.json()
+          : { general: null, top_questions: [], timeline_daily: [], by_country: [] })
+        .catch(() => {
+          failedSources.push('chat-analytics');
+          return { general: null, top_questions: [], timeline_daily: [], by_country: [] };
+        }),
+    ];
+
+    try {
+      const [statsData, mapDataPoints, chatAnalyticsJson] = await Promise.all(promises);
+      setStats(statsData);
+      setMapData(mapDataPoints);
+      setChatAnalytics(chatAnalyticsJson);
+      setWarnings(failedSources);
+    } catch (err) {
+      if (!silent) setError(err.message || 'Failed to load dashboard data');
+    } finally {
+      if (!silent) setLoading(false);
+    }
+  }, [authenticatedFetch]);
+
   useEffect(() => {
     let aborted = false;
 
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const failedSources = [];
+    const run = async () => {
+      await fetchCritical();
+      if (aborted) return;
 
-        // Critical data — dashboard waits only for these 3
-        const criticalPromises = [
-          authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/stats?days=30`)
-            .then(res => res.json())
-            .catch(() => { failedSources.push('stats'); return null; }),
-
-          authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/map-data`)
-            .then(res => res.json())
-            .catch(() => { failedSources.push('map'); return []; }),
-
-          authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/chat/full-stats`)
-            .then(res => {
-              if (!res.ok) {
-                return { general: null, top_questions: [], timeline_daily: [], by_country: [] };
+      // Job data — loads in background, normalize at fetch time so render is cheap
+      JOB_SOURCES.forEach(({ key, urlPath }) => {
+        authenticatedFetch(`${BACKEND_URL}${urlPath}`)
+          .then(res => res.json())
+          .then(data => {
+            if (aborted) return;
+            const raw = extractJobs(data);
+            const _normalized = raw.reduce((acc, j) => {
+              try {
+                acc.push(normalizeJob(j, key));
+              } catch (e) {
+                if (import.meta.env.DEV) console.warn(`[useDashboardData] Failed to normalize job from ${key}:`, j, e);
               }
-              return res.json();
-            })
-            .catch(() => { failedSources.push('chat-analytics'); return { general: null, top_questions: [], timeline_daily: [], by_country: [] }; }),
-        ];
-
-        const [statsData, mapDataPoints, chatAnalyticsJson] = await Promise.all(criticalPromises);
-
-        if (!aborted) {
-          setStats(statsData);
-          setMapData(mapDataPoints);
-          setChatAnalytics(chatAnalyticsJson);
-          setWarnings(failedSources);
-          setLoading(false);
-        }
-
-        // Job data — loads in background, normalize at fetch time so render is cheap
-        JOB_SOURCES.forEach(({ key, urlPath }) => {
-          authenticatedFetch(`${BACKEND_URL}${urlPath}`)
-            .then(res => res.json())
-            .then(data => {
-              if (!aborted) {
-                const raw = extractJobs(data);
-                const _normalized = raw.reduce((acc, j) => {
-                    try {
-                        acc.push(normalizeJob(j, key));
-                    } catch (e) {
-                        if (import.meta.env.DEV) console.warn(`[useDashboardData] Failed to normalize job from ${key}:`, j, e);
-                    }
-                    return acc;
-                }, []);
-                setJobData(prev => ({ ...prev, [key]: { ...data, _normalized } }));
-              }
-            })
-            .catch(() => { if (!aborted) setWarnings(prev => [...prev, key]); });
-        });
-
-      } catch (err) {
-        if (!aborted) {
-          setError(err.message || 'Failed to load dashboard data');
-          setLoading(false);
-        }
-      }
+              return acc;
+            }, []);
+            setJobData(prev => ({ ...prev, [key]: { ...data, _normalized } }));
+          })
+          .catch(() => { if (!aborted) setWarnings(prev => [...prev, key]); });
+      });
     };
 
-    loadData();
-
+    run();
     return () => { aborted = true; };
-  }, [authenticatedFetch]);
+  }, [fetchCritical, authenticatedFetch]);
+
+  // Refresh critical data when SSE signals new visitor/chat. Debounced so a burst
+  // of events triggers a single refetch.
+  useEffect(() => {
+    let timer;
+    const handler = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fetchCritical({ silent: true }), SSE_REFETCH_DEBOUNCE_MS);
+    };
+    window.addEventListener('dashboard-data-stale', handler);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('dashboard-data-stale', handler);
+    };
+  }, [fetchCritical]);
 
   return { stats, mapData, chatAnalytics, jobData, loading, error, warnings };
 };
