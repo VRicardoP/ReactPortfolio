@@ -391,22 +391,22 @@
       "errorLoad": "Échec du chargement des recherches"
     },
     "jobFilter": {
-      "title": "Filtre Avanc\u00e9",
+      "title": "Filtre Avancé",
       "searchLabel": "Rechercher",
-      "searchPlaceholder": "Titre, entreprise, comp\u00e9tence...",
+      "searchPlaceholder": "Titre, entreprise, compétence...",
       "countryLabel": "Pays",
-      "countryPlaceholder": "ex. Allemagne, \u00c9tats-Unis...",
+      "countryPlaceholder": "ex. Allemagne, États-Unis...",
       "cityLabel": "Ville",
       "cityPlaceholder": "ex. Berlin, Londres...",
       "salaryMin": "Salaire min.",
       "salaryMax": "Salaire max.",
-      "remoteOnly": "T\u00e9l\u00e9travail uniquement",
+      "remoteOnly": "Télétravail uniquement",
       "search": "Rechercher",
       "clear": "Effacer",
       "saveSearch": "Sauvegarder",
       "searching": "Recherche en cours...",
-      "resultsFound": "r\u00e9sultats trouv\u00e9s",
-      "noResults": "Aucun r\u00e9sultat ne correspond \u00e0 vos filtres",
+      "resultsFound": "résultats trouvés",
+      "noResults": "Aucun résultat ne correspond à vos filtres",
       "hint": "Définissez les filtres et cliquez sur Rechercher pour trouver des offres dans toutes les sources",
       "errorSearch": "Échec de la recherche"
     },
@@ -423,7 +423,7 @@
       "matchingSkills": "Correspondantes",
       "missingSkills": "Manquantes",
       "saveToBoard": "Sauvegarder",
-      "saved": "Sauvegard\u00e9 \u2713",
+      "saved": "Sauvegardé ✓",
       "noResults": "Cliquez sur 'Lancer l'analyse IA' pour trouver vos meilleures offres",
       "translateTitles": "Traduire les titres",
       "translating": "Traduction...",
@@ -446,6 +446,45 @@
       "chat": "Chat",
       "jobs": "Emplois",
       "settings": "Paramètres"
+    },
+    "schoolJobs": {
+      "title": "Suivi des emplois — écoles",
+      "scrapeNow": "Lancer maintenant",
+      "scraping": "Recherche…",
+      "reload": "Recharger",
+      "loading": "Chargement…",
+      "noJobs": "Aucune offre détectée pour l'instant.",
+      "error": "Error: {{message}}",
+      "count": "{{count}} job(s) detected",
+      "viewOffer": "Voir l'offre",
+      "emailContact": "Écrire un email",
+      "openPortal": "Ouvrir le portail",
+      "urgency": {
+        "push": "Immédiat",
+        "digest": "Synthèse",
+        "silent": "Silencieux"
+      },
+      "cols": {
+        "urgency": "Urgence",
+        "school": "École",
+        "title": "Poste",
+        "detected": "Détecté",
+        "actions": "Actions"
+      }
+    },
+    "schoolContacts": {
+      "title": "Contacts manuels (écoles)",
+      "help": "Écoles sans listing public — envoie une candidature spontanée selon la cadence indiquée.",
+      "noContacts": "Aucune école manual_only configurée.",
+      "unverified": "(contact non vérifié)",
+      "everyNDays": "tous les {{days}} jours",
+      "visitSite": "Visiter le site",
+      "cols": {
+        "school": "École",
+        "contact": "Contact",
+        "reminderEvery": "Rappel",
+        "actions": "Actions"
+      }
     }
   },
   "mobile": {

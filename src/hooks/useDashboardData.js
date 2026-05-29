@@ -16,10 +16,11 @@ export const useDashboardData = () => {
   const [warnings, setWarnings] = useState([]);
 
   const fetchCritical = useCallback(async ({ silent = false } = {}) => {
-    if (!silent) {
-      setLoading(true);
-      setError(null);
-    }
+    // DT-95: el reset de `error` se hace siempre, incluso en silent. Antes solo
+    // se reseteaba si !silent → un error previo se quedaba "pegado" cuando el
+    // SSE disparaba un refetch exitoso.
+    setError(null);
+    if (!silent) setLoading(true);
     const failedSources = [];
 
     const promises = [
@@ -48,7 +49,7 @@ export const useDashboardData = () => {
       setChatAnalytics(chatAnalyticsJson);
       setWarnings(failedSources);
     } catch (err) {
-      if (!silent) setError(err.message || 'Failed to load dashboard data');
+      setError(err.message || 'Failed to load dashboard data');
     } finally {
       if (!silent) setLoading(false);
     }

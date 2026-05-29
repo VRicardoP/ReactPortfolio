@@ -423,7 +423,7 @@
       "matchingSkills": "一致",
       "missingSkills": "不足",
       "saveToBoard": "保存",
-      "saved": "保存済み \u2713",
+      "saved": "保存済み ✓",
       "noResults": "「AI分析を実行」をクリックして最適な求人を見つけましょう",
       "translateTitles": "タイトルを翻訳",
       "translating": "翻訳中...",
@@ -446,6 +446,45 @@
       "chat": "チャット",
       "jobs": "求人",
       "settings": "設定"
+    },
+    "schoolJobs": {
+      "title": "学校求人モニター",
+      "scrapeNow": "今すぐ検索",
+      "scraping": "検索中…",
+      "reload": "再読込",
+      "loading": "求人を読み込み中…",
+      "noJobs": "まだ求人は検出されていません。",
+      "error": "Error: {{message}}",
+      "count": "{{count}} job(s) detected",
+      "viewOffer": "求人を見る",
+      "emailContact": "メールで連絡",
+      "openPortal": "ポータルを開く",
+      "urgency": {
+        "push": "即時",
+        "digest": "ダイジェスト",
+        "silent": "通知なし"
+      },
+      "cols": {
+        "urgency": "緊急度",
+        "school": "学校",
+        "title": "ポジション",
+        "detected": "検出日時",
+        "actions": "操作"
+      }
+    },
+    "schoolContacts": {
+      "title": "手動連絡先（学校）",
+      "help": "公開求人がない学校 — 指定の頻度で自発的応募を送ってください。",
+      "noContacts": "manual_only の学校が登録されていません。",
+      "unverified": "（連絡先未確認）",
+      "everyNDays": "{{days}} 日ごと",
+      "visitSite": "サイトを開く",
+      "cols": {
+        "school": "学校",
+        "contact": "連絡先",
+        "reminderEvery": "リマインダー",
+        "actions": "操作"
+      }
     }
   },
   "mobile": {

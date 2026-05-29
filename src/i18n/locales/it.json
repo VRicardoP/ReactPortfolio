@@ -396,7 +396,7 @@
       "searchPlaceholder": "Titolo, azienda, competenza...",
       "countryLabel": "Paese",
       "countryPlaceholder": "es. Germania, USA...",
-      "cityLabel": "Citt\u00e0",
+      "cityLabel": "Città",
       "cityPlaceholder": "es. Berlino, Londra...",
       "salaryMin": "Stipendio min.",
       "salaryMax": "Stipendio max.",
@@ -423,7 +423,7 @@
       "matchingSkills": "Corrispondenti",
       "missingSkills": "Mancanti",
       "saveToBoard": "Salva",
-      "saved": "Salvato \u2713",
+      "saved": "Salvato ✓",
       "noResults": "Clicca 'Avvia analisi IA' per trovare le migliori offerte per te",
       "translateTitles": "Traduci titoli",
       "translating": "Traduzione...",
@@ -446,6 +446,45 @@
       "chat": "Chat",
       "jobs": "Lavori",
       "settings": "Impostazioni"
+    },
+    "schoolJobs": {
+      "title": "Monitoraggio impieghi — scuole",
+      "scrapeNow": "Cerca ora",
+      "scraping": "Ricerca…",
+      "reload": "Ricarica",
+      "loading": "Caricamento offerte…",
+      "noJobs": "Nessuna offerta rilevata.",
+      "error": "Error: {{message}}",
+      "count": "{{count}} job(s) detected",
+      "viewOffer": "Vedi offerta",
+      "emailContact": "Scrivi email",
+      "openPortal": "Apri portale",
+      "urgency": {
+        "push": "Immediato",
+        "digest": "Riepilogo",
+        "silent": "Silenzioso"
+      },
+      "cols": {
+        "urgency": "Urgenza",
+        "school": "Scuola",
+        "title": "Posizione",
+        "detected": "Rilevato",
+        "actions": "Azioni"
+      }
+    },
+    "schoolContacts": {
+      "title": "Contatti manuali (scuole)",
+      "help": "Scuole senza elenco pubblico — invia candidatura spontanea secondo la cadenza indicata.",
+      "noContacts": "Nessuna scuola manual_only configurata.",
+      "unverified": "(contatto non verificato)",
+      "everyNDays": "ogni {{days}} giorni",
+      "visitSite": "Visita il sito",
+      "cols": {
+        "school": "Scuola",
+        "contact": "Contatto",
+        "reminderEvery": "Promemoria",
+        "actions": "Azioni"
+      }
     }
   },
   "mobile": {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
@@ -7,14 +7,12 @@ const SCHOOLS_URL = `${BACKEND_URL}/api/v1/schools/`;
 const SCHOOL_JOBS_URL = `${BACKEND_URL}/api/v1/schools/jobs/all`;
 const REFRESH_URL = `${BACKEND_URL}/api/v1/schools/refresh`;
 
+// Espera tras POST /refresh antes de re-pollear (el scraper corre en background)
+const SCRAPE_POLL_DELAY_MS = 8000;
+
 /**
  * Fetches schools metadata + detected school jobs.
- * Returns: { schools, jobs, loading, error, refresh, triggerScrape }
- *
- * - `schools`: full list incl. scrape/manual_only modes
- * - `jobs`: SchoolJob rows ordered by date_detected desc
- * - `refresh()`: re-fetch both
- * - `triggerScrape()`: POST /refresh and re-fetch after a delay
+ * Returns: { schools, jobs, loading, error, refresh, refreshing, triggerScrape }
  */
 const useSchoolJobs = () => {
   const { authenticatedFetch, isAuthenticated } = useAuth();
@@ -24,13 +22,30 @@ const useSchoolJobs = () => {
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
+  // DT-93: timers + mounted flag para evitar setState tras unmount
+  const scrapePollTimerRef = useRef(null);
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      if (scrapePollTimerRef.current) {
+        clearTimeout(scrapePollTimerRef.current);
+        scrapePollTimerRef.current = null;
+      }
+    };
+  }, []);
+
   const refresh = useCallback(async () => {
     if (!isAuthenticated) {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
       return;
     }
-    setLoading(true);
-    setError(null);
+    if (mountedRef.current) {
+      setLoading(true);
+      setError(null);
+    }
     try {
       const [schoolsRes, jobsRes] = await Promise.all([
         authenticatedFetch(SCHOOLS_URL),
@@ -40,12 +55,13 @@ const useSchoolJobs = () => {
         schoolsRes.json(),
         jobsRes.json(),
       ]);
+      if (!mountedRef.current) return;
       setSchools(Array.isArray(schoolsJson) ? schoolsJson : []);
       setJobs(Array.isArray(jobsJson) ? jobsJson : []);
     } catch (err) {
-      setError(err.message || 'Failed to load school data');
+      if (mountedRef.current) setError(err.message || 'Failed to load school data');
     } finally {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
     }
   }, [authenticatedFetch, isAuthenticated]);
 
@@ -58,13 +74,22 @@ const useSchoolJobs = () => {
     setRefreshing(true);
     try {
       await authenticatedFetch(REFRESH_URL, { method: 'POST' });
-      // Server runs in background; wait a bit before polling.
-      setTimeout(() => {
-        refresh().finally(() => setRefreshing(false));
-      }, 8000);
+      // Limpia un timer previo si triggerScrape se invoca varias veces
+      if (scrapePollTimerRef.current) {
+        clearTimeout(scrapePollTimerRef.current);
+      }
+      scrapePollTimerRef.current = setTimeout(() => {
+        scrapePollTimerRef.current = null;
+        if (!mountedRef.current) return;
+        refresh().finally(() => {
+          if (mountedRef.current) setRefreshing(false);
+        });
+      }, SCRAPE_POLL_DELAY_MS);
     } catch (err) {
-      setError(err.message || 'Failed to trigger scrape');
-      setRefreshing(false);
+      if (mountedRef.current) {
+        setError(err.message || 'Failed to trigger scrape');
+        setRefreshing(false);
+      }
     }
   }, [authenticatedFetch, isAuthenticated, refresh]);
 

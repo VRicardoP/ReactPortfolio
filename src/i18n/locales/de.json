@@ -393,7 +393,7 @@
     "jobFilter": {
       "title": "Erweiterter Filter",
       "searchLabel": "Suchen",
-      "searchPlaceholder": "Titel, Unternehmen, F\u00e4higkeit...",
+      "searchPlaceholder": "Titel, Unternehmen, Fähigkeit...",
       "countryLabel": "Land",
       "countryPlaceholder": "z.B. Deutschland, USA...",
       "cityLabel": "Stadt",
@@ -402,9 +402,9 @@
       "salaryMax": "Max. Gehalt",
       "remoteOnly": "Nur Remote",
       "search": "Suchen",
-      "clear": "L\u00f6schen",
+      "clear": "Löschen",
       "saveSearch": "Speichern",
-      "searching": "Suche l\u00e4uft...",
+      "searching": "Suche läuft...",
       "resultsFound": "Ergebnisse gefunden",
       "noResults": "Keine Ergebnisse passen zu Ihren Filtern",
       "hint": "Filter einstellen und auf Suchen klicken, um Jobs aus allen Quellen zu finden",
@@ -423,7 +423,7 @@
       "matchingSkills": "Übereinstimmend",
       "missingSkills": "Fehlend",
       "saveToBoard": "Speichern",
-      "saved": "Gespeichert \u2713",
+      "saved": "Gespeichert ✓",
       "noResults": "Klicken Sie auf 'KI-Analyse starten', um Ihre besten Stellenangebote zu finden",
       "translateTitles": "Titel übersetzen",
       "translating": "Übersetze...",
@@ -446,6 +446,45 @@
       "chat": "Chat",
       "jobs": "Stellen",
       "settings": "Einstellungen"
+    },
+    "schoolJobs": {
+      "title": "Schulen-Jobmonitor",
+      "scrapeNow": "Jetzt suchen",
+      "scraping": "Suche läuft…",
+      "reload": "Neu laden",
+      "loading": "Lade Stellenanzeigen…",
+      "noJobs": "Noch keine Stellen erkannt.",
+      "error": "Error: {{message}}",
+      "count": "{{count}} job(s) detected",
+      "viewOffer": "Stelle ansehen",
+      "emailContact": "E-Mail schreiben",
+      "openPortal": "Portal öffnen",
+      "urgency": {
+        "push": "Sofort",
+        "digest": "Zusammenfassung",
+        "silent": "Lautlos"
+      },
+      "cols": {
+        "urgency": "Dringlichkeit",
+        "school": "Schule",
+        "title": "Stelle",
+        "detected": "Erkannt",
+        "actions": "Aktionen"
+      }
+    },
+    "schoolContacts": {
+      "title": "Manuelle Kontakte (Schulen)",
+      "help": "Schulen ohne öffentliche Liste — sende eine Initiativbewerbung in der angegebenen Frequenz.",
+      "noContacts": "Keine manual_only Schulen konfiguriert.",
+      "unverified": "(Kontakt nicht verifiziert)",
+      "everyNDays": "alle {{days}} Tage",
+      "visitSite": "Webseite besuchen",
+      "cols": {
+        "school": "Schule",
+        "contact": "Kontakt",
+        "reminderEvery": "Erinnerung",
+        "actions": "Aktionen"
+      }
     }
   },
   "mobile": {
