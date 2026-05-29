@@ -283,6 +283,45 @@
       "noTimelineData": "No timeline data available",
       "noCountryData": "No country data available"
     },
+    "schoolJobs": {
+      "title": "School Jobs Monitor",
+      "scrapeNow": "Scrape now",
+      "scraping": "Scraping…",
+      "reload": "Reload",
+      "loading": "Loading school jobs…",
+      "noJobs": "No jobs detected yet. Try clicking 'Scrape now'.",
+      "error": "Error: {{message}}",
+      "count": "{{count}} job(s) detected",
+      "viewOffer": "View offer",
+      "emailContact": "Email contact",
+      "openPortal": "Open portal",
+      "urgency": {
+        "push": "Push",
+        "digest": "Digest",
+        "silent": "Silent"
+      },
+      "cols": {
+        "urgency": "Urgency",
+        "school": "School",
+        "title": "Title",
+        "detected": "Detected",
+        "actions": "Actions"
+      }
+    },
+    "schoolContacts": {
+      "title": "School Contacts (manual)",
+      "help": "Schools without a public listing — send a spontaneous application on the cadence below.",
+      "noContacts": "No manual-only schools configured.",
+      "unverified": "(contact unverified)",
+      "everyNDays": "every {{days}} days",
+      "visitSite": "Visit site",
+      "cols": {
+        "school": "School",
+        "contact": "Contact",
+        "reminderEvery": "Reminder",
+        "actions": "Actions"
+      }
+    },
     "heatmap": {
       "title": "Interaction Heatmap",
       "tabHeatmap": "Heatmap",

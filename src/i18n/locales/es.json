@@ -283,6 +283,45 @@
       "noTimelineData": "No hay datos de timeline disponibles",
       "noCountryData": "No hay datos de pa\u00edses disponibles"
     },
+    "schoolJobs": {
+      "title": "Monitor de empleo en colegios",
+      "scrapeNow": "Buscar ahora",
+      "scraping": "Buscando…",
+      "reload": "Recargar",
+      "loading": "Cargando ofertas de colegios…",
+      "noJobs": "Aún no se han detectado ofertas. Prueba con 'Buscar ahora'.",
+      "error": "Error: {{message}}",
+      "count": "{{count}} oferta(s) detectada(s)",
+      "viewOffer": "Ver oferta",
+      "emailContact": "Escribir email",
+      "openPortal": "Abrir portal",
+      "urgency": {
+        "push": "Inmediato",
+        "digest": "Resumen",
+        "silent": "Silencioso"
+      },
+      "cols": {
+        "urgency": "Urgencia",
+        "school": "Colegio",
+        "title": "Puesto",
+        "detected": "Detectado",
+        "actions": "Acciones"
+      }
+    },
+    "schoolContacts": {
+      "title": "Contactos manuales (colegios)",
+      "help": "Colegios sin listado público — envía candidatura espontánea según la cadencia indicada.",
+      "noContacts": "No hay colegios manual_only configurados.",
+      "unverified": "(contacto sin verificar)",
+      "everyNDays": "cada {{days}} días",
+      "visitSite": "Visitar sitio",
+      "cols": {
+        "school": "Colegio",
+        "contact": "Contacto",
+        "reminderEvery": "Recordatorio",
+        "actions": "Acciones"
+      }
+    },
     "heatmap": {
       "title": "Mapa de Calor de Interacciones",
       "tabHeatmap": "Mapa de Calor",

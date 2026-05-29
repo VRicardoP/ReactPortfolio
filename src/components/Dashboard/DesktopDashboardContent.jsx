@@ -17,6 +17,8 @@ const SavedSearchesWindow = lazy(() => import('./SavedSearchesWindow'));
 const JobFilterWindow = lazy(() => import('./JobFilterWindow'));
 const AIJobMatchWindow = lazy(() => import('./AIJobMatchWindow'));
 const HeatmapWindow = lazy(() => import('./HeatmapWindow'));
+const SchoolJobsWindow = lazy(() => import('./SchoolJobsWindow'));
+const SchoolManualContactsWindow = lazy(() => import('./SchoolManualContactsWindow'));
 
 // What is shown while the dashboard is loading
 export const DashboardLoader = memo(() => {
@@ -61,6 +63,8 @@ const DASHBOARD_WINDOW_IDS = [
     'saved-searches-window',
     'ai-match-window',
     'heatmap-window',
+    'school-jobs-window',
+    'school-manual-contacts-window',
 ];
 
 const LAYOUT_ANIMATION_DELAY_MS = 600;
@@ -138,6 +142,18 @@ const DesktopDashboardContent = memo(({
                     />
                     <AIJobMatchWindow
                         initialPosition={{ x: 520, y: 260 }}
+                    />
+                </Suspense>
+            </ErrorBoundary>
+
+            {/* Schools group */}
+            <ErrorBoundary>
+                <Suspense fallback={<DashboardLoader />}>
+                    <SchoolJobsWindow
+                        initialPosition={{ x: 340, y: 200 }}
+                    />
+                    <SchoolManualContactsWindow
+                        initialPosition={{ x: 400, y: 220 }}
                     />
                 </Suspense>
             </ErrorBoundary>
