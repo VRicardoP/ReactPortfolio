@@ -469,7 +469,14 @@
         "school": "Scuola",
         "title": "Posizione",
         "detected": "Rilevato",
-        "actions": "Azioni"
+        "actions": "Azioni",
+        "relevance": "Rilevanza"
+      },
+      "relevance": {
+        "match": "Match IT",
+        "partial": "Parziale",
+        "irrelevant": "Altro",
+        "excluded": "Docente"
       }
     },
     "schoolContacts": {

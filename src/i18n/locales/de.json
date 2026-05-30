@@ -469,7 +469,14 @@
         "school": "Schule",
         "title": "Stelle",
         "detected": "Erkannt",
-        "actions": "Aktionen"
+        "actions": "Aktionen",
+        "relevance": "Relevanz"
+      },
+      "relevance": {
+        "match": "IT-Treffer",
+        "partial": "Teilweise",
+        "irrelevant": "Andere",
+        "excluded": "Lehrer"
       }
     },
     "schoolContacts": {

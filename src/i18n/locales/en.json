@@ -15,7 +15,7 @@
     "maximizeDesc": "Click the yellow button (right). A second click expands to full screen",
     "tip": "Tip:",
     "tipText": "Explore the different windows to learn more about my experience, skills, and projects. Power users: try Ctrl+` for a surprise.",
-    "gotIt": "Got it, let's go! \u2192"
+    "gotIt": "Got it, let's go! →"
   },
   "chat": {
     "greeting": "Hi there! I'm Kusanagi! Do you have any questions about {{name}}?",
@@ -130,7 +130,7 @@
     "checkConsole": "Check browser console for detailed errors",
     "checkCors": "Ensure CORS is properly configured on backend",
     "retry": "Retry",
-    "backToPortfolio": "\u2190 Portfolio",
+    "backToPortfolio": "← Portfolio",
     "logout": "Logout",
     "theme": "Theme",
     "bgRain": "Rain",
@@ -305,7 +305,14 @@
         "school": "School",
         "title": "Title",
         "detected": "Detected",
-        "actions": "Actions"
+        "actions": "Actions",
+        "relevance": "Relevance"
+      },
+      "relevance": {
+        "match": "IT match",
+        "partial": "Partial",
+        "irrelevant": "Other",
+        "excluded": "Teacher"
       }
     },
     "schoolContacts": {
@@ -462,7 +469,7 @@
       "matchingSkills": "Matching",
       "missingSkills": "Missing",
       "saveToBoard": "Save",
-      "saved": "Saved \u2713",
+      "saved": "Saved ✓",
       "noResults": "Click 'Run AI Analysis' to find your best job matches",
       "translateTitles": "Translate Titles",
       "translating": "Translating...",
@@ -564,7 +571,7 @@
     "invalidCredentials": "Invalid credentials",
     "authenticating": "Authenticating...",
     "login": "Login",
-    "backToPortfolio": "\u2190 Back to Portfolio",
+    "backToPortfolio": "← Back to Portfolio",
     "sessionExpiredInactivity": "Session expired due to inactivity"
   }
 }

@@ -7,6 +7,12 @@ import useSchoolJobs from '../../hooks/useSchoolJobs';
 const PUSH_THRESHOLD = 70;
 const DIGEST_THRESHOLD = 40;
 
+// role_score viene como string Decimal del backend (-1.00 .. 1.00).
+const ROLE_MATCH = 1.0;
+const ROLE_PARTIAL = 0.5;
+const ROLE_IRRELEVANT = 0.0;
+const ROLE_EXCLUDED = -1.0;
+
 const urgencyColor = (score) => {
     if (score >= PUSH_THRESHOLD) return '#ff5252'; // red — act now
     if (score >= DIGEST_THRESHOLD) return '#ffb74d'; // amber — digest
@@ -17,6 +23,20 @@ const urgencyLabel = (t, score) => {
     if (score >= PUSH_THRESHOLD) return t('dashboard.schoolJobs.urgency.push');
     if (score >= DIGEST_THRESHOLD) return t('dashboard.schoolJobs.urgency.digest');
     return t('dashboard.schoolJobs.urgency.silent');
+};
+
+const roleScoreNum = (v) => (v == null ? 0 : Number(v));
+const roleColor = (score) => {
+    if (score >= ROLE_MATCH) return '#4caf50'; // verde — IT match
+    if (score >= ROLE_PARTIAL) return '#26a69a'; // teal — partial
+    if (score <= ROLE_EXCLUDED) return '#9e9e9e'; // gris — docente excluido
+    return '#bdbdbd'; // gris claro — irrelevante
+};
+const roleLabel = (t, score) => {
+    if (score >= ROLE_MATCH) return t('dashboard.schoolJobs.relevance.match');
+    if (score >= ROLE_PARTIAL) return t('dashboard.schoolJobs.relevance.partial');
+    if (score <= ROLE_EXCLUDED) return t('dashboard.schoolJobs.relevance.excluded');
+    return t('dashboard.schoolJobs.relevance.irrelevant');
 };
 
 const buildApplyLink = (school) => {
@@ -87,6 +107,7 @@ const SchoolJobsWindow = memo(({ initialPosition }) => {
                         <table className="visitors-table" style={{ width: '100%' }}>
                             <thead>
                                 <tr>
+                                    <th>{t('dashboard.schoolJobs.cols.relevance')}</th>
                                     <th>{t('dashboard.schoolJobs.cols.urgency')}</th>
                                     <th>{t('dashboard.schoolJobs.cols.school')}</th>
                                     <th>{t('dashboard.schoolJobs.cols.title')}</th>
@@ -98,8 +119,24 @@ const SchoolJobsWindow = memo(({ initialPosition }) => {
                                 {jobs.map((job) => {
                                     const school = schoolsById[job.school_id];
                                     const link = buildApplyLink(school);
+                                    const rscore = roleScoreNum(job.role_score);
                                     return (
-                                        <tr key={job.id}>
+                                        <tr key={job.id} style={rscore < ROLE_PARTIAL ? { opacity: 0.65 } : undefined}>
+                                            <td>
+                                                <span style={{
+                                                    display: 'inline-block',
+                                                    minWidth: 70,
+                                                    padding: '2px 8px',
+                                                    borderRadius: 4,
+                                                    background: roleColor(rscore),
+                                                    color: '#fff',
+                                                    fontWeight: 'bold',
+                                                    textAlign: 'center',
+                                                    fontSize: 11,
+                                                }}>
+                                                    {roleLabel(t, rscore)}
+                                                </span>
+                                            </td>
                                             <td>
                                                 <span style={{
                                                     display: 'inline-block',

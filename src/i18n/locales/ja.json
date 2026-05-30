@@ -469,7 +469,14 @@
         "school": "学校",
         "title": "ポジション",
         "detected": "検出日時",
-        "actions": "操作"
+        "actions": "操作",
+        "relevance": "関連性"
+      },
+      "relevance": {
+        "match": "IT一致",
+        "partial": "部分一致",
+        "irrelevant": "その他",
+        "excluded": "教員"
       }
     },
     "schoolContacts": {
