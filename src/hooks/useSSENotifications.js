@@ -7,7 +7,6 @@ import i18n from '../i18n';
 export const useSSENotifications = () => {
     const { token, isAuthenticated } = useAuth();
     const [notifications, setNotifications] = useState([]);
-    const controllerRef = useRef(null);
     const reconnectAttempts = useRef(0);
     const reconnectTimerRef = useRef(null);
 
@@ -24,7 +23,6 @@ export const useSSENotifications = () => {
 
         const controller = new AbortController();
         let mounted = true;
-        controllerRef.current = controller;
 
         const connectSSE = async () => {
             try {
@@ -112,7 +110,6 @@ export const useSSENotifications = () => {
         return () => {
             mounted = false;
             controller.abort();
-            controllerRef.current = null;
             if (reconnectTimerRef.current) {
                 clearTimeout(reconnectTimerRef.current);
                 reconnectTimerRef.current = null;

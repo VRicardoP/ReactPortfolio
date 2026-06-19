@@ -282,31 +282,6 @@ export const WindowProvider = ({ children }) => {
         });
     }, []);
 
-    // cycle focus to the next or previous non-minimized window
-    const focusNextWindow = useCallback((reverse = false) => {
-        setWindows(prev => {
-            const nonMinimized = Object.entries(prev)
-                .filter(([, w]) => !w.isMinimized)
-                .sort((a, b) => a[1].zIndex - b[1].zIndex);
-            if (nonMinimized.length < 2) return prev;
-
-            const currentIdx = nonMinimized.findIndex(([id]) => id === activeWindowId);
-            const nextIdx = reverse
-                ? (currentIdx <= 0 ? nonMinimized.length - 1 : currentIdx - 1)
-                : (currentIdx >= nonMinimized.length - 1 ? 0 : currentIdx + 1);
-            const [nextId] = nonMinimized[nextIdx];
-
-            const newHighest = highestZIndexRef.current + 1;
-            highestZIndexRef.current = newHighest;
-            setActiveWindowId(nextId);
-
-            return {
-                ...prev,
-                [nextId]: { ...prev[nextId], zIndex: newHighest }
-            };
-        });
-    }, [activeWindowId]);
-
     // Callbacks are stable (all wrapped in useCallback) — this value rarely changes
     const callbacksValue = useMemo(() => ({
         registerWindow,
@@ -317,7 +292,6 @@ export const WindowProvider = ({ children }) => {
         fitToContent,
         updatePosition,
         updateSize,
-        focusNextWindow,
         getWindowTitle,
         showWindowToast
     }), [
@@ -329,7 +303,6 @@ export const WindowProvider = ({ children }) => {
         fitToContent,
         updatePosition,
         updateSize,
-        focusNextWindow,
         getWindowTitle,
         showWindowToast
     ]);
