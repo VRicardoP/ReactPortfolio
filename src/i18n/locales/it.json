@@ -163,8 +163,6 @@
     },
     "jobBoard": {
       "searchPlaceholder": "Cerca lavori...",
-      "allCountries": "Tutti i Paesi",
-      "allSkills": "Tutte le Competenze",
       "allLocations": "Tutte le Sedi",
       "allCategories": "Tutte le Categorie",
       "allTags": "Tutti i Tag",
@@ -297,16 +295,6 @@
       "sessionsPerDay": "Sessioni al Giorno",
       "noData": "Nessun dato di interazione disponibile",
       "last30days": "Ultimi 30 giorni"
-    },
-    "unified": {
-      "title": "Ricerca Lavori Unificata",
-      "searchPlaceholder": "Cerca in tutte le fonti di lavoro...",
-      "noResults": "Nessun risultato trovato. Prova una ricerca diversa.",
-      "loading": "Ricerca in corso...",
-      "allSources": "Tutte le Fonti",
-      "prev": "Prec",
-      "next": "Succ",
-      "errorSearch": "Ricerca fallita"
     },
     "kanban": {
       "title": "Pipeline Candidature",

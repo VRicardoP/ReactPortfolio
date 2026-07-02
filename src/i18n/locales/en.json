@@ -163,8 +163,6 @@
     },
     "jobBoard": {
       "searchPlaceholder": "Search jobs...",
-      "allCountries": "All Countries",
-      "allSkills": "All Skills",
       "allLocations": "All Locations",
       "allCategories": "All Categories",
       "allTags": "All Tags",
@@ -343,16 +341,6 @@
       "sessionsPerDay": "Sessions per Day",
       "noData": "No interaction data available yet",
       "last30days": "Last 30 days"
-    },
-    "unified": {
-      "title": "Unified Job Search",
-      "searchPlaceholder": "Search across all job sources...",
-      "noResults": "No results found. Try a different search.",
-      "loading": "Searching...",
-      "allSources": "All Sources",
-      "prev": "Prev",
-      "next": "Next",
-      "errorSearch": "Search failed"
     },
     "kanban": {
       "title": "Application Pipeline",

@@ -163,8 +163,6 @@
     },
     "jobBoard": {
       "searchPlaceholder": "求人を検索...",
-      "allCountries": "すべての国",
-      "allSkills": "すべてのスキル",
       "allLocations": "すべての場所",
       "allCategories": "すべてのカテゴリ",
       "allTags": "すべてのタグ",
@@ -297,16 +295,6 @@
       "sessionsPerDay": "日別セッション数",
       "noData": "インタラクションデータがまだありません",
       "last30days": "過去30日間"
-    },
-    "unified": {
-      "title": "統合求人検索",
-      "searchPlaceholder": "すべてのソースから検索...",
-      "noResults": "結果が見つかりません。別の検索をお試しください。",
-      "loading": "検索中...",
-      "allSources": "すべてのソース",
-      "prev": "前へ",
-      "next": "次へ",
-      "errorSearch": "検索に失敗しました"
     },
     "kanban": {
       "title": "応募パイプライン",

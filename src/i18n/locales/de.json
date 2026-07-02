@@ -163,8 +163,6 @@
     },
     "jobBoard": {
       "searchPlaceholder": "Stellen suchen...",
-      "allCountries": "Alle Länder",
-      "allSkills": "Alle Fähigkeiten",
       "allLocations": "Alle Standorte",
       "allCategories": "Alle Kategorien",
       "allTags": "Alle Tags",
@@ -297,16 +295,6 @@
       "sessionsPerDay": "Sitzungen pro Tag",
       "noData": "Noch keine Interaktionsdaten verfügbar",
       "last30days": "Letzte 30 Tage"
-    },
-    "unified": {
-      "title": "Einheitliche Stellensuche",
-      "searchPlaceholder": "In allen Stellenquellen suchen...",
-      "noResults": "Keine Ergebnisse gefunden. Versuchen Sie eine andere Suche.",
-      "loading": "Suche läuft...",
-      "allSources": "Alle Quellen",
-      "prev": "Zurück",
-      "next": "Weiter",
-      "errorSearch": "Suche fehlgeschlagen"
     },
     "kanban": {
       "title": "Bewerbungs-Pipeline",

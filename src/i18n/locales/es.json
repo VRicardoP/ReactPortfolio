@@ -163,8 +163,6 @@
     },
     "jobBoard": {
       "searchPlaceholder": "Buscar empleos...",
-      "allCountries": "Todos los Países",
-      "allSkills": "Todas las Habilidades",
       "allLocations": "Todas las Ubicaciones",
       "allCategories": "Todas las Categorías",
       "allTags": "Todas las Etiquetas",
@@ -343,16 +341,6 @@
       "sessionsPerDay": "Sesiones por Día",
       "noData": "Aún no hay datos de interacción disponibles",
       "last30days": "Últimos 30 días"
-    },
-    "unified": {
-      "title": "Búsqueda Unificada de Empleos",
-      "searchPlaceholder": "Buscar en todas las fuentes de empleo...",
-      "noResults": "Sin resultados. Prueba una búsqueda diferente.",
-      "loading": "Buscando...",
-      "allSources": "Todas las Fuentes",
-      "prev": "Ant",
-      "next": "Sig",
-      "errorSearch": "Error en la búsqueda"
     },
     "kanban": {
       "title": "Pipeline de Aplicaciones",

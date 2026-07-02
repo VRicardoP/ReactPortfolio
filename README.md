@@ -21,7 +21,6 @@ Built with a desktop OS metaphor: draggable, resizable floating windows, 6 immer
 
 - **Analytics** — visitor stats, interactive map, chat statistics, interaction heatmap
 - **Job Board** — 12 job API sources in a tabbed interface with sort, pagination, and cache age badges
-- **Unified Search** — cross-source job search with filters and debounced queries
 - **AI Job Match** — sentence-transformers + Groq LLM re-ranking against CV profile; Skills Gap tab shows missing skills
 - **Kanban Pipeline** — drag-and-drop job application tracker (saved → applied → interview → offer → rejected)
 - **AI CV / Cover Letter** — generate, preview, and download PDF/JSON documents adapted to each job offer
@@ -40,7 +39,7 @@ Built with a desktop OS metaphor: draggable, resizable floating windows, 6 immer
 | Routing | React Router v7 |
 | State | React Context API (split state/callbacks) |
 | i18n | react-i18next (6 locales) |
-| Testing | Vitest + @testing-library/react (313 tests) |
+| Testing | Vitest + @testing-library/react (287 tests) |
 | E2E | Playwright (17 tests) |
 | Styles | Pure CSS (no CSS-in-JS) |
 | Hosting | Cloudflare Pages |
