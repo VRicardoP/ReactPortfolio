@@ -75,6 +75,9 @@ const themes = {
 
 const ThemeContext = createContext(null);
 
+// Available 3D/2D background effects. First entry is the default.
+const BACKGROUND_EFFECTS = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
+
 export const ThemeProvider = ({ children }) => {
     const [themeName, setThemeName] = useState(() => {
         // retrieve saved theme from localStorage
@@ -85,8 +88,7 @@ export const ThemeProvider = ({ children }) => {
     const [backgroundEffect, setBackgroundEffect] = useState(() => {
         // retrieve saved background effect from localStorage
         const saved = localStorage.getItem('portfolio-background');
-        const validEffects = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
-        return validEffects.includes(saved) ? saved : 'rain';
+        return BACKGROUND_EFFECTS.includes(saved) ? saved : BACKGROUND_EFFECTS[0];
     });
 
     const theme = useMemo(() => themes[themeName], [themeName]);
@@ -106,18 +108,16 @@ export const ThemeProvider = ({ children }) => {
     }, [themeName, setTheme]);
 
     const setBackground = useCallback((effect) => {
-        const effects = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
-        if (effects.includes(effect)) {
+        if (BACKGROUND_EFFECTS.includes(effect)) {
             setBackgroundEffect(effect);
             localStorage.setItem('portfolio-background', effect);
         }
     }, []);
 
     const cycleBackground = useCallback(() => {
-        const effects = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
-        const currentIndex = effects.indexOf(backgroundEffect);
-        const nextIndex = (currentIndex + 1) % effects.length;
-        setBackground(effects[nextIndex]);
+        const currentIndex = BACKGROUND_EFFECTS.indexOf(backgroundEffect);
+        const nextIndex = (currentIndex + 1) % BACKGROUND_EFFECTS.length;
+        setBackground(BACKGROUND_EFFECTS[nextIndex]);
     }, [backgroundEffect, setBackground]);
 
     // apply global CSS variables when the theme changes

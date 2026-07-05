@@ -36,10 +36,16 @@ export const useWindowContext = () => {
     return useMemo(() => ({ ...state, ...callbacks }), [state, callbacks]);
 };
 
+// Layout / z-index defaults for floating windows.
+const DEFAULT_WINDOW_POSITION = { x: 100, y: 100 };
+const DEFAULT_WINDOW_SIZE = { width: 400, height: 300 };
+const BASE_Z_INDEX = 100;
+const Z_INDEX_NORMALIZE_THRESHOLD = 10000; // reset z-indexes once they climb this high
+
 export const WindowProvider = ({ children }) => {
     const [windows, setWindows] = useState({});
     const [activeWindowId, setActiveWindowId] = useState(null);
-    const highestZIndexRef = useRef(100);
+    const highestZIndexRef = useRef(BASE_Z_INDEX);
     const toastTimeoutRef = useRef({});
     const prevActiveRef = useRef(null);
 
@@ -82,9 +88,9 @@ export const WindowProvider = ({ children }) => {
                 [windowId]: {
                     isMinimized: initialState.isMinimized ?? false,
                     isMaximized: initialState.isMaximized || false,
-                    position: initialState.position || { x: 100, y: 100 },
-                    size: initialState.size || { width: 400, height: 300 },
-                    zIndex: initialState.zIndex || 100,
+                    position: initialState.position || DEFAULT_WINDOW_POSITION,
+                    size: initialState.size || DEFAULT_WINDOW_SIZE,
+                    zIndex: initialState.zIndex || BASE_Z_INDEX,
                     ...initialState,
                 }
             };
@@ -111,15 +117,15 @@ export const WindowProvider = ({ children }) => {
             highestZIndexRef.current = newHighest;
 
             // Normalize if z-index gets too high
-            if (newHighest > 10000) {
+            if (newHighest > Z_INDEX_NORMALIZE_THRESHOLD) {
                 const sorted = Object.entries(prev)
                     .sort((a, b) => a[1].zIndex - b[1].zIndex);
                 const normalized = {};
                 sorted.forEach(([id, win], index) => {
-                    normalized[id] = { ...win, zIndex: 100 + index };
+                    normalized[id] = { ...win, zIndex: BASE_Z_INDEX + index };
                 });
-                normalized[windowId] = { ...normalized[windowId], zIndex: 100 + sorted.length };
-                highestZIndexRef.current = 100 + sorted.length;
+                normalized[windowId] = { ...normalized[windowId], zIndex: BASE_Z_INDEX + sorted.length };
+                highestZIndexRef.current = BASE_Z_INDEX + sorted.length;
                 return normalized;
             }
 
