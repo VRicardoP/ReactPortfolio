@@ -2,7 +2,7 @@ import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import FloatingWindow from '../Windows/FloatingWindow';
-import useSchoolJobs from '../../hooks/useSchoolJobs';
+import '../../styles/dashboard-schools.css';
 
 const PUSH_THRESHOLD = 70;
 const DIGEST_THRESHOLD = 40;
@@ -46,9 +46,9 @@ const buildApplyLink = (school) => {
     return school?.portal_url || school?.jobs_page_url || null;
 };
 
-const SchoolJobsWindow = memo(({ initialPosition }) => {
+const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
     const { t } = useTranslation();
-    const { schools, jobs, loading, error, refreshing, triggerScrape, refresh } = useSchoolJobs();
+    const { schools, jobs, loading, error, refreshing, triggerScrape, refresh } = schoolData;
 
     const schoolsById = useMemo(() => {
         const map = {};
@@ -63,8 +63,8 @@ const SchoolJobsWindow = memo(({ initialPosition }) => {
             initialPosition={initialPosition}
             initialSize={{ width: 820, height: 480 }}
         >
-            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ padding: '8px 12px', display: 'flex', gap: 8, alignItems: 'center', borderBottom: '1px solid var(--theme-border-light)' }}>
+            <div className="school-jobs">
+                <div className="school-jobs-toolbar">
                     <button
                         className="dash-btn"
                         onClick={triggerScrape}
@@ -79,32 +79,32 @@ const SchoolJobsWindow = memo(({ initialPosition }) => {
                     >
                         {t('dashboard.schoolJobs.reload')}
                     </button>
-                    <span style={{ marginLeft: 'auto', color: 'var(--theme-text)', opacity: 0.7 }}>
+                    <span className="school-jobs-count">
                         {t('dashboard.schoolJobs.count', { count: jobs.length })}
                     </span>
                 </div>
 
-                <div style={{ flex: 1, overflowY: 'auto' }}>
+                <div className="school-jobs-scroll">
                     {error && (
-                        <div style={{ padding: 16, color: '#ff5252' }}>
+                        <div className="school-error">
                             {t('dashboard.schoolJobs.error', { message: error })}
                         </div>
                     )}
 
                     {!error && loading && (
-                        <div style={{ padding: 16, color: 'var(--theme-text)', opacity: 0.6 }}>
+                        <div className="school-msg">
                             {t('dashboard.schoolJobs.loading')}
                         </div>
                     )}
 
                     {!error && !loading && jobs.length === 0 && (
-                        <div style={{ padding: 16, color: 'var(--theme-text)', opacity: 0.6 }}>
+                        <div className="school-msg">
                             {t('dashboard.schoolJobs.noJobs')}
                         </div>
                     )}
 
                     {!error && jobs.length > 0 && (
-                        <table className="visitors-table" style={{ width: '100%' }}>
+                        <table className="visitors-table school-table">
                             <thead>
                                 <tr>
                                     <th>{t('dashboard.schoolJobs.cols.relevance')}</th>
@@ -121,42 +121,32 @@ const SchoolJobsWindow = memo(({ initialPosition }) => {
                                     const link = buildApplyLink(school);
                                     const rscore = roleScoreNum(job.role_score);
                                     return (
-                                        <tr key={job.id} style={rscore < ROLE_PARTIAL ? { opacity: 0.65 } : undefined}>
+                                        <tr
+                                            key={job.id}
+                                            className={rscore < ROLE_PARTIAL ? 'school-job-row--dimmed' : undefined}
+                                        >
                                             <td>
-                                                <span style={{
-                                                    display: 'inline-block',
-                                                    minWidth: 70,
-                                                    padding: '2px 8px',
-                                                    borderRadius: 4,
-                                                    background: roleColor(rscore),
-                                                    color: '#fff',
-                                                    fontWeight: 'bold',
-                                                    textAlign: 'center',
-                                                    fontSize: 11,
-                                                }}>
+                                                <span
+                                                    className="school-badge school-badge--relevance"
+                                                    style={{ background: roleColor(rscore) }}
+                                                >
                                                     {roleLabel(t, rscore)}
                                                 </span>
                                             </td>
                                             <td>
-                                                <span style={{
-                                                    display: 'inline-block',
-                                                    minWidth: 40,
-                                                    padding: '2px 8px',
-                                                    borderRadius: 4,
-                                                    background: urgencyColor(job.urgency_score),
-                                                    color: '#fff',
-                                                    fontWeight: 'bold',
-                                                    textAlign: 'center',
-                                                }}>
+                                                <span
+                                                    className="school-badge school-badge--urgency"
+                                                    style={{ background: urgencyColor(job.urgency_score) }}
+                                                >
                                                     {job.urgency_score}
                                                 </span>
-                                                <div style={{ fontSize: 11, opacity: 0.7 }}>
+                                                <div className="school-cell-sub">
                                                     {urgencyLabel(t, job.urgency_score)}
                                                 </div>
                                             </td>
                                             <td>
                                                 {school?.name || job.school_id}
-                                                <div style={{ fontSize: 11, opacity: 0.7 }}>
+                                                <div className="school-cell-sub">
                                                     {school?.policy}
                                                 </div>
                                             </td>
@@ -164,7 +154,7 @@ const SchoolJobsWindow = memo(({ initialPosition }) => {
                                             <td>{new Date(job.date_detected).toLocaleString()}</td>
                                             <td>
                                                 {job.url && (
-                                                    <a href={job.url} target="_blank" rel="noopener noreferrer" style={{ marginRight: 8 }}>
+                                                    <a href={job.url} target="_blank" rel="noopener noreferrer" className="school-action-link">
                                                         {t('dashboard.schoolJobs.viewOffer')}
                                                     </a>
                                                 )}

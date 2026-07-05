@@ -1,0 +1,91 @@
+/* Styles for the school-monitoring dashboard windows (SchoolJobsWindow +
+   SchoolManualContactsWindow). Extracted from inline styles per the project's
+   "Pure CSS, no CSS-in-JS" rule. Data-driven colors (badge background) stay
+   inline in the components since they are computed from the row's score. */
+
+.school-jobs {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.school-jobs-toolbar {
+    padding: 8px 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    border-bottom: 1px solid var(--theme-border-light);
+}
+
+.school-jobs-count {
+    margin-left: auto;
+    color: var(--theme-text);
+    opacity: 0.7;
+}
+
+.school-jobs-scroll {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Loading / empty / help messages */
+.school-msg {
+    padding: 16px;
+    color: var(--theme-text);
+    opacity: 0.6;
+}
+
+.school-error {
+    padding: 16px;
+    color: #ff5252;
+}
+
+.school-table {
+    width: 100%;
+}
+
+/* Dimmed row for low-relevance (non-IT) offers */
+.school-job-row--dimmed {
+    opacity: 0.65;
+}
+
+/* Relevance + urgency badges — shared base; background set inline (data-driven) */
+.school-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+}
+
+.school-badge--relevance {
+    min-width: 70px;
+    font-size: 11px;
+}
+
+.school-badge--urgency {
+    min-width: 40px;
+}
+
+/* Secondary text under a cell (policy, urgency label) */
+.school-cell-sub {
+    font-size: 11px;
+    opacity: 0.7;
+}
+
+.school-action-link {
+    margin-right: 8px;
+}
+
+/* Manual-contacts window */
+.school-contacts-help {
+    padding: 12px;
+    color: var(--theme-text);
+    opacity: 0.7;
+    font-size: 12px;
+}
+
+.school-contacts-scroll {
+    overflow-y: auto;
+}

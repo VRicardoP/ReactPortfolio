@@ -1,12 +1,25 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// Build-only: harden the production CSP by dropping 'unsafe-inline' from style-src.
+// The dev server needs it (Vite HMR injects <style> tags), so it stays in the source
+// index.html and is only stripped from the built dist/index.html. React inline style
+// props set element.style via the CSSOM, which CSP's style-src does not govern, so
+// the app still renders correctly without it in production. (DT-104)
+const hardenCspOnBuild = {
+  name: 'harden-csp-on-build',
+  apply: 'build',
+  transformIndexHtml(html) {
+    return html.replace("style-src 'self' 'unsafe-inline'", "style-src 'self'")
+  },
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(Date.now().toString()),
   },
-  plugins: [react()],
+  plugins: [react(), hardenCspOnBuild],
   server: {
     proxy: {
       '/api': {

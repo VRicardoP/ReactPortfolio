@@ -2,6 +2,7 @@ import { lazy, Suspense, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useWindowLayout from '../../hooks/useWindowLayout';
 import { useSSENotifications } from '../../hooks/useSSENotifications';
+import useSchoolJobs from '../../hooks/useSchoolJobs';
 import ErrorBoundary from '../ErrorBoundary';
 
 // Lazy load dashboard window components
@@ -75,6 +76,10 @@ const DesktopDashboardContent = memo(({
 }) => {
     // Listen for SSE notifications (new jobs toast, etc.)
     useSSENotifications();
+
+    // Fetch schools + detected jobs ONCE here and share with both school windows
+    // (avoids the duplicate GETs from each window calling the hook — DT-98).
+    const schoolData = useSchoolJobs();
 
     useWindowLayout(DASHBOARD_WINDOW_IDS, LAYOUT_ANIMATION_DELAY_MS);
 
@@ -150,9 +155,11 @@ const DesktopDashboardContent = memo(({
             <ErrorBoundary>
                 <Suspense fallback={<DashboardLoader />}>
                     <SchoolJobsWindow
+                        schoolData={schoolData}
                         initialPosition={{ x: 340, y: 200 }}
                     />
                     <SchoolManualContactsWindow
+                        schoolData={schoolData}
                         initialPosition={{ x: 400, y: 220 }}
                     />
                 </Suspense>

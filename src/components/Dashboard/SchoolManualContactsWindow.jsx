@@ -2,11 +2,11 @@ import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import FloatingWindow from '../Windows/FloatingWindow';
-import useSchoolJobs from '../../hooks/useSchoolJobs';
+import '../../styles/dashboard-schools.css';
 
-const SchoolManualContactsWindow = memo(({ initialPosition }) => {
+const SchoolManualContactsWindow = memo(({ initialPosition, schoolData }) => {
     const { t } = useTranslation();
-    const { schools, loading, error } = useSchoolJobs();
+    const { schools, loading, error } = schoolData;
 
     const manualSchools = useMemo(
         () => schools.filter((s) => s.monitoring_mode === 'manual_only'),
@@ -20,31 +20,31 @@ const SchoolManualContactsWindow = memo(({ initialPosition }) => {
             initialPosition={initialPosition}
             initialSize={{ width: 640, height: 400 }}
         >
-            <div style={{ padding: 12, color: 'var(--theme-text)', opacity: 0.7, fontSize: 12 }}>
+            <div className="school-contacts-help">
                 {t('dashboard.schoolContacts.help')}
             </div>
 
             {error && (
-                <div style={{ padding: 16, color: '#ff5252' }}>
+                <div className="school-error">
                     {t('dashboard.schoolJobs.error', { message: error })}
                 </div>
             )}
 
             {!error && loading && (
-                <div style={{ padding: 16, color: 'var(--theme-text)', opacity: 0.6 }}>
+                <div className="school-msg">
                     {t('dashboard.schoolJobs.loading')}
                 </div>
             )}
 
             {!error && !loading && manualSchools.length === 0 && (
-                <div style={{ padding: 16, color: 'var(--theme-text)', opacity: 0.6 }}>
+                <div className="school-msg">
                     {t('dashboard.schoolContacts.noContacts')}
                 </div>
             )}
 
             {!error && manualSchools.length > 0 && (
-                <div style={{ overflowY: 'auto' }}>
-                    <table className="visitors-table" style={{ width: '100%' }}>
+                <div className="school-contacts-scroll">
+                    <table className="visitors-table school-table">
                         <thead>
                             <tr>
                                 <th>{t('dashboard.schoolContacts.cols.school')}</th>
@@ -58,7 +58,7 @@ const SchoolManualContactsWindow = memo(({ initialPosition }) => {
                                 <tr key={s.id}>
                                     <td>
                                         {s.name}
-                                        <div style={{ fontSize: 11, opacity: 0.7 }}>
+                                        <div className="school-cell-sub">
                                             {s.policy}
                                         </div>
                                     </td>
