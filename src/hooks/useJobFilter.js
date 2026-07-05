@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
 import { JOBS_PAGE_SIZE } from '../components/Dashboard/dashboardConstants';
+import { buildJobSearchParams } from '../utils/jobSearchParams';
 
 const INITIAL_FILTERS = {
     country: '',
@@ -37,16 +38,16 @@ const useJobFilter = (onSaveSearch) => {
     }, []);
 
     const buildQueryParams = useCallback((offset = 0) => {
-        const params = new URLSearchParams();
-        if (filters.q) params.set('q', filters.q);
-        if (filters.country) params.set('country', filters.country);
-        if (filters.city) params.set('city', filters.city);
-        if (filters.salaryMin) params.set('salary_min', filters.salaryMin);
-        if (filters.salaryMax) params.set('salary_max', filters.salaryMax);
-        if (filters.remoteOnly) params.set('remote_only', 'true');
-        params.set('limit', String(JOBS_PAGE_SIZE));
-        params.set('offset', String(offset));
-        return params.toString();
+        return buildJobSearchParams({
+            q: filters.q,
+            country: filters.country,
+            city: filters.city,
+            salaryMin: filters.salaryMin,
+            salaryMax: filters.salaryMax,
+            remoteOnly: filters.remoteOnly,
+            limit: JOBS_PAGE_SIZE,
+            offset,
+        }).toString();
     }, [filters]);
 
     const handleSearch = useCallback(async (newPage = 0) => {

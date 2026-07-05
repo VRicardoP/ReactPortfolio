@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
 import { JOBS_PAGE_SIZE } from '../components/Dashboard/dashboardConstants';
+import { buildJobSearchParams } from '../utils/jobSearchParams';
 
 const INITIAL_FORM = {
     name: '',
@@ -112,16 +113,16 @@ const useSavedSearches = () => {
 
         try {
             const filters = search.filters || {};
-            const params = new URLSearchParams();
-            if (filters.q) params.set('q', filters.q);
-            if (filters.country) params.set('country', filters.country);
-            if (filters.city) params.set('city', filters.city);
-            if (filters.salary_min) params.set('salary_min', String(filters.salary_min));
-            if (filters.salary_max) params.set('salary_max', String(filters.salary_max));
-            if (filters.remote_only) params.set('remote_only', 'true');
-            // Also support legacy format
-            if (filters.technologies?.length > 0) params.set('q', filters.technologies.join(' '));
-            params.set('limit', String(JOBS_PAGE_SIZE));
+            const params = buildJobSearchParams({
+                // legacy `technologies` overrides q, matching the previous order
+                q: filters.technologies?.length > 0 ? filters.technologies.join(' ') : filters.q,
+                country: filters.country,
+                city: filters.city,
+                salaryMin: filters.salary_min,
+                salaryMax: filters.salary_max,
+                remoteOnly: filters.remote_only,
+                limit: JOBS_PAGE_SIZE,
+            });
 
             const response = await authenticatedFetch(
                 `${BACKEND_URL}/api/v1/jobs/search?${params.toString()}`
