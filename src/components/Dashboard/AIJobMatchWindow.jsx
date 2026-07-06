@@ -1,11 +1,10 @@
-import { memo, useState, useCallback, useEffect } from 'react';
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
-import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import { BACKEND_URL } from '../../config/api';
 import useJobApplication from '../../hooks/useJobApplication';
 import useSkillsGap from '../../hooks/useSkillsGap';
+import useAIJobMatch, { TAB_RESULTS, TAB_SKILLS_GAP } from '../../hooks/useAIJobMatch';
 import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
 import { AI_MATCH_PAGE_SIZE } from './dashboardConstants';
 import '../../styles/ai-match.css';
@@ -18,81 +17,32 @@ const FIT_COLORS = {
     unknown: { bg: 'rgba(150, 150, 150, 0.15)', text: '#999', border: 'rgba(150, 150, 150, 0.2)' },
 };
 
-const TAB_RESULTS = 'results';
-const TAB_SKILLS_GAP = 'skills-gap';
-
 const AIJobMatchWindow = memo(({ initialPosition }) => {
     const { t } = useTranslation();
-    const { authenticatedFetch } = useAuth();
     const { theme } = useTheme();
 
-    const [results, setResults] = useState([]);
-    const [metadata, setMetadata] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [page, setPage] = useState(0);
-    const [expandedId, setExpandedId] = useState(null);
-    const [translatedTitles, setTranslatedTitles] = useState({});
-    const [translating, setTranslating] = useState(false);
-    const [activeTab, setActiveTab] = useState(TAB_RESULTS);
+    const {
+        results,
+        metadata,
+        loading,
+        error,
+        runAnalysis,
+        page,
+        totalPages,
+        pagedResults,
+        prevPage,
+        nextPage,
+        expandedId,
+        toggleExpanded,
+        translatedTitles,
+        translating,
+        translateTitles,
+        activeTab,
+        selectTab,
+        llmUnavailable,
+    } = useAIJobMatch();
     const { handleApply, appliedIds, handleSave, savedIds } = useJobApplication();
     const { missingSkills, addedSkills, togglingSkill, toggleSkill, lastError: skillError } = useSkillsGap(results);
-
-    const llmUnavailable = results.length > 0 && results.some(j => j.llm_unavailable);
-
-    useEffect(() => {
-        if (llmUnavailable && activeTab === TAB_SKILLS_GAP) {
-            setActiveTab(TAB_RESULTS);
-        }
-    }, [llmUnavailable, activeTab]);
-
-    const runAnalysis = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await authenticatedFetch(
-                `${BACKEND_URL}/api/v1/ai-match/analyze?top_k=50&rerank_top=30&batch_size=10`
-            );
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            setResults(data.results || []);
-            setMetadata(data.metadata || null);
-            setPage(0);
-        } catch (err) {
-            setError(err.message || 'Analysis failed');
-        } finally {
-            setLoading(false);
-        }
-    }, [authenticatedFetch]);
-
-    const totalPages = Math.max(1, Math.ceil(results.length / AI_MATCH_PAGE_SIZE));
-    const pagedResults = results.slice(page * AI_MATCH_PAGE_SIZE, (page + 1) * AI_MATCH_PAGE_SIZE);
-
-    const translateTitles = useCallback(async () => {
-        const titlesToTranslate = pagedResults
-            .map(j => j.title)
-            .filter(title => !translatedTitles[title]);
-        if (titlesToTranslate.length === 0) return;
-
-        setTranslating(true);
-        try {
-            const response = await authenticatedFetch(
-                `${BACKEND_URL}/api/v1/ai-match/translate-titles`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ titles: titlesToTranslate }),
-                }
-            );
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            setTranslatedTitles(prev => ({ ...prev, ...data.translations }));
-        } catch (err) {
-            console.warn('Translation failed:', err.message);
-        } finally {
-            setTranslating(false);
-        }
-    }, [pagedResults, translatedTitles, authenticatedFetch]);
 
     return (
         <FloatingWindow
@@ -139,14 +89,14 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                     <div className="ai-match-tabs">
                         <button
                             className={`ai-match-tab ${activeTab === TAB_RESULTS ? 'active' : ''}`}
-                            onClick={() => setActiveTab(TAB_RESULTS)}
+                            onClick={() => selectTab(TAB_RESULTS)}
                             style={activeTab === TAB_RESULTS ? { color: theme.primary, borderColor: theme.primary } : {}}
                         >
                             {t('dashboard.aiMatch.resultsTab')} ({results.length})
                         </button>
                         <button
                             className={`ai-match-tab ${activeTab === TAB_SKILLS_GAP ? 'active' : ''} ${llmUnavailable ? 'disabled' : ''}`}
-                            onClick={() => !llmUnavailable && setActiveTab(TAB_SKILLS_GAP)}
+                            onClick={() => selectTab(TAB_SKILLS_GAP)}
                             disabled={llmUnavailable}
                             title={llmUnavailable ? t('dashboard.aiMatch.skillsGapUnavailable') : undefined}
                             style={activeTab === TAB_SKILLS_GAP ? { color: theme.primary, borderColor: theme.primary } : {}}
@@ -188,7 +138,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                 <div>
                                     <button
                                         disabled={page === 0}
-                                        onClick={() => setPage(p => p - 1)}
+                                        onClick={prevPage}
                                         className="ai-match-page-btn"
                                         style={{
                                             background: `rgba(${theme.primaryRgb}, 0.2)`,
@@ -199,7 +149,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                     <span>{page + 1}/{totalPages}</span>
                                     <button
                                         disabled={page >= totalPages - 1}
-                                        onClick={() => setPage(p => p + 1)}
+                                        onClick={nextPage}
                                         className="ai-match-page-btn"
                                         style={{
                                             background: `rgba(${theme.primaryRgb}, 0.2)`,
@@ -280,7 +230,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                         <button
                                             className="ai-match-skills-toggle"
                                             style={{ color: theme.primary }}
-                                            onClick={() => setExpandedId(isExpanded ? null : globalIdx)}
+                                            onClick={() => toggleExpanded(globalIdx)}
                                             aria-expanded={isExpanded}
                                         >
                                             {t('dashboard.aiMatch.skillsAnalysis')} {isExpanded ? '▲' : '▼'}
