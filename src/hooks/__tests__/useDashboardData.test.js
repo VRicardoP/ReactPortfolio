@@ -14,7 +14,7 @@ vi.mock('../../context/AuthContext', () => ({
   }),
 }))
 
-// Mock jobSources to avoid loading all 12 sources in tests
+// Mock jobSources to avoid loading all 16 sources in tests
 vi.mock('../../config/jobSources', () => ({
   JOB_SOURCES: [
     { key: 'testjobs', urlPath: '/api/v1/test-jobs/recent' },

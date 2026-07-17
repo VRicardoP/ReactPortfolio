@@ -202,6 +202,10 @@
       "tabZentraljob": "Zentraljob",
       "tabSwisstechjobs": "SwissTech",
       "tabIctjobs": "ICTjobs",
+      "tabSwissdevjobs": "SwissDevJobs",
+      "tabJobscout24": "JobScout24",
+      "tabDynamitejobs": "DynamiteJobs",
+      "tabJobroom": "Job-Room",
       "applied": "Applied",
       "save": "Save",
       "saved": "Saved"
