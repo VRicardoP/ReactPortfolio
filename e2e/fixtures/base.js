@@ -4,7 +4,13 @@ import { test as base } from '@playwright/test';
 const MOCK_ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImV4cCI6OTk5OTk5OTk5OX0.mock-signature';
 const MOCK_REFRESH_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInR5cGUiOiJyZWZyZXNoIiwiZXhwIjo5OTk5OTk5OTk5fQ.mock-refresh';
 
-const BACKEND_URL = 'http://127.0.0.1:8001';
+// Origin-agnostic API glob. The production build resolves API calls either
+// relative to the preview origin (http://localhost:4173/api/...) when
+// VITE_API_BASE_URL is unset, or absolute (http://127.0.0.1:8001/api/...) when
+// it is set. Matching on `**/api/...` intercepts both, so the mock no longer
+// depends on the build-time API base URL. `**` never matches page/asset loads
+// because those paths don't contain `/api/`.
+const API = '**/api';
 
 // Mock data
 const mockStats = {
@@ -41,11 +47,11 @@ const emptyJobResponse = { jobs: [], total: 0, source: 'mock', cached_at: new Da
 
 /**
  * Set up API route mocking for all backend endpoints.
- * Intercepts requests to BACKEND_URL so no real backend is needed.
+ * Intercepts every `/api/...` request (any origin) so no real backend is needed.
  */
 async function mockBackendAPI(page) {
   // Catch-all FIRST (lowest priority in Playwright's LIFO matching)
-  await page.route(`${BACKEND_URL}/**`, async (route) => {
+  await page.route(`${API}/**`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -54,7 +60,7 @@ async function mockBackendAPI(page) {
   });
 
   // Auth: login
-  await page.route(`${BACKEND_URL}/api/v1/auth/token`, async (route) => {
+  await page.route(`${API}/v1/auth/token`, async (route) => {
     const request = route.request();
     if (request.method() === 'POST') {
       const body = await request.postData();
@@ -83,7 +89,7 @@ async function mockBackendAPI(page) {
   });
 
   // Auth: refresh
-  await page.route(`${BACKEND_URL}/api/v1/auth/refresh`, async (route) => {
+  await page.route(`${API}/v1/auth/refresh`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -96,7 +102,7 @@ async function mockBackendAPI(page) {
   });
 
   // Analytics: stats
-  await page.route(`${BACKEND_URL}/api/v1/analytics/stats`, async (route) => {
+  await page.route(`${API}/v1/analytics/stats`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -105,7 +111,7 @@ async function mockBackendAPI(page) {
   });
 
   // Analytics: map data
-  await page.route(`${BACKEND_URL}/api/v1/analytics/map-data`, async (route) => {
+  await page.route(`${API}/v1/analytics/map-data`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -114,7 +120,7 @@ async function mockBackendAPI(page) {
   });
 
   // Analytics: recent visitors
-  await page.route(`${BACKEND_URL}/api/v1/analytics/recent*`, async (route) => {
+  await page.route(`${API}/v1/analytics/recent*`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -123,7 +129,7 @@ async function mockBackendAPI(page) {
   });
 
   // Chat analytics
-  await page.route(`${BACKEND_URL}/api/v1/analytics/chat*`, async (route) => {
+  await page.route(`${API}/v1/analytics/chat*`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -132,7 +138,7 @@ async function mockBackendAPI(page) {
   });
 
   // Visitor tracking (fire-and-forget POST)
-  await page.route(`${BACKEND_URL}/api/v1/analytics/visit`, async (route) => {
+  await page.route(`${API}/v1/analytics/visit`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -148,7 +154,7 @@ async function mockBackendAPI(page) {
     'jobroom',
   ];
   for (const source of jobPrefixes) {
-    await page.route(`${BACKEND_URL}/api/v1/${source}-jobs/**`, async (route) => {
+    await page.route(`${API}/v1/${source}-jobs/**`, async (route) => {
       return route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -158,7 +164,7 @@ async function mockBackendAPI(page) {
   }
 
   // Unified jobs endpoint
-  await page.route(`${BACKEND_URL}/api/v1/jobs/**`, async (route) => {
+  await page.route(`${API}/v1/jobs/**`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -167,7 +173,7 @@ async function mockBackendAPI(page) {
   });
 
   // Applications, saved searches, AI match
-  await page.route(`${BACKEND_URL}/api/v1/applications/**`, async (route) => {
+  await page.route(`${API}/v1/applications/**`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -175,7 +181,7 @@ async function mockBackendAPI(page) {
     });
   });
 
-  await page.route(`${BACKEND_URL}/api/v1/saved-searches/**`, async (route) => {
+  await page.route(`${API}/v1/saved-searches/**`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -183,7 +189,7 @@ async function mockBackendAPI(page) {
     });
   });
 
-  await page.route(`${BACKEND_URL}/api/v1/ai-match/**`, async (route) => {
+  await page.route(`${API}/v1/ai-match/**`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -192,7 +198,7 @@ async function mockBackendAPI(page) {
   });
 
   // Notifications SSE — return empty and close
-  await page.route(`${BACKEND_URL}/api/v1/notifications/**`, async (route) => {
+  await page.route(`${API}/v1/notifications/**`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'text/event-stream',
@@ -201,7 +207,7 @@ async function mockBackendAPI(page) {
   });
 
   // Chat endpoint
-  await page.route(`${BACKEND_URL}/api/v1/chat/**`, async (route) => {
+  await page.route(`${API}/v1/chat/**`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -210,7 +216,7 @@ async function mockBackendAPI(page) {
   });
 
   // CV export
-  await page.route(`${BACKEND_URL}/api/v1/cv/**`, async (route) => {
+  await page.route(`${API}/v1/cv/**`, async (route) => {
     return route.fulfill({
       status: 200,
       contentType: 'application/json',
