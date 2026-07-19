@@ -151,7 +151,7 @@ async function mockBackendAPI(page) {
     'jobicy', 'remotive', 'arbeitnow', 'jsearch', 'remoteok',
     'himalayas', 'adzuna', 'weworkremotely', 'ostjob', 'zentraljob',
     'swisstechjobs', 'ictjobs', 'swissdevjobs', 'jobscout24', 'dynamitejobs',
-    'jobroom',
+    'jobroom', 'thehub', 'jobgether', 'nav', 'irishjobs',
   ];
   for (const source of jobPrefixes) {
     await page.route(`${API}/v1/${source}-jobs/**`, async (route) => {

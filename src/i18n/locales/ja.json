@@ -105,7 +105,8 @@
     "achievements": "実績",
     "contact": "連絡先",
     "chat": "クサナギ AI",
-    "fitMatrix": "スキル適合マトリクス"
+    "fitMatrix": "スキル適合マトリクス",
+    "jobSearch": "求人検索"
   },
   "app": {
     "loading": "読み込み中...",
@@ -206,6 +207,10 @@
       "tabJobscout24": "JobScout24",
       "tabDynamitejobs": "DynamiteJobs",
       "tabJobroom": "Job-Room",
+      "tabThehub": "The Hub",
+      "tabJobgether": "Jobgether",
+      "tabNav": "NAV",
+      "tabIrishjobs": "IrishJobs",
       "applied": "応募済み",
       "save": "保存",
       "saved": "保存済み"
@@ -484,6 +489,12 @@
         "reminderEvery": "リマインダー",
         "actions": "操作"
       }
+    },
+    "jobSearch": {
+      "title": "求人検索",
+      "tabLive": "JSearchライブ",
+      "tabFilter": "詳細フィルター",
+      "tabSaved": "保存済み検索"
     }
   },
   "mobile": {

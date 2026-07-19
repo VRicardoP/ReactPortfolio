@@ -105,7 +105,8 @@
     "achievements": "Logros",
     "contact": "Contacto",
     "chat": "Kusanagi AI",
-    "fitMatrix": "Matriz de Habilidades"
+    "fitMatrix": "Matriz de Habilidades",
+    "jobSearch": "Búsqueda de empleo"
   },
   "app": {
     "loading": "Cargando...",
@@ -206,6 +207,10 @@
       "tabJobscout24": "JobScout24",
       "tabDynamitejobs": "DynamiteJobs",
       "tabJobroom": "Job-Room",
+      "tabThehub": "The Hub",
+      "tabJobgether": "Jobgether",
+      "tabNav": "NAV",
+      "tabIrishjobs": "IrishJobs",
       "applied": "Aplicado",
       "save": "Guardar",
       "saved": "Guardado"
@@ -484,6 +489,12 @@
       "chat": "Chat",
       "jobs": "Empleos",
       "settings": "Ajustes"
+    },
+    "jobSearch": {
+      "title": "Búsqueda de empleo",
+      "tabLive": "JSearch en vivo",
+      "tabFilter": "Filtro avanzado",
+      "tabSaved": "Búsquedas guardadas"
     }
   },
   "mobile": {
