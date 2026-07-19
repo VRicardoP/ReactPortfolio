@@ -481,7 +481,12 @@
       "removingSkill": "Eliminando...",
       "skillAdded": "Skill añadido a tu CV",
       "skillRemoved": "Skill eliminado de tu CV",
-      "skillToggleError": "Error al actualizar el skill"
+      "skillToggleError": "Error al actualizar el skill",
+      "progressCollect": "Recopilando ofertas…",
+      "progressEmbedding": "Codificando ofertas {{done}}/{{total}}",
+      "progressRerank": "Evaluación IA — lote {{done}}/{{total}}",
+      "progressFinalize": "Finalizando…",
+      "computedAt": "Análisis de las {{time}}"
     },
     "tab": {
       "overview": "General",

@@ -378,6 +378,27 @@
   font-size: 13px;
 }
 
+/* Progress bar for the server-side background analysis */
+.ai-match-progress-track {
+  width: 100%;
+  max-width: 420px;
+  height: 10px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.ai-match-progress-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.4s ease;
+}
+
+.ai-match-progress-label {
+  font-size: 13px;
+}
+
 .ai-match-score {
   font-size: 14px;
   font-weight: bold;

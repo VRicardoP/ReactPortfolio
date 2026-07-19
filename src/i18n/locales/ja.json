@@ -435,7 +435,12 @@
       "removingSkill": "削除中...",
       "skillAdded": "スキルをCVに追加しました",
       "skillRemoved": "スキルをCVから削除しました",
-      "skillToggleError": "スキルの更新に失敗しました"
+      "skillToggleError": "スキルの更新に失敗しました",
+      "progressCollect": "求人を収集中…",
+      "progressEmbedding": "求人をエンコード中 {{done}}/{{total}}",
+      "progressRerank": "AI評価 — バッチ {{done}}/{{total}}",
+      "progressFinalize": "仕上げ中…",
+      "computedAt": "{{time}}の分析"
     },
     "tab": {
       "overview": "概要",

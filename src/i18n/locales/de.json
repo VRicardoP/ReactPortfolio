@@ -435,7 +435,12 @@
       "removingSkill": "Entfernen...",
       "skillAdded": "Skill zu Ihrem CV hinzugefügt",
       "skillRemoved": "Skill aus Ihrem CV entfernt",
-      "skillToggleError": "Skill-Aktualisierung fehlgeschlagen"
+      "skillToggleError": "Skill-Aktualisierung fehlgeschlagen",
+      "progressCollect": "Stellen werden gesammelt…",
+      "progressEmbedding": "Kodierung der Stellen {{done}}/{{total}}",
+      "progressRerank": "KI-Bewertung — Charge {{done}}/{{total}}",
+      "progressFinalize": "Abschluss…",
+      "computedAt": "Analyse von {{time}}"
     },
     "tab": {
       "overview": "Übersicht",

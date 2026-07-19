@@ -17,6 +17,24 @@ const FIT_COLORS = {
     unknown: { bg: 'rgba(150, 150, 150, 0.15)', text: '#999', border: 'rgba(150, 150, 150, 0.2)' },
 };
 
+/** i18n label for the current background-analysis stage. */
+const stageLabel = (t, progress) => {
+    switch (progress?.stage) {
+        case 'embedding':
+            return t('dashboard.aiMatch.progressEmbedding', {
+                done: progress.jobs_done, total: progress.jobs_total,
+            });
+        case 'rerank':
+            return t('dashboard.aiMatch.progressRerank', {
+                done: progress.batches_done, total: progress.batches_total,
+            });
+        case 'finalize':
+            return t('dashboard.aiMatch.progressFinalize');
+        default:
+            return t('dashboard.aiMatch.progressCollect');
+    }
+};
+
 const AIJobMatchWindow = memo(({ initialPosition }) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
@@ -25,6 +43,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
         results,
         metadata,
         loading,
+        progress,
         error,
         runAnalysis,
         page,
@@ -80,6 +99,11 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                 total: metadata.total_jobs_analyzed,
                                 time: (metadata.total_time_ms / 1000).toFixed(1)
                             })}
+                            {metadata.computed_at && (
+                                <> · {t('dashboard.aiMatch.computedAt', {
+                                    time: new Date(metadata.computed_at).toLocaleString()
+                                })}</>
+                            )}
                         </span>
                     )}
                 </div>
@@ -106,14 +130,21 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                     </div>
                 )}
 
-                {/* Loading state */}
+                {/* Loading state: real progress of the server-side background run */}
                 {loading && (
                     <div className="ai-match-loading">
-                        <div
-                            className="ai-match-spinner"
-                            style={{ borderColor: theme.primary }}
-                        />
-                        <span>{t('dashboard.aiMatch.analyzing')}</span>
+                        <div className="ai-match-progress-track">
+                            <div
+                                className="ai-match-progress-fill"
+                                style={{
+                                    width: `${progress?.percent ?? 0}%`,
+                                    backgroundColor: theme.primary,
+                                }}
+                            />
+                        </div>
+                        <span className="ai-match-progress-label" style={{ color: theme.textHighlight }}>
+                            {progress?.percent ?? 0}% — {stageLabel(t, progress)}
+                        </span>
                         <span className="ai-match-stage-info">
                             {t('dashboard.aiMatch.stageInfo')}
                         </span>

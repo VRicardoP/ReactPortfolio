@@ -435,7 +435,12 @@
       "removingSkill": "Suppression...",
       "skillAdded": "Compétence ajoutée à votre CV",
       "skillRemoved": "Compétence supprimée de votre CV",
-      "skillToggleError": "Échec de la mise à jour de la compétence"
+      "skillToggleError": "Échec de la mise à jour de la compétence",
+      "progressCollect": "Collecte des offres…",
+      "progressEmbedding": "Encodage des offres {{done}}/{{total}}",
+      "progressRerank": "Évaluation IA — lot {{done}}/{{total}}",
+      "progressFinalize": "Finalisation…",
+      "computedAt": "Analyse de {{time}}"
     },
     "tab": {
       "overview": "Aperçu",
