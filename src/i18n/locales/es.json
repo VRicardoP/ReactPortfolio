@@ -449,6 +449,7 @@
       "saveSearch": "Guardar",
       "searching": "Buscando...",
       "resultsFound": "resultados encontrados",
+      "loadMore": "Cargar más",
       "noResults": "Ningún resultado coincide con tus filtros",
       "hint": "Configura los filtros y pulsa Buscar para encontrar ofertas en todas las fuentes",
       "errorSearch": "Error en la búsqueda"

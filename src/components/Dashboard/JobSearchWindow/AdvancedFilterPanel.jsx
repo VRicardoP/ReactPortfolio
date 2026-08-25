@@ -15,10 +15,16 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
     const { handleApply, appliedIds } = jobApp;
 
     const {
-        filters, results, total, loading, searched, page,
-        totalPages, hasFilters,
-        handleFilterChange, handleSearch, handleClear, formatSalary,
+        filters, results, total, hasMore, loading, searched, hasFilters,
+        handleFilterChange, handleSearch, handleLoadMore, handleClear, formatSalary,
     } = filter;
+
+    // Single pagination contract (local offset engine AND core keyset feed):
+    // `total` is null when the backend cannot count the corpus (cursor mode) —
+    // show what we have, with a "+" while more pages exist.
+    const resultCountLabel = total != null
+        ? `${total}`
+        : `${results.length}${hasMore ? '+' : ''}`;
 
     return (
         <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -34,7 +40,7 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                         value={filters.q}
                         onChange={(e) => handleFilterChange('q', e.target.value)}
                         className="dash-input"
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch(0)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     />
                 </div>
                 <div>
@@ -47,7 +53,7 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                         value={filters.country}
                         onChange={(e) => handleFilterChange('country', e.target.value)}
                         className="dash-input"
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch(0)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     />
                 </div>
                 <div>
@@ -60,7 +66,7 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                         value={filters.city}
                         onChange={(e) => handleFilterChange('city', e.target.value)}
                         className="dash-input"
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch(0)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     />
                 </div>
                 <div style={{ display: 'flex', gap: '6px' }}>
@@ -74,7 +80,7 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                             value={filters.salaryMin}
                             onChange={(e) => handleFilterChange('salaryMin', e.target.value)}
                             className="dash-input"
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch(0)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         />
                     </div>
                     <div style={{ flex: 1 }}>
@@ -87,7 +93,7 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                             value={filters.salaryMax}
                             onChange={(e) => handleFilterChange('salaryMax', e.target.value)}
                             className="dash-input"
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearch(0)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         />
                     </div>
                 </div>
@@ -102,7 +108,7 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                     </label>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'end', gap: '6px', justifyContent: 'flex-end' }}>
-                    <button className="dash-btn dash-btn-primary dash-btn-lg" onClick={() => handleSearch(0)}>
+                    <button className="dash-btn dash-btn-primary dash-btn-lg" onClick={() => handleSearch()}>
                         {t('dashboard.jobFilter.search')}
                     </button>
                     {hasFilters && (
@@ -122,30 +128,9 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                     <span>
                         {loading
                             ? t('dashboard.jobFilter.searching')
-                            : `${total} ${t('dashboard.jobFilter.resultsFound')}`
+                            : `${resultCountLabel} ${t('dashboard.jobFilter.resultsFound')}`
                         }
                     </span>
-                    {totalPages > 1 && (
-                        <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                            <button
-                                disabled={page === 0}
-                                onClick={() => handleSearch(page - 1)}
-                                className="dash-btn"
-                                style={{ padding: '2px 8px' }}
-                            >
-                                &lt;
-                            </button>
-                            <span>{page + 1}/{totalPages}</span>
-                            <button
-                                disabled={page >= totalPages - 1}
-                                onClick={() => handleSearch(page + 1)}
-                                className="dash-btn"
-                                style={{ padding: '2px 8px' }}
-                            >
-                                &gt;
-                            </button>
-                        </div>
-                    )}
                 </div>
             )}
 
@@ -256,6 +241,22 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                         </div>
                     </div>
                 ))}
+
+                {/* "Load more": follows next_cursor (core) or accumulated
+                    offset (local) via handleLoadMore — never a page total. */}
+                {searched && hasMore && (
+                    <button
+                        className="dash-btn"
+                        onClick={handleLoadMore}
+                        disabled={loading}
+                        style={{ alignSelf: 'center', margin: '6px 0', padding: '4px 16px' }}
+                    >
+                        {loading
+                            ? t('dashboard.jobFilter.searching')
+                            : t('dashboard.jobFilter.loadMore')
+                        }
+                    </button>
+                )}
             </div>
         </div>
     );

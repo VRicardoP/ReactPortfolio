@@ -17,8 +17,15 @@ const INITIAL_FILTERS = {
 
 /**
  * Business logic for the job filter window: search state, filter management,
- * query building, pagination, and save-to-saved-searches integration.
- * Used by JobFilterWindow.
+ * query building, cursor/offset pagination ("load more"), and
+ * save-to-saved-searches integration. Used by AdvancedFilterPanel.
+ *
+ * Pagination contract (single envelope for local AND core routing, see
+ * backend/services/catalog): metadata carries `total` (number under the local
+ * offset engine, null under the core keyset feed), `has_more` and
+ * `next_cursor`. The hook never depends on `total` to paginate: "load more"
+ * follows `next_cursor` when present (core) and an accumulated offset when not
+ * (local), guided by `has_more`.
  *
  * @param {Function} [onSaveSearch] — optional callback to save current filters
  */
@@ -28,16 +35,17 @@ const useJobFilter = (onSaveSearch) => {
 
     const [filters, setFilters] = useState(INITIAL_FILTERS);
     const [results, setResults] = useState([]);
-    const [total, setTotal] = useState(0);
+    const [total, setTotal] = useState(null); // null = unknown (core keyset feed)
+    const [hasMore, setHasMore] = useState(false);
+    const [nextCursor, setNextCursor] = useState(null);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState(false);
-    const [page, setPage] = useState(0);
 
     const handleFilterChange = useCallback((field, value) => {
         setFilters(prev => ({ ...prev, [field]: value }));
     }, []);
 
-    const buildQueryParams = useCallback((offset = 0) => {
+    const buildQueryParams = useCallback(({ offset = 0, cursor = null } = {}) => {
         return buildJobSearchParams({
             q: filters.q,
             country: filters.country,
@@ -46,37 +54,64 @@ const useJobFilter = (onSaveSearch) => {
             salaryMax: filters.salaryMax,
             remoteOnly: filters.remoteOnly,
             limit: JOBS_PAGE_SIZE,
-            offset,
+            // The core keyset cursor already encodes the position: never send
+            // both cursor and a non-zero offset.
+            offset: cursor ? undefined : offset,
+            cursor,
         }).toString();
     }, [filters]);
 
-    const handleSearch = useCallback(async (newPage = 0) => {
+    const fetchPage = useCallback(async ({ offset = 0, cursor = null, append = false }) => {
         setLoading(true);
         setSearched(true);
-        setPage(newPage);
         try {
-            const qs = buildQueryParams(newPage * JOBS_PAGE_SIZE);
+            const qs = buildQueryParams({ offset, cursor });
             const response = await authenticatedFetch(
                 `${BACKEND_URL}/api/v1/jobs/search?${qs}`
             );
             const data = await response.json();
-            setResults(data.data || []);
-            setTotal(data.metadata?.total || 0);
+            const items = data.data || [];
+            const meta = data.metadata || {};
+            setResults(prev => (append ? [...prev, ...items] : items));
+            setTotal(meta.total ?? null);
+            setNextCursor(meta.next_cursor ?? null);
+            // `has_more` drives the "load more" button; a full page is the
+            // conservative fallback if the envelope ever omits it.
+            setHasMore(meta.has_more ?? items.length === JOBS_PAGE_SIZE);
         } catch {
             showToast(t('dashboard.jobFilter.errorSearch'));
-            setResults([]);
-            setTotal(0);
+            // A failed "load more" keeps the pages already shown.
+            if (!append) {
+                setResults([]);
+                setTotal(null);
+            }
+            setHasMore(false);
+            setNextCursor(null);
         } finally {
             setLoading(false);
         }
     }, [authenticatedFetch, buildQueryParams, t]);
 
+    const handleSearch = useCallback(() => fetchPage({ offset: 0 }), [fetchPage]);
+
+    const handleLoadMore = useCallback(() => {
+        if (loading) return Promise.resolve();
+        // Cursor when the backend gave one (core keyset); accumulated offset
+        // otherwise (local engine). Same code path in both routing modes.
+        return fetchPage(
+            nextCursor
+                ? { cursor: nextCursor, append: true }
+                : { offset: results.length, append: true }
+        );
+    }, [fetchPage, nextCursor, results.length, loading]);
+
     const handleClear = useCallback(() => {
         setFilters(INITIAL_FILTERS);
         setResults([]);
-        setTotal(0);
+        setTotal(null);
+        setHasMore(false);
+        setNextCursor(null);
         setSearched(false);
-        setPage(0);
     }, []);
 
     const handleSave = useCallback(() => {
@@ -91,8 +126,6 @@ const useJobFilter = (onSaveSearch) => {
             });
         }
     }, [onSaveSearch, filters]);
-
-    const totalPages = Math.ceil(total / JOBS_PAGE_SIZE);
 
     const hasFilters = filters.country || filters.city
         || filters.salaryMin || filters.salaryMax || filters.q || filters.remoteOnly;
@@ -109,14 +142,15 @@ const useJobFilter = (onSaveSearch) => {
         filters,
         results,
         total,
+        hasMore,
+        nextCursor,
         loading,
         searched,
-        page,
-        totalPages,
         hasFilters,
         handleFilterChange,
         buildQueryParams,
         handleSearch,
+        handleLoadMore,
         handleClear,
         handleSave,
         formatSalary,

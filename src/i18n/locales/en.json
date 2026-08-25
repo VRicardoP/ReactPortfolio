@@ -449,6 +449,7 @@
       "saveSearch": "Save",
       "searching": "Searching...",
       "resultsFound": "results found",
+      "loadMore": "Load more",
       "noResults": "No results match your filters",
       "hint": "Set filters and click Search to find jobs across all sources",
       "errorSearch": "Search failed"

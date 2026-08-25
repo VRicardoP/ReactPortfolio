@@ -403,6 +403,7 @@
       "saveSearch": "Sauvegarder",
       "searching": "Recherche en cours...",
       "resultsFound": "résultats trouvés",
+      "loadMore": "Charger plus",
       "noResults": "Aucun résultat ne correspond à vos filtres",
       "hint": "Définissez les filtres et cliquez sur Rechercher pour trouver des offres dans toutes les sources",
       "errorSearch": "Échec de la recherche"

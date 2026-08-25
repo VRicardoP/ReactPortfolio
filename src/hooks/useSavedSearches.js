@@ -129,7 +129,9 @@ const useSavedSearches = () => {
             );
             const data = await response.json();
             setSearchResults(data.data || []);
-            setResultsTotal(data.metadata?.total || 0);
+            // Contrato unificado local/core: bajo el feed keyset del core
+            // `total` es null — se muestra al menos lo recibido, nunca 0.
+            setResultsTotal(data.metadata?.total ?? data.data?.length ?? 0);
         } catch {
             showToast(t('dashboard.savedSearches.errorRun'));
             setSearchResults([]);

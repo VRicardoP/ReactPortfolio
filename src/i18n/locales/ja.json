@@ -403,6 +403,7 @@
       "saveSearch": "保存",
       "searching": "検索中...",
       "resultsFound": "件の結果",
+      "loadMore": "さらに読み込む",
       "noResults": "フィルターに一致する結果はありません",
       "hint": "フィルターを設定し、検索をクリックしてすべてのソースから求人を検索します",
       "errorSearch": "検索に失敗しました"

@@ -4,7 +4,9 @@
  * (camelCase vs snake_case) field names into this shape before calling.
  *
  * Falsy values are omitted (same as the previous inline builders). `limit` /
- * `offset` are included only when provided.
+ * `offset` are included only when provided. `cursor` is the opaque keyset
+ * cursor from the unified-search envelope (`metadata.next_cursor`, core
+ * routing) — pass it INSTEAD of `offset` to fetch the next page.
  */
 export function buildJobSearchParams({
     q,
@@ -15,6 +17,7 @@ export function buildJobSearchParams({
     remoteOnly,
     limit,
     offset,
+    cursor,
 } = {}) {
     const params = new URLSearchParams();
     if (q) params.set('q', q);
@@ -25,5 +28,6 @@ export function buildJobSearchParams({
     if (remoteOnly) params.set('remote_only', 'true');
     if (limit != null) params.set('limit', String(limit));
     if (offset != null) params.set('offset', String(offset));
+    if (cursor) params.set('cursor', cursor);
     return params;
 }

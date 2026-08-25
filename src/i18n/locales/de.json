@@ -403,6 +403,7 @@
       "saveSearch": "Speichern",
       "searching": "Suche läuft...",
       "resultsFound": "Ergebnisse gefunden",
+      "loadMore": "Mehr laden",
       "noResults": "Keine Ergebnisse passen zu Ihren Filtern",
       "hint": "Filter einstellen und auf Suchen klicken, um Jobs aus allen Quellen zu finden",
       "errorSearch": "Suche fehlgeschlagen"

@@ -35,6 +35,18 @@ const makeMockResponse = (data) => ({
   json: () => Promise.resolve(data),
 })
 
+// Unified pagination envelope (single contract for local offset engine and
+// core keyset feed): local pages carry total + has_more + next_cursor null,
+// core pages carry total null + next_cursor.
+const localPage = (items, { total, hasMore }) => ({
+  data: items,
+  metadata: { total, has_more: hasMore, next_cursor: null },
+})
+const corePage = (items, { nextCursor }) => ({
+  data: items,
+  metadata: { total: null, has_more: nextCursor != null, next_cursor: nextCursor },
+})
+
 describe('useJobFilter', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -54,11 +66,11 @@ describe('useJobFilter', () => {
       remoteOnly: false,
     })
     expect(result.current.results).toEqual([])
-    expect(result.current.total).toBe(0)
+    expect(result.current.total).toBe(null)
+    expect(result.current.hasMore).toBe(false)
+    expect(result.current.nextCursor).toBe(null)
     expect(result.current.loading).toBe(false)
     expect(result.current.searched).toBe(false)
-    expect(result.current.page).toBe(0)
-    expect(result.current.totalPages).toBe(0)
     expect(result.current.hasFilters).toBeFalsy()
   })
 
@@ -97,20 +109,18 @@ describe('useJobFilter', () => {
     expect(result.current.filters.remoteOnly).toBe(true)
   })
 
-  // --- 3. handleSearch success ---
-  it('performs search and sets results', async () => {
-    const mockData = {
-      data: [
-        { id: 1, title: 'React Dev' },
-        { id: 2, title: 'Node Dev' },
-      ],
-      metadata: { total: 42 },
-    }
-    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse(mockData))
+  // --- 3. handleSearch success (local envelope) ---
+  it('performs search and sets results with pagination metadata', async () => {
+    const items = [
+      { id: 1, title: 'React Dev' },
+      { id: 2, title: 'Node Dev' },
+    ]
+    mockAuthenticatedFetch.mockResolvedValueOnce(
+      makeMockResponse(localPage(items, { total: 42, hasMore: true }))
+    )
 
     const { result } = renderHook(() => useJobFilter())
 
-    // Set a filter first
     act(() => {
       result.current.handleFilterChange('q', 'react')
       result.current.handleFilterChange('country', 'CH')
@@ -120,11 +130,12 @@ describe('useJobFilter', () => {
       await result.current.handleSearch()
     })
 
-    expect(result.current.results).toEqual(mockData.data)
+    expect(result.current.results).toEqual(items)
     expect(result.current.total).toBe(42)
+    expect(result.current.hasMore).toBe(true)
+    expect(result.current.nextCursor).toBe(null)
     expect(result.current.loading).toBe(false)
     expect(result.current.searched).toBe(true)
-    expect(result.current.page).toBe(0)
 
     // Verify URL params
     const url = mockAuthenticatedFetch.mock.calls[0][0]
@@ -132,32 +143,81 @@ describe('useJobFilter', () => {
     expect(url).toContain('country=CH')
     expect(url).toContain('limit=20')
     expect(url).toContain('offset=0')
+    expect(url).not.toContain('cursor=')
   })
 
-  // --- 4. handleSearch with pagination ---
-  it('supports pagination via handleSearch(page)', async () => {
-    const mockData = {
-      data: [{ id: 3, title: 'Page 2 job' }],
-      metadata: { total: 42 },
-    }
-    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse(mockData))
+  // --- 4. handleLoadMore in local (offset) mode appends the next page ---
+  it('loads more via accumulated offset when there is no cursor', async () => {
+    const firstPage = Array.from({ length: 20 }, (_, i) => ({ id: i }))
+    const secondPage = [{ id: 20, title: 'Page 2 job' }]
+    mockAuthenticatedFetch
+      .mockResolvedValueOnce(
+        makeMockResponse(localPage(firstPage, { total: 21, hasMore: true }))
+      )
+      .mockResolvedValueOnce(
+        makeMockResponse(localPage(secondPage, { total: 21, hasMore: false }))
+      )
 
     const { result } = renderHook(() => useJobFilter())
 
     act(() => {
       result.current.handleFilterChange('q', 'python')
     })
-
     await act(async () => {
-      await result.current.handleSearch(2) // page 2
+      await result.current.handleSearch()
+    })
+    await act(async () => {
+      await result.current.handleLoadMore()
     })
 
-    expect(result.current.page).toBe(2)
-    const url = mockAuthenticatedFetch.mock.calls[0][0]
-    expect(url).toContain('offset=40') // page 2 * 20
+    expect(result.current.results).toHaveLength(21)
+    expect(result.current.results[20]).toEqual(secondPage[0])
+    expect(result.current.hasMore).toBe(false)
+    const url = mockAuthenticatedFetch.mock.calls[1][0]
+    expect(url).toContain('offset=20') // accumulated results length
+    expect(url).not.toContain('cursor=')
   })
 
-  // --- 5. handleSearch error ---
+  // --- 5. handleLoadMore in core (cursor) mode follows next_cursor ---
+  it('loads more via next_cursor when the backend provides one', async () => {
+    const firstPage = [{ id: 'a', title: 'Core job 1' }]
+    const secondPage = [{ id: 'b', title: 'Core job 2' }]
+    mockAuthenticatedFetch
+      .mockResolvedValueOnce(
+        makeMockResponse(corePage(firstPage, { nextCursor: 'opaque-cursor-1' }))
+      )
+      .mockResolvedValueOnce(
+        makeMockResponse(corePage(secondPage, { nextCursor: null }))
+      )
+
+    const { result } = renderHook(() => useJobFilter())
+
+    act(() => {
+      result.current.handleFilterChange('q', 'python')
+    })
+    await act(async () => {
+      await result.current.handleSearch()
+    })
+
+    // core envelope: unknown total, cursor stored
+    expect(result.current.total).toBe(null)
+    expect(result.current.hasMore).toBe(true)
+    expect(result.current.nextCursor).toBe('opaque-cursor-1')
+
+    await act(async () => {
+      await result.current.handleLoadMore()
+    })
+
+    expect(result.current.results).toEqual([...firstPage, ...secondPage])
+    expect(result.current.hasMore).toBe(false)
+    expect(result.current.nextCursor).toBe(null)
+    const url = mockAuthenticatedFetch.mock.calls[1][0]
+    expect(url).toContain('cursor=opaque-cursor-1')
+    // the keyset cursor already encodes the position: no offset alongside it
+    expect(url).not.toContain('offset=')
+  })
+
+  // --- 6. handleSearch error ---
   it('shows toast and resets results on search error', async () => {
     mockAuthenticatedFetch.mockRejectedValueOnce(new Error('Search failed'))
 
@@ -172,18 +232,41 @@ describe('useJobFilter', () => {
     })
 
     expect(result.current.results).toEqual([])
-    expect(result.current.total).toBe(0)
+    expect(result.current.total).toBe(null)
+    expect(result.current.hasMore).toBe(false)
     expect(result.current.loading).toBe(false)
     expect(result.current.searched).toBe(true)
     expect(mockShowToast).toHaveBeenCalledWith('dashboard.jobFilter.errorSearch')
   })
 
-  // --- 6. handleClear resets everything ---
+  // --- 7. handleLoadMore error keeps the pages already shown ---
+  it('keeps existing results when load more fails', async () => {
+    const firstPage = [{ id: 1, title: 'Kept job' }]
+    mockAuthenticatedFetch
+      .mockResolvedValueOnce(
+        makeMockResponse(localPage(firstPage, { total: 40, hasMore: true }))
+      )
+      .mockRejectedValueOnce(new Error('Load more failed'))
+
+    const { result } = renderHook(() => useJobFilter())
+
+    await act(async () => {
+      await result.current.handleSearch()
+    })
+    await act(async () => {
+      await result.current.handleLoadMore()
+    })
+
+    expect(result.current.results).toEqual(firstPage)
+    expect(result.current.hasMore).toBe(false)
+    expect(mockShowToast).toHaveBeenCalledWith('dashboard.jobFilter.errorSearch')
+  })
+
+  // --- 8. handleClear resets everything ---
   it('clears filters, results, and search state', async () => {
-    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
-      data: [{ id: 1, title: 'Job' }],
-      metadata: { total: 1 },
-    }))
+    mockAuthenticatedFetch.mockResolvedValueOnce(
+      makeMockResponse(localPage([{ id: 1, title: 'Job' }], { total: 1, hasMore: false }))
+    )
 
     const { result } = renderHook(() => useJobFilter())
 
@@ -213,12 +296,13 @@ describe('useJobFilter', () => {
       remoteOnly: false,
     })
     expect(result.current.results).toEqual([])
-    expect(result.current.total).toBe(0)
+    expect(result.current.total).toBe(null)
+    expect(result.current.hasMore).toBe(false)
+    expect(result.current.nextCursor).toBe(null)
     expect(result.current.searched).toBe(false)
-    expect(result.current.page).toBe(0)
   })
 
-  // --- 7. handleSave calls onSaveSearch callback ---
+  // --- 9. handleSave calls onSaveSearch callback ---
   it('calls onSaveSearch with current filters', () => {
     const mockOnSave = vi.fn()
     const { result } = renderHook(() => useJobFilter(mockOnSave))
@@ -243,7 +327,7 @@ describe('useJobFilter', () => {
     })
   })
 
-  // --- 8. handleSave does nothing without callback ---
+  // --- 10. handleSave does nothing without callback ---
   it('does nothing when onSaveSearch is not provided', () => {
     const { result } = renderHook(() => useJobFilter())
 
@@ -253,7 +337,7 @@ describe('useJobFilter', () => {
     })
   })
 
-  // --- 9. hasFilters computed correctly ---
+  // --- 11. hasFilters computed correctly ---
   it('hasFilters is truthy when any filter is set', () => {
     const { result } = renderHook(() => useJobFilter())
 
@@ -274,12 +358,12 @@ describe('useJobFilter', () => {
     expect(result.current.hasFilters).toBeTruthy()
   })
 
-  // --- 10. totalPages computed correctly ---
-  it('computes totalPages based on total and page size', async () => {
-    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
-      data: Array.from({ length: 20 }, (_, i) => ({ id: i })),
-      metadata: { total: 45 },
-    }))
+  // --- 12. has_more fallback when the envelope omits it ---
+  it('derives hasMore from a full page when metadata lacks has_more', async () => {
+    const fullPage = Array.from({ length: 20 }, (_, i) => ({ id: i }))
+    mockAuthenticatedFetch.mockResolvedValueOnce(
+      makeMockResponse({ data: fullPage, metadata: { total: 45 } })
+    )
 
     const { result } = renderHook(() => useJobFilter())
 
@@ -290,11 +374,10 @@ describe('useJobFilter', () => {
       await result.current.handleSearch()
     })
 
-    // 45 / 20 = 2.25 -> ceil = 3
-    expect(result.current.totalPages).toBe(3)
+    expect(result.current.hasMore).toBe(true)
   })
 
-  // --- 11. buildQueryParams includes all active filters ---
+  // --- 13. buildQueryParams includes all active filters ---
   it('buildQueryParams builds correct query string with all filters', () => {
     const { result } = renderHook(() => useJobFilter())
 
@@ -307,7 +390,7 @@ describe('useJobFilter', () => {
       result.current.handleFilterChange('remoteOnly', true)
     })
 
-    const qs = result.current.buildQueryParams(0)
+    const qs = result.current.buildQueryParams()
     expect(qs).toContain('q=react')
     expect(qs).toContain('country=CH')
     expect(qs).toContain('city=Zurich')
@@ -318,11 +401,11 @@ describe('useJobFilter', () => {
     expect(qs).toContain('offset=0')
   })
 
-  // --- 12. buildQueryParams omits empty filters ---
+  // --- 14. buildQueryParams omits empty filters, cursor replaces offset ---
   it('buildQueryParams omits empty filter values', () => {
     const { result } = renderHook(() => useJobFilter())
 
-    const qs = result.current.buildQueryParams(0)
+    const qs = result.current.buildQueryParams()
     expect(qs).not.toContain('q=')
     expect(qs).not.toContain('country=')
     expect(qs).not.toContain('city=')
@@ -333,7 +416,15 @@ describe('useJobFilter', () => {
     expect(qs).toContain('offset=0')
   })
 
-  // --- 13. formatSalary formats correctly ---
+  it('buildQueryParams sends cursor instead of offset when given one', () => {
+    const { result } = renderHook(() => useJobFilter())
+
+    const qs = result.current.buildQueryParams({ cursor: 'abc123' })
+    expect(qs).toContain('cursor=abc123')
+    expect(qs).not.toContain('offset=')
+  })
+
+  // --- 15. formatSalary formats correctly ---
   it('formats salary with min and max', () => {
     const { result } = renderHook(() => useJobFilter())
 
