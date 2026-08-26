@@ -460,3 +460,93 @@ describe('useJobFilter', () => {
     expect(result.current.formatSalary(null, null)).toBe('')
   })
 })
+
+// ---------------------------------------------------------------------------
+// P2-1 auditoria G8 — el token de secuencia, la mitad del CLIENTE
+// ---------------------------------------------------------------------------
+
+describe('useJobFilter — token de secuencia (P2-1 G8)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.restoreAllMocks()
+  })
+
+  const paginaConToken = (items, { hasMore, sequence }) => ({
+    data: items,
+    metadata: { total: null, has_more: hasMore, next_cursor: null, sequence },
+  })
+
+  // MUERDE sin el fix: el backend acuña el token desde G7 y lo publica en
+  // `metadata.sequence`, pero NINGUN cliente lo leia ni lo reenviaba, asi que
+  // el 100 % del trafico caia en el respaldo por IP — el codigo de ANTES del
+  // fix — y dos pestañas del mismo host podian mezclar corpus e identidades
+  // entre el motor core y el local.
+  it('reenvia metadata.sequence como ?seq= en el "cargar mas"', async () => {
+    mockAuthenticatedFetch
+      .mockResolvedValueOnce(
+        makeMockResponse(paginaConToken([{ id: 1 }], { hasMore: true, sequence: 'tok-1' }))
+      )
+      .mockResolvedValueOnce(
+        makeMockResponse(paginaConToken([{ id: 2 }], { hasMore: false, sequence: undefined }))
+      )
+
+    const { result } = renderHook(() => useJobFilter())
+
+    await act(async () => { await result.current.handleSearch() })
+    expect(result.current.sequence).toBe('tok-1')
+    // La pagina 1 ABRE la secuencia: no puede reenviar token (el servidor
+    // estrena uno igualmente, y mandarlo solo confundiria la lectura).
+    expect(mockAuthenticatedFetch.mock.calls[0][0]).not.toContain('seq=')
+
+    await act(async () => { await result.current.handleLoadMore() })
+    expect(mockAuthenticatedFetch.mock.calls[1][0]).toContain('seq=tok-1')
+  })
+
+  it('conserva el token de la pagina 1 aunque el "cargar mas" no lo republique', async () => {
+    mockAuthenticatedFetch
+      .mockResolvedValueOnce(
+        makeMockResponse(paginaConToken([{ id: 1 }], { hasMore: true, sequence: 'tok-2' }))
+      )
+      .mockResolvedValueOnce(
+        makeMockResponse(paginaConToken([{ id: 2 }], { hasMore: true, sequence: undefined }))
+      )
+      .mockResolvedValueOnce(
+        makeMockResponse(paginaConToken([{ id: 3 }], { hasMore: false, sequence: undefined }))
+      )
+
+    const { result } = renderHook(() => useJobFilter())
+    await act(async () => { await result.current.handleSearch() })
+    await act(async () => { await result.current.handleLoadMore() })
+    await act(async () => { await result.current.handleLoadMore() })
+
+    expect(result.current.sequence).toBe('tok-2')
+    expect(mockAuthenticatedFetch.mock.calls[2][0]).toContain('seq=tok-2')
+  })
+
+  it('una busqueda nueva descarta el token de la secuencia anterior', async () => {
+    mockAuthenticatedFetch
+      .mockResolvedValueOnce(
+        makeMockResponse(paginaConToken([{ id: 1 }], { hasMore: true, sequence: 'tok-3' }))
+      )
+      .mockResolvedValueOnce(
+        makeMockResponse(paginaConToken([{ id: 9 }], { hasMore: false, sequence: 'tok-4' }))
+      )
+
+    const { result } = renderHook(() => useJobFilter())
+    await act(async () => { await result.current.handleSearch() })
+    await act(async () => { await result.current.handleSearch() })
+
+    expect(result.current.sequence).toBe('tok-4')
+    expect(mockAuthenticatedFetch.mock.calls[1][0]).not.toContain('seq=')
+  })
+
+  it('handleClear olvida el token', async () => {
+    mockAuthenticatedFetch.mockResolvedValueOnce(
+      makeMockResponse(paginaConToken([{ id: 1 }], { hasMore: true, sequence: 'tok-5' }))
+    )
+    const { result } = renderHook(() => useJobFilter())
+    await act(async () => { await result.current.handleSearch() })
+    act(() => { result.current.handleClear() })
+    expect(result.current.sequence).toBeNull()
+  })
+})

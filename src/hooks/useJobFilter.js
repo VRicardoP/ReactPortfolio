@@ -27,6 +27,15 @@ const INITIAL_FILTERS = {
  * follows `next_cursor` when present (core) and an accumulated offset when not
  * (local), guided by `has_more`.
  *
+ * Identidad de secuencia (P2-1 auditoria G8): la pagina 1 devuelve ademas
+ * `metadata.sequence`, un token opaco que el backend acuña por secuencia. El
+ * hook lo guarda y lo REENVIA en cada "cargar mas" — sin eso el backend cae a
+ * su respaldo por IP, y dos pestañas del mismo host (o la peticion duplicada de
+ * React StrictMode en desarrollo) comparten la anotacion de que motor sirvio la
+ * pagina 1: la pagina 2 puede llegar del otro corpus, con otras identidades y
+ * otro orden. El token existia en el servidor desde G7 y ningun cliente lo
+ * reenviaba, asi que el 100 % del trafico real caia en el respaldo.
+ *
  * @param {Function} [onSaveSearch] — optional callback to save current filters
  */
 const useJobFilter = (onSaveSearch) => {
@@ -38,6 +47,7 @@ const useJobFilter = (onSaveSearch) => {
     const [total, setTotal] = useState(null); // null = unknown (core keyset feed)
     const [hasMore, setHasMore] = useState(false);
     const [nextCursor, setNextCursor] = useState(null);
+    const [sequence, setSequence] = useState(null);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState(false);
 
@@ -45,7 +55,7 @@ const useJobFilter = (onSaveSearch) => {
         setFilters(prev => ({ ...prev, [field]: value }));
     }, []);
 
-    const buildQueryParams = useCallback(({ offset = 0, cursor = null } = {}) => {
+    const buildQueryParams = useCallback(({ offset = 0, cursor = null, seq = null } = {}) => {
         return buildJobSearchParams({
             q: filters.q,
             country: filters.country,
@@ -58,14 +68,15 @@ const useJobFilter = (onSaveSearch) => {
             // both cursor and a non-zero offset.
             offset: cursor ? undefined : offset,
             cursor,
+            sequence: seq,
         }).toString();
     }, [filters]);
 
-    const fetchPage = useCallback(async ({ offset = 0, cursor = null, append = false }) => {
+    const fetchPage = useCallback(async ({ offset = 0, cursor = null, seq = null, append = false }) => {
         setLoading(true);
         setSearched(true);
         try {
-            const qs = buildQueryParams({ offset, cursor });
+            const qs = buildQueryParams({ offset, cursor, seq });
             const response = await authenticatedFetch(
                 `${BACKEND_URL}/api/v1/jobs/search?${qs}`
             );
@@ -75,6 +86,9 @@ const useJobFilter = (onSaveSearch) => {
             setResults(prev => (append ? [...prev, ...items] : items));
             setTotal(meta.total ?? null);
             setNextCursor(meta.next_cursor ?? null);
+            // Solo la pagina 1 acuña token; en un "cargar mas" no viene y hay
+            // que CONSERVAR el que abrio la secuencia.
+            if (!append) setSequence(meta.sequence ?? null);
             // `has_more` drives the "load more" button; a full page is the
             // conservative fallback if the envelope ever omits it.
             setHasMore(meta.has_more ?? items.length === JOBS_PAGE_SIZE);
@@ -87,6 +101,7 @@ const useJobFilter = (onSaveSearch) => {
             }
             setHasMore(false);
             setNextCursor(null);
+            if (!append) setSequence(null);
         } finally {
             setLoading(false);
         }
@@ -100,10 +115,10 @@ const useJobFilter = (onSaveSearch) => {
         // otherwise (local engine). Same code path in both routing modes.
         return fetchPage(
             nextCursor
-                ? { cursor: nextCursor, append: true }
-                : { offset: results.length, append: true }
+                ? { cursor: nextCursor, seq: sequence, append: true }
+                : { offset: results.length, seq: sequence, append: true }
         );
-    }, [fetchPage, nextCursor, results.length, loading]);
+    }, [fetchPage, nextCursor, sequence, results.length, loading]);
 
     const handleClear = useCallback(() => {
         setFilters(INITIAL_FILTERS);
@@ -111,6 +126,7 @@ const useJobFilter = (onSaveSearch) => {
         setTotal(null);
         setHasMore(false);
         setNextCursor(null);
+        setSequence(null);
         setSearched(false);
     }, []);
 
@@ -144,6 +160,7 @@ const useJobFilter = (onSaveSearch) => {
         total,
         hasMore,
         nextCursor,
+        sequence,
         loading,
         searched,
         hasFilters,
