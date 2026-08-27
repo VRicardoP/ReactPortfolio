@@ -258,7 +258,10 @@ describe('useJobFilter', () => {
     })
 
     expect(result.current.results).toEqual(firstPage)
-    expect(result.current.hasMore).toBe(false)
+    // P3-2 (auditoría G9): antes se apagaba `hasMore` aquí. Un "cargar más" que
+    // falla no prueba que no haya más páginas, y apagarlo dejaba al usuario sin
+    // camino de reintento. La posición se conserva para poder repetir el intento.
+    expect(result.current.hasMore).toBe(true)
     expect(mockShowToast).toHaveBeenCalledWith('dashboard.jobFilter.errorSearch')
   })
 
@@ -676,5 +679,45 @@ describe('useJobFilter — respuestas fuera de orden (P2-1 externa)', () => {
     expect(result.current.nextCursor).toBeNull()
     expect(result.current.searched).toBe(false)
     expect(result.current.loading).toBe(false)
+  })
+
+  // --- Regresión P3-2 (auditoría G9 2026-08-27) ---
+  // El fallo cerrado del token de secuencia (501) llega al hook como una
+  // excepción de `authenticatedFetch`. Apagar `hasMore` ahí dejaba al usuario
+  // con la primera página de un corpus de cientos y sin ningún camino de
+  // reintento: un "cargar más" que falla no prueba que no haya más páginas.
+  it('F1 · un "cargar más" que falla conserva el botón y la posición para reintentar', async () => {
+    mockAuthenticatedFetch.mockImplementationOnce(() =>
+      Promise.resolve(makeMockResponse({
+        data: [{ id: 'p1' }],
+        metadata: { next_cursor: 'c1', sequence: 's1', has_more: true },
+      }))
+    )
+    mockAuthenticatedFetch.mockImplementationOnce(() =>
+      Promise.reject(new Error('Sequence expired'))
+    )
+
+    const { result } = renderHook(() => useJobFilter())
+    await act(async () => { await result.current.handleSearch() })
+    expect(result.current.hasMore).toBe(true)
+
+    await act(async () => { await result.current.handleLoadMore() })
+
+    expect(result.current.results.map(r => r.id)).toEqual(['p1'])
+    expect(result.current.hasMore).toBe(true)
+    expect(result.current.nextCursor).toBe('c1')
+    expect(result.current.sequence).toBe('s1')
+    expect(result.current.loading).toBe(false)
+
+    // Y el reintento vuelve a pedir exactamente la misma página.
+    mockAuthenticatedFetch.mockImplementationOnce(() =>
+      Promise.resolve(makeMockResponse({
+        data: [{ id: 'p2' }],
+        metadata: { next_cursor: 'c2', has_more: false },
+      }))
+    )
+    await act(async () => { await result.current.handleLoadMore() })
+    expect(result.current.results.map(r => r.id)).toEqual(['p1', 'p2'])
+    expect(result.current.sequence).toBe('s1')
   })
 })

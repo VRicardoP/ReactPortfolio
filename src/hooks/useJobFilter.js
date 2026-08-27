@@ -108,14 +108,19 @@ const useJobFilter = (onSaveSearch) => {
         } catch {
             if (!isCurrent()) return;
             showToast(t('dashboard.jobFilter.errorSearch'));
-            // A failed "load more" keeps the pages already shown.
-            if (!append) {
-                setResults([]);
-                setTotal(null);
-            }
+            // Un "cargar mas" que falla conserva las paginas ya mostradas Y su
+            // posicion: que este intento fallara no prueba que no haya mas
+            // paginas. Apagar `hasMore`/`nextCursor` dejaba al usuario con la
+            // primera pagina de un corpus de cientos y sin camino de reintento
+            // salvo relanzar la busqueda entera — y el 501 del fallo cerrado
+            // (token de secuencia caducado, backend redesplegado, cambio de IP
+            // al pasar de wifi a 4G) es alcanzable en produccion.
+            if (append) return;
+            setResults([]);
+            setTotal(null);
             setHasMore(false);
             setNextCursor(null);
-            if (!append) setSequence(null);
+            setSequence(null);
         } finally {
             // Apagar el indicador solo si nadie ha tomado el relevo: si una
             // busqueda mas nueva sigue en vuelo, manda la suya.
