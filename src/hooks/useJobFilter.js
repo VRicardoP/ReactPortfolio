@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
@@ -51,6 +51,12 @@ const useJobFilter = (onSaveSearch) => {
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState(false);
 
+    // Generacion de peticion: cada busqueda nueva (y el "limpiar") invalida lo
+    // que siga en vuelo. Sin esto una respuesta lenta de la busqueda anterior
+    // aterriza sobre la actual y deja estado hibrido — filtros nuevos con
+    // resultados, cursor y token de secuencia viejos (P2-1 auditoria externa).
+    const requestGenerationRef = useRef(0);
+
     const handleFilterChange = useCallback((field, value) => {
         setFilters(prev => ({ ...prev, [field]: value }));
     }, []);
@@ -73,6 +79,12 @@ const useJobFilter = (onSaveSearch) => {
     }, [filters]);
 
     const fetchPage = useCallback(async ({ offset = 0, cursor = null, seq = null, append = false }) => {
+        // Una busqueda abre generacion nueva; un "cargar mas" continua la vigente.
+        const generation = append
+            ? requestGenerationRef.current
+            : (requestGenerationRef.current += 1);
+        const isCurrent = () => generation === requestGenerationRef.current;
+
         setLoading(true);
         setSearched(true);
         try {
@@ -81,6 +93,7 @@ const useJobFilter = (onSaveSearch) => {
                 `${BACKEND_URL}/api/v1/jobs/search?${qs}`
             );
             const data = await response.json();
+            if (!isCurrent()) return;
             const items = data.data || [];
             const meta = data.metadata || {};
             setResults(prev => (append ? [...prev, ...items] : items));
@@ -93,6 +106,7 @@ const useJobFilter = (onSaveSearch) => {
             // conservative fallback if the envelope ever omits it.
             setHasMore(meta.has_more ?? items.length === JOBS_PAGE_SIZE);
         } catch {
+            if (!isCurrent()) return;
             showToast(t('dashboard.jobFilter.errorSearch'));
             // A failed "load more" keeps the pages already shown.
             if (!append) {
@@ -103,7 +117,9 @@ const useJobFilter = (onSaveSearch) => {
             setNextCursor(null);
             if (!append) setSequence(null);
         } finally {
-            setLoading(false);
+            // Apagar el indicador solo si nadie ha tomado el relevo: si una
+            // busqueda mas nueva sigue en vuelo, manda la suya.
+            if (isCurrent()) setLoading(false);
         }
     }, [authenticatedFetch, buildQueryParams, t]);
 
@@ -121,6 +137,10 @@ const useJobFilter = (onSaveSearch) => {
     }, [fetchPage, nextCursor, sequence, results.length, loading]);
 
     const handleClear = useCallback(() => {
+        // Vaciar la vista invalida tambien lo pendiente: nada en vuelo debe
+        // repoblar los resultados que el usuario acaba de limpiar.
+        requestGenerationRef.current += 1;
+        setLoading(false);
         setFilters(INITIAL_FILTERS);
         setResults([]);
         setTotal(null);

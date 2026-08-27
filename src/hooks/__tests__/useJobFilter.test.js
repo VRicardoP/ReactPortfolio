@@ -550,3 +550,131 @@ describe('useJobFilter — token de secuencia (P2-1 G8)', () => {
     expect(result.current.sequence).toBeNull()
   })
 })
+
+// ---------------------------------------------------------------------------
+// P2-1 auditoria externa 2026-08-27 — respuestas de busqueda fuera de orden
+// ---------------------------------------------------------------------------
+
+describe('useJobFilter — respuestas fuera de orden (P2-1 externa)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.restoreAllMocks()
+  })
+
+  const paginaSecuencia = (items, sequence) => ({
+    data: items,
+    metadata: {
+      total: null,
+      has_more: true,
+      next_cursor: `cur-${sequence}`,
+      sequence,
+    },
+  })
+
+  /** Respuesta que el test decide cuando entregar, para forzar el desorden. */
+  const diferida = () => {
+    let resolve
+    const promise = new Promise(r => { resolve = r })
+    return { promise, resolve }
+  }
+
+  // MUERDE sin el fix: `fetchPage` confirmaba CUALQUIER respuesta que llegara,
+  // sin atarla a la generacion de filtros que la lanzo. La busqueda vieja
+  // aterrizaba encima de la nueva y dejaba estado hibrido:
+  //   filters.q = "new", results[0] = "OLD", sequence = "seq-old".
+  it('una respuesta vieja no sobrescribe los resultados de la busqueda nueva', async () => {
+    const a = diferida()
+    const b = diferida()
+    mockAuthenticatedFetch
+      .mockReturnValueOnce(a.promise)
+      .mockReturnValueOnce(b.promise)
+
+    const { result } = renderHook(() => useJobFilter())
+
+    act(() => { result.current.handleFilterChange('q', 'old') })
+    let busquedaA
+    act(() => { busquedaA = result.current.handleSearch() })
+
+    act(() => { result.current.handleFilterChange('q', 'new') })
+    let busquedaB
+    act(() => { busquedaB = result.current.handleSearch() })
+
+    // B, la vigente, resuelve primero; A, la vieja, llega despues.
+    await act(async () => {
+      b.resolve(makeMockResponse(paginaSecuencia([{ id: 'NEW' }], 'seq-new')))
+      await busquedaB
+    })
+    await act(async () => {
+      a.resolve(makeMockResponse(paginaSecuencia([{ id: 'OLD' }], 'seq-old')))
+      await busquedaA
+    })
+
+    expect(result.current.filters.q).toBe('new')
+    expect(result.current.results).toEqual([{ id: 'NEW' }])
+    expect(result.current.sequence).toBe('seq-new')
+    expect(result.current.nextCursor).toBe('cur-seq-new')
+    expect(result.current.loading).toBe(false)
+  })
+
+  // MUERDE sin el fix: con `sequence` contaminado por la respuesta vieja, el
+  // "cargar mas" pide la pagina 2 con los filtros nuevos y el token viejo —
+  // justo la mezcla de corpus que el token vino a evitar.
+  it('el "cargar mas" siguiente usa el cursor y la secuencia de la busqueda vigente', async () => {
+    const a = diferida()
+    const b = diferida()
+    mockAuthenticatedFetch
+      .mockReturnValueOnce(a.promise)
+      .mockReturnValueOnce(b.promise)
+      .mockResolvedValueOnce(makeMockResponse(paginaSecuencia([{ id: 'NEW-2' }], 'seq-new')))
+
+    const { result } = renderHook(() => useJobFilter())
+
+    act(() => { result.current.handleFilterChange('q', 'old') })
+    let busquedaA
+    act(() => { busquedaA = result.current.handleSearch() })
+    act(() => { result.current.handleFilterChange('q', 'new') })
+    let busquedaB
+    act(() => { busquedaB = result.current.handleSearch() })
+
+    await act(async () => {
+      b.resolve(makeMockResponse(paginaSecuencia([{ id: 'NEW' }], 'seq-new')))
+      await busquedaB
+    })
+    await act(async () => {
+      a.resolve(makeMockResponse(paginaSecuencia([{ id: 'OLD' }], 'seq-old')))
+      await busquedaA
+    })
+
+    await act(async () => { await result.current.handleLoadMore() })
+
+    const urlPagina2 = mockAuthenticatedFetch.mock.calls[2][0]
+    expect(urlPagina2).toContain('seq=seq-new')
+    expect(urlPagina2).toContain('cur-seq-new')
+    expect(urlPagina2).not.toContain('seq-old')
+  })
+
+  // MUERDE sin el fix: `handleClear` no invalidaba lo pendiente, asi que la
+  // respuesta en vuelo repoblaba una vista que el usuario acababa de vaciar.
+  it('handleClear invalida la peticion en vuelo', async () => {
+    const a = diferida()
+    mockAuthenticatedFetch.mockReturnValueOnce(a.promise)
+
+    const { result } = renderHook(() => useJobFilter())
+    act(() => { result.current.handleFilterChange('q', 'old') })
+    let busquedaA
+    act(() => { busquedaA = result.current.handleSearch() })
+
+    act(() => { result.current.handleClear() })
+
+    await act(async () => {
+      a.resolve(makeMockResponse(paginaSecuencia([{ id: 'OLD' }], 'seq-old')))
+      await busquedaA
+    })
+
+    expect(result.current.results).toEqual([])
+    expect(result.current.sequence).toBeNull()
+    expect(result.current.nextCursor).toBeNull()
+    expect(result.current.searched).toBe(false)
+    expect(result.current.loading).toBe(false)
+  })
+})
