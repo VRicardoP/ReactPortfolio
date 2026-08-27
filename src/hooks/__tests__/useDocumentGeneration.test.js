@@ -410,4 +410,35 @@ describe('useDocumentGeneration', () => {
 
     expect(mockAuthenticatedFetch).toHaveBeenCalledTimes(1)
   })
+
+  // --- Regresión P3-1 (auditoría G9 2026-08-27) ---
+  // `fetchAllDocuments` reemplazaba el mapa entero: una generación que terminó
+  // mientras el fetch volaba desaparecía de la vista.
+  it('C2 · fetchAllDocuments no borra lo generado mientras volaba', async () => {
+    let resolveAll
+    const allFlight = new Promise((resolve) => { resolveAll = resolve })
+    mockAuthenticatedFetch.mockImplementationOnce(() => allFlight)
+    mockAuthenticatedFetch.mockImplementationOnce(() =>
+      Promise.resolve(makeMockResponse({
+        cv_document: { id: 'cv-7' },
+        cover_letter_document: { id: 'cl-7' },
+        generation_time_ms: 10,
+      }))
+    )
+
+    const { result } = renderHook(() => useDocumentGeneration())
+
+    let pAll
+    await act(async () => { pAll = result.current.fetchAllDocuments() })
+    await act(async () => { await result.current.generate(7) })
+    expect(result.current.getDocumentsFor(7)).not.toBeNull()
+
+    await act(async () => {
+      resolveAll(makeMockResponse([]))
+      await pAll
+    })
+
+    expect(result.current.getDocumentsFor(7)).not.toBeNull()
+    expect(result.current.getDocumentsFor(7).cv).toEqual({ id: 'cv-7' })
+  })
 })

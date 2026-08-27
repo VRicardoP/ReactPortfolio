@@ -81,7 +81,10 @@ export default function useDocumentGeneration() {
                 if (doc.doc_type === 'cv') indexed[appId].cv = doc;
                 if (doc.doc_type === 'cover_letter') indexed[appId].coverLetter = doc;
             }
-            setDocuments(indexed);
+            // Fusionar, no reemplazar: `generate` y `fetchDocuments` escriben en
+            // este mismo mapa, y una generacion que termina mientras este fetch
+            // vuela desaparecia de la vista pese a estar ya en el servidor.
+            setDocuments(prev => ({ ...prev, ...indexed }));
         } catch (err) {
             logger.warn('Failed to fetch all documents', err);
         }
