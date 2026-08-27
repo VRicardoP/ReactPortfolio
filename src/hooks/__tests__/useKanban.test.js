@@ -678,4 +678,68 @@ describe('useKanban — rollback optimista con movimientos solapados', () => {
     expect(estadoDe(result, 1)).toBe('saved')
     expect(estadoDe(result, 2)).toBe('applied')
   })
+
+  // --- Regresión P2-4 (auditoría G9 2026-08-27) ---
+  // El rollback quirúrgico acierta con tarjetas DISTINTAS, pero sobre la MISMA
+  // tarjeta un PATCH que falla tarde pisa el movimiento posterior que el
+  // servidor sí aceptó. Mover con la flecha dos veces es uso normal.
+  const deferred = () => {
+    let resolve, reject
+    const promise = new Promise((res, rej) => { resolve = res; reject = rej })
+    return { promise, resolve, reject }
+  }
+
+  const mountWithCards = async (cards) => {
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse(cards))
+    const hook = renderHook(() => useKanban())
+    await waitFor(() => expect(hook.result.current.applications).toHaveLength(cards.length))
+    return hook
+  }
+
+  it('K1 · misma tarjeta, dos movimientos: el fallo tardío del primero no pisa al segundo', async () => {
+    const { result } = await mountWithCards([makeApp({ id: 1, status: 'saved' })])
+    const firstPatch = deferred()
+    mockAuthenticatedFetch.mockImplementationOnce(() => firstPatch.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => Promise.resolve(makeMockResponse({})))
+
+    let pFirst
+    await act(async () => { pFirst = result.current.handleMoveCard(1, 1) })   // saved → applied
+    await act(async () => { await result.current.handleMoveCard(1, 1) })      // applied → phone_screen (OK)
+    expect(result.current.applications.find(a => a.id === 1).status).toBe('phone_screen')
+
+    await act(async () => { firstPatch.reject(new Error('timeout')); await pFirst })
+
+    // El servidor está en phone_screen: la vista no puede decir otra cosa.
+    expect(result.current.applications.find(a => a.id === 1).status).toBe('phone_screen')
+  })
+
+  it('K2 · tres movimientos solapados sobre la misma tarjeta no caen en cascada', async () => {
+    const { result } = await mountWithCards([makeApp({ id: 1, status: 'saved' })])
+    const g1 = deferred()
+    const g2 = deferred()
+    mockAuthenticatedFetch.mockImplementationOnce(() => g1.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => g2.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => Promise.resolve(makeMockResponse({})))
+
+    let p1, p2
+    await act(async () => { p1 = result.current.handleMoveCard(1, 1) })   // → applied
+    await act(async () => { p2 = result.current.handleMoveCard(1, 1) })   // → phone_screen
+    await act(async () => { await result.current.handleMoveCard(1, 1) })  // → technical (OK)
+    expect(result.current.applications.find(a => a.id === 1).status).toBe('technical')
+
+    await act(async () => { g2.reject(new Error('b')); await p2 })
+    await act(async () => { g1.reject(new Error('a')); await p1 })
+
+    expect(result.current.applications.find(a => a.id === 1).status).toBe('technical')
+  })
+
+  it('K1b · el rollback sigue ocurriendo cuando el movimiento fallido es el último', async () => {
+    const { result } = await mountWithCards([makeApp({ id: 1, status: 'saved' })])
+    mockAuthenticatedFetch.mockImplementationOnce(() => Promise.reject(new Error('boom')))
+
+    await act(async () => { await result.current.handleMoveCard(1, 1) })
+
+    expect(result.current.applications.find(a => a.id === 1).status).toBe('saved')
+    expect(mockShowToast).toHaveBeenCalledWith('dashboard.kanban.errorMove')
+  })
 })

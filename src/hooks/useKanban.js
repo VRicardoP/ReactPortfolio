@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
@@ -29,6 +29,13 @@ const useKanban = () => {
     const [draggedId, setDraggedId] = useState(null);
     const [addingTo, setAddingTo] = useState(null);
     const [newApp, setNewApp] = useState(INITIAL_NEW_APP);
+
+    // Generacion POR TARJETA. El rollback quirurgico acierta entre tarjetas
+    // distintas, pero sobre la MISMA tarjeta dos movimientos se solapan (pulsar
+    // la flecha dos veces seguidas es uso normal) y el fallo tardio del primero
+    // pisaba el segundo, que el servidor ya habia aceptado: la vista se quedaba
+    // en `saved` con el servidor en `technical`, en silencio y hasta recargar.
+    const mutationGenRef = useRef({});
 
     // Fetch all applications on mount
     const fetchApplications = useCallback(async () => {
@@ -68,6 +75,16 @@ const useKanban = () => {
         setApplications(prev => prev.map(a => (a.id === id ? { ...a, status } : a)));
     }, []);
 
+    /**
+     * Registra una mutacion de estado sobre `id` y devuelve el test de vigencia
+     * de ESA mutacion: solo la ultima lanzada sobre la tarjeta puede revertirla.
+     * Sigue revirtiendo lo que debe; deja de revertir lo que ya fue superado.
+     */
+    const beginMutation = useCallback((id) => {
+        const generation = (mutationGenRef.current[id] = (mutationGenRef.current[id] ?? 0) + 1);
+        return () => generation === mutationGenRef.current[id];
+    }, []);
+
     const handleDragStart = useCallback((e, id) => {
         setDraggedId(id);
         e.dataTransfer.effectAllowed = 'move';
@@ -89,6 +106,7 @@ const useKanban = () => {
         }
 
         const previousStatus = app.status;
+        const isCurrent = beginMutation(draggedId);
         setApplications(prev =>
             prev.map(a => a.id === draggedId ? { ...a, status: targetStatus } : a)
         );
@@ -100,10 +118,11 @@ const useKanban = () => {
                 body: JSON.stringify({ status: targetStatus }),
             });
         } catch {
+            if (!isCurrent()) return;
             revertStatus(draggedId, previousStatus);
             showToast(t('dashboard.kanban.errorMove'));
         }
-    }, [draggedId, applications, authenticatedFetch, revertStatus, t]);
+    }, [draggedId, applications, authenticatedFetch, beginMutation, revertStatus, t]);
 
     const handleAdd = useCallback(async (status) => {
         if (!newApp.title.trim() || !newApp.company.trim()) return;
@@ -142,6 +161,7 @@ const useKanban = () => {
 
         const targetStatus = COLUMN_KEYS[targetIndex];
         const previousStatus = app.status;
+        const isCurrent = beginMutation(appId);
         setApplications(prev =>
             prev.map(a => a.id === appId ? { ...a, status: targetStatus } : a)
         );
@@ -152,10 +172,13 @@ const useKanban = () => {
                 body: JSON.stringify({ status: targetStatus }),
             });
         } catch {
+            // Superado por un movimiento posterior de ESTA tarjeta que el
+            // servidor si acepto: revertir mentiria, y el aviso tambien.
+            if (!isCurrent()) return;
             revertStatus(appId, previousStatus);
             showToast(t('dashboard.kanban.errorMove'));
         }
-    }, [applications, authenticatedFetch, revertStatus, t]);
+    }, [applications, authenticatedFetch, beginMutation, revertStatus, t]);
 
     // Delete an application from the pipeline
     const handleDelete = useCallback(async (appId) => {
@@ -186,6 +209,7 @@ const useKanban = () => {
         if (!app || app.status === 'applied') return;
 
         const previousStatus = app.status;
+        const isCurrent = beginMutation(appId);
         setApplications(prev =>
             prev.map(a => a.id === appId ? { ...a, status: 'applied' } : a)
         );
@@ -195,10 +219,11 @@ const useKanban = () => {
                 body: JSON.stringify({ status: 'applied' }),
             });
         } catch {
+            if (!isCurrent()) return;
             revertStatus(appId, previousStatus);
             showToast(t('dashboard.kanban.errorMove'));
         }
-    }, [applications, authenticatedFetch, revertStatus, t]);
+    }, [applications, authenticatedFetch, beginMutation, revertStatus, t]);
 
     // Group applications by status
     const grouped = useMemo(() => {
