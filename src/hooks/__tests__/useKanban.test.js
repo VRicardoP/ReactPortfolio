@@ -742,4 +742,110 @@ describe('useKanban — rollback optimista con movimientos solapados', () => {
     expect(result.current.applications.find(a => a.id === 1).status).toBe('saved')
     expect(mockShowToast).toHaveBeenCalledWith('dashboard.kanban.errorMove')
   })
+
+  // --- Regresión G10-2 (auditoría G10 2026-08-27) ---
+  // La generación decide QUIÉN puede revertir, pero no A DÓNDE: `previousStatus`
+  // se tomaba del render, que a partir del segundo movimiento ya es optimista y
+  // nunca se persistió. Con el backend caído dos flechas dejaban la vista una
+  // columna por delante del servidor, y tres, dos columnas.
+
+  it('G10-K1 · dos movimientos que fallan LOS DOS devuelven la tarjeta al estado del servidor', async () => {
+    const { result } = await mountWithCards([makeApp({ id: 1, status: 'saved' })])
+    const patch1 = deferred()
+    const patch2 = deferred()
+    mockAuthenticatedFetch.mockImplementationOnce(() => patch1.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => patch2.promise)
+
+    let mov1, mov2
+    await act(async () => { mov1 = result.current.handleMoveCard(1, 1) })  // saved → applied
+    await act(async () => { mov2 = result.current.handleMoveCard(1, 1) })  // applied → phone_screen
+    expect(estadoDe(result, 1)).toBe('phone_screen')
+
+    await act(async () => { patch1.reject(new Error('sin red')); await mov1 })
+    await act(async () => { patch2.reject(new Error('sin red')); await mov2 })
+
+    // Ningún PATCH persistió: el servidor sigue en `saved`.
+    expect(estadoDe(result, 1)).toBe('saved')
+  })
+
+  it('G10-K2 · tres movimientos fallidos no dejan la vista dos columnas por delante', async () => {
+    const { result } = await mountWithCards([makeApp({ id: 1, status: 'saved' })])
+    const g1 = deferred()
+    const g2 = deferred()
+    const g3 = deferred()
+    mockAuthenticatedFetch.mockImplementationOnce(() => g1.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => g2.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => g3.promise)
+
+    let p1, p2, p3
+    await act(async () => { p1 = result.current.handleMoveCard(1, 1) })
+    await act(async () => { p2 = result.current.handleMoveCard(1, 1) })
+    await act(async () => { p3 = result.current.handleMoveCard(1, 1) })
+    expect(estadoDe(result, 1)).toBe('technical')
+
+    await act(async () => { g1.reject(new Error('a')); await p1 })
+    await act(async () => { g2.reject(new Error('b')); await p2 })
+    await act(async () => { g3.reject(new Error('c')); await p3 })
+
+    expect(estadoDe(result, 1)).toBe('saved')
+  })
+
+  it('G10-K3 · markApplied y moveCard comparten el ancla de la misma tarjeta', async () => {
+    const { result } = await mountWithCards([makeApp({ id: 1, status: 'saved' })])
+    const patchApplied = deferred()
+    const patchMove = deferred()
+    mockAuthenticatedFetch.mockImplementationOnce(() => patchApplied.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => patchMove.promise)
+
+    let marcar, mover
+    await act(async () => { marcar = result.current.handleMarkApplied(1) })  // saved → applied
+    await act(async () => { mover = result.current.handleMoveCard(1, 1) })   // applied → phone_screen
+    expect(estadoDe(result, 1)).toBe('phone_screen')
+
+    await act(async () => { patchApplied.reject(new Error('sin red')); await marcar })
+    await act(async () => { patchMove.reject(new Error('sin red')); await mover })
+
+    expect(estadoDe(result, 1)).toBe('saved')
+  })
+
+  it('G10-K4 · dos drops que fallan devuelven la tarjeta al estado del servidor', async () => {
+    const { result } = await mountWithCards([makeApp({ id: 1, status: 'saved' })])
+    const patch1 = deferred()
+    const patch2 = deferred()
+    mockAuthenticatedFetch.mockImplementationOnce(() => patch1.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => patch2.promise)
+
+    let drop1, drop2
+    act(() => { result.current.handleDragStart(makeDragEvent(), 1) })
+    await act(async () => { drop1 = result.current.handleDrop(makeDragEvent(), 'applied') })
+    act(() => { result.current.handleDragStart(makeDragEvent(), 1) })
+    await act(async () => { drop2 = result.current.handleDrop(makeDragEvent(), 'offer') })
+    expect(estadoDe(result, 1)).toBe('offer')
+
+    await act(async () => { patch1.reject(new Error('sin red')); await drop1 })
+    await act(async () => { patch2.reject(new Error('sin red')); await drop2 })
+
+    expect(estadoDe(result, 1)).toBe('saved')
+  })
+
+  // CONTROL: el ancla AVANZA con cada PATCH que el servidor acepta. Revertir
+  // siempre al estado previo al primer vuelo dejaría la vista por DETRÁS.
+  it('G10-K5 · si el primer movimiento triunfa, el fallo del segundo revierte al destino confirmado', async () => {
+    const { result } = await mountWithCards([makeApp({ id: 1, status: 'saved' })])
+    const patch1 = deferred()
+    const patch2 = deferred()
+    mockAuthenticatedFetch.mockImplementationOnce(() => patch1.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => patch2.promise)
+
+    let mov1, mov2
+    await act(async () => { mov1 = result.current.handleMoveCard(1, 1) })  // saved → applied
+    await act(async () => { mov2 = result.current.handleMoveCard(1, 1) })  // applied → phone_screen
+
+    await act(async () => { patch1.resolve(makeMockResponse({})); await mov1 })
+    await act(async () => { patch2.reject(new Error('sin red')); await mov2 })
+
+    // El servidor tiene `applied`: ni `phone_screen` (mentiría por delante) ni
+    // `saved` (mentiría por detrás).
+    expect(estadoDe(result, 1)).toBe('applied')
+  })
 })

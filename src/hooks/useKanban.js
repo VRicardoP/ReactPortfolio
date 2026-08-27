@@ -30,12 +30,16 @@ const useKanban = () => {
     const [addingTo, setAddingTo] = useState(null);
     const [newApp, setNewApp] = useState(INITIAL_NEW_APP);
 
-    // Generacion POR TARJETA. El rollback quirurgico acierta entre tarjetas
-    // distintas, pero sobre la MISMA tarjeta dos movimientos se solapan (pulsar
-    // la flecha dos veces seguidas es uso normal) y el fallo tardio del primero
-    // pisaba el segundo, que el servidor ya habia aceptado: la vista se quedaba
-    // en `saved` con el servidor en `technical`, en silencio y hasta recargar.
-    const mutationGenRef = useRef({});
+    // Vuelos POR TARJETA. La generacion decide QUIEN puede revertir: sobre la
+    // MISMA tarjeta dos movimientos se solapan (pulsar la flecha dos veces
+    // seguidas es uso normal) y el fallo tardio del primero pisaba el segundo,
+    // que el servidor ya habia aceptado.
+    // El `baseline` decide A DONDE: es el ultimo estado CONFIRMADO por el
+    // servidor. Revertir al estado del render dejaba la vista por delante —a
+    // partir del segundo movimiento ese estado ya es optimista y nunca se
+    // persistio, asi que con el backend caido dos flechas dejaban la tarjeta
+    // una columna por delante del servidor, y tres, dos columnas.
+    const flightsRef = useRef({});
 
     // Fetch all applications on mount
     const fetchApplications = useCallback(async () => {
@@ -76,13 +80,35 @@ const useKanban = () => {
     }, []);
 
     /**
-     * Registra una mutacion de estado sobre `id` y devuelve el test de vigencia
-     * de ESA mutacion: solo la ultima lanzada sobre la tarjeta puede revertirla.
-     * Sigue revirtiendo lo que debe; deja de revertir lo que ya fue superado.
+     * Registra una mutacion de `id` hacia `targetStatus` y devuelve su control
+     * de vuelo: `isCurrent` (solo la ultima lanzada sobre la tarjeta puede
+     * revertir), `lastConfirmed` (a donde revertir), `confirm` (el servidor
+     * acepto este destino) y `end` (cerrar el vuelo).
      */
-    const beginMutation = useCallback((id) => {
-        const generation = (mutationGenRef.current[id] = (mutationGenRef.current[id] ?? 0) + 1);
-        return () => generation === mutationGenRef.current[id];
+    const beginMutation = useCallback((id, currentStatus, targetStatus) => {
+        const flights = flightsRef.current;
+        const flight = flights[id]
+            || (flights[id] = { generation: 0, confirmed: 0, inFlight: 0, baseline: currentStatus });
+        // Sin vuelos abiertos, lo que se ve ES lo que el servidor confirmo.
+        if (flight.inFlight === 0) flight.baseline = currentStatus;
+        flight.inFlight += 1;
+        const generation = (flight.generation += 1);
+
+        return {
+            isCurrent: () => flight.generation === generation,
+            lastConfirmed: () => flight.baseline,
+            confirm: () => {
+                // Un PATCH viejo que responde tarde no adelanta el ancla.
+                if (generation <= flight.confirmed) return;
+                flight.confirmed = generation;
+                flight.baseline = targetStatus;
+            },
+            end: () => {
+                flight.inFlight -= 1;
+                // Cerrado el ultimo vuelo, el ancla vuelve a leerse del render.
+                if (flight.inFlight === 0) delete flights[id];
+            },
+        };
     }, []);
 
     const handleDragStart = useCallback((e, id) => {
@@ -105,8 +131,7 @@ const useKanban = () => {
             return;
         }
 
-        const previousStatus = app.status;
-        const isCurrent = beginMutation(draggedId);
+        const flight = beginMutation(draggedId, app.status, targetStatus);
         setApplications(prev =>
             prev.map(a => a.id === draggedId ? { ...a, status: targetStatus } : a)
         );
@@ -117,10 +142,14 @@ const useKanban = () => {
                 method: 'PATCH',
                 body: JSON.stringify({ status: targetStatus }),
             });
+            flight.confirm();
         } catch {
-            if (!isCurrent()) return;
-            revertStatus(draggedId, previousStatus);
-            showToast(t('dashboard.kanban.errorMove'));
+            if (flight.isCurrent()) {
+                revertStatus(draggedId, flight.lastConfirmed());
+                showToast(t('dashboard.kanban.errorMove'));
+            }
+        } finally {
+            flight.end();
         }
     }, [draggedId, applications, authenticatedFetch, beginMutation, revertStatus, t]);
 
@@ -160,8 +189,7 @@ const useKanban = () => {
         if (targetIndex < 0 || targetIndex >= COLUMN_KEYS.length) return;
 
         const targetStatus = COLUMN_KEYS[targetIndex];
-        const previousStatus = app.status;
-        const isCurrent = beginMutation(appId);
+        const flight = beginMutation(appId, app.status, targetStatus);
         setApplications(prev =>
             prev.map(a => a.id === appId ? { ...a, status: targetStatus } : a)
         );
@@ -171,12 +199,16 @@ const useKanban = () => {
                 method: 'PATCH',
                 body: JSON.stringify({ status: targetStatus }),
             });
+            flight.confirm();
         } catch {
             // Superado por un movimiento posterior de ESTA tarjeta que el
             // servidor si acepto: revertir mentiria, y el aviso tambien.
-            if (!isCurrent()) return;
-            revertStatus(appId, previousStatus);
-            showToast(t('dashboard.kanban.errorMove'));
+            if (flight.isCurrent()) {
+                revertStatus(appId, flight.lastConfirmed());
+                showToast(t('dashboard.kanban.errorMove'));
+            }
+        } finally {
+            flight.end();
         }
     }, [applications, authenticatedFetch, beginMutation, revertStatus, t]);
 
@@ -208,8 +240,7 @@ const useKanban = () => {
         const app = applications.find(a => a.id === appId);
         if (!app || app.status === 'applied') return;
 
-        const previousStatus = app.status;
-        const isCurrent = beginMutation(appId);
+        const flight = beginMutation(appId, app.status, 'applied');
         setApplications(prev =>
             prev.map(a => a.id === appId ? { ...a, status: 'applied' } : a)
         );
@@ -218,10 +249,14 @@ const useKanban = () => {
                 method: 'PATCH',
                 body: JSON.stringify({ status: 'applied' }),
             });
+            flight.confirm();
         } catch {
-            if (!isCurrent()) return;
-            revertStatus(appId, previousStatus);
-            showToast(t('dashboard.kanban.errorMove'));
+            if (flight.isCurrent()) {
+                revertStatus(appId, flight.lastConfirmed());
+                showToast(t('dashboard.kanban.errorMove'));
+            }
+        } finally {
+            flight.end();
         }
     }, [applications, authenticatedFetch, beginMutation, revertStatus, t]);
 
