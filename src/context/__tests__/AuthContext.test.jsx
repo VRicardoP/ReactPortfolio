@@ -203,4 +203,144 @@ describe('AuthContext', () => {
     expect(screen.getByTestId('auth')).toHaveTextContent('no')
     expect(sessionStorage.getItem('accessToken')).toBeNull()
   })
+
+  // --- Regresión P1-2 (auditoría externa 2026-08-27) ---
+  // Un refresh que termina DESPUÉS del logout no debe resucitar la sesión:
+  // ni reescribir sessionStorage ni reinstalar el access token en el estado.
+
+  /** Promesa que el test decide cuándo resolver, para retener una respuesta. */
+  const makeDeferred = () => {
+    let resolve
+    const promise = new Promise(r => { resolve = r })
+    return { promise, resolve }
+  }
+
+  /** Consumidor que expone el valor vivo del contexto al test. */
+  const makeCapture = (bag) => {
+    const Capture = () => {
+      bag.current = useAuth()
+      return null
+    }
+    return Capture
+  }
+
+  const refreshOk = () => ({
+    ok: true,
+    json: () => Promise.resolve({
+      access_token: makeTestToken(),
+      refresh_token: makeTestToken(),
+    }),
+  })
+
+  it('un refresh en vuelo no resucita la sesión tras el logout', async () => {
+    sessionStorage.setItem('accessToken', VALID_TOKEN)
+    sessionStorage.setItem('refreshToken', VALID_TOKEN)
+    sessionStorage.setItem('tokenType', 'bearer')
+
+    const refreshGate = makeDeferred()
+    let protectedCalls = 0
+    global.fetch = vi.fn(async (url) => {
+      const target = String(url)
+      if (target.includes('/auth/refresh')) return refreshGate.promise
+      if (target.includes('/auth/logout')) return { ok: true, json: async () => ({}) }
+      protectedCalls += 1
+      // La primera llamada protegida caduca; el reintento tras el refresh iría bien.
+      return protectedCalls === 1
+        ? { ok: false, status: 401, json: async () => ({}) }
+        : { ok: true, status: 200, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    const view = render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+    expect(bag.current.isAuthenticated).toBe(true)
+
+    // 1-2. Petición protegida → 401 → abre /auth/refresh, cuya respuesta retenemos.
+    let pending
+    await act(async () => {
+      pending = bag.current.authenticatedFetch('/api/v1/protected').catch(() => {})
+      await Promise.resolve()
+    })
+    await waitFor(() => {
+      expect(global.fetch.mock.calls.some(c => String(c[0]).includes('/auth/refresh'))).toBe(true)
+    })
+
+    // 3. Logout con el refresh todavía en vuelo.
+    await act(async () => { bag.current.logout() })
+    expect(bag.current.isAuthenticated).toBe(false)
+    expect(sessionStorage.getItem('accessToken')).toBeNull()
+    expect(sessionStorage.getItem('refreshToken')).toBeNull()
+
+    // 4. El refresh llega tarde, con credenciales nuevas y válidas.
+    await act(async () => {
+      refreshGate.resolve(refreshOk())
+      await pending
+    })
+
+    // 5. La sesión ya estaba cerrada: nada debe volver a sessionStorage.
+    expect(sessionStorage.getItem('accessToken')).toBeNull()
+    expect(sessionStorage.getItem('refreshToken')).toBeNull()
+    expect(bag.current.token).toBeNull()
+
+    // 6. Remontar el provider no debe recuperar la sesión.
+    view.unmount()
+    const bag2 = { current: null }
+    const Capture2 = makeCapture(bag2)
+    render(<AuthProvider><Capture2 /></AuthProvider>)
+    await waitFor(() => expect(bag2.current.loading).toBe(false))
+    expect(bag2.current.isAuthenticated).toBe(false)
+  })
+
+  it('dos refresh que comparten el semáforo tampoco reescriben tras el logout', async () => {
+    sessionStorage.setItem('accessToken', VALID_TOKEN)
+    sessionStorage.setItem('refreshToken', VALID_TOKEN)
+    sessionStorage.setItem('tokenType', 'bearer')
+
+    const refreshGate = makeDeferred()
+    let refreshCalls = 0
+    let protectedCalls = 0
+    global.fetch = vi.fn(async (url) => {
+      const target = String(url)
+      if (target.includes('/auth/refresh')) {
+        refreshCalls += 1
+        return refreshGate.promise
+      }
+      if (target.includes('/auth/logout')) return { ok: true, json: async () => ({}) }
+      protectedCalls += 1
+      // Las dos primeras (a y b) caducan; sus reintentos tras el refresh irían bien.
+      return protectedCalls <= 2
+        ? { ok: false, status: 401, json: async () => ({}) }
+        : { ok: true, status: 200, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+
+    // Dos peticiones protegidas reciben 401 y comparten el mismo refresh.
+    let pending
+    await act(async () => {
+      pending = Promise.all([
+        bag.current.authenticatedFetch('/api/v1/a').catch(() => {}),
+        bag.current.authenticatedFetch('/api/v1/b').catch(() => {}),
+      ])
+      await Promise.resolve()
+    })
+    await waitFor(() => expect(refreshCalls).toBe(1))
+
+    await act(async () => { bag.current.logout() })
+
+    await act(async () => {
+      refreshGate.resolve(refreshOk())
+      await pending
+    })
+
+    expect(refreshCalls).toBe(1)
+    expect(sessionStorage.getItem('accessToken')).toBeNull()
+    expect(sessionStorage.getItem('refreshToken')).toBeNull()
+    expect(bag.current.isAuthenticated).toBe(false)
+    expect(bag.current.token).toBeNull()
+  })
 })

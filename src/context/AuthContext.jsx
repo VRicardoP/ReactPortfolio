@@ -39,6 +39,12 @@ export const AuthProvider = ({ children }) => {
     // Prevents 12 parallel dashboard fetches from consuming the refresh token simultaneously.
     const refreshPromiseRef = useRef(null);
 
+    // Generación de sesión. Un refresh en vuelo no se puede cancelar, pero sí
+    // invalidar: captura el epoch al arrancar y, si al volver ya no coincide
+    // (hubo logout o un login nuevo), su resultado se descarta en vez de
+    // reescribir credenciales de una sesión que ya no existe.
+    const authEpochRef = useRef(0);
+
     // try to get a new access token using the refresh token
     const tryRefresh = useCallback(async () => {
         const refreshToken = sessionStorage.getItem('refreshToken');
@@ -49,6 +55,8 @@ export const AuthProvider = ({ children }) => {
         if (refreshPromiseRef.current) {
             return refreshPromiseRef.current;
         }
+
+        const epoch = authEpochRef.current;
 
         const doRefresh = async () => {
             try {
@@ -63,6 +71,8 @@ export const AuthProvider = ({ children }) => {
                 });
                 if (!response.ok) return null;
                 const data = await response.json();
+                // La sesión se cerró (o cambió) mientras volaba: descartar.
+                if (authEpochRef.current !== epoch) return null;
                 sessionStorage.setItem('accessToken', data.access_token);
                 sessionStorage.setItem('refreshToken', data.refresh_token);
                 return data.access_token;
@@ -103,6 +113,8 @@ export const AuthProvider = ({ children }) => {
 
     // function to log in
     const login = useCallback(async (username, password) => {
+        // Sesión explícita nueva: invalida cualquier refresh de la anterior.
+        authEpochRef.current += 1;
         try {
             // prepare the data to send to the server
             const formData = new URLSearchParams();
@@ -145,6 +157,9 @@ export const AuthProvider = ({ children }) => {
 
     // log out and clear everything — fire-and-forget token revocation to keep logout synchronous
     const logout = useCallback(() => {
+        // Invalidar ANTES de limpiar: un refresh que llegue después ya no
+        // coincidirá en epoch y no podrá resucitar las credenciales.
+        authEpochRef.current += 1;
         const refreshToken = sessionStorage.getItem('refreshToken');
         if (refreshToken) {
             fetch(`${BACKEND_URL}/api/v1/auth/logout`, {
@@ -221,6 +236,8 @@ export const AuthProvider = ({ children }) => {
             throw new Error('No authentication token');
         }
 
+        const epoch = authEpochRef.current;
+
         const headers = {
             ...DEFAULT_HEADERS,
             ...options.headers,
@@ -233,6 +250,12 @@ export const AuthProvider = ({ children }) => {
         // if 401, try refreshing the token before giving up
         if (response.status === 401) {
             const newToken = await tryRefresh();
+            // Si la sesión cambió mientras volaba el refresh, esta respuesta ya
+            // no le pertenece: ni instalar token ni reintentar ni re-desloguear.
+            const stale = authEpochRef.current !== epoch;
+            if (stale) {
+                throw new Error('Session expired');
+            }
             if (newToken) {
                 setToken(newToken);
                 const retryHeaders = {
