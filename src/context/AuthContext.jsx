@@ -7,6 +7,29 @@ const AuthContext = createContext();
 const INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes
 const ACTIVITY_EVENTS = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
 
+// ─── FRONTERA DE CREDENCIALES ────────────────────────────────────────────────
+//
+// REGLA ÚNICA: toda operación captura el epoch de sesión al empezar y solo
+// puede escribir o borrar credenciales si al terminar ese epoch sigue siendo el
+// vigente; si cambió, la operación CADUCÓ y no toca nada — caducar no es
+// fracasar, y solo el fracaso de la sesión vigente limpia el almacén.
+//
+// Los cuatro caminos que deciden sobre credenciales —el arranque `init`,
+// `login`, `tryRefresh` y el reintento de `authenticatedFetch`— liquidan todos
+// por `settleSession`, que es el ÚNICO sitio que toca `sessionStorage` y el
+// estado de sesión. Nadie escribe por su cuenta: cuatro comprobaciones sueltas
+// es exactamente lo que dejó dos caminos sin guarda y convirtió un descarte en
+// un borrado.
+//
+// `openSession` es la otra mitad: abrir o cerrar sesión sube el epoch Y suelta
+// el semáforo de refresh, para que una promesa de la sesión anterior no se le
+// entregue a la siguiente.
+const SETTLED = Object.freeze({
+    COMMITTED: 'committed', // credenciales de esta sesión instaladas
+    FAILED: 'failed',       // esta sesión, que sigue siendo la vigente, se quedó sin ellas
+    STALE: 'stale',         // otra sesión tomó el relevo: no se toca nada
+});
+
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
     const context = useContext(AuthContext);
@@ -39,26 +62,70 @@ export const AuthProvider = ({ children }) => {
     // Prevents 12 parallel dashboard fetches from consuming the refresh token simultaneously.
     const refreshPromiseRef = useRef(null);
 
-    // Generación de sesión. Un refresh en vuelo no se puede cancelar, pero sí
-    // invalidar: captura el epoch al arrancar y, si al volver ya no coincide
-    // (hubo logout o un login nuevo), su resultado se descarta en vez de
-    // reescribir credenciales de una sesión que ya no existe.
+    // Epoch de sesión: el discriminante de la REGLA ÚNICA (ver arriba).
     const authEpochRef = useRef(0);
 
-    // try to get a new access token using the refresh token
+    /**
+     * Abre una sesión lógica nueva (login o logout) y devuelve su epoch.
+     * Todo lo que estuviera en vuelo queda caducado, y el semáforo de refresh
+     * se suelta para que la sesión nueva pida el suyo en vez de heredar una
+     * promesa que no le pertenece.
+     */
+    const openSession = useCallback(() => {
+        refreshPromiseRef.current = null;
+        authEpochRef.current += 1;
+        return authEpochRef.current;
+    }, []);
+
+    /**
+     * Liquida una operación contra la frontera de credenciales. ÚNICO punto que
+     * escribe o borra credenciales; ver la REGLA ÚNICA en la cabecera.
+     *
+     * @param {number} epoch  el que capturó la operación al empezar
+     * @param {object|null} credentials  las emitidas por el servidor, o null si
+     *                                   esta sesión se quedó sin ellas
+     * @returns {'committed'|'failed'|'stale'}
+     */
+    const settleSession = useCallback((epoch, credentials) => {
+        if (authEpochRef.current !== epoch) return SETTLED.STALE;
+
+        if (credentials?.access_token) {
+            sessionStorage.setItem('accessToken', credentials.access_token);
+            if (credentials.refresh_token) sessionStorage.setItem('refreshToken', credentials.refresh_token);
+            if (credentials.token_type) sessionStorage.setItem('tokenType', credentials.token_type);
+            setToken(credentials.access_token);
+            setIsAuthenticated(true);
+            return SETTLED.COMMITTED;
+        }
+
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('refreshToken');
+        sessionStorage.removeItem('tokenType');
+        setToken(null);
+        setIsAuthenticated(false);
+        return SETTLED.FAILED;
+    }, []);
+
+    /**
+     * Pide un access token nuevo con el refresh token.
+     * @returns {Promise<{outcome: string, token: string|null}>} el desenlace
+     * según la frontera; `token` solo viene con `committed`. Devolver el
+     * desenlace —y no un token-o-null— es lo que deja distinguir "fracasó" de
+     * "caducó" en los tres sitios que llaman.
+     */
     const tryRefresh = useCallback(async () => {
+        const epoch = authEpochRef.current;
         const refreshToken = sessionStorage.getItem('refreshToken');
         if (!refreshToken || isTokenExpired(refreshToken)) {
-            return null;
+            return { outcome: settleSession(epoch, null), token: null };
         }
 
         if (refreshPromiseRef.current) {
             return refreshPromiseRef.current;
         }
 
-        const epoch = authEpochRef.current;
-
         const doRefresh = async () => {
+            let credentials = null;
             try {
                 const response = await fetch(`${BACKEND_URL}/api/v1/auth/refresh`, {
                     method: 'POST',
@@ -69,52 +136,51 @@ export const AuthProvider = ({ children }) => {
                     },
                     credentials: 'include',
                 });
-                if (!response.ok) return null;
-                const data = await response.json();
-                // La sesión se cerró (o cambió) mientras volaba: descartar.
-                if (authEpochRef.current !== epoch) return null;
-                sessionStorage.setItem('accessToken', data.access_token);
-                sessionStorage.setItem('refreshToken', data.refresh_token);
-                return data.access_token;
+                if (response.ok) credentials = await response.json();
             } catch {
-                return null;
-            } finally {
-                refreshPromiseRef.current = null;
+                credentials = null;
             }
+            const outcome = settleSession(epoch, credentials);
+            return { outcome, token: outcome === SETTLED.COMMITTED ? credentials.access_token : null };
         };
 
-        refreshPromiseRef.current = doRefresh();
-        return refreshPromiseRef.current;
-    }, []);
+        // Soltar el semáforo solo si sigue siendo el nuestro: si una sesión
+        // nueva lo abrió entretanto, pisarlo la dejaría sin su propio refresh.
+        const flight = doRefresh().finally(() => {
+            if (refreshPromiseRef.current === flight) refreshPromiseRef.current = null;
+        });
+        refreshPromiseRef.current = flight;
+        return flight;
+    }, [settleSession]);
 
     // when the page loads check if there's already a saved token
     useEffect(() => {
         const init = async () => {
+            const epoch = authEpochRef.current;
             const storedToken = sessionStorage.getItem('accessToken');
             if (storedToken && !isTokenExpired(storedToken)) {
-                setToken(storedToken);
-                setIsAuthenticated(true);
+                settleSession(epoch, {
+                    access_token: storedToken,
+                    refresh_token: sessionStorage.getItem('refreshToken'),
+                    token_type: sessionStorage.getItem('tokenType'),
+                });
             } else {
-                // access token expired or missing, try refresh
-                const newToken = await tryRefresh();
-                if (newToken) {
-                    setToken(newToken);
-                    setIsAuthenticated(true);
-                } else {
-                    sessionStorage.removeItem('accessToken');
-                    sessionStorage.removeItem('refreshToken');
-                    sessionStorage.removeItem('tokenType');
-                }
+                // Access token caducado o ausente: el refresh liquida por la
+                // frontera. Si CADUCÓ (el formulario de /login —que no está
+                // dentro de ProtectedRoute— abrió sesión mientras volaba) no hay
+                // nada que limpiar: las credenciales del almacén ya no son las
+                // que este arranque estaba evaluando.
+                await tryRefresh();
             }
             setLoading(false);
         };
         init();
-    }, [tryRefresh]);
+    }, [tryRefresh, settleSession]);
 
     // function to log in
     const login = useCallback(async (username, password) => {
-        // Sesión explícita nueva: invalida cualquier refresh de la anterior.
-        authEpochRef.current += 1;
+        // Sesión explícita nueva: invalida cualquier operación de la anterior.
+        const epoch = openSession();
         try {
             // prepare the data to send to the server
             const formData = new URLSearchParams();
@@ -138,13 +204,13 @@ export const AuthProvider = ({ children }) => {
 
             const data = await response.json();
 
-            // save tokens so we don't have to log in again
-            sessionStorage.setItem('accessToken', data.access_token);
-            sessionStorage.setItem('refreshToken', data.refresh_token);
-            sessionStorage.setItem('tokenType', data.token_type);
-
-            setToken(data.access_token);
-            setIsAuthenticated(true);
+            if (settleSession(epoch, data) === SETTLED.STALE) {
+                // Un logout o un login posterior tomaron el relevo mientras
+                // volaba este: sus credenciales mandan. Instalar las nuestras
+                // dejaría viva una sesión que el usuario ya no pidió, y cuya
+                // revocación en el servidor salió con el refresh token ANTERIOR.
+                return { success: false, error: 'Session superseded' };
+            }
 
             return { success: true };
         } catch (error) {
@@ -153,14 +219,15 @@ export const AuthProvider = ({ children }) => {
                 error: error.message || 'Authentication failed'
             };
         }
-    }, []);
+    }, [openSession, settleSession]);
 
     // log out and clear everything — fire-and-forget token revocation to keep logout synchronous
     const logout = useCallback(() => {
-        // Invalidar ANTES de limpiar: un refresh que llegue después ya no
-        // coincidirá en epoch y no podrá resucitar las credenciales.
-        authEpochRef.current += 1;
+        // Leer el refresh token ANTES de abrir sesión nueva: es el que hay que
+        // revocar. Abrir sesión invalida lo que esté en vuelo, así que nada de
+        // lo anterior podrá resucitar las credenciales que limpiamos aquí.
         const refreshToken = sessionStorage.getItem('refreshToken');
+        const epoch = openSession();
         if (refreshToken) {
             fetch(`${BACKEND_URL}/api/v1/auth/logout`, {
                 method: 'POST',
@@ -168,12 +235,8 @@ export const AuthProvider = ({ children }) => {
                 credentials: 'include',
             })?.catch(() => {});
         }
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('refreshToken');
-        sessionStorage.removeItem('tokenType');
-        setToken(null);
-        setIsAuthenticated(false);
-    }, []);
+        settleSession(epoch, null);
+    }, [openSession, settleSession]);
 
     // Proactive session expiry check — refresh or logout before the user hits a 401
     useEffect(() => {
@@ -184,12 +247,10 @@ export const AuthProvider = ({ children }) => {
         const intervalId = setInterval(async () => {
             const storedToken = sessionStorage.getItem('accessToken');
             if (!storedToken || isTokenExpired(storedToken)) {
-                const newToken = await tryRefresh();
-                if (newToken) {
-                    setToken(newToken);
-                } else {
-                    logout();
-                }
+                // `committed` ya instaló el token por la frontera; `stale` es de
+                // otra sesión y no se toca. Solo el fracaso propio cierra.
+                const { outcome } = await tryRefresh();
+                if (outcome === SETTLED.FAILED) logout();
             }
         }, CHECK_INTERVAL_MS);
 
@@ -249,24 +310,25 @@ export const AuthProvider = ({ children }) => {
 
         // if 401, try refreshing the token before giving up
         if (response.status === 401) {
-            const newToken = await tryRefresh();
-            // Si la sesión cambió mientras volaba el refresh, esta respuesta ya
-            // no le pertenece: ni instalar token ni reintentar ni re-desloguear.
-            const stale = authEpochRef.current !== epoch;
-            if (stale) {
+            const { outcome, token: newToken } = await tryRefresh();
+            // Caducó (el refresh, o esta petición): la respuesta ya no es de
+            // nuestra sesión. Ni instalar token, ni reintentar, ni cerrar la
+            // sesión ajena — que es lo que hacía una promesa huérfana.
+            if (outcome === SETTLED.STALE || authEpochRef.current !== epoch) {
                 throw new Error('Session expired');
             }
-            if (newToken) {
-                setToken(newToken);
-                const retryHeaders = {
-                    ...DEFAULT_HEADERS,
-                    ...options.headers,
-                    'Authorization': `Bearer ${newToken}`,
-                    'Content-Type': 'application/json',
-                };
-                response = await fetch(url, { ...options, headers: retryHeaders, credentials: 'include' });
+            if (outcome === SETTLED.FAILED) {
+                logout();
+                throw new Error('Session expired');
             }
-            if (!newToken || response.status === 401) {
+            const retryHeaders = {
+                ...DEFAULT_HEADERS,
+                ...options.headers,
+                'Authorization': `Bearer ${newToken}`,
+                'Content-Type': 'application/json',
+            };
+            response = await fetch(url, { ...options, headers: retryHeaders, credentials: 'include' });
+            if (response.status === 401) {
                 logout();
                 throw new Error('Session expired');
             }

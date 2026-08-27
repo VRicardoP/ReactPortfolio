@@ -343,4 +343,233 @@ describe('AuthContext', () => {
     expect(bag.current.isAuthenticated).toBe(false)
     expect(bag.current.token).toBeNull()
   })
+
+  // --- Regresión P1-1 y P2-1 (auditoría G9 2026-08-27) ---
+  // La frontera de credenciales tiene CUATRO caminos (init, login, tryRefresh y
+  // el reintento de authenticatedFetch). Todos deben obedecer la misma regla de
+  // epoch, y "la operación caducó" no puede confundirse con "la operación
+  // fracasó": esa confusión es la que borraba el almacén de una sesión ajena.
+
+  const makeSubToken = (sub, exp = 4102444800) => {
+    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
+    const payload = btoa(JSON.stringify({ sub, exp }))
+    return `${header}.${payload}.fake-signature`
+  }
+  const subOf = (jwt) => JSON.parse(atob(jwt.split('.')[1])).sub
+  const ALREADY_EXPIRED = 1000000000
+
+  it('A4 · el refresh de arranque no borra las credenciales de un login que triunfó entretanto', async () => {
+    // Pestaña reabierta: access caducado, refresh todavía vivo. El formulario de
+    // /login se renderiza igualmente (no está dentro de ProtectedRoute).
+    sessionStorage.setItem('accessToken', makeSubToken('OLD', ALREADY_EXPIRED))
+    sessionStorage.setItem('refreshToken', makeSubToken('OLD'))
+    sessionStorage.setItem('tokenType', 'bearer')
+
+    const refreshGate = makeDeferred()
+    global.fetch = vi.fn(async (url) => {
+      const target = String(url)
+      if (target.includes('/auth/refresh')) return refreshGate.promise
+      if (target.includes('/auth/token')) {
+        return {
+          ok: true,
+          json: async () => ({
+            access_token: makeSubToken('NEW'),
+            refresh_token: makeSubToken('NEW'),
+            token_type: 'bearer',
+          }),
+        }
+      }
+      return { ok: true, status: 200, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(
+      global.fetch.mock.calls.some(c => String(c[0]).includes('/auth/refresh'))
+    ).toBe(true))
+    expect(bag.current.loading).toBe(true)
+
+    // El usuario entra por el formulario mientras el refresh de arranque vuela.
+    await act(async () => {
+      const outcome = await bag.current.login('admin', 'password')
+      expect(outcome.success).toBe(true)
+    })
+    expect(subOf(sessionStorage.getItem('accessToken'))).toBe('NEW')
+
+    // Ahora responde el refresh de arranque: 200 válido, pero de la sesión VIEJA.
+    await act(async () => {
+      refreshGate.resolve({
+        ok: true,
+        json: async () => ({ access_token: makeSubToken('OLD'), refresh_token: makeSubToken('OLD') }),
+      })
+      await Promise.resolve()
+    })
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+
+    // El arranque caducó; no puede limpiar el almacén de la sesión que lo relevó.
+    expect(sessionStorage.getItem('accessToken')).not.toBeNull()
+    expect(sessionStorage.getItem('refreshToken')).not.toBeNull()
+    expect(subOf(sessionStorage.getItem('accessToken'))).toBe('NEW')
+    expect(bag.current.isAuthenticated).toBe(true)
+    expect(subOf(bag.current.token)).toBe('NEW')
+  })
+
+  it('A1 · un login en vuelo no instala credenciales después del logout', async () => {
+    const loginGate = makeDeferred()
+    global.fetch = vi.fn(async (url) => {
+      const target = String(url)
+      if (target.includes('/auth/token')) return loginGate.promise
+      return { ok: true, status: 200, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+
+    let pending
+    await act(async () => {
+      pending = bag.current.login('admin', 'password')
+      await Promise.resolve()
+    })
+    await act(async () => { bag.current.logout() })
+    expect(sessionStorage.getItem('accessToken')).toBeNull()
+
+    await act(async () => {
+      loginGate.resolve({
+        ok: true,
+        json: async () => ({
+          access_token: makeSubToken('LATE'),
+          refresh_token: makeSubToken('LATE'),
+          token_type: 'bearer',
+        }),
+      })
+      await pending
+    })
+
+    // El logout es la última palabra: la revocación ya salió con el refresh
+    // ANTERIOR, así que una credencial nueva que sobreviva no se revoca nunca.
+    expect(sessionStorage.getItem('accessToken')).toBeNull()
+    expect(sessionStorage.getItem('refreshToken')).toBeNull()
+    expect(sessionStorage.getItem('tokenType')).toBeNull()
+    expect(bag.current.isAuthenticated).toBe(false)
+    expect(bag.current.token).toBeNull()
+  })
+
+  it('A2 · dos logins concurrentes: se queda la sesión que el usuario pidió último', async () => {
+    const gateAlice = makeDeferred()
+    const gateBob = makeDeferred()
+    let loginCalls = 0
+    global.fetch = vi.fn(async (url) => {
+      const target = String(url)
+      if (target.includes('/auth/token')) {
+        loginCalls += 1
+        return loginCalls === 1 ? gateAlice.promise : gateBob.promise
+      }
+      return { ok: true, status: 200, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+
+    let pAlice, pBob
+    await act(async () => { pAlice = bag.current.login('alice', 'pw'); await Promise.resolve() })
+    await act(async () => { pBob = bag.current.login('bob', 'pw'); await Promise.resolve() })
+
+    // BOB (el último que pidió el usuario) responde primero; ALICE llega tarde.
+    await act(async () => {
+      gateBob.resolve({
+        ok: true,
+        json: async () => ({ access_token: makeSubToken('BOB'), refresh_token: makeSubToken('BOB'), token_type: 'bearer' }),
+      })
+      await pBob
+    })
+    await act(async () => {
+      gateAlice.resolve({
+        ok: true,
+        json: async () => ({ access_token: makeSubToken('ALICE'), refresh_token: makeSubToken('ALICE'), token_type: 'bearer' }),
+      })
+      await pAlice
+    })
+
+    expect(subOf(sessionStorage.getItem('accessToken'))).toBe('BOB')
+    expect(subOf(bag.current.token)).toBe('BOB')
+  })
+
+  it('A3 · el semáforo de refresh no se hereda: una promesa huérfana no cierra la sesión nueva', async () => {
+    sessionStorage.setItem('accessToken', VALID_TOKEN)
+    sessionStorage.setItem('refreshToken', VALID_TOKEN)
+
+    const orphanGate = makeDeferred()
+    const REFRESHED = makeSubToken('NEW2')
+    let refreshCalls = 0
+    global.fetch = vi.fn(async (url, options) => {
+      const target = String(url)
+      if (target.includes('/auth/refresh')) {
+        refreshCalls += 1
+        // El refresh de la sesión NUEVA sí responde; el de la vieja lo retenemos.
+        if (refreshCalls === 1) return orphanGate.promise
+        return {
+          ok: true,
+          json: async () => ({ access_token: REFRESHED, refresh_token: makeSubToken('NEW2') }),
+        }
+      }
+      if (target.includes('/auth/logout')) return { ok: true, json: async () => ({}) }
+      if (target.includes('/auth/token')) {
+        return {
+          ok: true,
+          json: async () => ({ access_token: makeSubToken('NEW'), refresh_token: makeSubToken('NEW'), token_type: 'bearer' }),
+        }
+      }
+      // Solo el access token recién refrescado sirve: así el reintento de la
+      // sesión nueva llega a buen puerto y el único cierre posible sería el
+      // provocado por la promesa huérfana.
+      const authorized = String(options?.headers?.Authorization || '').includes(REFRESHED)
+      if (authorized) return { ok: true, status: 200, json: async () => ({}) }
+      return { ok: false, status: 401, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+
+    // 1. Sesión vieja: petición protegida → 401 → refresh RETENIDO.
+    let pOld
+    await act(async () => {
+      pOld = bag.current.authenticatedFetch('/api/v1/x').catch(() => {})
+      await Promise.resolve()
+    })
+    await waitFor(() => expect(refreshCalls).toBe(1))
+
+    // 2-3. logout con el refresh en vuelo, y login nuevo con éxito.
+    await act(async () => { bag.current.logout() })
+    await act(async () => { await bag.current.login('admin', 'password') })
+    expect(subOf(sessionStorage.getItem('accessToken'))).toBe('NEW')
+
+    // 4. La sesión NUEVA pide su propio refresh: el semáforo debe estar libre.
+    let pNew
+    await act(async () => {
+      pNew = bag.current.authenticatedFetch('/api/v1/y').catch(() => {})
+      await Promise.resolve()
+    })
+    await waitFor(() => expect(refreshCalls).toBe(2))
+
+    // 5. Resuelve la promesa huérfana de la sesión vieja.
+    await act(async () => {
+      orphanGate.resolve({
+        ok: true,
+        json: async () => ({ access_token: makeSubToken('OLD'), refresh_token: makeSubToken('OLD') }),
+      })
+      await pOld
+      await pNew
+    })
+
+    expect(bag.current.isAuthenticated).toBe(true)
+    expect(sessionStorage.getItem('accessToken')).not.toBeNull()
+    expect(subOf(sessionStorage.getItem('accessToken'))).not.toBe('OLD')
+  })
 })
