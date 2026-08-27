@@ -81,10 +81,20 @@ export default function useDocumentGeneration() {
                 if (doc.doc_type === 'cv') indexed[appId].cv = doc;
                 if (doc.doc_type === 'cover_letter') indexed[appId].coverLetter = doc;
             }
-            // Fusionar, no reemplazar: `generate` y `fetchDocuments` escriben en
-            // este mismo mapa, y una generacion que termina mientras este fetch
-            // vuela desaparecia de la vista pese a estar ya en el servidor.
-            setDocuments(prev => ({ ...prev, ...indexed }));
+            // Fusionar POR SOLICITUD, no reemplazarla: `generate` y
+            // `fetchDocuments` escriben en este mismo mapa, y una generacion que
+            // termina mientras este fetch vuela desaparecia de la vista pese a
+            // estar ya en el servidor. Fusionar solo el primer nivel no basta:
+            // el caso normal —la solicitud ya tenia CV y se genera la carta, o
+            // al reves— es justo el de una solicitud que el servidor SI conoce,
+            // cuya entrada se reemplazaba entera.
+            setDocuments(prev => {
+                const merged = { ...prev };
+                for (const [appId, docs] of Object.entries(indexed)) {
+                    merged[appId] = { ...prev[appId], ...docs };
+                }
+                return merged;
+            });
         } catch (err) {
             logger.warn('Failed to fetch all documents', err);
         }

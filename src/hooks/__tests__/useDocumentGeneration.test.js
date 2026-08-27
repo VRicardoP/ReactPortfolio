@@ -411,9 +411,13 @@ describe('useDocumentGeneration', () => {
     expect(mockAuthenticatedFetch).toHaveBeenCalledTimes(1)
   })
 
-  // --- Regresión P3-1 (auditoría G9 2026-08-27) ---
+  // --- Regresión P3-1 (auditoría G9 2026-08-27), endurecida en G10-5 ---
   // `fetchAllDocuments` reemplazaba el mapa entero: una generación que terminó
-  // mientras el fetch volaba desaparecía de la vista.
+  // mientras el fetch volaba desaparecía de la vista. La respuesta del servidor
+  // trae la solicitud 7 CON un documento (el CV viejo): una fusión de primer
+  // nivel reemplaza esa entrada entera y pierde la carta recién generada. Con
+  // `[]` —el caso que medía este test— el fallo no se ve, porque la solicitud
+  // no aparece en la respuesta.
   it('C2 · fetchAllDocuments no borra lo generado mientras volaba', async () => {
     let resolveAll
     const allFlight = new Promise((resolve) => { resolveAll = resolve })
@@ -434,11 +438,39 @@ describe('useDocumentGeneration', () => {
     expect(result.current.getDocumentsFor(7)).not.toBeNull()
 
     await act(async () => {
-      resolveAll(makeMockResponse([]))
+      resolveAll(makeMockResponse([
+        { application_id: 7, doc_type: 'cv', id: 'cv-7-viejo' },
+      ]))
       await pAll
     })
 
     expect(result.current.getDocumentsFor(7)).not.toBeNull()
-    expect(result.current.getDocumentsFor(7).cv).toEqual({ id: 'cv-7' })
+    expect(result.current.getDocumentsFor(7).cv).not.toBeNull()
+    // La carta generada mientras volaba el fetch no está en la respuesta, y
+    // aun así no puede desaparecer de la vista.
+    expect(result.current.getDocumentsFor(7).coverLetter).toEqual({ id: 'cl-7' })
+  })
+
+  // --- Regresión G10-5 (auditoría G10 2026-08-27) ---
+  // La fusión debe ser POR SOLICITUD, no de primer nivel: el caso normal es que
+  // la solicitud ya tuviera un documento y se acabe de generar el otro.
+  it('G10-D2 · el CV generado sobrevive a un fetchAll que solo conoce la carta', async () => {
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
+      cv_document: { id: 'cv-nuevo' },
+      cover_letter_document: null,
+      generation_time_ms: 10,
+    }))
+
+    const { result } = renderHook(() => useDocumentGeneration())
+    await act(async () => { await result.current.generate(7) })
+    expect(result.current.getDocumentsFor(7).cv).toEqual({ id: 'cv-nuevo' })
+
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse([
+      { application_id: 7, doc_type: 'cover_letter', id: 'cl-viejo' },
+    ]))
+    await act(async () => { await result.current.fetchAllDocuments() })
+
+    expect(result.current.getDocumentsFor(7).cv).toEqual({ id: 'cv-nuevo' })
+    expect(result.current.getDocumentsFor(7).coverLetter.id).toBe('cl-viejo')
   })
 })
