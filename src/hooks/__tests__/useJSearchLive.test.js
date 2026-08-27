@@ -389,4 +389,59 @@ describe('useJSearchLive', () => {
       vi.advanceTimersByTime(20000)
     })
   })
+
+  // --- Regresión P2-2 (auditoría G9 2026-08-27) ---
+  // El Enter del input (LiveSearchPanel) no mira `loading` y el cooldown solo se
+  // arma tras el éxito: dos búsquedas pueden volar a la vez. La respuesta de la
+  // consulta abandonada no puede aterrizar sobre la vigente.
+  it('C1 · dos búsquedas seguidas: la respuesta vieja no pisa los resultados de la nueva', async () => {
+    let resolveOld
+    const oldFlight = new Promise((resolve) => { resolveOld = resolve })
+    mockAuthenticatedFetch.mockImplementationOnce(() => oldFlight)
+    mockAuthenticatedFetch.mockImplementationOnce(() =>
+      Promise.resolve(makeMockResponse([{ job_id: 'NEW' }]))
+    )
+
+    const { result } = renderHook(() => useJSearchLive())
+
+    act(() => { result.current.handleFieldChange('query', 'old') })
+    let pOld
+    await act(async () => { pOld = result.current.handleSearch() })
+
+    act(() => { result.current.handleFieldChange('query', 'new') })
+    await act(async () => { await result.current.handleSearch() })
+    expect(result.current.results.map(r => r.job_id)).toEqual(['NEW'])
+
+    await act(async () => {
+      resolveOld(makeMockResponse([{ job_id: 'OLD' }]))
+      await pOld
+    })
+
+    expect(result.current.formFields.query).toBe('new')
+    expect(result.current.results.map(r => r.job_id)).toEqual(['NEW'])
+  })
+
+  it('C1b · el fallo de una búsqueda abandonada no vacía los resultados de la vigente', async () => {
+    let rejectOld
+    const oldFlight = new Promise((_, reject) => { rejectOld = reject })
+    mockAuthenticatedFetch.mockImplementationOnce(() => oldFlight)
+    mockAuthenticatedFetch.mockImplementationOnce(() =>
+      Promise.resolve(makeMockResponse([{ job_id: 'NEW' }]))
+    )
+
+    const { result } = renderHook(() => useJSearchLive())
+    act(() => { result.current.handleFieldChange('query', 'old') })
+    let pOld
+    await act(async () => { pOld = result.current.handleSearch() })
+    act(() => { result.current.handleFieldChange('query', 'new') })
+    await act(async () => { await result.current.handleSearch() })
+
+    await act(async () => {
+      rejectOld(new Error('boom'))
+      await pOld
+    })
+
+    expect(result.current.results.map(r => r.job_id)).toEqual(['NEW'])
+    expect(result.current.loading).toBe(false)
+  })
 })

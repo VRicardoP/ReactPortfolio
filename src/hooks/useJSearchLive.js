@@ -30,6 +30,12 @@ const useJSearchLive = () => {
     const [cooldownTimer, setCooldownTimer] = useState(0);
     const timerRef = useRef(null);
 
+    // Generacion de busqueda: el Enter del input dispara `handleSearch` sin
+    // mirar `loading` (el boton si lo mira) y el cooldown solo se arma tras el
+    // exito, asi que dos consultas pueden volar a la vez. La que queda atras no
+    // puede confirmar resultados, ni armar el cooldown, ni apagar el indicador.
+    const searchGenerationRef = useRef(0);
+
     // Cleanup timer on unmount
     useEffect(() => {
         return () => {
@@ -63,6 +69,9 @@ const useJSearchLive = () => {
     const handleSearch = useCallback(async () => {
         if (cooldown || !formFields.query.trim()) return;
 
+        const generation = (searchGenerationRef.current += 1);
+        const isCurrent = () => generation === searchGenerationRef.current;
+
         setLoading(true);
         try {
             const params = new URLSearchParams();
@@ -74,13 +83,16 @@ const useJSearchLive = () => {
 
             const response = await authenticatedFetch(`${BACKEND_URL}/api/v1/jsearch-jobs/search?${params.toString()}`);
             const data = await response.json();
+            if (!isCurrent()) return;
             setResults(Array.isArray(data) ? data : data.data || data.results || data.jobs || []);
             startCooldown();
         } catch {
+            if (!isCurrent()) return;
             setResults([]);
             showToast(t('dashboard.jsearchLive.errorSearch'));
         } finally {
-            setLoading(false);
+            // Apagar el indicador solo si nadie ha tomado el relevo.
+            if (isCurrent()) setLoading(false);
         }
     }, [authenticatedFetch, formFields, cooldown, startCooldown, t]);
 
