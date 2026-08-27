@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
@@ -32,6 +32,11 @@ const useSavedSearches = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [searchLoading, setSearchLoading] = useState(false);
     const [resultsTotal, setResultsTotal] = useState(0);
+
+    // Generacion de ejecucion: expandir otra busqueda guardada (o plegar la
+    // actual) invalida la que siga en vuelo. Sin esto una respuesta lenta
+    // aterriza sobre la tarjeta equivocada, o repuebla una ya plegada.
+    const runGenerationRef = useRef(0);
 
     // Fetch saved searches on mount
     const fetchSearches = useCallback(async () => {
@@ -102,9 +107,13 @@ const useSavedSearches = () => {
 
     // Run a saved search (toggle expand/collapse)
     const handleRun = useCallback(async (search) => {
+        const generation = (runGenerationRef.current += 1);
+        const isCurrent = () => generation === runGenerationRef.current;
+
         if (expandedId === search.id) {
             setExpandedId(null);
             setSearchResults([]);
+            setSearchLoading(false);
             return;
         }
         setExpandedId(search.id);
@@ -128,16 +137,19 @@ const useSavedSearches = () => {
                 `${BACKEND_URL}/api/v1/jobs/search?${params.toString()}`
             );
             const data = await response.json();
+            if (!isCurrent()) return;
             setSearchResults(data.data || []);
             // Contrato unificado local/core: bajo el feed keyset del core
             // `total` es null — se muestra al menos lo recibido, nunca 0.
             setResultsTotal(data.metadata?.total ?? data.data?.length ?? 0);
         } catch {
+            if (!isCurrent()) return;
             showToast(t('dashboard.savedSearches.errorRun'));
             setSearchResults([]);
             setResultsTotal(0);
         } finally {
-            setSearchLoading(false);
+            // Apagar el indicador solo si nadie ha tomado el relevo.
+            if (isCurrent()) setSearchLoading(false);
         }
     }, [authenticatedFetch, expandedId, t]);
 
@@ -152,8 +164,11 @@ const useSavedSearches = () => {
             });
             setSearches(prev => prev.filter(s => s.id !== id));
             if (expandedId === id) {
+                // Borrar la expandida tambien invalida su ejecucion en vuelo.
+                runGenerationRef.current += 1;
                 setExpandedId(null);
                 setSearchResults([]);
+                setSearchLoading(false);
             }
         } catch {
             showToast(t('dashboard.savedSearches.errorDelete'));

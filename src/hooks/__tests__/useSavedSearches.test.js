@@ -588,3 +588,112 @@ describe('useSavedSearches', () => {
     expect(result.current.hasAnyFilter).toBeTruthy()
   })
 })
+
+// ---------------------------------------------------------------------------
+// Hipotesis 2 de la auditoria externa 2026-08-27 — ejecuciones fuera de orden
+// ---------------------------------------------------------------------------
+
+describe('useSavedSearches — ejecuciones fuera de orden', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.restoreAllMocks()
+  })
+
+  /** Respuesta que el test decide cuando entregar, para forzar el desorden. */
+  const diferida = () => {
+    let resolve
+    const promise = new Promise(r => { resolve = r })
+    return { promise, resolve }
+  }
+
+  const guardadas = [
+    { id: 1, name: 'Vieja', filters: { q: 'old' } },
+    { id: 2, name: 'Nueva', filters: { q: 'new' } },
+  ]
+
+  const pagina = (items, total) => makeMockResponse({ data: items, metadata: { total } })
+
+  // MUERDE sin el fix: `handleRun` confirmaba cualquier respuesta, aunque el
+  // usuario ya hubiera expandido otra busqueda guardada.
+  it('los resultados de una ejecucion vieja no aterrizan sobre la busqueda expandida', async () => {
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse(guardadas))
+    const { result } = renderHook(() => useSavedSearches())
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    const a = diferida()
+    const b = diferida()
+    mockAuthenticatedFetch
+      .mockReturnValueOnce(a.promise)
+      .mockReturnValueOnce(b.promise)
+
+    let corridaA
+    let corridaB
+    act(() => { corridaA = result.current.handleRun(guardadas[0]) })
+    act(() => { corridaB = result.current.handleRun(guardadas[1]) })
+
+    await act(async () => {
+      b.resolve(pagina([{ id: 'NEW' }], 1))
+      await corridaB
+    })
+    await act(async () => {
+      a.resolve(pagina([{ id: 'OLD' }], 99))
+      await corridaA
+    })
+
+    expect(result.current.expandedId).toBe(2)
+    expect(result.current.searchResults).toEqual([{ id: 'NEW' }])
+    expect(result.current.resultsTotal).toBe(1)
+    expect(result.current.searchLoading).toBe(false)
+  })
+
+  // MUERDE sin el fix: borrar la busqueda expandida tampoco invalidaba su
+  // ejecucion en vuelo, que repoblaba los resultados de algo ya inexistente.
+  it('borrar la busqueda expandida invalida su ejecucion en vuelo', async () => {
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse(guardadas))
+    const { result } = renderHook(() => useSavedSearches())
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    const a = diferida()
+    mockAuthenticatedFetch
+      .mockReturnValueOnce(a.promise)
+      .mockResolvedValueOnce(makeMockResponse({}))
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+
+    let corridaA
+    act(() => { corridaA = result.current.handleRun(guardadas[0]) })
+    await act(async () => { await result.current.handleDelete(1) })
+
+    await act(async () => {
+      a.resolve(pagina([{ id: 'OLD' }], 99))
+      await corridaA
+    })
+
+    expect(result.current.expandedId).toBeNull()
+    expect(result.current.searchResults).toEqual([])
+    expect(result.current.searchLoading).toBe(false)
+  })
+
+  // MUERDE sin el fix: plegar la tarjeta no invalidaba lo pendiente, asi que la
+  // respuesta en vuelo dejaba resultados huerfanos sin nada expandido.
+  it('plegar la busqueda invalida la ejecucion en vuelo', async () => {
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse(guardadas))
+    const { result } = renderHook(() => useSavedSearches())
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    const a = diferida()
+    mockAuthenticatedFetch.mockReturnValueOnce(a.promise)
+
+    let corridaA
+    act(() => { corridaA = result.current.handleRun(guardadas[0]) })
+    act(() => { result.current.handleRun(guardadas[0]) }) // plegar
+
+    await act(async () => {
+      a.resolve(pagina([{ id: 'OLD' }], 99))
+      await corridaA
+    })
+
+    expect(result.current.expandedId).toBeNull()
+    expect(result.current.searchResults).toEqual([])
+    expect(result.current.searchLoading).toBe(false)
+  })
+})
