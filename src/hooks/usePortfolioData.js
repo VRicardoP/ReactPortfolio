@@ -21,6 +21,10 @@ const usePortfolioData = () => {
 
     const loadData = async () => {
       setLoading(true);
+      // El error es del intento ANTERIOR: `App.jsx` pinta su pantalla antes de
+      // mirar `data`, asi que arrastrarlo dejaba el portfolio publico en error
+      // aunque el idioma nuevo cargara bien.
+      setError(null);
       const lang = (i18n.language || 'en').split('-')[0];
 
       try {

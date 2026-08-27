@@ -129,4 +129,32 @@ describe('usePortfolioData', () => {
 
     expect(result.current.data?.lang).toBe('DE')
   })
+
+  // --- Regresión G10-8 (auditoría G10 2026-08-27) ---
+  // `App.jsx` pinta la pantalla de error ANTES de mirar `data`, y `error` nunca
+  // se reiniciaba al empezar una carga nueva: un idioma que falla dejaba el
+  // portfolio PÚBLICO en pantalla de error aunque el siguiente cargara bien.
+  it('G10-P2 · volver a un idioma que carga bien limpia la pantalla de error', async () => {
+    global.fetch = vi.fn((url) => {
+      const target = String(url)
+      if (target.includes('lang=en')) {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ name: 'EN' }) })
+      }
+      // El idioma roto agota sus tres intentos: API, estático y respaldo.
+      return Promise.resolve({ ok: false, status: 500 })
+    })
+
+    const { result, rerender } = renderHook(() => usePortfolioData())
+    await waitFor(() => expect(result.current.data?.name).toBe('EN'))
+
+    currentLang = 'es'
+    await act(async () => { rerender() })
+    await waitFor(() => expect(result.current.error).toBe('Failed to load portfolio data'))
+
+    currentLang = 'en'
+    await act(async () => { rerender() })
+    await waitFor(() => expect(result.current.data?.name).toBe('EN'))
+
+    expect(result.current.error).toBeNull()
+  })
 })
