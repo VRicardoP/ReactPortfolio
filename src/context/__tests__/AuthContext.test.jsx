@@ -572,4 +572,193 @@ describe('AuthContext', () => {
     expect(sessionStorage.getItem('accessToken')).not.toBeNull()
     expect(subOf(sessionStorage.getItem('accessToken'))).not.toBe('OLD')
   })
+
+  // --- Regresión G10-6 y G10-7 (auditoría G10 2026-08-27) ---
+
+  const credenciales = (sub, conRefresh = true) => ({
+    ok: true,
+    json: async () => ({
+      access_token: makeSubToken(sub),
+      ...(conRefresh ? { refresh_token: makeSubToken(sub) } : {}),
+      token_type: 'bearer',
+    }),
+  })
+
+  // G10-6: el servidor omite `refresh_token` del body cuando
+  // `AUTH_REFRESH_TOKEN_IN_BODY=False` (canal canónico: cookie HttpOnly). El
+  // guardado condicional dejaba vivo el refresh de la identidad ANTERIOR, así
+  // que al caducar el access la pestaña volvía en silencio a esa sesión.
+  it('G10-A · un login sin refresh_token en el body no hereda el de la identidad anterior', async () => {
+    let loginCalls = 0
+    global.fetch = vi.fn(async (url) => {
+      if (String(url).includes('/auth/token')) {
+        loginCalls += 1
+        return loginCalls === 1 ? credenciales('ALICE') : credenciales('BOB', false)
+      }
+      return { ok: true, status: 200, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+
+    await act(async () => { await bag.current.login('alice', 'pw') })
+    expect(subOf(sessionStorage.getItem('refreshToken'))).toBe('ALICE')
+
+    await act(async () => { await bag.current.login('bob', 'pw') })
+    expect(subOf(sessionStorage.getItem('accessToken'))).toBe('BOB')
+
+    const guardado = sessionStorage.getItem('refreshToken')
+    expect(guardado && subOf(guardado)).toBeNull()
+  })
+
+  // G10-7: `login` abría sesión lógica ANTES de enviar las credenciales, así que
+  // una contraseña mal tecleada subía el epoch y descartaba como STALE un
+  // refresh legítimo en vuelo cuyo par el servidor YA había rotado: el cliente
+  // se quedaba con un ancla muerta.
+  it('G10-B · un login FALLIDO no descarta el refresh legítimo de la sesión vigente', async () => {
+    sessionStorage.setItem('accessToken', makeSubToken('OLD'))
+    sessionStorage.setItem('refreshToken', makeSubToken('OLD'))
+    sessionStorage.setItem('tokenType', 'bearer')
+
+    const refreshGate = makeDeferred()
+    let protectedCalls = 0
+    global.fetch = vi.fn(async (url) => {
+      const target = String(url)
+      if (target.includes('/auth/refresh')) return refreshGate.promise
+      if (target.includes('/auth/logout')) return { ok: true, json: async () => ({}) }
+      if (target.includes('/auth/token')) {
+        return { ok: false, status: 401, json: async () => ({ detail: 'Invalid credentials' }) }
+      }
+      protectedCalls += 1
+      return protectedCalls === 1
+        ? { ok: false, status: 401, json: async () => ({}) }
+        : { ok: true, status: 200, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+    expect(bag.current.isAuthenticated).toBe(true)
+
+    // 1. La sesión vigente pide su refresh (401 en una petición protegida).
+    let pending
+    await act(async () => {
+      pending = bag.current.authenticatedFetch('/api/v1/protegido').catch(() => {})
+      await Promise.resolve()
+    })
+    await waitFor(() => expect(
+      global.fetch.mock.calls.some(c => String(c[0]).includes('/auth/refresh'))
+    ).toBe(true))
+
+    // 2. El usuario teclea mal la contraseña mientras ese refresh vuela.
+    await act(async () => {
+      const salida = await bag.current.login('admin', 'mala')
+      expect(salida.success).toBe(false)
+    })
+
+    // 3. El refresh llega bien: el servidor ya rotó el par, así que descartarlo
+    //    deja al cliente con un ancla muerta.
+    await act(async () => {
+      refreshGate.resolve(credenciales('NEW'))
+      await pending
+    })
+
+    expect(subOf(sessionStorage.getItem('accessToken'))).toBe('NEW')
+    expect(subOf(sessionStorage.getItem('refreshToken'))).toBe('NEW')
+    expect(bag.current.isAuthenticated).toBe(true)
+  })
+
+  // --- Las secuencias que la frontera ya tenía validadas y G10-7 no puede romper ---
+
+  it('A5 · tres logins concurrentes resolviendo en orden C, A, B: manda C', async () => {
+    const gates = [makeDeferred(), makeDeferred(), makeDeferred()]
+    let loginCalls = 0
+    global.fetch = vi.fn(async (url) => {
+      if (String(url).includes('/auth/token')) return gates[loginCalls++].promise
+      return { ok: true, status: 200, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+
+    let pA, pB, pC
+    await act(async () => { pA = bag.current.login('a', 'pw'); await Promise.resolve() })
+    await act(async () => { pB = bag.current.login('b', 'pw'); await Promise.resolve() })
+    await act(async () => { pC = bag.current.login('c', 'pw'); await Promise.resolve() })
+
+    await act(async () => { gates[2].resolve(credenciales('C')); await pC })
+    await act(async () => { gates[0].resolve(credenciales('A')); await pA })
+    await act(async () => { gates[1].resolve(credenciales('B')); await pB })
+
+    expect(subOf(sessionStorage.getItem('accessToken'))).toBe('C')
+    expect(subOf(bag.current.token)).toBe('C')
+  })
+
+  it('A6 · logout con el refresh de ARRANQUE en vuelo deja el almacén vacío', async () => {
+    sessionStorage.setItem('accessToken', makeSubToken('OLD', ALREADY_EXPIRED))
+    sessionStorage.setItem('refreshToken', makeSubToken('OLD'))
+    sessionStorage.setItem('tokenType', 'bearer')
+
+    const refreshGate = makeDeferred()
+    global.fetch = vi.fn(async (url) => {
+      const target = String(url)
+      if (target.includes('/auth/refresh')) return refreshGate.promise
+      if (target.includes('/auth/logout')) return { ok: true, json: async () => ({}) }
+      return { ok: true, status: 200, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(
+      global.fetch.mock.calls.some(c => String(c[0]).includes('/auth/refresh'))
+    ).toBe(true))
+
+    await act(async () => { bag.current.logout() })
+
+    await act(async () => {
+      refreshGate.resolve(credenciales('OLD2'))
+      await Promise.resolve()
+    })
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+
+    expect(sessionStorage.getItem('accessToken')).toBeNull()
+    expect(sessionStorage.getItem('refreshToken')).toBeNull()
+    expect(sessionStorage.getItem('tokenType')).toBeNull()
+    expect(bag.current.isAuthenticated).toBe(false)
+  })
+
+  it('A7 · 401 en petición protegida con un refresh que falla limpia y cierra', async () => {
+    sessionStorage.setItem('accessToken', VALID_TOKEN)
+    sessionStorage.setItem('refreshToken', VALID_TOKEN)
+    sessionStorage.setItem('tokenType', 'bearer')
+
+    global.fetch = vi.fn(async (url) => {
+      const target = String(url)
+      if (target.includes('/auth/logout')) return { ok: true, json: async () => ({}) }
+      // El refresh falla igual que la petición protegida: 401.
+      return { ok: false, status: 401, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+    expect(bag.current.isAuthenticated).toBe(true)
+
+    await act(async () => {
+      await bag.current.authenticatedFetch('/api/v1/protegido').catch(() => {})
+    })
+
+    expect(sessionStorage.getItem('accessToken')).toBeNull()
+    expect(sessionStorage.getItem('refreshToken')).toBeNull()
+    expect(sessionStorage.getItem('tokenType')).toBeNull()
+    expect(bag.current.isAuthenticated).toBe(false)
+    expect(bag.current.token).toBeNull()
+  })
 })

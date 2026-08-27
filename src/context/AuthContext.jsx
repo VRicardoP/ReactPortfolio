@@ -91,7 +91,12 @@ export const AuthProvider = ({ children }) => {
 
         if (credentials?.access_token) {
             sessionStorage.setItem('accessToken', credentials.access_token);
+            // Nunca HEREDAR el refresh anterior: el servidor lo omite del body
+            // cuando `AUTH_REFRESH_TOKEN_IN_BODY=False`, y conservarlo dejaba
+            // vivo el de la identidad ANTERIOR — al caducar el access, la
+            // pestaña volvía en silencio a esa sesión.
             if (credentials.refresh_token) sessionStorage.setItem('refreshToken', credentials.refresh_token);
+            else sessionStorage.removeItem('refreshToken');
             if (credentials.token_type) sessionStorage.setItem('tokenType', credentials.token_type);
             setToken(credentials.access_token);
             setIsAuthenticated(true);
@@ -179,8 +184,11 @@ export const AuthProvider = ({ children }) => {
 
     // function to log in
     const login = useCallback(async (username, password) => {
-        // Sesión explícita nueva: invalida cualquier operación de la anterior.
-        const epoch = openSession();
+        // El epoch se consume al LIQUIDAR, no al empezar: abrir sesión antes de
+        // enviar las credenciales hacía que una contraseña mal tecleada
+        // descartase como STALE un refresh legítimo en vuelo cuyo par el
+        // servidor YA había rotado, dejando al cliente con un ancla muerta.
+        const epochBefore = authEpochRef.current;
         try {
             // prepare the data to send to the server
             const formData = new URLSearchParams();
@@ -204,7 +212,7 @@ export const AuthProvider = ({ children }) => {
 
             const data = await response.json();
 
-            if (settleSession(epoch, data) === SETTLED.STALE) {
+            if (authEpochRef.current !== epochBefore) {
                 // Un logout o un login posterior tomaron el relevo mientras
                 // volaba este: sus credenciales mandan. Instalar las nuestras
                 // dejaría viva una sesión que el usuario ya no pidió, y cuya
@@ -212,6 +220,9 @@ export const AuthProvider = ({ children }) => {
                 return { success: false, error: 'Session superseded' };
             }
 
+            // Sesión explícita nueva, ya con las credenciales sobre la mesa:
+            // invalida cualquier operación de la anterior.
+            settleSession(openSession(), data);
             return { success: true };
         } catch (error) {
             return {
