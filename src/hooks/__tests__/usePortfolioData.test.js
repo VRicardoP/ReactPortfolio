@@ -1,11 +1,22 @@
-import { renderHook, waitFor } from '@testing-library/react'
+import { renderHook, waitFor, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import usePortfolioData from '../usePortfolioData'
 
 // The hook tries the API first, then falls back to static files.
 
+// El idioma vigente lo controla el test: el hook recarga cuando `i18n.language`
+// cambia, y ese es el disparador de la regresión C5.
+let currentLang = 'en'
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key) => key,
+    i18n: { get language() { return currentLang } },
+  }),
+}))
+
 describe('usePortfolioData', () => {
   beforeEach(() => {
+    currentLang = 'en'
     global.fetch = vi.fn()
   })
 
@@ -84,5 +95,38 @@ describe('usePortfolioData', () => {
 
     expect(result.current.data).toBeNull()
     expect(result.current.error).toBe('Network error')
+  })
+
+  // --- Regresión P2-3 (auditoría G9 2026-08-27) ---
+  // Es el portfolio PÚBLICO: si la respuesta de un idioma abandonado aterriza
+  // tarde, todo el contenido queda en un idioma distinto del que muestra el
+  // conmutador, y así se queda hasta que el usuario vuelva a cambiarlo.
+  it('C5 · cambiar de idioma dos veces deja el contenido en el idioma vigente', async () => {
+    let resolveSpanish
+    const spanishFlight = new Promise((resolve) => { resolveSpanish = resolve })
+    global.fetch = vi.fn((url) => {
+      const target = String(url)
+      if (target.includes('lang=es')) return spanishFlight
+      if (target.includes('lang=de')) {
+        return Promise.resolve({ ok: true, json: () => Promise.resolve({ lang: 'DE' }) })
+      }
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({ lang: 'EN' }) })
+    })
+
+    const { result, rerender } = renderHook(() => usePortfolioData())
+    await waitFor(() => expect(result.current.data?.lang).toBe('EN'))
+
+    currentLang = 'es'
+    await act(async () => { rerender() })
+    currentLang = 'de'
+    await act(async () => { rerender() })
+    await waitFor(() => expect(result.current.data?.lang).toBe('DE'))
+
+    await act(async () => {
+      resolveSpanish({ ok: true, json: () => Promise.resolve({ lang: 'ES' }) })
+      await new Promise(r => setTimeout(r, 10))
+    })
+
+    expect(result.current.data?.lang).toBe('DE')
   })
 })
