@@ -65,6 +65,14 @@ export const AuthProvider = ({ children }) => {
     // Epoch de sesión: el discriminante de la REGLA ÚNICA (ver arriba).
     const authEpochRef = useRef(0);
 
+    // Orden de los intentos de login. El epoch NO puede llevarlo: desde G10-7
+    // un login solo lo consume al liquidar, así que dos intentos concurrentes
+    // ven el mismo epoch y el primero en RESOLVER se instalaría, aunque el
+    // usuario ya hubiera pedido otro. Este contador reclama el ORDEN al empezar
+    // —lo único que un login puede reclamar antes de demostrar nada— sin tocar
+    // ninguna credencial ni caducar nada: manda el ÚLTIMO que el usuario pidió.
+    const loginAttemptRef = useRef(0);
+
     /**
      * Abre una sesión lógica nueva (login o logout) y devuelve su epoch.
      * Todo lo que estuviera en vuelo queda caducado, y el semáforo de refresh
@@ -188,6 +196,7 @@ export const AuthProvider = ({ children }) => {
         // enviar las credenciales hacía que una contraseña mal tecleada
         // descartase como STALE un refresh legítimo en vuelo cuyo par el
         // servidor YA había rotado, dejando al cliente con un ancla muerta.
+        const attempt = ++loginAttemptRef.current;
         const epochBefore = authEpochRef.current;
         try {
             // prepare the data to send to the server
@@ -212,11 +221,12 @@ export const AuthProvider = ({ children }) => {
 
             const data = await response.json();
 
-            if (authEpochRef.current !== epochBefore) {
-                // Un logout o un login posterior tomaron el relevo mientras
-                // volaba este: sus credenciales mandan. Instalar las nuestras
-                // dejaría viva una sesión que el usuario ya no pidió, y cuya
-                // revocación en el servidor salió con el refresh token ANTERIOR.
+            if (attempt !== loginAttemptRef.current || authEpochRef.current !== epochBefore) {
+                // Un logout, o un login POSTERIOR (aunque todavía no haya
+                // resuelto), tomaron el relevo mientras volaba este: sus
+                // credenciales mandan. Instalar las nuestras dejaría viva una
+                // sesión que el usuario ya no pidió, y cuya revocación en el
+                // servidor salió con el refresh token ANTERIOR.
                 return { success: false, error: 'Session superseded' };
             }
 

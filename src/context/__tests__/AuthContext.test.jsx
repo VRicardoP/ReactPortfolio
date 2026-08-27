@@ -699,6 +699,33 @@ describe('AuthContext', () => {
     expect(subOf(bag.current.token)).toBe('C')
   })
 
+  it('A5b · de dos logins concurrentes manda el ÚLTIMO que pidió el usuario, aunque resuelva el segundo', async () => {
+    // El usuario se equivoca de identidad y vuelve a enviar el formulario. La
+    // primera respuesta llega DESPUÉS de haber pedido la segunda: instalar
+    // ALICE dejaría al usuario en una sesión que ya no pidió.
+    const gates = [makeDeferred(), makeDeferred()]
+    let loginCalls = 0
+    global.fetch = vi.fn(async (url) => {
+      if (String(url).includes('/auth/token')) return gates[loginCalls++].promise
+      return { ok: true, status: 200, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+
+    let pAlice, pBob
+    await act(async () => { pAlice = bag.current.login('alice', 'pw'); await Promise.resolve() })
+    await act(async () => { pBob = bag.current.login('bob', 'pw'); await Promise.resolve() })
+
+    await act(async () => { gates[0].resolve(credenciales('ALICE')); await pAlice })
+    await act(async () => { gates[1].resolve(credenciales('BOB')); await pBob })
+
+    expect(subOf(sessionStorage.getItem('accessToken'))).toBe('BOB')
+    expect(subOf(bag.current.token)).toBe('BOB')
+  })
+
   it('A6 · logout con el refresh de ARRANQUE en vuelo deja el almacén vacío', async () => {
     sessionStorage.setItem('accessToken', makeSubToken('OLD', ALREADY_EXPIRED))
     sessionStorage.setItem('refreshToken', makeSubToken('OLD'))
