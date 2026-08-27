@@ -39,7 +39,7 @@ Built with a desktop OS metaphor: draggable, resizable floating windows, 6 immer
 | Routing | React Router v7 |
 | State | React Context API (split state/callbacks) |
 | i18n | react-i18next (6 locales) |
-| Testing | Vitest + @testing-library/react (319 tests en 32 ficheros) |
+| Testing | Vitest + @testing-library/react (330 tests en 32 ficheros) |
 | E2E | Playwright (17 tests) |
 | Styles | Pure CSS (no CSS-in-JS) |
 | Hosting | Cloudflare Pages |
