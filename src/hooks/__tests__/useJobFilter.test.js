@@ -721,3 +721,34 @@ describe('useJobFilter — respuestas fuera de orden (P2-1 externa)', () => {
     expect(result.current.sequence).toBe('s1')
   })
 })
+
+// ---------------------------------------------------------------------------
+// Contrapartida de G10-9 — el buscador que SÍ pagina no lleva la marca
+// ---------------------------------------------------------------------------
+
+describe('useJobFilter — abre secuencia porque sí pagina', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.restoreAllMocks()
+  })
+
+  // `oneshot` es exclusivo de la vista previa de una búsqueda guardada. Si se
+  // colara aquí, la página 1 dejaría de anotar qué motor la sirvió y el propio
+  // "cargar más" de este hook fallaría cerrado o mezclaría corpus.
+  it('G10-9b · ni la búsqueda ni el "cargar más" declaran `oneshot`', async () => {
+    mockAuthenticatedFetch.mockResolvedValueOnce(
+      makeMockResponse(corePage([{ id: 1 }], { nextCursor: 'cur-2' }))
+    )
+    const { result } = renderHook(() => useJobFilter())
+    await act(async () => { await result.current.handleSearch() })
+
+    mockAuthenticatedFetch.mockResolvedValueOnce(
+      makeMockResponse(corePage([{ id: 2 }], { nextCursor: null }))
+    )
+    await act(async () => { await result.current.handleLoadMore() })
+
+    const urls = mockAuthenticatedFetch.mock.calls.map(c => c[0])
+    expect(urls).toHaveLength(2)
+    for (const url of urls) expect(url).not.toContain('oneshot')
+  })
+})

@@ -697,3 +697,38 @@ describe('useSavedSearches — ejecuciones fuera de orden', () => {
     expect(result.current.searchLoading).toBe(false)
   })
 })
+
+// ---------------------------------------------------------------------------
+// Regresión G10-9 (auditoría G10 2026-08-27) — la vista previa no abre secuencia
+// ---------------------------------------------------------------------------
+
+describe('useSavedSearches — la vista previa no abre secuencia', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.restoreAllMocks()
+  })
+
+  const guardada = { id: 1, name: 'React CH', filters: { q: 'react', country: 'CH' } }
+
+  // La vista previa pide la página 1 y NO continúa. El servidor no puede
+  // distinguirla de una página 1 que sí paginará —está medido—, así que sin
+  // declararlo la trataba como el arranque de una secuencia: acuñaba un token
+  // que nadie lee, SOBRESCRIBÍA la anotación compartida de esa consulta
+  // (rompiendo el "cargar más" de la pestaña de al lado) y consumía dos huecos
+  // del registro LRU. Quien lo sabe es el cliente, y es el único que puede
+  // decirlo.
+  it('G10-9 · handleRun declara `oneshot` en su petición de búsqueda', async () => {
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse([guardada]))
+    const { result } = renderHook(() => useSavedSearches())
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    mockAuthenticatedFetch.mockResolvedValueOnce(
+      makeMockResponse({ data: [], metadata: { total: 0 } })
+    )
+    await act(async () => { await result.current.handleRun(guardada) })
+
+    const url = mockAuthenticatedFetch.mock.calls[1][0]
+    expect(url).toContain('/api/v1/jobs/search?')
+    expect(url).toContain('oneshot=true')
+  })
+})
