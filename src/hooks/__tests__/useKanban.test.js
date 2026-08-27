@@ -849,3 +849,110 @@ describe('useKanban — rollback optimista con movimientos solapados', () => {
     expect(estadoDe(result, 1)).toBe('applied')
   })
 })
+
+// ===========================================================================
+// Regresiones G11-3 (auditoría G11 2026-08-27) — la carrera del kanban en la
+// dirección CONTRARIA. `5a87255` no la cerró: la giró. Las dos sondas de abajo
+// PASABAN contra su padre `3c878ae` y FALLAN contra `5a87255`..`258170a`, y son
+// peores que la dirección anterior: la tarjeta está en el servidor una columna
+// por delante de lo que muestra la vista, así que la siguiente pulsación de
+// flecha manda un PATCH que DESTRUYE el estado bueno del servidor.
+//
+// La causa: el `baseline` se leía en el instante del FALLO, cuando todavía no
+// había recogido las confirmaciones de los PATCH que seguían volando. Ahora la
+// reconciliación ocurre al cerrar el ÚLTIMO vuelo (`beginMutation.end`), que es
+// el único momento en que se sabe dónde está el servidor de verdad.
+// ===========================================================================
+describe('useKanban — la carrera, en las DOS direcciones', () => {
+  const deferred = () => {
+    let resolve, reject
+    const promise = new Promise((res, rej) => { resolve = res; reject = rej })
+    return { promise, resolve, reject }
+  }
+  const mountWithCards = async (cards) => {
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse(cards))
+    const hook = renderHook(() => useKanban())
+    await waitFor(() => expect(hook.result.current.applications).toHaveLength(cards.length))
+    return hook
+  }
+  const estadoDe = (r, id) => r.current.applications.find(a => a.id === id).status
+
+  beforeEach(() => { vi.clearAllMocks(); vi.restoreAllMocks() })
+
+  it('G11-K1 · el 2º PATCH falla ANTES de que triunfe el 1º: la vista no puede quedar por DETRÁS', async () => {
+    const { result } = await mountWithCards([makeApp({ id: 1, status: 'saved' })])
+    const p1 = deferred()   // saved → applied        TRIUNFA, tarde
+    const p2 = deferred()   // applied → phone_screen FALLA, pronto
+    mockAuthenticatedFetch.mockImplementationOnce(() => p1.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => p2.promise)
+
+    let mov1, mov2
+    await act(async () => { mov1 = result.current.handleMoveCard(1, 1) })
+    await act(async () => { mov2 = result.current.handleMoveCard(1, 1) })
+    expect(estadoDe(result, 1)).toBe('phone_screen')
+
+    await act(async () => { p2.reject(new Error('sin red')); await mov2 })
+    await act(async () => { p1.resolve(makeMockResponse({})); await mov1 })
+
+    // El servidor tiene `applied`: el primer PATCH sí se persistió.
+    expect(estadoDe(result, 1)).toBe('applied')
+    expect(mockShowToast).toHaveBeenCalledWith('dashboard.kanban.errorMove')
+  })
+
+  it('G11-K2 · tres flechas: falla la 3ª primero y triunfan la 1ª y la 2ª', async () => {
+    const { result } = await mountWithCards([makeApp({ id: 1, status: 'saved' })])
+    const g1 = deferred(), g2 = deferred(), g3 = deferred()
+    mockAuthenticatedFetch.mockImplementationOnce(() => g1.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => g2.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => g3.promise)
+
+    let p1, p2, p3
+    await act(async () => { p1 = result.current.handleMoveCard(1, 1) })
+    await act(async () => { p2 = result.current.handleMoveCard(1, 1) })
+    await act(async () => { p3 = result.current.handleMoveCard(1, 1) })
+    expect(estadoDe(result, 1)).toBe('technical')
+
+    await act(async () => { g3.reject(new Error('c')); await p3 })
+    await act(async () => { g1.resolve(makeMockResponse({})); await p1 })
+    await act(async () => { g2.resolve(makeMockResponse({})); await p2 })
+
+    expect(estadoDe(result, 1)).toBe('phone_screen')
+  })
+
+  it('G11-K3 · el fallo se reconcilia con lo ÚLTIMO confirmado, aunque llegue después', async () => {
+    // Variante de K1 con `handleDrop`: la reconciliación vive en `beginMutation`,
+    // así que las cuatro puertas (drop, moveCard, markApplied) la comparten.
+    const { result } = await mountWithCards([makeApp({ id: 1, status: 'saved' })])
+    const p1 = deferred(), p2 = deferred()
+    mockAuthenticatedFetch.mockImplementationOnce(() => p1.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => p2.promise)
+
+    let drop1, drop2
+    act(() => { result.current.handleDragStart(makeDragEvent(), 1) })
+    await act(async () => { drop1 = result.current.handleDrop(makeDragEvent(), 'applied') })
+    act(() => { result.current.handleDragStart(makeDragEvent(), 1) })
+    await act(async () => { drop2 = result.current.handleDrop(makeDragEvent(), 'offer') })
+
+    await act(async () => { p2.reject(new Error('sin red')); await drop2 })
+    await act(async () => { p1.resolve(makeMockResponse({})); await drop1 })
+
+    expect(estadoDe(result, 1)).toBe('applied')
+  })
+
+  it('G11-K4 · si el usuario relanza tras el fallo, manda el movimiento NUEVO', async () => {
+    // El fallo anotado no puede reconciliar sobre un movimiento posterior que el
+    // usuario sí pidió y el servidor sí aceptó.
+    const { result } = await mountWithCards([makeApp({ id: 1, status: 'saved' })])
+    const p1 = deferred(), p2 = deferred()
+    mockAuthenticatedFetch.mockImplementationOnce(() => p1.promise)
+    mockAuthenticatedFetch.mockImplementationOnce(() => p2.promise)
+
+    let mov1, mov2
+    await act(async () => { mov1 = result.current.handleMoveCard(1, 1) })  // saved → applied
+    await act(async () => { p1.reject(new Error('sin red')); await mov1 })
+    await act(async () => { mov2 = result.current.handleMoveCard(1, 1) })  // → applied otra vez
+    await act(async () => { p2.resolve(makeMockResponse({})); await mov2 })
+
+    expect(estadoDe(result, 1)).toBe('applied')
+  })
+})

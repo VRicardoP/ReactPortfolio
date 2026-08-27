@@ -445,7 +445,13 @@ describe('useDocumentGeneration', () => {
     })
 
     expect(result.current.getDocumentsFor(7)).not.toBeNull()
-    expect(result.current.getDocumentsFor(7).cv).not.toBeNull()
+    // RESTITUIDA (G11-4). `9078c16` cambió este `toEqual({ id: 'cv-7' })` por un
+    // `not.toBeNull()` justo sobre el campo donde el fallo sobrevivía: la
+    // respuesta trae el CV VIEJO y la fusión dejaba ganar al servidor, así que
+    // `cv` valía `{ id: 'cv-7-viejo' }` y la aserción débil pasaba igual.
+    // Ablandar una aserción para que un arreglo parezca completo es exactamente
+    // lo que no se puede hacer aquí.
+    expect(result.current.getDocumentsFor(7).cv).toEqual({ id: 'cv-7' })
     // La carta generada mientras volaba el fetch no está en la respuesta, y
     // aun así no puede desaparecer de la vista.
     expect(result.current.getDocumentsFor(7).coverLetter).toEqual({ id: 'cl-7' })
@@ -472,5 +478,112 @@ describe('useDocumentGeneration', () => {
 
     expect(result.current.getDocumentsFor(7).cv).toEqual({ id: 'cv-nuevo' })
     expect(result.current.getDocumentsFor(7).coverLetter.id).toBe('cl-viejo')
+  })
+
+  // --- Regresiones G11-4 / G11-5 (auditoría G11 2026-08-27) ---
+  // La fusión por solicitud de `9078c16` arregla el caso CRUZADO (CV ↔ carta) y
+  // no toca el del MISMO tipo: al regenerar el CV, la respuesta del servidor
+  // trae `cv` con el valor viejo y la fusión deja ganar al servidor. Y
+  // `fetchDocuments` —el TERCER escritor del mismo mapa— no se tocó siquiera.
+  // Los tres escritores comparten ahora la misma guarda de generación.
+
+  it('G11-D1 · el CV recién generado no lo pisa el CV VIEJO de un fetchAll que ya volaba', async () => {
+    let resolveAll
+    const allFlight = new Promise((resolve) => { resolveAll = resolve })
+    mockAuthenticatedFetch.mockImplementationOnce(() => allFlight)
+    mockAuthenticatedFetch.mockImplementationOnce(() =>
+      Promise.resolve(makeMockResponse({
+        cv_document: { id: 'cv-nuevo' },
+        cover_letter_document: { id: 'cl-nuevo' },
+        generation_time_ms: 10,
+      }))
+    )
+
+    const { result } = renderHook(() => useDocumentGeneration())
+    let pAll
+    await act(async () => { pAll = result.current.fetchAllDocuments() })
+    await act(async () => { await result.current.generate(7) })
+
+    await act(async () => {
+      resolveAll(makeMockResponse([
+        { application_id: 7, doc_type: 'cv', id: 'cv-VIEJO' },
+        { application_id: 7, doc_type: 'cover_letter', id: 'cl-VIEJO' },
+      ]))
+      await pAll
+    })
+
+    expect(result.current.getDocumentsFor(7).cv).toEqual({ id: 'cv-nuevo' })
+    expect(result.current.getDocumentsFor(7).coverLetter).toEqual({ id: 'cl-nuevo' })
+  })
+
+  it('G11-D2 · fetchDocuments no borra lo generado mientras volaba', async () => {
+    // Es el camino de `SelectedOffersPanel.handleViewDocs`: abrir la vista previa
+    // de la MISMA tarjeta que se está generando. Reemplazaba la entrada entera.
+    let resolveOne
+    const oneFlight = new Promise((resolve) => { resolveOne = resolve })
+    mockAuthenticatedFetch.mockImplementationOnce(() => oneFlight)
+    mockAuthenticatedFetch.mockImplementationOnce(() =>
+      Promise.resolve(makeMockResponse({
+        cv_document: { id: 'cv-nuevo' },
+        cover_letter_document: { id: 'cl-nuevo' },
+        generation_time_ms: 10,
+      }))
+    )
+
+    const { result } = renderHook(() => useDocumentGeneration())
+    let pOne
+    await act(async () => { pOne = result.current.fetchDocuments(7) })
+    await act(async () => { await result.current.generate(7) })
+
+    await act(async () => {
+      resolveOne(makeMockResponse([]))   // el servidor aún no sabía nada
+      await pOne
+    })
+
+    expect(result.current.getDocumentsFor(7).cv).toEqual({ id: 'cv-nuevo' })
+    expect(result.current.getDocumentsFor(7).coverLetter).toEqual({ id: 'cl-nuevo' })
+  })
+
+  it('G11-D3 · una lectura lanzada DESPUÉS de generar sí manda: no se ignoran las buenas', async () => {
+    // La contrapartida de la guarda: si la respuesta salió después de la última
+    // escritura local, es más reciente y tiene que escribir.
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
+      cv_document: { id: 'cv-viejo' },
+      cover_letter_document: null,
+      generation_time_ms: 10,
+    }))
+    const { result } = renderHook(() => useDocumentGeneration())
+    await act(async () => { await result.current.generate(7) })
+
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse([
+      { application_id: 7, doc_type: 'cv', id: 'cv-del-servidor' },
+    ]))
+    await act(async () => { await result.current.fetchAllDocuments() })
+
+    expect(result.current.getDocumentsFor(7).cv).toEqual({
+      application_id: 7, doc_type: 'cv', id: 'cv-del-servidor',
+    })
+  })
+
+  it('G11-D4 · generar SOLO la carta no borra el CV que ya estaba', async () => {
+    // `generate` es el tercer escritor y también reemplazaba la entrada entera:
+    // solo se pisa lo que esta llamada ha pedido regenerar.
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
+      cv_document: { id: 'cv-1' },
+      cover_letter_document: { id: 'cl-1' },
+      generation_time_ms: 10,
+    }))
+    const { result } = renderHook(() => useDocumentGeneration())
+    await act(async () => { await result.current.generate(7) })
+
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
+      cv_document: null,
+      cover_letter_document: { id: 'cl-2' },
+      generation_time_ms: 10,
+    }))
+    await act(async () => { await result.current.generate(7, { includeCv: false }) })
+
+    expect(result.current.getDocumentsFor(7).cv).toEqual({ id: 'cv-1' })
+    expect(result.current.getDocumentsFor(7).coverLetter).toEqual({ id: 'cl-2' })
   })
 })

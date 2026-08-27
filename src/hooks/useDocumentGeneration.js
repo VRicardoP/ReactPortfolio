@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { BACKEND_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -16,6 +16,34 @@ export default function useDocumentGeneration() {
     const [generating, setGenerating] = useState(new Set());
     const [error, setError] = useState(null);
 
+    // Guarda de generacion COMPARTIDA por los tres escritores del mapa
+    // (`generate`, `fetchDocuments`, `fetchAllDocuments`). Aqui si se justifica
+    // una utilidad comun: los tres tienen el mismo defecto y arreglar uno solo
+    // es el patron «fix aplicado a un tercio de las puertas».
+    //
+    // La regla: una respuesta del servidor que SALIO antes de una escritura
+    // local no puede pisarla, porque cuando el servidor la emitio todavia no
+    // conocia lo que se acababa de generar. Fusionar mas hondo no basta —el
+    // caso de "regenerar el CV" trae el MISMO campo con el valor viejo, y ahi la
+    // fusion deja ganar al servidor—; hace falta saber QUE es mas reciente.
+    // `tick` ordena los sucesos; `perApplication` recuerda cuando fue la ultima
+    // escritura local de cada solicitud.
+    const writesRef = useRef({ tick: 0, perApplication: {} });
+
+    const markLocalWrite = useCallback((applicationId) => {
+        const w = writesRef.current;
+        w.tick += 1;
+        w.perApplication[applicationId] = w.tick;
+    }, []);
+
+    /** Sello a tomar ANTES de lanzar una lectura, para compararlo al volver. */
+    const stampRead = useCallback(() => writesRef.current.tick, []);
+
+    /** ¿Esta respuesta salio antes de la ultima escritura local de `applicationId`? */
+    const isStaleFor = useCallback((stamp, applicationId) => (
+        (writesRef.current.perApplication[applicationId] ?? 0) > stamp
+    ), []);
+
     const generate = useCallback(async (applicationId, options = {}) => {
         setGenerating(prev => new Set(prev).add(applicationId));
         setError(null);
@@ -30,14 +58,15 @@ export default function useDocumentGeneration() {
                 }),
             });
             const data = await resp.json();
-            setDocuments(prev => ({
-                ...prev,
-                [applicationId]: {
-                    cv: data.cv_document,
-                    coverLetter: data.cover_letter_document,
-                    generationTimeMs: data.generation_time_ms,
-                },
-            }));
+            markLocalWrite(applicationId);
+            setDocuments(prev => {
+                // Reemplazar la entrada ENTERA borraba el documento que esta
+                // llamada NO pidio regenerar: solo se pisa lo que se ha pedido.
+                const entry = { ...prev[applicationId], generationTimeMs: data.generation_time_ms };
+                if (options.includeCv !== false) entry.cv = data.cv_document;
+                if (options.includeCoverLetter !== false) entry.coverLetter = data.cover_letter_document;
+                return { ...prev, [applicationId]: entry };
+            });
             return data;
         } catch (err) {
             setError(err.message || 'Generation failed');
@@ -49,9 +78,14 @@ export default function useDocumentGeneration() {
                 return next;
             });
         }
-    }, [authenticatedFetch]);
+    }, [authenticatedFetch, markLocalWrite]);
 
     const fetchDocuments = useCallback(async (applicationId) => {
+        // Es el camino de `SelectedOffersPanel.handleViewDocs`, que se dispara al
+        // abrir la vista previa de la MISMA tarjeta que se esta generando: sin
+        // guarda, reemplazaba la entrada entera y borraba los DOS documentos
+        // recien generados.
+        const stamp = stampRead();
         try {
             const resp = await authenticatedFetch(
                 `${BACKEND_URL}/api/v1/cv-generation/?application_id=${applicationId}`
@@ -59,18 +93,21 @@ export default function useDocumentGeneration() {
             const docs = await resp.json();
             const cv = docs.find(d => d.doc_type === 'cv') || null;
             const coverLetter = docs.find(d => d.doc_type === 'cover_letter') || null;
-            setDocuments(prev => ({
-                ...prev,
-                [applicationId]: { cv, coverLetter },
-            }));
+            if (!isStaleFor(stamp, applicationId)) {
+                setDocuments(prev => ({
+                    ...prev,
+                    [applicationId]: { cv, coverLetter },
+                }));
+            }
             return { cv, coverLetter };
         } catch (err) {
             logger.warn('Failed to fetch documents', err);
             return null;
         }
-    }, [authenticatedFetch]);
+    }, [authenticatedFetch, stampRead, isStaleFor]);
 
     const fetchAllDocuments = useCallback(async () => {
+        const stamp = stampRead();
         try {
             const resp = await authenticatedFetch(`${BACKEND_URL}/api/v1/cv-generation/`);
             const docs = await resp.json();
@@ -88,9 +125,14 @@ export default function useDocumentGeneration() {
             // el caso normal —la solicitud ya tenia CV y se genera la carta, o
             // al reves— es justo el de una solicitud que el servidor SI conoce,
             // cuya entrada se reemplazaba entera.
+            // Y fusionar tampoco basta para el MISMO tipo: al regenerar el CV, la
+            // respuesta trae `cv` con el valor VIEJO y la fusion deja ganar al
+            // servidor. Por eso las solicitudes escritas localmente despues de
+            // lanzar esta lectura se saltan enteras.
             setDocuments(prev => {
                 const merged = { ...prev };
                 for (const [appId, docs] of Object.entries(indexed)) {
+                    if (isStaleFor(stamp, appId)) continue;
                     merged[appId] = { ...prev[appId], ...docs };
                 }
                 return merged;
@@ -98,7 +140,7 @@ export default function useDocumentGeneration() {
         } catch (err) {
             logger.warn('Failed to fetch all documents', err);
         }
-    }, [authenticatedFetch]);
+    }, [authenticatedFetch, stampRead, isStaleFor]);
 
     const getDocumentsFor = useCallback((applicationId) => {
         return documents[applicationId] || null;
