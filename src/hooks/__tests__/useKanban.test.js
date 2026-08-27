@@ -555,3 +555,127 @@ describe('useKanban', () => {
     expect(result.current.addingTo).toBeNull()
   })
 })
+
+// ---------------------------------------------------------------------------
+// Hipotesis 3 de la auditoria externa 2026-08-27 — rollback optimista solapado
+// ---------------------------------------------------------------------------
+
+describe('useKanban — rollback optimista con movimientos solapados', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.restoreAllMocks()
+  })
+
+  /** PATCH que el test decide cuando resolver o rechazar. */
+  const diferida = () => {
+    let resolve
+    let reject
+    const promise = new Promise((res, rej) => { resolve = res; reject = rej })
+    return { promise, resolve, reject }
+  }
+
+  const montarConDos = async () => {
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse([
+      makeApp({ id: 1, status: 'saved' }),
+      makeApp({ id: 2, status: 'saved' }),
+    ]))
+    const { result } = renderHook(() => useKanban())
+    await waitFor(() => expect(result.current.applications).toHaveLength(2))
+    return result
+  }
+
+  const estadoDe = (result, id) => result.current.applications.find(a => a.id === id).status
+
+  // MUERDE sin el fix: el rollback restauraba la instantania COMPLETA tomada
+  // antes del primer movimiento, asi que el fallo del antiguo borraba
+  // visualmente el exito del posterior.
+  it('el fallo de un movimiento antiguo no borra el exito de otro posterior (teclado)', async () => {
+    const result = await montarConDos()
+
+    const patch1 = diferida() // fallara
+    const patch2 = diferida() // tendra exito
+    mockAuthenticatedFetch
+      .mockReturnValueOnce(patch1.promise)
+      .mockReturnValueOnce(patch2.promise)
+
+    let mov1
+    let mov2
+    act(() => { mov1 = result.current.handleMoveCard(1, 1) })
+    act(() => { mov2 = result.current.handleMoveCard(2, 1) })
+
+    await act(async () => {
+      patch2.resolve(makeMockResponse({}))
+      await mov2
+    })
+    await act(async () => {
+      patch1.reject(new Error('PATCH 500'))
+      await mov1
+    })
+
+    expect(estadoDe(result, 1)).toBe('saved')   // revertido, como debe
+    expect(estadoDe(result, 2)).toBe('applied') // el exito sobrevive
+  })
+
+  // MUERDE sin el fix: el borrado tambien restauraba la instantania completa.
+  it('el fallo de un borrado no revierte un movimiento posterior con exito', async () => {
+    const result = await montarConDos()
+
+    const del1 = diferida()  // fallara
+    const patch2 = diferida() // tendra exito
+    mockAuthenticatedFetch
+      .mockReturnValueOnce(del1.promise)
+      .mockReturnValueOnce(patch2.promise)
+
+    let borrado
+    let mov2
+    act(() => { borrado = result.current.handleDelete(1) })
+    act(() => { mov2 = result.current.handleMoveCard(2, 1) })
+
+    await act(async () => {
+      patch2.resolve(makeMockResponse({}))
+      await mov2
+    })
+    await act(async () => {
+      del1.reject(new Error('DELETE 500'))
+      await borrado
+    })
+
+    // La tarjeta borrada vuelve a su sitio...
+    expect(result.current.applications.map(a => a.id)).toEqual([1, 2])
+    // ...y el movimiento posterior sigue en pie.
+    expect(estadoDe(result, 2)).toBe('applied')
+  })
+
+  it('el fallo de un drop antiguo no borra el exito de otro posterior', async () => {
+    const result = await montarConDos()
+
+    const patch1 = diferida()
+    const patch2 = diferida()
+    mockAuthenticatedFetch
+      .mockReturnValueOnce(patch1.promise)
+      .mockReturnValueOnce(patch2.promise)
+
+    let drop1
+    let drop2
+    act(() => {
+      result.current.handleDragStart(makeDragEvent(), 1)
+    })
+    act(() => { drop1 = result.current.handleDrop(makeDragEvent(), 'applied') })
+    act(() => {
+      result.current.handleDragStart(makeDragEvent(), 2)
+    })
+    act(() => { drop2 = result.current.handleDrop(makeDragEvent(), 'applied') })
+
+    await act(async () => {
+      patch2.resolve(makeMockResponse({}))
+      await drop2
+    })
+    await act(async () => {
+      patch1.reject(new Error('PATCH 500'))
+      await drop1
+    })
+
+    expect(estadoDe(result, 1)).toBe('saved')
+    expect(estadoDe(result, 2)).toBe('applied')
+  })
+})

@@ -61,6 +61,13 @@ const useKanban = () => {
         return () => window.removeEventListener('application-changed', handleExternalChange);
     }, []);
 
+    // Rollback quirurgico: devuelve UNA tarjeta a su estado previo sin tocar el
+    // resto. Restaurar la instantanea completa (el codigo anterior) borraba los
+    // movimientos que hubieran tenido exito mientras volaba este PATCH.
+    const revertStatus = useCallback((id, status) => {
+        setApplications(prev => prev.map(a => (a.id === id ? { ...a, status } : a)));
+    }, []);
+
     const handleDragStart = useCallback((e, id) => {
         setDraggedId(id);
         e.dataTransfer.effectAllowed = 'move';
@@ -81,7 +88,7 @@ const useKanban = () => {
             return;
         }
 
-        const previousApps = [...applications];
+        const previousStatus = app.status;
         setApplications(prev =>
             prev.map(a => a.id === draggedId ? { ...a, status: targetStatus } : a)
         );
@@ -93,10 +100,10 @@ const useKanban = () => {
                 body: JSON.stringify({ status: targetStatus }),
             });
         } catch {
-            setApplications(previousApps);
+            revertStatus(draggedId, previousStatus);
             showToast(t('dashboard.kanban.errorMove'));
         }
-    }, [draggedId, applications, authenticatedFetch, t]);
+    }, [draggedId, applications, authenticatedFetch, revertStatus, t]);
 
     const handleAdd = useCallback(async (status) => {
         if (!newApp.title.trim() || !newApp.company.trim()) return;
@@ -134,7 +141,7 @@ const useKanban = () => {
         if (targetIndex < 0 || targetIndex >= COLUMN_KEYS.length) return;
 
         const targetStatus = COLUMN_KEYS[targetIndex];
-        const previousApps = [...applications];
+        const previousStatus = app.status;
         setApplications(prev =>
             prev.map(a => a.id === appId ? { ...a, status: targetStatus } : a)
         );
@@ -145,21 +152,30 @@ const useKanban = () => {
                 body: JSON.stringify({ status: targetStatus }),
             });
         } catch {
-            setApplications(previousApps);
+            revertStatus(appId, previousStatus);
             showToast(t('dashboard.kanban.errorMove'));
         }
-    }, [applications, authenticatedFetch, t]);
+    }, [applications, authenticatedFetch, revertStatus, t]);
 
     // Delete an application from the pipeline
     const handleDelete = useCallback(async (appId) => {
-        const previousApps = [...applications];
+        // Mismo criterio quirurgico: si el DELETE falla, reinsertar SOLO la
+        // tarjeta borrada y en su sitio, sin revertir lo que haya pasado entretanto.
+        const index = applications.findIndex(a => a.id === appId);
+        const removed = index === -1 ? null : applications[index];
         setApplications(prev => prev.filter(a => a.id !== appId));
         try {
             await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/${appId}`, {
                 method: 'DELETE',
             });
         } catch {
-            setApplications(previousApps);
+            if (removed) {
+                setApplications(prev => {
+                    const next = [...prev];
+                    next.splice(Math.min(index, next.length), 0, removed);
+                    return next;
+                });
+            }
             showToast(t('dashboard.kanban.errorDelete'));
         }
     }, [applications, authenticatedFetch, t]);
@@ -169,7 +185,7 @@ const useKanban = () => {
         const app = applications.find(a => a.id === appId);
         if (!app || app.status === 'applied') return;
 
-        const previousApps = [...applications];
+        const previousStatus = app.status;
         setApplications(prev =>
             prev.map(a => a.id === appId ? { ...a, status: 'applied' } : a)
         );
@@ -179,10 +195,10 @@ const useKanban = () => {
                 body: JSON.stringify({ status: 'applied' }),
             });
         } catch {
-            setApplications(previousApps);
+            revertStatus(appId, previousStatus);
             showToast(t('dashboard.kanban.errorMove'));
         }
-    }, [applications, authenticatedFetch, t]);
+    }, [applications, authenticatedFetch, revertStatus, t]);
 
     // Group applications by status
     const grouped = useMemo(() => {
