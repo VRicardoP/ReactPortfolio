@@ -30,18 +30,29 @@ const useKanban = () => {
     const [addingTo, setAddingTo] = useState(null);
     const [newApp, setNewApp] = useState(INITIAL_NEW_APP);
 
-    // Vuelos POR TARJETA. La generacion decide QUIEN puede revertir: sobre la
-    // MISMA tarjeta dos movimientos se solapan (pulsar la flecha dos veces
-    // seguidas es uso normal) y el fallo tardio del primero pisaba el segundo,
-    // que el servidor ya habia aceptado.
-    // El `baseline` decide A DONDE: es el ultimo estado CONFIRMADO por el
-    // servidor. Revertir al estado del render dejaba la vista por delante —a
-    // partir del segundo movimiento ese estado ya es optimista y nunca se
-    // persistio, asi que con el backend caido dos flechas dejaban la tarjeta
-    // una columna por delante del servidor, y tres, dos columnas.
-    // Y el CIERRE del ultimo vuelo decide CUANDO: leer el ancla en el instante
-    // del fallo la dejaba por detras (ver `beginMutation.end`). Las dos
-    // direcciones se miden en `useKanban.test.js` (G10-K1..K5, G11-K1..K3).
+    // UN SOLO PATCH en vuelo por tarjeta.
+    //
+    // El PATCH de estado es ABSOLUTO ("ponla en `applied`"), asi que con dos en
+    // vuelo manda el orden en que el SERVIDOR los procesa, y ese orden el
+    // cliente no lo conoce ni lo puede inferir: si la red entrega antes el
+    // segundo, la base termina en el destino del primero mientras la vista
+    // muestra el del segundo. Ningun contador local arregla eso —lo intentaron
+    // las generaciones que habia aqui—, porque miden el orden de SALIDA.
+    //
+    // Por eso los movimientos que llegan mientras vuela uno se COALESCEN: se
+    // aplican al momento en la vista (pulsar la flecha dos veces seguidas es
+    // uso normal) y, al confirmar el PATCH en curso, sale UNO solo hacia el
+    // ultimo destino que el usuario pidio. El servidor ve exactamente la misma
+    // secuencia que la vista, en el mismo orden.
+    //
+    // `baseline` es el ultimo destino que el servidor CONFIRMO: es a donde se
+    // revierte si el PATCH fracasa —ni al estado del render, que ya es
+    // optimista y dejaria la vista por delante, ni al inicial, que la dejaria
+    // por detras de lo ya persistido.
+    //
+    // COTA CONOCIDA: esto ordena los PATCH de ESTA pestana. Dos pestanas (o dos
+    // clientes) sobre la misma tarjeta pueden seguir divergiendo; cerrar eso
+    // exige version/ETag en el servidor, no mas estado local.
     const flightsRef = useRef({});
 
     // Fetch all applications on mount
@@ -83,52 +94,56 @@ const useKanban = () => {
     }, []);
 
     /**
-     * Registra una mutacion de `id` hacia `targetStatus` y devuelve su control
-     * de vuelo: `isCurrent` (solo la ultima lanzada sobre la tarjeta cuenta),
-     * `fail` (anotar que fracaso), `confirm` (el servidor acepto este destino) y
-     * `end` (cerrar el vuelo, y reconciliar la vista si era el ultimo).
+     * Mueve la tarjeta en la vista y manda su PATCH; si esa tarjeta ya tenia
+     * uno en vuelo, el destino se COALESCE en la cola en vez de salir a la vez.
+     *
+     * @param {number} id tarjeta
+     * @param {string} currentStatus estado visible, que sin vuelos abiertos ES
+     *                 el que el servidor confirmo
+     * @param {string} targetStatus destino pedido
+     * @returns {Promise<void>} se cumple cuando la cola de la tarjeta se vacia
      */
-    const beginMutation = useCallback((id, currentStatus, targetStatus) => {
-        const flights = flightsRef.current;
-        const flight = flights[id]
-            || (flights[id] = {
-                generation: 0, confirmed: 0, inFlight: 0, failed: 0, baseline: currentStatus,
-            });
-        // Sin vuelos abiertos, lo que se ve ES lo que el servidor confirmo.
-        if (flight.inFlight === 0) flight.baseline = currentStatus;
-        flight.inFlight += 1;
-        const generation = (flight.generation += 1);
+    const mutateStatus = useCallback((id, currentStatus, targetStatus) => {
+        setApplications(prev =>
+            prev.map(a => (a.id === id ? { ...a, status: targetStatus } : a))
+        );
 
-        return {
-            isCurrent: () => flight.generation === generation,
-            // Se ANOTA el fallo; NO se revierte todavia. Revertir aqui era leer
-            // el ancla en el momento del fallo, y el ancla aun no habia recogido
-            // las confirmaciones de los PATCH anteriores que seguian volando: si
-            // el ultimo fallaba ANTES de que triunfase el primero, la vista se
-            // quedaba por DETRAS del servidor, en silencio, y la siguiente
-            // flecha mandaba un PATCH que DESTRUIA el estado bueno.
-            fail: () => { flight.failed = generation; },
-            confirm: () => {
-                // Un PATCH viejo que responde tarde no adelanta el ancla.
-                if (generation <= flight.confirmed) return;
-                flight.confirmed = generation;
-                flight.baseline = targetStatus;
-            },
-            end: () => {
-                flight.inFlight -= 1;
-                if (flight.inFlight > 0) return;
-                // Cerrado el ULTIMO vuelo, el ancla ya recogio todas las
-                // confirmaciones: es el unico instante en que se sabe donde esta
-                // el servidor de verdad. Se reconcilia solo si el movimiento que
-                // el usuario pidio el ultimo fracaso; si lo superó otro
-                // posterior, la vista ya muestra el destino de ese.
-                const reconciliar = flight.failed === flight.generation;
-                const destino = flight.baseline;
-                delete flights[id];
-                if (reconciliar) revertStatus(id, destino);
-            },
-        };
-    }, [revertStatus]);
+        const flights = flightsRef.current;
+        const enCurso = flights[id];
+        if (enCurso) {
+            // Solo cuenta el ULTIMO destino pedido: los intermedios ya no los
+            // quiere nadie, y mandarlos solo multiplicaria los PATCH.
+            enCurso.pending = targetStatus;
+            return enCurso.drained;
+        }
+
+        const flight = { pending: targetStatus, baseline: currentStatus, drained: null };
+        flights[id] = flight;
+        flight.drained = (async () => {
+            let failed = false;
+            while (flight.pending !== null && !failed) {
+                const destino = flight.pending;
+                flight.pending = null;
+                try {
+                    await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/${id}`, {
+                        method: 'PATCH',
+                        body: JSON.stringify({ status: destino }),
+                    });
+                    flight.baseline = destino;
+                } catch {
+                    // Se abandona la cola: los destinos pendientes se calcularon
+                    // sobre un movimiento que NO se persistio.
+                    failed = true;
+                }
+            }
+            delete flights[id];
+            if (failed) {
+                revertStatus(id, flight.baseline);
+                showToast(t('dashboard.kanban.errorMove'));
+            }
+        })();
+        return flight.drained;
+    }, [authenticatedFetch, revertStatus, t]);
 
     const handleDragStart = useCallback((e, id) => {
         setDraggedId(id);
@@ -150,27 +165,9 @@ const useKanban = () => {
             return;
         }
 
-        const flight = beginMutation(draggedId, app.status, targetStatus);
-        setApplications(prev =>
-            prev.map(a => a.id === draggedId ? { ...a, status: targetStatus } : a)
-        );
         setDraggedId(null);
-
-        try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/${draggedId}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ status: targetStatus }),
-            });
-            flight.confirm();
-        } catch {
-            if (flight.isCurrent()) {
-                flight.fail();
-                showToast(t('dashboard.kanban.errorMove'));
-            }
-        } finally {
-            flight.end();
-        }
-    }, [draggedId, applications, authenticatedFetch, beginMutation, t]);
+        await mutateStatus(draggedId, app.status, targetStatus);
+    }, [draggedId, applications, mutateStatus]);
 
     const handleAdd = useCallback(async (status) => {
         if (!newApp.title.trim() || !newApp.company.trim()) return;
@@ -207,29 +204,8 @@ const useKanban = () => {
         const targetIndex = colIndex + direction;
         if (targetIndex < 0 || targetIndex >= COLUMN_KEYS.length) return;
 
-        const targetStatus = COLUMN_KEYS[targetIndex];
-        const flight = beginMutation(appId, app.status, targetStatus);
-        setApplications(prev =>
-            prev.map(a => a.id === appId ? { ...a, status: targetStatus } : a)
-        );
-
-        try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/${appId}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ status: targetStatus }),
-            });
-            flight.confirm();
-        } catch {
-            // Superado por un movimiento posterior de ESTA tarjeta que el
-            // servidor si acepto: revertir mentiria, y el aviso tambien.
-            if (flight.isCurrent()) {
-                flight.fail();
-                showToast(t('dashboard.kanban.errorMove'));
-            }
-        } finally {
-            flight.end();
-        }
-    }, [applications, authenticatedFetch, beginMutation, t]);
+        await mutateStatus(appId, app.status, COLUMN_KEYS[targetIndex]);
+    }, [applications, mutateStatus]);
 
     // Delete an application from the pipeline
     const handleDelete = useCallback(async (appId) => {
@@ -259,25 +235,8 @@ const useKanban = () => {
         const app = applications.find(a => a.id === appId);
         if (!app || app.status === 'applied') return;
 
-        const flight = beginMutation(appId, app.status, 'applied');
-        setApplications(prev =>
-            prev.map(a => a.id === appId ? { ...a, status: 'applied' } : a)
-        );
-        try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/${appId}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ status: 'applied' }),
-            });
-            flight.confirm();
-        } catch {
-            if (flight.isCurrent()) {
-                flight.fail();
-                showToast(t('dashboard.kanban.errorMove'));
-            }
-        } finally {
-            flight.end();
-        }
-    }, [applications, authenticatedFetch, beginMutation, t]);
+        await mutateStatus(appId, app.status, 'applied');
+    }, [applications, mutateStatus]);
 
     // Group applications by status
     const grouped = useMemo(() => {
