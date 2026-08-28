@@ -200,8 +200,19 @@ export default function useDocumentGeneration() {
             if (applicationId) {
                 markLocalWrite(applicationId);
                 setDocuments(prev => {
+                    const entry = prev[applicationId];
+                    if (!entry) return prev;
+                    // El DELETE del servidor borra UN documento por su id, no la
+                    // solicitud: retirar la entrada entera ocultaba el hermano que
+                    // el servidor SI conserva. Se anula solo el campo cuyo id
+                    // coincide, y la entrada se retira unicamente si no queda
+                    // ninguno de los dos documentos.
+                    const next = { ...entry };
+                    if (next.cv?.id === docId) next.cv = null;
+                    if (next.coverLetter?.id === docId) next.coverLetter = null;
                     const copy = { ...prev };
-                    delete copy[applicationId];
+                    if (next.cv || next.coverLetter) copy[applicationId] = next;
+                    else delete copy[applicationId];
                     return copy;
                 });
             }

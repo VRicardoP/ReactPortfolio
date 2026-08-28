@@ -587,15 +587,18 @@ describe('useDocumentGeneration', () => {
     expect(result.current.getDocumentsFor(7).coverLetter).toEqual({ id: 'cl-2' })
   })
 
-  // --- Regresión P2-2 (auditoría externa R2 2026-08-28) ---
+  // --- Regresión P2-2 (auditoría externa R2 y R3, 2026-08-28) ---
   // El borrado es la CUARTA escritura local del mapa, y era la única que no se
   // anotaba: una lectura lanzada ANTES del DELETE seguía considerándose vigente
   // y reinsertaba el documento ya borrado.
-  it('D5 · una lectura anterior al borrado no resucita el documento', async () => {
-    // 1. Generar el CV de la solicitud 42.
+  // R3 amplía D5: la solicitud lleva CV *y* carta, porque el DELETE del servidor
+  // borra UN documento por su id y el hook retiraba los dos. La prueba mide dos
+  // cosas a la vez: la carrera de resurrección y la granularidad del borrado.
+  it('D5 · borrar un documento no toca a su hermano ni deja resucitar al borrado', async () => {
+    // 1. Generar CV (id 10) y carta (id 11) de la solicitud 42.
     mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
       cv_document: { application_id: 42, doc_type: 'cv', id: 10 },
-      cover_letter_document: null,
+      cover_letter_document: { application_id: 42, doc_type: 'cover_letter', id: 11 },
       generation_time_ms: 10,
     }))
     const { result } = renderHook(() => useDocumentGeneration())
@@ -608,20 +611,51 @@ describe('useDocumentGeneration', () => {
     let pLectura
     await act(async () => { pLectura = result.current.fetchAllDocuments() })
 
-    // 3. Borrar el documento 10: el estado local queda sin la solicitud 42.
+    // 3. Borrar SOLO el documento 10: el servidor conserva la carta 11.
     mockAuthenticatedFetch.mockImplementationOnce(() => Promise.resolve(makeMockResponse({})))
     await act(async () => { await result.current.deleteDocument(10, 42) })
-    expect(result.current.getDocumentsFor(42)).toBeNull()
+    expect(result.current.getDocumentsFor(42).cv).toBeNull()
+    expect(result.current.getDocumentsFor(42).coverLetter).toEqual({
+      application_id: 42, doc_type: 'cover_letter', id: 11,
+    })
 
-    // 4. Llega la lectura vieja, que todavía conoce el documento borrado.
+    // 4. Llega la lectura vieja, que todavía conoce los dos documentos.
     await act(async () => {
       resolverLectura(makeMockResponse([
         { application_id: 42, doc_type: 'cv', id: 10 },
+        { application_id: 42, doc_type: 'cover_letter', id: 11 },
       ]))
       await pLectura
     })
 
-    // 5. Un recurso borrado no puede reaparecer por una respuesta anterior.
+    // 5. Un recurso borrado no puede reaparecer por una respuesta anterior,
+    //    y el hermano que el servidor conserva sigue en su sitio.
+    expect(result.current.getDocumentsFor(42).cv).toBeNull()
+    expect(result.current.getDocumentsFor(42).coverLetter).toEqual({
+      application_id: 42, doc_type: 'cover_letter', id: 11,
+    })
+  })
+
+  it('D5b · borrar el ÚLTIMO documento sí retira la entrada de la solicitud', async () => {
+    // La otra mitad de la regla: la entrada se conserva mientras quede algún
+    // documento, y se retira solo cuando ambos campos quedan vacíos.
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
+      cv_document: { application_id: 42, doc_type: 'cv', id: 10 },
+      cover_letter_document: { application_id: 42, doc_type: 'cover_letter', id: 11 },
+      generation_time_ms: 10,
+    }))
+    const { result } = renderHook(() => useDocumentGeneration())
+    await act(async () => { await result.current.generate(42) })
+
+    mockAuthenticatedFetch.mockImplementationOnce(() => Promise.resolve(makeMockResponse({})))
+    await act(async () => { await result.current.deleteDocument(11, 42) })
+    expect(result.current.getDocumentsFor(42).cv).toEqual({
+      application_id: 42, doc_type: 'cv', id: 10,
+    })
+    expect(result.current.getDocumentsFor(42).coverLetter).toBeNull()
+
+    mockAuthenticatedFetch.mockImplementationOnce(() => Promise.resolve(makeMockResponse({})))
+    await act(async () => { await result.current.deleteDocument(10, 42) })
     expect(result.current.getDocumentsFor(42)).toBeNull()
   })
 
