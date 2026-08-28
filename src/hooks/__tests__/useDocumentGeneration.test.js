@@ -586,4 +586,68 @@ describe('useDocumentGeneration', () => {
     expect(result.current.getDocumentsFor(7).cv).toEqual({ id: 'cv-1' })
     expect(result.current.getDocumentsFor(7).coverLetter).toEqual({ id: 'cl-2' })
   })
+
+  // --- Regresión P2-2 (auditoría externa R2 2026-08-28) ---
+  // El borrado es la CUARTA escritura local del mapa, y era la única que no se
+  // anotaba: una lectura lanzada ANTES del DELETE seguía considerándose vigente
+  // y reinsertaba el documento ya borrado.
+  it('D5 · una lectura anterior al borrado no resucita el documento', async () => {
+    // 1. Generar el CV de la solicitud 42.
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
+      cv_document: { application_id: 42, doc_type: 'cv', id: 10 },
+      cover_letter_document: null,
+      generation_time_ms: 10,
+    }))
+    const { result } = renderHook(() => useDocumentGeneration())
+    await act(async () => { await result.current.generate(42) })
+
+    // 2. Lanzar y RETENER `fetchAllDocuments`: su respuesta salió antes del DELETE.
+    let resolverLectura
+    const lecturaVieja = new Promise((resolve) => { resolverLectura = resolve })
+    mockAuthenticatedFetch.mockImplementationOnce(() => lecturaVieja)
+    let pLectura
+    await act(async () => { pLectura = result.current.fetchAllDocuments() })
+
+    // 3. Borrar el documento 10: el estado local queda sin la solicitud 42.
+    mockAuthenticatedFetch.mockImplementationOnce(() => Promise.resolve(makeMockResponse({})))
+    await act(async () => { await result.current.deleteDocument(10, 42) })
+    expect(result.current.getDocumentsFor(42)).toBeNull()
+
+    // 4. Llega la lectura vieja, que todavía conoce el documento borrado.
+    await act(async () => {
+      resolverLectura(makeMockResponse([
+        { application_id: 42, doc_type: 'cv', id: 10 },
+      ]))
+      await pLectura
+    })
+
+    // 5. Un recurso borrado no puede reaparecer por una respuesta anterior.
+    expect(result.current.getDocumentsFor(42)).toBeNull()
+  })
+
+  it('D6 · una lectura lanzada DESPUÉS del borrado sí manda', async () => {
+    // Control de la dirección contraria: la guarda no puede cegar las lecturas
+    // buenas — si el servidor vuelve a tener documentos de esa solicitud
+    // (regeneración desde otra pestaña), la lectura posterior debe entrar.
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
+      cv_document: { application_id: 42, doc_type: 'cv', id: 10 },
+      cover_letter_document: null,
+      generation_time_ms: 10,
+    }))
+    const { result } = renderHook(() => useDocumentGeneration())
+    await act(async () => { await result.current.generate(42) })
+
+    mockAuthenticatedFetch.mockImplementationOnce(() => Promise.resolve(makeMockResponse({})))
+    await act(async () => { await result.current.deleteDocument(10, 42) })
+    expect(result.current.getDocumentsFor(42)).toBeNull()
+
+    mockAuthenticatedFetch.mockImplementationOnce(() => Promise.resolve(makeMockResponse([
+      { application_id: 42, doc_type: 'cv', id: 11 },
+    ])))
+    await act(async () => { await result.current.fetchAllDocuments() })
+
+    expect(result.current.getDocumentsFor(42).cv).toEqual({
+      application_id: 42, doc_type: 'cv', id: 11,
+    })
+  })
 })

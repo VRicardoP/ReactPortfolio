@@ -16,10 +16,12 @@ export default function useDocumentGeneration() {
     const [generating, setGenerating] = useState(new Set());
     const [error, setError] = useState(null);
 
-    // Guarda de generacion COMPARTIDA por los tres escritores del mapa
-    // (`generate`, `fetchDocuments`, `fetchAllDocuments`). Aqui si se justifica
-    // una utilidad comun: los tres tienen el mismo defecto y arreglar uno solo
-    // es el patron «fix aplicado a un tercio de las puertas».
+    // Guarda de generacion COMPARTIDA por los cuatro escritores del mapa
+    // (`generate`, `fetchDocuments`, `fetchAllDocuments` y `deleteDocument`).
+    // Aqui si se justifica una utilidad comun: los cuatro tienen el mismo
+    // defecto y arreglar uno solo es el patron «fix aplicado a un tercio de las
+    // puertas». Borrar es una escritura local como cualquier otra: lo que una
+    // lectura anterior no puede pisar no es solo lo que se acaba de crear.
     //
     // La regla: una respuesta del servidor que SALIO antes de una escritura
     // local no puede pisarla, porque cuando el servidor la emitio todavia no
@@ -187,7 +189,16 @@ export default function useDocumentGeneration() {
             await authenticatedFetch(`${BACKEND_URL}/api/v1/cv-generation/${docId}`, {
                 method: 'DELETE',
             });
+            // Borrar es la CUARTA escritura local del mapa, y era la unica que
+            // no se anotaba: una lectura lanzada ANTES del DELETE se seguia
+            // considerando vigente y reinsertaba el documento ya borrado.
+            // Se anota ANTES de tocar el mapa, para que ninguna respuesta que
+            // ya volaba pueda colarse entre la anotacion y el borrado.
+            // Sin `applicationId` no se mantiene estado local (contrato del
+            // hook): no hay nada que proteger, y quien quiera que se mantenga
+            // tiene que pasarlo.
             if (applicationId) {
+                markLocalWrite(applicationId);
                 setDocuments(prev => {
                     const copy = { ...prev };
                     delete copy[applicationId];
@@ -197,7 +208,7 @@ export default function useDocumentGeneration() {
         } catch (err) {
             logger.warn('Failed to delete document', err);
         }
-    }, [authenticatedFetch]);
+    }, [authenticatedFetch, markLocalWrite]);
 
     const isGenerating = useCallback((applicationId) => {
         return generating.has(applicationId);
