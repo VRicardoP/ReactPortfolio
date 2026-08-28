@@ -350,7 +350,12 @@ export const AuthProvider = ({ children }) => {
             };
             response = await fetch(url, { ...options, headers: retryHeaders, credentials: 'include' });
             if (response.status === 401) {
-                logout();
+                // El reintento también es una operación que TERMINA, y era el
+                // único camino que borraba credenciales sin comprobar su epoch:
+                // si el usuario abrió otra sesión mientras volaba, este 401 es
+                // de la anterior y CADUCÓ —no fracasó—, así que se descarta sin
+                // tocar nada. Solo el fracaso de la sesión vigente cierra.
+                if (authEpochRef.current === epoch) logout();
                 throw new Error('Session expired');
             }
         }

@@ -788,4 +788,91 @@ describe('AuthContext', () => {
     expect(bag.current.isAuthenticated).toBe(false)
     expect(bag.current.token).toBeNull()
   })
+
+  // --- Regresión P1-2 (auditoría externa R2 2026-08-28) ---
+  // `authenticatedFetch` comprobaba el epoch tras el refresh, pero NO tras la
+  // petición REINTENTADA: un 401 tardío de la sesión vieja llamaba a `logout()`
+  // sin condición y borraba las credenciales de la sesión nueva. Es el mismo
+  // discriminante de la REGLA ÚNICA aplicado al único camino que escribía (que
+  // borraba) sin comprobarlo.
+  it('A8 · un 401 tardío del reintento de A no cierra la sesión B abierta entretanto', async () => {
+    sessionStorage.setItem('accessToken', makeSubToken('A'))
+    sessionStorage.setItem('refreshToken', makeSubToken('A'))
+    sessionStorage.setItem('tokenType', 'bearer')
+
+    const reintentoA = makeDeferred()
+    let protegidas = 0
+    global.fetch = vi.fn(async (url) => {
+      const target = String(url)
+      if (target.includes('/auth/refresh')) return credenciales('A2')
+      if (target.includes('/auth/logout')) return { ok: true, json: async () => ({}) }
+      if (target.includes('/auth/token')) return credenciales('B')
+      protegidas += 1
+      // 1ª: caduca el access de A. 2ª: el REINTENTO con A2, que retenemos.
+      if (protegidas === 1) return { ok: false, status: 401, json: async () => ({}) }
+      return reintentoA.promise
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+
+    // 1-2. Petición de A → 401 → refresh de A → A2 → reintento RETENIDO.
+    let pA
+    await act(async () => {
+      pA = bag.current.authenticatedFetch('/api/v1/protegido').catch(() => {})
+      await Promise.resolve()
+    })
+    await waitFor(() => expect(protegidas).toBe(2))
+
+    // 3. El usuario abre sesión NUEVA mientras el reintento sigue en vuelo.
+    await act(async () => { await bag.current.login('admin', 'password') })
+    expect(subOf(sessionStorage.getItem('accessToken'))).toBe('B')
+
+    // 4. El reintento de A vuelve con 401: caducó, no fracasó.
+    await act(async () => {
+      reintentoA.resolve({ ok: false, status: 401, json: async () => ({}) })
+      await pA
+    })
+
+    // 5. B sigue en pie: identidad EXACTA, no un simple "no es nulo".
+    expect(sessionStorage.getItem('accessToken')).not.toBeNull()
+    expect(subOf(sessionStorage.getItem('accessToken'))).toBe('B')
+    expect(subOf(sessionStorage.getItem('refreshToken'))).toBe('B')
+    expect(bag.current.isAuthenticated).toBe(true)
+    expect(subOf(bag.current.token)).toBe('B')
+    // Y nadie revocó nada por el camino: el logout de A habría salido aquí.
+    expect(global.fetch.mock.calls.some(c => String(c[0]).includes('/auth/logout'))).toBe(false)
+  })
+
+  it('A8b · el 401 del reintento SÍ cierra la sesión cuando sigue siendo la vigente', async () => {
+    // Control de la dirección contraria: la guarda de epoch no puede volverse
+    // una excusa para no cerrar nunca. Sin sesión nueva de por medio, un
+    // reintento que vuelve a caducar es el fracaso de la sesión VIGENTE.
+    sessionStorage.setItem('accessToken', makeSubToken('A'))
+    sessionStorage.setItem('refreshToken', makeSubToken('A'))
+    sessionStorage.setItem('tokenType', 'bearer')
+
+    global.fetch = vi.fn(async (url) => {
+      const target = String(url)
+      if (target.includes('/auth/refresh')) return credenciales('A2')
+      if (target.includes('/auth/logout')) return { ok: true, json: async () => ({}) }
+      return { ok: false, status: 401, json: async () => ({}) }
+    })
+
+    const bag = { current: null }
+    const Capture = makeCapture(bag)
+    render(<AuthProvider><Capture /></AuthProvider>)
+    await waitFor(() => expect(bag.current.loading).toBe(false))
+
+    await act(async () => {
+      await bag.current.authenticatedFetch('/api/v1/protegido').catch(() => {})
+    })
+
+    expect(sessionStorage.getItem('accessToken')).toBeNull()
+    expect(sessionStorage.getItem('refreshToken')).toBeNull()
+    expect(bag.current.isAuthenticated).toBe(false)
+    expect(global.fetch.mock.calls.some(c => String(c[0]).includes('/auth/logout'))).toBe(true)
+  })
 })
