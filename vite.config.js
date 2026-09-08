@@ -39,7 +39,9 @@ export default defineConfig({
           if (id.includes('node_modules/react/')) return 'vendor-react';
           if (id.includes('node_modules/@tsparticles/') || id.includes('node_modules/tsparticles')) return 'vendor-particles';
           if (id.includes('node_modules/chart.js/') || id.includes('node_modules/react-chartjs-2/')) return 'vendor-charts';
-          if (id.includes('node_modules/react-leaflet/')) return 'vendor-react';
+          // Keep the map adapters with Leaflet; otherwise React eagerly imports
+          // the lazy map chunk and creates a vendor-react <-> vendor-maps cycle.
+          if (id.includes('node_modules/react-leaflet/') || id.includes('node_modules/@react-leaflet/')) return 'vendor-maps';
           if (id.includes('node_modules/leaflet/')) return 'vendor-maps';
         },
       },
