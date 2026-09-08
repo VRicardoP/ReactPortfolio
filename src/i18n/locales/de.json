@@ -242,6 +242,12 @@
       "delete": "Löschen"
     },
     "cvGeneration": {
+      "library": "Gespeicherte Dokumente",
+      "retentionNotice": "Dokumente bleiben nach dem Löschen der Bewerbung erhalten, bis Sie sie löschen oder die Aufbewahrungsfrist von 180 Tagen endet.",
+      "refreshLibrary": "Dokumente aktualisieren",
+      "deleteDocument": "Dokument löschen",
+      "confirmDeleteDocument": "Dieses Dokument endgültig löschen?",
+      "libraryError": "Dokumente konnten nicht geladen oder aktualisiert werden. Bitte erneut versuchen.",
       "title": "Dokumentenvorschau",
       "generate": "KI-Docs Generieren",
       "generating": "Wird generiert...",

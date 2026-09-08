@@ -242,6 +242,12 @@
       "delete": "Eliminar"
     },
     "cvGeneration": {
+      "library": "Documentos guardados",
+      "retentionNotice": "Los documentos se conservan al borrar la candidatura, hasta que los borres o venza la retención de 180 días.",
+      "refreshLibrary": "Actualizar documentos",
+      "deleteDocument": "Borrar documento",
+      "confirmDeleteDocument": "¿Borrar este documento definitivamente?",
+      "libraryError": "No se pudieron cargar o actualizar los documentos. Inténtalo de nuevo.",
       "title": "Vista Previa de Documentos",
       "generate": "Generar Docs IA",
       "generating": "Generando...",

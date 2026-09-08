@@ -2,12 +2,15 @@ import { memo, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
 import KanbanBoard from './KanbanBoard';
+import DocumentLibrary from './DocumentLibrary';
+import { useAuth } from '../../context/AuthContext';
 import DocumentPreview from './DocumentPreview';
 import useDocumentGeneration from '../../hooks/useDocumentGeneration';
 
 const SelectedOffersPanel = memo(({ initialPosition }) => {
     const { t } = useTranslation();
     const docGen = useDocumentGeneration();
+    const { user } = useAuth();
     const [previewAppId, setPreviewAppId] = useState(null);
 
     // Pre-load document status for all applications so icon buttons render correctly
@@ -50,6 +53,11 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
         >
             <div className="selected-offers-panel">
                 <div className={`selected-offers-kanban${previewAppId ? ' with-preview' : ''}`}>
+                    <DocumentLibrary key={user?.id}
+                        onDownloadPdf={docGen.downloadPdf}
+                        onDownloadJson={docGen.downloadJson}
+                        onDeleted={docGen.fetchDocuments}
+                    />
                     <KanbanBoard
                         documentMap={docGen.documents}
                         generatingIds={docGen.generatingSet}

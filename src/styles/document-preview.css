@@ -151,3 +151,8 @@
     padding: 4px 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* History remains reachable when the Kanban application has been deleted. */
+.document-library { padding: 8px; border-bottom: 1px solid var(--primary, #00ffff); }
+.document-library-list { max-height: 260px; overflow: auto; padding-inline-start: 20px; }
+.document-library-list li { padding-block: 6px; overflow-wrap: anywhere; }

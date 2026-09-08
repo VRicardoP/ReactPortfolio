@@ -242,6 +242,12 @@
       "delete": "Delete"
     },
     "cvGeneration": {
+      "library": "Saved documents",
+      "retentionNotice": "Documents remain after application deletion, until you delete them or the 180-day retention expires.",
+      "refreshLibrary": "Refresh documents",
+      "deleteDocument": "Delete document",
+      "confirmDeleteDocument": "Delete this document permanently?",
+      "libraryError": "Could not load or update documents. Please retry.",
       "title": "Document Preview",
       "generate": "Generate AI Docs",
       "generating": "Generating...",

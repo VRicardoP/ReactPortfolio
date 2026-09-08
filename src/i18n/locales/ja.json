@@ -242,6 +242,12 @@
       "delete": "削除"
     },
     "cvGeneration": {
+      "library": "保存済みドキュメント",
+      "retentionNotice": "応募を削除しても、ドキュメントは個別に削除するか180日間の保存期間が終了するまで保持されます。",
+      "refreshLibrary": "ドキュメントを更新",
+      "deleteDocument": "ドキュメントを削除",
+      "confirmDeleteDocument": "このドキュメントを完全に削除しますか？",
+      "libraryError": "ドキュメントを読み込みまたは更新できませんでした。もう一度お試しください。",
       "title": "書類プレビュー",
       "generate": "AI書類生成",
       "generating": "生成中...",

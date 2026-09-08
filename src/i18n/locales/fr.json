@@ -242,6 +242,12 @@
       "delete": "Supprimer"
     },
     "cvGeneration": {
+      "library": "Documents enregistrés",
+      "retentionNotice": "Les documents sont conservés après la suppression de la candidature, jusqu’à leur suppression ou l’expiration du délai de 180 jours.",
+      "refreshLibrary": "Actualiser les documents",
+      "deleteDocument": "Supprimer le document",
+      "confirmDeleteDocument": "Supprimer définitivement ce document ?",
+      "libraryError": "Impossible de charger ou de modifier les documents. Réessayez.",
       "title": "Aperçu des Documents",
       "generate": "Générer Docs IA",
       "generating": "Génération...",

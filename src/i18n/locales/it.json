@@ -242,6 +242,12 @@
       "delete": "Elimina"
     },
     "cvGeneration": {
+      "library": "Documenti salvati",
+      "retentionNotice": "I documenti restano dopo l’eliminazione della candidatura, finché non li elimini o scade il periodo di conservazione di 180 giorni.",
+      "refreshLibrary": "Aggiorna documenti",
+      "deleteDocument": "Elimina documento",
+      "confirmDeleteDocument": "Eliminare definitivamente questo documento?",
+      "libraryError": "Impossibile caricare o aggiornare i documenti. Riprova.",
       "title": "Anteprima Documenti",
       "generate": "Genera Docs IA",
       "generating": "Generazione...",
