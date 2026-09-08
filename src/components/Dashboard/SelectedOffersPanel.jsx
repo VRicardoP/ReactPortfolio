@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
 import KanbanBoard from './KanbanBoard';
 import DocumentLibrary from './DocumentLibrary';
+import DocumentDeliveryRecovery from './DocumentDeliveryRecovery';
 import { useAuth } from '../../context/AuthContext';
 import DocumentPreview from './DocumentPreview';
 import useDocumentGeneration from '../../hooks/useDocumentGeneration';
@@ -22,6 +23,11 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
         docGen.fetchDocuments(appId);
         setPreviewAppId(appId);
     }, [docGen]);
+
+    const handleGenerate = useCallback(
+        (...args) => docGen.generate(...args).catch(() => null),
+        [docGen],
+    );
 
     const handleClosePreview = useCallback(() => {
         setPreviewAppId(null);
@@ -53,6 +59,8 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
         >
             <div className="selected-offers-panel">
                 <div className={`selected-offers-kanban${previewAppId ? ' with-preview' : ''}`}>
+                    {docGen.error && <p role="alert">{docGen.error}</p>}
+                    <DocumentDeliveryRecovery onDelivered={docGen.fetchDocuments} />
                     <DocumentLibrary key={user?.id}
                         onDownloadPdf={docGen.downloadPdf}
                         onDownloadJson={docGen.downloadJson}
@@ -61,7 +69,7 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
                     <KanbanBoard
                         documentMap={docGen.documents}
                         generatingIds={docGen.generatingSet}
-                        onGenerate={docGen.generate}
+                        onGenerate={handleGenerate}
                         onViewDocuments={handleViewDocs}
                         onDownloadPdf={handleDownloadPdf}
                         onDelete={handleDeleteApp}
@@ -73,7 +81,7 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
                         documents={docGen.getDocumentsFor(previewAppId)}
                         onDownloadPdf={docGen.downloadPdf}
                         onDownloadJson={docGen.downloadJson}
-                        onRegenerate={docGen.generate}
+                        onRegenerate={handleGenerate}
                         applicationId={previewAppId}
                         onClose={handleClosePreview}
                     />

@@ -362,7 +362,7 @@ export const AuthProvider = ({ children }) => {
 
         if (!response.ok) {
             const error = await response.json().catch(() => ({}));
-            throw new Error(error.detail || 'Request failed');
+            throw Object.assign(new Error(error.detail || 'Request failed'), { status: response.status });
         }
 
         return response;

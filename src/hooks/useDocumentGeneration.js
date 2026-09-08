@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BACKEND_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,6 +13,8 @@ const logger = {
  */
 export default function useDocumentGeneration() {
     const { authenticatedFetch } = useAuth();
+    const { t } = useTranslation();
+    const inFlight = useRef(new Set());
     const [documents, setDocuments] = useState({});
     const [generating, setGenerating] = useState(new Set());
     const [error, setError] = useState(null);
@@ -47,19 +50,33 @@ export default function useDocumentGeneration() {
     ), []);
 
     const generate = useCallback(async (applicationId, options = {}) => {
+        if (inFlight.current.has(applicationId)) throw new Error(t('dashboard.cvGeneration.alreadyGenerating'));
+        inFlight.current.add(applicationId);
         setGenerating(prev => new Set(prev).add(applicationId));
         setError(null);
+        let operationKey;
         try {
+            // Store only an opaque operation UUID, never CV/contact/content. A reload
+            // after an ambiguous response must retry the SAME request identity.
+            const intent = {
+                application_id: applicationId,
+                language: options.language || 'en',
+                include_cv: options.includeCv !== false,
+                include_cover_letter: options.includeCoverLetter !== false,
+            };
+            const key = 'document-operation:' + JSON.stringify(intent);
+            operationKey = key;
+            const operationId = sessionStorage.getItem(key) || crypto.randomUUID();
+            sessionStorage.setItem(key, operationId); // unavailable storage => no HTTP
             const resp = await authenticatedFetch(`${BACKEND_URL}/api/v1/cv-generation/generate`, {
                 method: 'POST',
-                body: JSON.stringify({
-                    application_id: applicationId,
-                    language: options.language || 'en',
-                    include_cv: options.includeCv !== false,
-                    include_cover_letter: options.includeCoverLetter !== false,
-                }),
+                body: JSON.stringify({ ...intent, operation_id: operationId }),
             });
             const data = await resp.json();
+            if (resp.status === 202 || data.status === 'pending') {
+                throw new Error(t('dashboard.cvGeneration.deliveryPending'));
+            }
+            sessionStorage.removeItem(key); // explicit success only; next click is a new generation
             markLocalWrite(applicationId);
             setDocuments(prev => {
                 // Reemplazar la entrada ENTERA borraba el documento que esta
@@ -71,16 +88,20 @@ export default function useDocumentGeneration() {
             });
             return data;
         } catch (err) {
+            // 410 is a CONFIRMED deleted generation, not an ambiguous timeout.
+            // Report it; only the user's next explicit click starts a new operation.
+            if (err.status === 410 && operationKey) sessionStorage.removeItem(operationKey);
             setError(err.message || 'Generation failed');
             throw err;
         } finally {
+            inFlight.current.delete(applicationId);
             setGenerating(prev => {
                 const next = new Set(prev);
                 next.delete(applicationId);
                 return next;
             });
         }
-    }, [authenticatedFetch, markLocalWrite]);
+    }, [authenticatedFetch, markLocalWrite, t]);
 
     const fetchDocuments = useCallback(async (applicationId) => {
         // Es el camino de `SelectedOffersPanel.handleViewDocs`, que se dispara al
@@ -117,8 +138,8 @@ export default function useDocumentGeneration() {
             for (const doc of docs) {
                 const appId = doc.application_id;
                 if (!indexed[appId]) indexed[appId] = {};
-                if (doc.doc_type === 'cv') indexed[appId].cv = doc;
-                if (doc.doc_type === 'cover_letter') indexed[appId].coverLetter = doc;
+                if (doc.doc_type === 'cv' && !indexed[appId].cv) indexed[appId].cv = doc;
+                if (doc.doc_type === 'cover_letter' && !indexed[appId].coverLetter) indexed[appId].coverLetter = doc;
             }
             // Fusionar POR SOLICITUD, no reemplazarla: `generate` y
             // `fetchDocuments` escriben en este mismo mapa, y una generacion que

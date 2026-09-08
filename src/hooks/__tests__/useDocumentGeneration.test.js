@@ -34,6 +34,7 @@ describe('useDocumentGeneration', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.restoreAllMocks()
+    sessionStorage.clear()
   })
 
   // --- 1. Initial state ---
@@ -683,5 +684,65 @@ describe('useDocumentGeneration', () => {
     expect(result.current.getDocumentsFor(42).cv).toEqual({
       application_id: 42, doc_type: 'cv', id: 11,
     })
+  })
+})
+
+describe('durable document request identity', () => {
+  beforeEach(() => { vi.clearAllMocks(); sessionStorage.clear() })
+
+  it('retains the key across pending response and remount without erasing existing documents', async () => {
+    const first = renderHook(() => useDocumentGeneration())
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
+      cv_document: { id: 'retained' }, generation_time_ms: 1,
+    }))
+    await act(async () => { await first.result.current.generate('app') })
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({ status: 'pending' }))
+    await act(async () => {
+      await expect(first.result.current.generate('app')).rejects.toThrow('deliveryPending')
+    })
+    expect(first.result.current.getDocumentsFor('app').cv.id).toBe('retained')
+    const pending = JSON.parse(mockAuthenticatedFetch.mock.calls[1][1].body)
+    first.unmount()
+    const second = renderHook(() => useDocumentGeneration())
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
+      status: 'delivered', cv_document: { id: 'core-committed' }, generation_time_ms: 1,
+    }))
+    await act(async () => { await second.result.current.generate('app') })
+    expect(JSON.parse(mockAuthenticatedFetch.mock.calls[2][1].body).operation_id).toBe(pending.operation_id)
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({
+      status: 'delivered', cv_document: { id: 'new-generation' }, generation_time_ms: 1,
+    }))
+    await act(async () => { await second.result.current.generate('app') })
+    expect(JSON.parse(mockAuthenticatedFetch.mock.calls[3][1].body).operation_id).not.toBe(pending.operation_id)
+  })
+
+  it('retry after an ambiguous network failure uses exactly the same request body', async () => {
+    const { result } = renderHook(() => useDocumentGeneration())
+    mockAuthenticatedFetch.mockRejectedValueOnce(new Error('lost ACK'))
+    await act(async () => { await expect(result.current.generate('app')).rejects.toThrow('lost ACK') })
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse({ status: 'delivered', generation_time_ms: 0 }))
+    await act(async () => { await result.current.generate('app') })
+    expect(mockAuthenticatedFetch.mock.calls[1][1].body).toBe(mockAuthenticatedFetch.mock.calls[0][1].body)
+  })
+
+  it('does not send two simultaneous generations for one application', async () => {
+    const { result } = renderHook(() => useDocumentGeneration())
+    let resolve
+    mockAuthenticatedFetch.mockReturnValueOnce(new Promise(r => { resolve = r }))
+    let task
+    act(() => { task = result.current.generate('app') })
+    await act(async () => { await expect(result.current.generate('app')).rejects.toThrow('alreadyGenerating') })
+    expect(mockAuthenticatedFetch).toHaveBeenCalledTimes(1)
+    await act(async () => { resolve(makeMockResponse({ generation_time_ms: 0 })); await task })
+  })
+
+  it('the descending history keeps the newest version per type', async () => {
+    const { result } = renderHook(() => useDocumentGeneration())
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse([
+      { id: 'new', application_id: 'app', doc_type: 'cv' },
+      { id: 'old', application_id: 'app', doc_type: 'cv' },
+    ]))
+    await act(async () => { await result.current.fetchAllDocuments() })
+    expect(result.current.getDocumentsFor('app').cv.id).toBe('new')
   })
 })
