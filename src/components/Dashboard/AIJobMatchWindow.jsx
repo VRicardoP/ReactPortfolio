@@ -42,6 +42,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
     const {
         results,
         metadata,
+        dataSource,
         loading,
         progress,
         error,
@@ -95,10 +96,12 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                     )}
                     {metadata && !loading && (
                         <span className="ai-match-meta">
-                            {t('dashboard.aiMatch.analyzed', {
-                                total: metadata.total_jobs_analyzed,
-                                time: (metadata.total_time_ms / 1000).toFixed(1)
-                            })}
+                            {dataSource === 'core'
+                                ? t('dashboard.aiMatch.coreFeed', { count: results.length })
+                                : t('dashboard.aiMatch.analyzed', {
+                                    total: metadata.total_jobs_analyzed,
+                                    time: (metadata.total_time_ms / 1000).toFixed(1)
+                                })}
                             {metadata.computed_at && (
                                 <> · {t('dashboard.aiMatch.computedAt', {
                                     time: new Date(metadata.computed_at).toLocaleString()
@@ -107,6 +110,10 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                         </span>
                     )}
                 </div>
+
+                {dataSource === 'local_fallback' && (
+                    <p role="status">{t('dashboard.aiMatch.localFallback')}</p>
+                )}
 
                 {/* Tabs */}
                 {results.length > 0 && (

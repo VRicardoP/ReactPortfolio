@@ -34,6 +34,8 @@ const useAIJobMatch = () => {
 
     const [results, setResults] = useState([]);
     const [metadata, setMetadata] = useState(null);
+    const [dataSource, setDataSource] = useState(null);
+    const sourceRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const [progress, setProgress] = useState(null);
     const [error, setError] = useState(null);
@@ -59,6 +61,15 @@ const useAIJobMatch = () => {
         }
     }, [llmUnavailable, activeTab]);
 
+    const installResult = useCallback((data, source = null) => {
+        if (!mountedRef.current) return;
+        setResults(data.results || []);
+        setMetadata(data.metadata || null);
+        setDataSource(source);
+        sourceRef.current = source;
+        setPage(0);
+    }, []);
+
     /** Load the latest persisted result. Returns true when one was available. */
     const fetchResult = useCallback(async () => {
         const response = await authenticatedFetch(
@@ -67,11 +78,9 @@ const useAIJobMatch = () => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const payload = await response.json();
         if (!payload.available || !payload.data || !mountedRef.current) return false;
-        setResults(payload.data.results || []);
-        setMetadata(payload.data.metadata || null);
-        setPage(0);
+        installResult(payload.data, payload.source);
         return true;
-    }, [authenticatedFetch]);
+    }, [authenticatedFetch, installResult]);
 
     /** Poll /analyze/progress until the background run ends, then load the result. */
     const followRunningAnalysis = useCallback(async () => {
@@ -105,9 +114,13 @@ const useAIJobMatch = () => {
                 { method: 'POST' }
             );
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            // status: started | already_running — either way, follow the run
-            await response.json();
-            await followRunningAnalysis();
+            const payload = await response.json();
+            if (payload.source === 'core' && payload.data) {
+                installResult(payload.data, 'core');
+            } else {
+                // Local/canary fallback still uses its asynchronous runner.
+                await followRunningAnalysis();
+            }
         } catch (err) {
             if (mountedRef.current) setError(err.message || 'Analysis failed');
         } finally {
@@ -116,7 +129,7 @@ const useAIJobMatch = () => {
                 setProgress(null);
             }
         }
-    }, [authenticatedFetch, followRunningAnalysis]);
+    }, [authenticatedFetch, followRunningAnalysis, installResult]);
 
     // On mount: show the stored result instantly; if a background analysis is
     // already running (post-deploy warm-up, another session), attach to it.
@@ -125,6 +138,7 @@ const useAIJobMatch = () => {
         (async () => {
             try {
                 await fetchResult();
+                if (sourceRef.current === 'core') return; // no local progress for a persistent feed
                 const response = await authenticatedFetch(
                     `${BACKEND_URL}/api/v1/ai-match/analyze/progress`
                 );
@@ -142,8 +156,9 @@ const useAIJobMatch = () => {
                         }
                     }
                 }
-            } catch {
-                // Silent: no stored result yet is a normal first-visit state
+            } catch (err) {
+                // "available:false" is normal; an HTTP failure is not an empty feed.
+                if (!cancelled && mountedRef.current) setError(err.message || 'Analysis unavailable');
             }
         })();
         return () => { cancelled = true; };
@@ -196,6 +211,7 @@ const useAIJobMatch = () => {
     return {
         results,
         metadata,
+        dataSource,
         loading,
         progress,
         error,

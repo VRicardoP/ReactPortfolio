@@ -474,6 +474,8 @@
       "runAnalysis": "Run AI Analysis",
       "analyzing": "Analyzing jobs with AI...",
       "analyzed": "Analyzed {{total}} jobs in {{time}}s",
+      "coreFeed": "Core feed: {{count}} offers",
+      "localFallback": "Core is unavailable: showing the local fallback result.",
       "stageInfo": "Stage 1: Embeddings → Stage 2: LLM scoring",
       "skillsAnalysis": "Skills Analysis",
       "matchingSkills": "Matching",

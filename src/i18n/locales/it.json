@@ -428,6 +428,8 @@
       "runAnalysis": "Avvia analisi IA",
       "analyzing": "Analisi dei lavori con IA...",
       "analyzed": "{{total}} lavori analizzati in {{time}}s",
+      "coreFeed": "Feed del core: {{count}} offerte",
+      "localFallback": "Il core non è disponibile: viene mostrato il risultato locale di riserva.",
       "stageInfo": "Fase 1: Embeddings → Fase 2: Scoring LLM",
       "skillsAnalysis": "Analisi delle competenze",
       "matchingSkills": "Corrispondenti",

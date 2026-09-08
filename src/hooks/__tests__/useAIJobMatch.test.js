@@ -302,3 +302,48 @@ describe('useAIJobMatch', () => {
     })
   })
 })
+
+
+describe('core background feed', () => {
+  beforeEach(() => vi.clearAllMocks())
+
+  it('loads core data without attaching to legacy progress', async () => {
+    routeFetch([
+      ['/analyze/result', okJson({ available: true, source: 'core', data: { results: makeJobs(2), metadata: { source: 'core_feed' } } })],
+    ])
+    const { result } = renderHook(() => useAIJobMatch())
+    await waitFor(() => expect(result.current.results).toHaveLength(2))
+    expect(result.current.dataSource).toBe('core')
+    expect(mockAuthenticatedFetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('uses the core start response without a second feed request or polling', async () => {
+    routeFetch(idleMountRoutes)
+    const { result } = renderHook(() => useAIJobMatch())
+    await waitFor(() => expect(mockAuthenticatedFetch).toHaveBeenCalledTimes(2))
+    mockAuthenticatedFetch.mockClear()
+    routeFetch([
+      ['/analyze/start', okJson({ status: 'cached', source: 'core', data: { results: makeJobs(50), metadata: { source: 'core_feed' } } })],
+    ])
+    await act(async () => { await result.current.runAnalysis() })
+    expect(mockAuthenticatedFetch).toHaveBeenCalledTimes(1)
+    expect(result.current.results).toHaveLength(50)
+    expect(result.current.dataSource).toBe('core')
+  })
+
+  it('an unavailable core is not represented as a successful empty feed', async () => {
+    routeFetch([['/analyze/result', { ok: false, status: 503 }]])
+    const { result } = renderHook(() => useAIJobMatch())
+    await waitFor(() => expect(result.current.error).toBe('HTTP 503'))
+  })
+
+  it('exposes canary fallback provenance', async () => {
+    routeFetch([
+      ['/analyze/result', okJson({ available: true, source: 'local_fallback', data: { results: makeJobs(1), metadata: {} } })],
+      ['/analyze/progress', okJson({ state: 'idle' })],
+    ])
+    const { result } = renderHook(() => useAIJobMatch())
+    await waitFor(() => expect(result.current.results).toHaveLength(1))
+    expect(result.current.dataSource).toBe('local_fallback')
+  })
+})

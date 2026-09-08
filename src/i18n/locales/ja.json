@@ -428,6 +428,8 @@
       "runAnalysis": "AI分析を実行",
       "analyzing": "AIで求人を分析中...",
       "analyzed": "{{total}}件の求人を{{time}}秒で分析",
+      "coreFeed": "コアのフィード：{{count}}件の求人",
+      "localFallback": "コアに接続できないため、ローカルの代替結果を表示しています。",
       "stageInfo": "ステージ1: エンベディング → ステージ2: LLMスコアリング",
       "skillsAnalysis": "スキル分析",
       "matchingSkills": "一致",

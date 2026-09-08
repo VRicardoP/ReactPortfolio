@@ -428,6 +428,8 @@
       "runAnalysis": "Lancer l'analyse IA",
       "analyzing": "Analyse des emplois avec l'IA...",
       "analyzed": "{{total}} emplois analysés en {{time}}s",
+      "coreFeed": "Flux du core : {{count}} offres",
+      "localFallback": "Le core est indisponible : affichage du résultat local de secours.",
       "stageInfo": "Étape 1 : Embeddings → Étape 2 : Scoring LLM",
       "skillsAnalysis": "Analyse des compétences",
       "matchingSkills": "Correspondantes",
