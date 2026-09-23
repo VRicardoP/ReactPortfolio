@@ -474,3 +474,22 @@
 }
 .ai-match-summary.secondary { opacity: 0.75; }
 .ai-match-summary.muted { opacity: 0.55; font-style: italic; }
+
+/* Bolsa de empleo: resumen de la oferta y titulo enlazado */
+.jobboard-summary {
+    margin: 0.4rem 0 0.2rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    opacity: 0.9;
+}
+.jobboard-summary.secondary { opacity: 0.72; }
+.jobboard-summary.muted { opacity: 0.55; font-style: italic; }
+.jobboard-title-link { color: inherit; text-decoration: none; }
+.jobboard-title-link:hover { text-decoration: underline; }
+.jobboard-translated-badge {
+    margin-left: 0.4rem;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+}

@@ -176,7 +176,30 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
                         pagedJobs.map(job => (
                             <div key={job.id} className="jobboard-card">
                                 <div className="jobboard-card-header">
-                                    <h3 className="jobboard-title">{job.title}</h3>
+                                    {/* El titulo enlaza a la oferta: antes el unico
+                                        camino para abrirla era el boton «apply», que
+                                        sugiere postular. `title_en` lo resuelve el
+                                        backend en segundo plano (job_enrichments). */}
+                                    <h3 className="jobboard-title">
+                                        {job.url ? (
+                                            <a
+                                                href={job.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="jobboard-title-link"
+                                                title={job.title_en ? job.title : undefined}
+                                            >
+                                                {job.title_en || job.title}
+                                            </a>
+                                        ) : (
+                                            job.title_en || job.title
+                                        )}
+                                        {job.title_en && (
+                                            <span className="jobboard-translated-badge">
+                                                {t('dashboard.aiMatch.translated')}
+                                            </span>
+                                        )}
+                                    </h3>
                                     <div style={{ display: 'flex', gap: '5px', alignItems: 'center', flexShrink: 0 }}>
                                         {job.remote && (
                                             <span className="jobboard-remote-badge">REMOTE</span>
@@ -209,6 +232,19 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
                                     </div>
                                 )}
 
+                                {/* Dos o tres frases para decidir sin salir de la
+                                    lista: resumen del LLM; si aun no esta, el
+                                    principio de la descripcion YA limpia de
+                                    marcado; si la fuente no publica texto, se dice. */}
+                                {job.summary ? (
+                                    <p className="jobboard-summary">{job.summary}</p>
+                                ) : job.description_snippet ? (
+                                    <p className="jobboard-summary secondary">{job.description_snippet}</p>
+                                ) : (
+                                    <p className="jobboard-summary muted">
+                                        {t('dashboard.aiMatch.noDescription')}
+                                    </p>
+                                )}
                                 {job.tags && job.tags.length > 0 && (
                                     <div className="jobboard-skills">
                                         {job.tags.slice(0, 5).map(tag => (
