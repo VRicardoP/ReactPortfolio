@@ -501,7 +501,8 @@
       "progressEmbedding": "Codificando ofertas {{done}}/{{total}}",
       "progressRerank": "Evaluación IA — lote {{done}}/{{total}}",
       "progressFinalize": "Finalizando…",
-      "computedAt": "Análisis de las {{time}}"
+      "computedAt": "Análisis de las {{time}}",
+      "noDescription": "Esta fuente no publica la descripción — abre la oferta en el portal."
     },
     "tab": {
       "overview": "General",

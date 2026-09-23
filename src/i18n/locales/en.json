@@ -501,7 +501,8 @@
       "progressEmbedding": "Encoding offers {{done}}/{{total}}",
       "progressRerank": "AI evaluation — batch {{done}}/{{total}}",
       "progressFinalize": "Finalizing…",
-      "computedAt": "Analysis from {{time}}"
+      "computedAt": "Analysis from {{time}}",
+      "noDescription": "This source does not publish the description — open the offer on the portal."
     },
     "tab": {
       "overview": "Overview",

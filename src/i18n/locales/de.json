@@ -455,7 +455,8 @@
       "progressEmbedding": "Kodierung der Stellen {{done}}/{{total}}",
       "progressRerank": "KI-Bewertung — Charge {{done}}/{{total}}",
       "progressFinalize": "Abschluss…",
-      "computedAt": "Analyse von {{time}}"
+      "computedAt": "Analyse von {{time}}",
+      "noDescription": "Diese Quelle veröffentlicht keine Beschreibung — Stelle im Portal öffnen."
     },
     "tab": {
       "overview": "Übersicht",

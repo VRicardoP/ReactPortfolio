@@ -464,3 +464,13 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* Resumen de la oferta (2-3 frases) bajo los metadatos de la tarjeta */
+.ai-match-summary {
+    margin: 0.5rem 0 0.25rem;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    opacity: 0.92;
+}
+.ai-match-summary.secondary { opacity: 0.75; }
+.ai-match-summary.muted { opacity: 0.55; font-style: italic; }

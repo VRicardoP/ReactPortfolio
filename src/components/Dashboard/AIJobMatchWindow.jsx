@@ -214,8 +214,10 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                         <div className="ai-match-card-header">
                                             <div className="ai-match-card-title-col">
                                                 <div className="ai-match-card-title" style={{ color: theme.textHighlight }}>
-                                                    {translatedTitles[job.title] || job.title}
-                                                    {translatedTitles[job.title] && (
+                                                    {/* `title_en` llega ya resuelto del backend (enriquecimiento en
+                                                        segundo plano); el boton manual sigue cubriendo lo aun pendiente. */}
+                                                    {job.title_en || translatedTitles[job.title] || job.title}
+                                                    {(job.title_en || translatedTitles[job.title]) && (
                                                         <span
                                                             className="ai-match-translated-badge"
                                                             title={job.title}
@@ -265,6 +267,16 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                             )}
                                         </div>
 
+                                        {/* Resumen de 2-3 frases (LLM, resuelto en segundo plano); mientras
+                                            no exista, el principio de la descripcion; si la fuente no publica
+                                            texto (jobgether, colegios), se dice en vez de dejar un hueco. */}
+                                        {job.summary ? (
+                                            <p className="ai-match-summary" style={{ color: theme.text }}>{job.summary}</p>
+                                        ) : job.description_snippet ? (
+                                            <p className="ai-match-summary secondary" style={{ color: theme.text }}>{job.description_snippet}</p>
+                                        ) : (
+                                            <p className="ai-match-summary muted" style={{ color: theme.text }}>{t('dashboard.aiMatch.noDescription')}</p>
+                                        )}
                                         <button
                                             className="ai-match-skills-toggle"
                                             style={{ color: theme.primary }}
