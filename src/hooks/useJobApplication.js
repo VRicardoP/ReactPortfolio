@@ -3,43 +3,33 @@ import { BACKEND_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 
 /**
- * Hook to handle job applications: apply (opens URL + saves as applied)
- * and save-to-board (saves as saved for later review in pipeline).
- * Deduplicates by job ID so the same job isn't processed twice.
+ * Acciones sobre una oferta del panel. Tres, y cada una dice la verdad:
+ *
+ * - `handleInterested` — marca ligera «me interesa». No existía: el enum del
+ *   backend no tenía ese estado, así que el botón tampoco.
+ * - `handleSave` — la guarda para revisarla.
+ * - `handleOpenOffer` — ABRE la oferta en otra pestaña y la guarda.
+ *
+ * Lo que este hook YA NO hace: dar por aplicada una oferta sólo porque se
+ * abrió su página. `handleApply` abría la URL y a la vez registraba
+ * `status: 'applied'`, así que el panel mostraba como aplicadas ofertas a las
+ * que nadie había aplicado. Abrir una oferta es mirarla, no postular: quien
+ * aplica de verdad lo marca en el Kanban, que para eso tiene su columna.
+ *
+ * Deduplica por id para no crear la misma candidatura dos veces.
  */
 export default function useJobApplication() {
     const { authenticatedFetch } = useAuth();
-    const [appliedIds, setAppliedIds] = useState(new Set());
+    const [interestedIds, setInterestedIds] = useState(new Set());
     const [savedIds, setSavedIds] = useState(new Set());
-    const savingRef = useRef(new Set());
+    const [openedIds, setOpenedIds] = useState(new Set());
+    const enCursoRef = useRef(new Set());
 
-    const handleApply = useCallback(async (job) => {
-        if (job.url) {
-            window.open(job.url, '_blank', 'noopener,noreferrer');
-        }
-        if (appliedIds.has(job.id)) return;
-        try {
-            const response = await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    title: job.title,
-                    company: job.company,
-                    url: job.url || null,
-                    source: job.source,
-                    status: 'applied',
-                }),
-            });
-            const created = await response.json();
-            setAppliedIds(prev => new Set(prev).add(job.id));
-            window.dispatchEvent(new CustomEvent('application-changed', { detail: created }));
-        } catch {
-            // URL already opened — silently fail
-        }
-    }, [authenticatedFetch, appliedIds]);
-
-    const handleSave = useCallback(async (job) => {
-        if (savedIds.has(job.id) || savingRef.current.has(job.id)) return;
-        savingRef.current.add(job.id);
+    // Registra la oferta con el estado pedido. Devuelve true si quedó anotada.
+    const registrar = useCallback(async (job, status) => {
+        const clave = `${status}:${job.id}`;
+        if (enCursoRef.current.has(clave)) return false;
+        enCursoRef.current.add(clave);
         try {
             const response = await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/`, {
                 method: 'POST',
@@ -48,21 +38,52 @@ export default function useJobApplication() {
                     company: job.company || '',
                     url: job.url || null,
                     source: job.source || null,
-                    status: 'saved',
+                    status,
                     description: job.description || null,
                 }),
             });
-            if (response.ok) {
-                const created = await response.json();
-                setSavedIds(prev => new Set(prev).add(job.id));
-                window.dispatchEvent(new CustomEvent('application-changed', { detail: created }));
-            }
+            if (!response.ok) return false;
+            const created = await response.json();
+            window.dispatchEvent(new CustomEvent('application-changed', { detail: created }));
+            return true;
         } catch {
-            // Save failed — silently fail
+            return false;
         } finally {
-            savingRef.current.delete(job.id);
+            enCursoRef.current.delete(clave);
         }
-    }, [authenticatedFetch, savedIds]);
+    }, [authenticatedFetch]);
 
-    return { handleApply, appliedIds, handleSave, savedIds };
+    const handleInterested = useCallback(async (job) => {
+        if (interestedIds.has(job.id)) return;
+        if (await registrar(job, 'interested')) {
+            setInterestedIds(prev => new Set(prev).add(job.id));
+        }
+    }, [registrar, interestedIds]);
+
+    const handleSave = useCallback(async (job) => {
+        if (savedIds.has(job.id)) return;
+        if (await registrar(job, 'saved')) {
+            setSavedIds(prev => new Set(prev).add(job.id));
+        }
+    }, [registrar, savedIds]);
+
+    const handleOpenOffer = useCallback(async (job) => {
+        if (job.url) {
+            window.open(job.url, '_blank', 'noopener,noreferrer');
+        }
+        // Se guarda para no perderla de vista, NUNCA como aplicada: abrir la
+        // pagina de una oferta no es haber postulado a ella.
+        if (!openedIds.has(job.id) && !savedIds.has(job.id)) {
+            if (await registrar(job, 'saved')) {
+                setSavedIds(prev => new Set(prev).add(job.id));
+            }
+        }
+        setOpenedIds(prev => new Set(prev).add(job.id));
+    }, [registrar, openedIds, savedIds]);
+
+    return {
+        handleInterested, interestedIds,
+        handleSave, savedIds,
+        handleOpenOffer, openedIds,
+    };
 }

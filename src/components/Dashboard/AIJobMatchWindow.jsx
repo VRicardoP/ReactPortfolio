@@ -61,7 +61,8 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
         selectTab,
         llmUnavailable,
     } = useAIJobMatch();
-    const { handleApply, appliedIds, handleSave, savedIds } = useJobApplication();
+    const { handleInterested, interestedIds, handleSave, savedIds, handleOpenOffer, openedIds } =
+        useJobApplication();
     const { missingSkills, addedSkills, togglingSkill, toggleSkill, lastError: skillError } = useSkillsGap(results);
 
     return (
@@ -324,6 +325,18 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                                 <FreshnessBadge dateStr={job.date} />
                                             </span>
                                             <div className="ai-match-card-actions">
+                                                {/* «Me interesa»: marca ligera, primer paso del embudo. Faltaba
+                                                    porque ese estado no existía en el backend (tt33u2264w20). */}
+                                                <button
+                                                    onClick={() => handleInterested(job)}
+                                                    disabled={interestedIds.has(job.id)}
+                                                    className={`cv-gen-btn ${interestedIds.has(job.id) ? 'cv-gen-btn-applied' : 'cv-gen-btn-generate'}`}
+                                                >
+                                                    {interestedIds.has(job.id)
+                                                        ? t('dashboard.jobBoard.interestedDone')
+                                                        : t('dashboard.jobBoard.interested')
+                                                    }
+                                                </button>
                                                 <button
                                                     onClick={() => handleSave(job)}
                                                     disabled={savedIds.has(job.id)}
@@ -336,12 +349,12 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                                 </button>
                                                 {job.url && (
                                                     <button
-                                                        onClick={() => handleApply(job)}
-                                                        className={`jobboard-apply-btn ${appliedIds.has(job.id) ? 'applied' : ''}`}
+                                                        onClick={() => handleOpenOffer(job)}
+                                                        className={`jobboard-apply-btn ${openedIds.has(job.id) ? 'applied' : ''}`}
                                                     >
-                                                        {appliedIds.has(job.id)
-                                                            ? t('dashboard.jobBoard.applied')
-                                                            : t('dashboard.jobBoard.apply')
+                                                        {openedIds.has(job.id)
+                                                            ? t('dashboard.jobBoard.opened')
+                                                            : t('dashboard.jobBoard.viewOffer')
                                                         }
                                                     </button>
                                                 )}

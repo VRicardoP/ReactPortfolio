@@ -27,7 +27,7 @@ const filterSummary = (filters) => {
 const SavedSearchesPanel = memo(({ saved, jobApp }) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
-    const { handleApply, appliedIds } = jobApp;
+    const { handleOpenOffer, openedIds } = jobApp;
 
     const {
         searches, loading, showForm, setShowForm, formData, hasAnyFilter,
@@ -245,13 +245,13 @@ const SavedSearchesPanel = memo(({ saved, jobApp }) => {
                                             </span>
                                             {job.url && (
                                                 <button
-                                                    onClick={(e) => { e.stopPropagation(); handleApply(job); }}
-                                                    className={`jobboard-apply-btn ${appliedIds.has(job.id) ? 'applied' : ''}`}
+                                                    onClick={(e) => { e.stopPropagation(); handleOpenOffer(job); }}
+                                                    className={`jobboard-apply-btn ${openedIds.has(job.id) ? 'applied' : ''}`}
                                                     style={{ padding: '2px 8px', fontSize: '10px' }}
                                                 >
-                                                    {appliedIds.has(job.id)
-                                                        ? t('dashboard.jobBoard.applied')
-                                                        : t('dashboard.jobBoard.apply')
+                                                    {openedIds.has(job.id)
+                                                        ? t('dashboard.jobBoard.opened')
+                                                        : t('dashboard.jobBoard.viewOffer')
                                                     }
                                                 </button>
                                             )}

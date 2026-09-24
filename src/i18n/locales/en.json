@@ -213,7 +213,11 @@
       "tabIrishjobs": "IrishJobs",
       "applied": "Applied",
       "save": "Save",
-      "saved": "Saved"
+      "saved": "Saved",
+      "interested": "I'm interested",
+      "interestedDone": "Interested ✓",
+      "viewOffer": "View offer",
+      "opened": "Opened ✓"
     },
     "selectedOffers": {
       "title": "Selected Offers",
@@ -391,7 +395,8 @@
       "downloadDocs": "Download documents",
       "openUrl": "Open job posting",
       "markApplied": "Mark as applied",
-      "deleteApp": "Delete application"
+      "deleteApp": "Delete application",
+      "interested": "Interested"
     },
     "jsearchLive": {
       "title": "JSearch Live Search",

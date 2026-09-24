@@ -14,7 +14,7 @@ vi.mock('../JobCardExtras', () => ({
     CompanyResearchName: ({ children }) => <span>{children}</span>,
 }));
 vi.mock('../../../hooks/useJobApplication', () => ({
-    default: () => ({ handleSave: vi.fn(), savedIds: new Set(), appliedIds: new Set() }),
+    default: () => ({ handleSave: vi.fn(), savedIds: new Set(), openedIds: new Set(), handleInterested: vi.fn(), interestedIds: new Set() }),
 }));
 vi.mock('../JobBoardControls', () => ({ default: () => null }));
 // El componente recibe `jobData` por FUENTE y lee `_normalized`; la paginacion

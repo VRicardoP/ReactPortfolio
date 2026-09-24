@@ -5,6 +5,9 @@ import useKanban from '../../hooks/useKanban';
 import '../../styles/kanban.css';
 
 const COLUMNS = [
+    // Primer paso del embudo. Antes no existía: por eso abrir una oferta se
+    // registraba directamente como «aplicada», que era falso.
+    { key: 'interested', i18nKey: 'interested', color: '#9C27B0' },
     { key: 'saved', i18nKey: 'saved', color: '#888888' },
     { key: 'applied', i18nKey: 'applied', color: '#4CAF50' },
     { key: 'phone_screen', i18nKey: 'phoneScreen', color: '#FF9800' },

@@ -15,7 +15,7 @@ vi.mock('../JobCardExtras', () => ({
     CompanyResearchName: ({ children }) => <span>{children}</span>,
 }));
 vi.mock('../../../hooks/useJobApplication', () => ({
-    default: () => ({ handleApply: vi.fn(), appliedIds: new Set(), handleSave: vi.fn(), savedIds: new Set() }),
+    default: () => ({ handleOpenOffer: vi.fn(), openedIds: new Set(), handleInterested: vi.fn(), interestedIds: new Set(), handleSave: vi.fn(), savedIds: new Set() }),
 }));
 vi.mock('../../../hooks/useSkillsGap', () => ({
     default: () => ({ missingSkills: [], addedSkills: new Set(), togglingSkill: null, toggleSkill: vi.fn(), lastError: null }),

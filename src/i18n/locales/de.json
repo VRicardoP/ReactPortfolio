@@ -213,7 +213,11 @@
       "tabIrishjobs": "IrishJobs",
       "applied": "Beworben",
       "save": "Speichern",
-      "saved": "Gespeichert"
+      "saved": "Gespeichert",
+      "interested": "Interessiert mich",
+      "interestedDone": "Interessiert ✓",
+      "viewOffer": "Angebot ansehen",
+      "opened": "Geöffnet ✓"
     },
     "selectedOffers": {
       "title": "Ausgewählte Angebote",
@@ -345,7 +349,8 @@
       "downloadDocs": "Dokumente herunterladen",
       "openUrl": "Stellenanzeige öffnen",
       "markApplied": "Als beworben markieren",
-      "deleteApp": "Bewerbung löschen"
+      "deleteApp": "Bewerbung löschen",
+      "interested": "Interessiert"
     },
     "jsearchLive": {
       "title": "JSearch Live-Suche",

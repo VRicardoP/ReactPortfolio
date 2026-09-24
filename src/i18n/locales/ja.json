@@ -213,7 +213,11 @@
       "tabIrishjobs": "IrishJobs",
       "applied": "応募済み",
       "save": "保存",
-      "saved": "保存済み"
+      "saved": "保存済み",
+      "interested": "興味あり",
+      "interestedDone": "興味あり ✓",
+      "viewOffer": "求人を見る",
+      "opened": "開いた ✓"
     },
     "selectedOffers": {
       "title": "選択した求人",
@@ -345,7 +349,8 @@
       "downloadDocs": "書類をダウンロード",
       "openUrl": "求人を開く",
       "markApplied": "応募済みにする",
-      "deleteApp": "応募を削除"
+      "deleteApp": "応募を削除",
+      "interested": "興味あり"
     },
     "jsearchLive": {
       "title": "JSearchライブ検索",

@@ -12,7 +12,7 @@ import { FreshnessBadge, CompanyResearchName } from '../JobCardExtras';
 const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
-    const { handleApply, appliedIds } = jobApp;
+    const { handleOpenOffer, openedIds } = jobApp;
 
     const {
         filters, results, total, hasMore, loading, searched, hasFilters,
@@ -229,12 +229,12 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                             </span>
                             {job.url && (
                                 <button
-                                    onClick={() => handleApply(job)}
-                                    className={`jobboard-apply-btn ${appliedIds.has(job.id) ? 'applied' : ''}`}
+                                    onClick={() => handleOpenOffer(job)}
+                                    className={`jobboard-apply-btn ${openedIds.has(job.id) ? 'applied' : ''}`}
                                 >
-                                    {appliedIds.has(job.id)
-                                        ? t('dashboard.jobBoard.applied')
-                                        : t('dashboard.jobBoard.apply')
+                                    {openedIds.has(job.id)
+                                        ? t('dashboard.jobBoard.opened')
+                                        : t('dashboard.jobBoard.viewOffer')
                                     }
                                 </button>
                             )}

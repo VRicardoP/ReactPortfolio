@@ -13,7 +13,7 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
     const { theme } = useTheme();
     const [activeTab, setActiveTab] = useState('all');
     const [search, setSearch] = useState('');
-    const { appliedIds, handleSave, savedIds } = useJobApplication();
+    const { openedIds, handleSave, savedIds } = useJobApplication();
 
     // Use pre-normalized data from useDashboardData (normalized at fetch time)
     const normalizedBySource = useMemo(() => {
@@ -273,15 +273,15 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
                                                 rel="noopener noreferrer"
                                                 className="jobboard-apply-btn"
                                             >
-                                                {t('dashboard.jobBoard.apply')}
+                                                {t('dashboard.jobBoard.viewOffer')}
                                             </a>
                                         )}
                                         <button
                                             onClick={() => handleSave(job)}
-                                            disabled={savedIds.has(job.id) || appliedIds.has(job.id)}
-                                            className={`jobboard-save-btn ${savedIds.has(job.id) || appliedIds.has(job.id) ? 'saved' : ''}`}
+                                            disabled={savedIds.has(job.id) || openedIds.has(job.id)}
+                                            className={`jobboard-save-btn ${savedIds.has(job.id) || openedIds.has(job.id) ? 'saved' : ''}`}
                                         >
-                                            {savedIds.has(job.id) || appliedIds.has(job.id)
+                                            {savedIds.has(job.id) || openedIds.has(job.id)
                                                 ? t('dashboard.jobBoard.saved')
                                                 : t('dashboard.jobBoard.save')
                                             }
