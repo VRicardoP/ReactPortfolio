@@ -35,10 +35,7 @@
     "frontend": "FRONTEND",
     "backend": "BACKEND",
     "databases": "BASES DE DATOS",
-    "others": "OTROS",
-    "viewBars": "Barras",
-    "viewRadar": "Radar",
-    "viewMatrix": "Matriz"
+    "others": "OTROS"
   },
   "profile": {
     "yearsExp": "20+ años",
@@ -49,7 +46,9 @@
     "normalView": "Perfil Completo",
     "downloadCV": "Descargar CV",
     "exportJSON": "JSON Resume",
-    "exportPDF": "Imprimir PDF",
+    "exportPDF": "Descargar PDF",
+    "downloadFailed": "No se pudo descargar el CV. Inténtalo de nuevo.",
+    "downloadRateLimited": "Demasiados intentos de descarga. Espera un minuto.",
     "recruiterTopImpact": "Impacto Principal",
     "recruiterTopImpact1": "99%+ uptime de red (sanidad)",
     "recruiterTopImpact2": "60% mejora rendimiento infraestructura",
@@ -63,36 +62,21 @@
     "recruiterKeyMetrics2": "1.000+ terminales gestionados",
     "recruiterKeyMetrics3": "4 países en soporte remoto"
   },
-  "softSkills": {
-    "desc0": "Cumple sus compromisos y asume la responsabilidad de los resultados",
-    "desc1": "Evalúa situaciones complejas con lógica y razonamiento basado en datos",
-    "desc2": "Mantiene estándares éticos y transparencia en todas las interacciones",
-    "desc3": "Comprende las necesidades del usuario y diseña soluciones desde su perspectiva",
-    "desc4": "Gestiona desacuerdos para encontrar soluciones beneficiosas para todos",
-    "desc5": "Adquiere nuevas habilidades proactivamente y se mantiene al día con las tendencias",
-    "desc6": "Colabora entre roles y contribuye a objetivos compartidos",
-    "desc7": "Identifica oportunidades y actúa sin esperar a que se lo pidan",
-    "desc8": "Mantiene la calma y productividad bajo presión",
-    "desc9": "Prospera en entornos cambiantes y se adapta rápidamente",
-    "desc10": "Descompone desafíos difíciles en soluciones accionables",
-    "desc11": "Comunica ideas eficazmente tanto a audiencias técnicas como no técnicas",
-    "desc12": "Establece metas de forma independiente y mantiene el enfoque sin supervisión"
-  },
   "education": {
     "typeDegree": "Titulación",
     "typeBootcamp": "Bootcamp",
     "typeCert": "Certificado",
-    "typeCourse": "Curso"
+    "typeCourse": "Curso",
+    "europass": "Suplemento Europass"
+  },
+  "documentViewer": {
+    "openNewTab": "Abrir en una pestaña nueva",
+    "download": "Descargar",
+    "close": "Cerrar"
   },
   "portfolio": {
     "statusCompleted": "Completado",
     "statusInProgress": "En Progreso"
-  },
-  "fitMatrix": {
-    "skill": "Habilidad",
-    "category": "Categoría",
-    "proficiency": "Dominio",
-    "level": "Niv"
   },
   "windows": {
     "profile": "Perfil",
@@ -105,7 +89,6 @@
     "achievements": "Logros",
     "contact": "Contacto",
     "chat": "Kusanagi AI",
-    "fitMatrix": "Matriz de Habilidades",
     "jobSearch": "Búsqueda de empleo"
   },
   "app": {

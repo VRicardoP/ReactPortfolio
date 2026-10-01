@@ -15,6 +15,7 @@ const MAX_CELL_HEIGHT = 320;
 // Header offset accounts for top navbar height
 const HEADER_OFFSET_MOBILE = 70;
 const HEADER_OFFSET_DESKTOP = 110;
+const PILL_ROW_TOP_OFFSET = 15;
 
 // Minimized pill dimensions
 const PILL_WIDTH_MOBILE = 140;
@@ -68,7 +69,7 @@ const useWindowLayout = (windowIds, delay = 3000) => {
     const pillGap = isMobile ? PILL_GAP_MOBILE : PILL_GAP_DESKTOP;
     const maxRowWidth = screenWidth * MAX_ROW_WIDTH_RATIO;
     const perRow = Math.max(1, Math.floor((maxRowWidth + pillGap) / (pillWidth + pillGap)));
-    const menuY = isMobile ? HEADER_OFFSET_MOBILE : HEADER_OFFSET_DESKTOP;
+    const menuY = (isMobile ? HEADER_OFFSET_MOBILE : HEADER_OFFSET_DESKTOP) + PILL_ROW_TOP_OFFSET;
     const rowHeight = isMobile ? ROW_HEIGHT_MOBILE : ROW_HEIGHT_DESKTOP;
 
     timerIdsRef.current = [];
@@ -146,7 +147,7 @@ const useWindowLayout = (windowIds, delay = 3000) => {
       const pillGap = isMobile ? PILL_GAP_MOBILE : PILL_GAP_DESKTOP;
       const maxRowWidth = screenWidth * MAX_ROW_WIDTH_RATIO;
       const perRow = Math.max(1, Math.floor((maxRowWidth + pillGap) / (pillWidth + pillGap)));
-      const menuY = isMobile ? HEADER_OFFSET_MOBILE : HEADER_OFFSET_DESKTOP;
+      const menuY = (isMobile ? HEADER_OFFSET_MOBILE : HEADER_OFFSET_DESKTOP) + PILL_ROW_TOP_OFFSET;
       const rowHeight = isMobile ? ROW_HEIGHT_MOBILE : ROW_HEIGHT_DESKTOP;
 
       windowIds.forEach((windowId, index) => {

@@ -7,14 +7,14 @@
         "description": "IT-Fachmann mit über 25 Jahren ununterbrochener Berufserfahrung in Systemadministration, kritischer Infrastruktur und Softwareentwicklung. Duales Profil: bewährte Kompetenz in hochverfügbarer Unternehmensinfrastruktur — Krankenhäuser, nationale Rechenzentren, regionale Gesundheitsnetzwerke — kombiniert mit moderner Full-Stack-Entwicklung und Conversational-AI-Engineering. EU-Bürger, verfügbar für Remote-Positionen mit vollständiger Abdeckung der CET-Geschäftszeiten. Auf der Suche nach Organisationen, die Werte wie technische Präzision, Zuverlässigkeit und nachhaltige Qualität teilen."
     },
     "softSkills": [
-        "Eigenverantwortliche Entscheidungsfindung in kritischen Umgebungen ohne direkte Aufsicht",
-        "Proaktive Eigeninitiative — selbst vorgeschlagene Verbesserungen ohne vorherigen Auftrag",
-        "Englisch C1 für technische Kommunikation und internationale Eskalationen",
-        "Strukturierte Problemlösung unter Hochdruckbedingungen",
-        "Technische Dokumentation als systematische Praxis im Arbeitsalltag",
-        "Kontinuierliche Weiterbildung neben Vollzeitbeschäftigung",
-        "End-to-End-Verantwortung für technische Projekte",
-        "Effektives 100-%-Remote-Arbeiten seit 2020"
+        { "text": "Eigenverantwortliche Entscheidungsfindung in kritischen Umgebungen ohne direkte Aufsicht", "icon": "🎯" },
+        { "text": "Proaktive Eigeninitiative — selbst vorgeschlagene Verbesserungen ohne vorherigen Auftrag", "icon": "🚀" },
+        { "text": "Englisch C1 für technische Kommunikation und internationale Eskalationen", "icon": "💬" },
+        { "text": "Strukturierte Problemlösung unter Hochdruckbedingungen", "icon": "🔧" },
+        { "text": "Technische Dokumentation als systematische Praxis im Arbeitsalltag", "icon": "📝" },
+        { "text": "Kontinuierliche Weiterbildung neben Vollzeitbeschäftigung", "icon": "📚" },
+        { "text": "End-to-End-Verantwortung für technische Projekte", "icon": "⭐" },
+        { "text": "Effektives 100-%-Remote-Arbeiten seit 2020", "icon": "🏠" }
     ],
     "education": [
         {
@@ -22,6 +22,7 @@
             "institution": "IES Jaume II el Just — Tabernes de la Valldigna, Valencia, Spanien — EQF Stufe 5 | 120 ECTS | Europass",
             "date": "2024 – 2025",
             "type": "degree",
+            "documents": [{ "labelKey": "education.europass", "file": "europass-daw" }],
             "description": "Offizieller Abschluss auf EQF-Stufe 5 mit Europass-Supplement, EU-weit anerkannt. Kernmodule: client- und serverseitige Webentwicklung (JavaScript, PHP, Node.js), Deployment von Webanwendungen, barrierefreies Interface-Design (HTML5, CSS3), relationale Datenbanken und ERP/CRM mit Odoo."
         },
         {
@@ -29,6 +30,7 @@
             "institution": "IES Jaume II el Just — Tabernes de la Valldigna, Valencia, Spanien — EQF Stufe 5 | 120 ECTS | Europass",
             "date": "2021 – 2024",
             "type": "degree",
+            "documents": [{ "labelKey": "education.europass", "file": "europass-dam" }],
             "description": "Offizieller Abschluss auf EQF-Stufe 5 mit Europass-Supplement, EU-weit anerkannt. Kernmodule: objektorientierte Programmierung in Java, mobile Entwicklung (Android/Kotlin, Flutter/Dart), Datenzugriff mit Hibernate und ORM, ERP/CRM Odoo, TDD und UML. Abgeschlossen berufsbegleitend in Vollzeitbeschäftigung."
         },
         {
@@ -174,7 +176,7 @@
             "title": "CookCode System — Restaurant- und Küchenmanagement-Suite",
             "tech": ["PHP 8.2", "MySQL 8", "WordPress", "WooCommerce", "Python", "PySide6", "Docker", "MQTT"],
             "description": "Durchgängige Gastronomie-Plattform, die Zentralküche, Restaurant-Kasse und Online-Shop unter einer gemeinsamen Datengrundlage vereint. Vier vernetzte Dienste — WordPress-Shop mit eigenen WooCommerce-APIs, Küchen-App mit Chargenrückverfolgung und QR-Etiketten, Restaurant-Kasse mit MQTT-Scanner sowie der MiniChef-Sprachassistent (PySide6 + Vosk + Coqui TTS + Gemini) — orchestriert durch ein einziges docker-compose mit sechs Containern.",
-            "github": "https://gitlab.com/lotharsan/cookcodesystem",
+            "gitlab": "https://gitlab.com/lotharsan/cookcodesystem",
             "demo": "",
             "status": "completed"
         },
@@ -182,7 +184,7 @@
             "title": "Portfolio Frontend — vicentepau.is-a.dev",
             "tech": ["React 19", "Vite 7", "Three.js", "Chart.js", "Leaflet", "i18next", "Vitest", "Playwright"],
             "description": "Dieses Portfolio. Desktop-OS-Metapher mit ziehbaren, grössenveränderbaren Fenstern, sechs interaktiven 3D-Hintergründen, drei Farbthemen, einem Groq-basierten KI-Chatbot, sechs Sprachen, Besuchertracking und einem privaten Admin-Dashboard mit Job-Aggregation, KI-Matching, Kanban-Pipeline und KI-generierten Lebensläufen. 313 Vitest- + 17 Playwright-Tests. Ausgerollt auf Cloudflare Pages.",
-            "github": "https://gitlab.com/lotharsan/reactportfolio-front",
+            "gitlab": "https://gitlab.com/lotharsan/reactportfolio-front",
             "demo": "https://vicentepau.is-a.dev",
             "status": "in-progress"
         },
@@ -190,7 +192,7 @@
             "title": "Parakeet — Smartphone-Integration für Budgie",
             "tech": ["Vala", "GTK 3", "Meson", "D-Bus", "KDE Connect"],
             "description": "Budgie-Panel-Applet, das ein Android-Telefon über KDE Connect in den Linux-Arbeitsablauf integriert. Ein Klick zeigt Gerätestatus, Akkustand, die letzten zehn Benachrichtigungen, «Find my phone» und einen SFTP-Dateibrowser — alles gesteuert über D-Bus-Signale des KDE-Connect-Daemons, ohne Polling und ohne Hintergrunddienste.",
-            "github": "https://gitlab.com/lotharsan/parakeet",
+            "gitlab": "https://gitlab.com/lotharsan/parakeet",
             "demo": "",
             "status": "in-progress"
         },
@@ -198,7 +200,7 @@
             "title": "Photoloop — Digitaler Bilderrahmen mit NAS-Streaming",
             "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
             "description": "Flutter-Android-App, die jedes Handy, Tablet oder Android TV in einen digitalen Bilderrahmen verwandelt. Streamt Fotos von einem SMB-fähigen NAS mit automatischer Subnetz-Erkennung und gleitendem Cache oder liest sie aus dem lokalen Speicher. Drei Übergangsstile, Orientierungsfilter, Wakelock während der Wiedergabe und sichere Ablage der SMB-Zugangsdaten im Android Keystore.",
-            "github": "https://gitlab.com/lotharsan/photoloop",
+            "gitlab": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
             "status": "completed"
         },
@@ -206,7 +208,7 @@
             "title": "Reddit Gallery — Android-Multimedia-Client",
             "tech": ["Flutter", "Dart", "Provider", "Dio", "Reddit JSON API"],
             "description": "Schlanker Flutter-Android-Client zum Stöbern und Herunterladen von Bildern und Videos aus Reddit ohne Konto — als Ersatz für die eingestellte Gallery for Reddit. Kombinierter Feed der Abonnements mit endlosem Scrollen, Vollbild-Mediaviewer mit Zoom, Unterstützung von v.redd.it / Redgifs / Imgur / Streamable, konfigurierbare Filter und JSON-Backup/Restore der Abonnements.",
-            "github": "https://gitlab.com/lotharsan/reddit_gallery",
+            "gitlab": "https://gitlab.com/lotharsan/reddit_gallery",
             "demo": "",
             "status": "completed"
         },
@@ -214,7 +216,7 @@
             "title": "Movies React — TMDB-Browser-SPA",
             "tech": ["React 18", "Vite", "React Router 6", "Axios", "Vitest"],
             "description": "Single-Page-Anwendung mit React 18 + Vite, die The Movie Database (TMDB) durchsucht. Authentifizierung mit 30-minütiger Sitzung, Favoriten im localStorage, Suche mit Debounce und abbrechbaren Requests via AbortController, inkrementelle Paginierung, Skeleton-Loader, geschützte Routen und eine vollständig getestete Business-Schicht.",
-            "github": "https://gitlab.com/lotharsan/movies-react",
+            "gitlab": "https://gitlab.com/lotharsan/movies-react",
             "demo": "",
             "status": "completed"
         }
@@ -232,9 +234,8 @@
     "contact": {
         "message": "Suchen Sie ein erfahrenes IT-Profil mit Kompetenz in kritischer Infrastruktur und Conversational AI für eine Remote-Position? Kontaktieren Sie mich direkt oder nutzen Sie den Chatbot, um meinen Werdegang im Detail zu erkunden.",
         "social": {
-            "linkedin": "",
-            "github": "",
-            "twitter": ""
+            "linkedin": "https://www.linkedin.com/in/vicentedev/",
+            "gitlab": "https://gitlab.com/lotharsan"
         }
     }
 }

@@ -41,6 +41,12 @@ const DEFAULT_WINDOW_POSITION = { x: 100, y: 100 };
 const DEFAULT_WINDOW_SIZE = { width: 400, height: 300 };
 const BASE_Z_INDEX = 100;
 const Z_INDEX_NORMALIZE_THRESHOLD = 10000; // reset z-indexes once they climb this high
+const MINIMIZED_WINDOW_SIZE = { width: 180, height: 40 };
+
+const clampMinimizePosition = (position) => ({
+    x: Math.min(Math.max(position.x, 0), Math.max(globalThis.innerWidth - MINIMIZED_WINDOW_SIZE.width, 0)),
+    y: Math.min(Math.max(position.y, 0), Math.max(globalThis.innerHeight - MINIMIZED_WINDOW_SIZE.height, 0)),
+});
 
 export const WindowProvider = ({ children }) => {
     const [windows, setWindows] = useState({});
@@ -83,15 +89,18 @@ export const WindowProvider = ({ children }) => {
             // if it already exists don't create it again
             if (prev[windowId]) return prev;
 
+            const position = initialState.position || DEFAULT_WINDOW_POSITION;
             return {
                 ...prev,
                 [windowId]: {
                     isMinimized: initialState.isMinimized ?? false,
                     isMaximized: initialState.isMaximized || false,
-                    position: initialState.position || DEFAULT_WINDOW_POSITION,
                     size: initialState.size || DEFAULT_WINDOW_SIZE,
                     zIndex: initialState.zIndex || BASE_Z_INDEX,
                     ...initialState,
+                    position,
+                    minimizePosition: initialState.minimizePosition || position,
+                    restorePosition: initialState.restorePosition || null,
                 }
             };
         });
@@ -143,30 +152,34 @@ export const WindowProvider = ({ children }) => {
         return i18n.t(`windows.${key}`, { defaultValue: fallback });
     }, []);
 
-    // to minimize or restore a window
+    // Minimized pills keep their own anchor; programmatic centering must not move it.
     const toggleMinimize = useCallback((windowId) => {
         setWindows(prev => {
             const window = prev[windowId];
             if (!window) return prev;
 
             const newIsMinimized = !window.isMinimized;
+            const position = newIsMinimized
+                ? clampMinimizePosition(window.minimizePosition || window.position)
+                : (window.restorePosition || window.position);
 
             const newState = {
                 ...prev,
                 [windowId]: {
                     ...window,
                     isMinimized: newIsMinimized,
-                    isMaximized: window.isMaximized && newIsMinimized ? false : window.isMaximized
+                    isMaximized: window.isMaximized && newIsMinimized ? false : window.isMaximized,
+                    position,
+                    minimizePosition: newIsMinimized ? position : window.minimizePosition,
+                    restorePosition: newIsMinimized ? window.position : null,
                 }
             };
 
             const windowTitle = getWindowTitle(windowId);
-
-            if (newIsMinimized) {
-                showWindowToast(windowId, i18n.t('toast.minimized', { window: windowTitle }));
-            } else {
-                showWindowToast(windowId, i18n.t('toast.restored', { window: windowTitle }));
-            }
+            showWindowToast(
+                windowId,
+                i18n.t(newIsMinimized ? 'toast.minimized' : 'toast.restored', { window: windowTitle })
+            );
 
             return newState;
         });
@@ -183,7 +196,9 @@ export const WindowProvider = ({ children }) => {
                     ...prev,
                     [windowId]: {
                         ...window,
-                        isMinimized: false
+                        isMinimized: false,
+                        position: window.restorePosition || window.position,
+                        restorePosition: null
                     }
                 };
             }
@@ -261,7 +276,8 @@ export const WindowProvider = ({ children }) => {
                 ...prev,
                 [windowId]: {
                     ...window,
-                    position
+                    position,
+                    minimizePosition: position
                 }
             };
         });

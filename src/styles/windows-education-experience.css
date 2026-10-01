@@ -17,21 +17,21 @@
 }
 
 .education-title {
-  font-size: 18px;
+  font-size: var(--fs-section);
   font-weight: bold;
   color: #D3D3D3;
   margin-bottom: 5px;
 }
 
 .education-institution {
-  font-size: 16px;
+  font-size: var(--fs-lead);
   color: #D3D3D3;
   opacity: 0.8;
   margin-bottom: 3px;
 }
 
 .education-date {
-  font-size: 14px;
+  font-size: var(--fs-body);
   font-style: italic;
   color: #D3D3D3;
   opacity: 0.7;
@@ -39,14 +39,14 @@
 }
 
 .education-description {
-  font-size: 15px;
+  font-size: var(--fs-body);
   line-height: 1.5;
   color: #D3D3D3;
 }
 
 /* Education type badges */
 .education-badge {
-  font-size: 10px;
+  font-size: var(--fs-caption);
   font-weight: bold;
   padding: 2px 8px;
   border-radius: 10px;
@@ -92,7 +92,7 @@
 }
 
 .career-span-label {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-family: 'Courier New', monospace;
   color: #00ffff;
   flex-shrink: 0;
@@ -132,7 +132,7 @@
 .timeline-item {
   position: relative;
   margin-bottom: 16px;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
 }
 
 .timeline-item:last-child {
@@ -160,7 +160,7 @@
 }
 
 .timeline-date {
-  font-size: 11px;
+  font-size: var(--fs-caption);
   font-family: 'Courier New', monospace;
   color: rgba(0, 255, 255, 0.7);
   margin-bottom: 4px;
@@ -179,20 +179,27 @@
   background: rgba(0, 255, 255, 0.05);
 }
 
+.timeline-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .timeline-card-title {
-  font-size: 14px;
+  font-size: var(--fs-body);
   font-weight: bold;
   color: #D3D3D3;
   margin-bottom: 2px;
 }
 
 .timeline-card-company {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: #00ffff;
 }
 
 .timeline-card-location {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: #D3D3D3;
   opacity: 0.7;
 }
@@ -201,7 +208,7 @@
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s ease, margin-top 0.4s ease;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.5;
   color: #D3D3D3;
   margin-top: 0;
@@ -213,7 +220,7 @@
 }
 
 .timeline-expand-hint {
-  font-size: 11px;
+  font-size: var(--fs-caption);
   color: rgba(0, 255, 255, 0.5);
   font-family: 'Courier New', monospace;
   float: right;
@@ -239,19 +246,19 @@
 
   /* Education */
   .education-title {
-    font-size: 16px;
+    font-size: var(--fs-lead);
   }
 
   .education-institution {
-    font-size: 14px;
+    font-size: var(--fs-body);
   }
 
   .education-date {
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 
   .education-description {
-    font-size: 14px;
+    font-size: var(--fs-body);
   }
 
   /* Experience */
@@ -265,23 +272,23 @@
   }
 
   .experience-title {
-    font-size: 15px;
+    font-size: var(--fs-body);
   }
 
   .experience-company {
-    font-size: 14px;
+    font-size: var(--fs-body);
   }
 
   .experience-location {
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 
   .experience-date {
-    font-size: 12px;
+    font-size: var(--fs-sm);
   }
 
   .experience-description {
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 }
 
@@ -298,21 +305,21 @@
   }
 
   .education-title {
-    font-size: 15px;
+    font-size: var(--fs-body);
     margin-bottom: 4px;
   }
 
   .education-institution {
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 
   .education-date {
-    font-size: 12px;
+    font-size: var(--fs-sm);
     margin-bottom: 6px;
   }
 
   .education-description {
-    font-size: 13px;
+    font-size: var(--fs-sm);
     line-height: 1.4;
   }
 
@@ -326,25 +333,25 @@
   }
 
   .experience-title {
-    font-size: 14px;
+    font-size: var(--fs-body);
     margin-bottom: 4px;
   }
 
   .experience-company {
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 
   .experience-location {
-    font-size: 12px;
+    font-size: var(--fs-sm);
   }
 
   .experience-date {
-    font-size: 11px;
+    font-size: var(--fs-caption);
     margin: 6px 0;
   }
 
   .experience-description {
-    font-size: 12px;
+    font-size: var(--fs-sm);
     line-height: 1.4;
   }
 }
@@ -354,11 +361,11 @@
 
   .education-title,
   .experience-title {
-    font-size: 14px;
+    font-size: var(--fs-body);
   }
 
   .experience-description {
-    font-size: 11px;
+    font-size: var(--fs-caption);
   }
 }
 
@@ -395,18 +402,69 @@
 @media (min-width: 1440px) {
 
   .education-title {
-    font-size: 20px;
+    font-size: var(--fs-window-title);
   }
 
   .education-institution {
-    font-size: 18px;
+    font-size: var(--fs-section);
   }
 
   .education-description {
-    font-size: 17px;
+    font-size: var(--fs-lead);
   }
 
   .experience-grid {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
+}
+
+.education-document-link {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 8px;
+  border: 1px solid var(--theme-primary, #00ffff);
+  background: transparent;
+  color: var(--theme-primary, #00ffff);
+  font: inherit;
+  text-decoration: none;
+  cursor: var(--cursor-pointer, pointer);
+}
+
+.education-document-link:hover,
+.education-document-link:focus-visible {
+  background: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.12);
+  box-shadow: 0 0 8px rgba(var(--theme-primary-rgb, 0, 255, 255), 0.35);
+}
+
+.document-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 8px;
+}
+
+.document-viewer-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.document-viewer-actions a,
+.document-viewer-actions button {
+  padding: 5px 9px;
+  border: 1px solid var(--theme-primary, #00ffff);
+  background: transparent;
+  color: var(--theme-primary, #00ffff);
+  font: inherit;
+  text-decoration: none;
+  cursor: var(--cursor-pointer, pointer);
+}
+
+.document-viewer-frame {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  border: 1px solid var(--theme-border, rgba(0, 255, 255, 0.3));
+  background: #fff;
 }

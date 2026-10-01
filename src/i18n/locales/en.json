@@ -35,10 +35,7 @@
     "frontend": "FRONTEND",
     "backend": "BACKEND",
     "databases": "DATABASES",
-    "others": "OTHERS",
-    "viewBars": "Bars",
-    "viewRadar": "Radar",
-    "viewMatrix": "Matrix"
+    "others": "OTHERS"
   },
   "profile": {
     "yearsExp": "20+ yrs",
@@ -49,7 +46,9 @@
     "normalView": "Full Profile",
     "downloadCV": "Download CV",
     "exportJSON": "JSON Resume",
-    "exportPDF": "Print PDF",
+    "exportPDF": "Download PDF",
+    "downloadFailed": "The CV could not be downloaded. Please try again.",
+    "downloadRateLimited": "Too many download attempts. Please wait a minute.",
     "recruiterTopImpact": "Top Impact",
     "recruiterTopImpact1": "99%+ network uptime (healthcare)",
     "recruiterTopImpact2": "60% infra performance boost",
@@ -63,36 +62,21 @@
     "recruiterKeyMetrics2": "1,000+ terminals managed",
     "recruiterKeyMetrics3": "4 countries remote support"
   },
-  "softSkills": {
-    "desc0": "Delivers on promises and takes ownership of outcomes",
-    "desc1": "Evaluates complex situations with logic and data-driven reasoning",
-    "desc2": "Maintains ethical standards and transparency in all interactions",
-    "desc3": "Understands user needs and designs solutions with their perspective in mind",
-    "desc4": "Navigates disagreements to find win-win outcomes",
-    "desc5": "Proactively acquires new skills and stays current with industry trends",
-    "desc6": "Collaborates across roles and contributes to shared goals",
-    "desc7": "Identifies opportunities and acts without waiting to be asked",
-    "desc8": "Maintains composure and productivity under pressure",
-    "desc9": "Thrives in changing environments and pivots quickly when needed",
-    "desc10": "Breaks down difficult challenges into actionable solutions",
-    "desc11": "Conveys ideas effectively to both technical and non-technical audiences",
-    "desc12": "Sets goals independently and maintains focus without external supervision"
-  },
   "education": {
     "typeDegree": "Degree",
     "typeBootcamp": "Bootcamp",
     "typeCert": "Certificate",
-    "typeCourse": "Course"
+    "typeCourse": "Course",
+    "europass": "Europass Supplement"
+  },
+  "documentViewer": {
+    "openNewTab": "Open in a new tab",
+    "download": "Download",
+    "close": "Close"
   },
   "portfolio": {
     "statusCompleted": "Completed",
     "statusInProgress": "In Progress"
-  },
-  "fitMatrix": {
-    "skill": "Skill",
-    "category": "Category",
-    "proficiency": "Proficiency",
-    "level": "Lvl"
   },
   "windows": {
     "profile": "Profile",
@@ -105,7 +89,6 @@
     "achievements": "Achievements",
     "contact": "Contact",
     "chat": "Kusanagi AI",
-    "fitMatrix": "Skill Fit Matrix",
     "jobSearch": "Job Search"
   },
   "app": {

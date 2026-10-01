@@ -7,14 +7,14 @@
         "description": "IT professional with 25+ years of uninterrupted experience in systems administration, critical infrastructure and software development. Dual profile: enterprise infrastructure in high-availability environments — hospitals, national data centres, regional health networks — combined with modern full-stack development and conversational AI engineering. EU citizen available for remote positions with full CET business hours overlap. Seeking organisations that share values of technical precision, reliability and sustained quality."
     },
     "softSkills": [
-        "Autonomous decision-making in critical environments without direct supervision",
-        "Proactive initiative — self-proposed improvements without prior request",
-        "C1 professional English for technical communication and international escalations",
-        "Structured problem-solving under high-pressure conditions",
-        "Technical documentation as a systematic practice, not an afterthought",
-        "Continuous learning sustained alongside full-time employment",
-        "End-to-end ownership of technical projects",
-        "Effective 100% remote working since 2020"
+        { "text": "Autonomous decision-making in critical environments without direct supervision", "icon": "🎯" },
+        { "text": "Proactive initiative — self-proposed improvements without prior request", "icon": "🚀" },
+        { "text": "C1 professional English for technical communication and international escalations", "icon": "💬" },
+        { "text": "Structured problem-solving under high-pressure conditions", "icon": "🔧" },
+        { "text": "Technical documentation as a systematic practice, not an afterthought", "icon": "📝" },
+        { "text": "Continuous learning sustained alongside full-time employment", "icon": "📚" },
+        { "text": "End-to-end ownership of technical projects", "icon": "⭐" },
+        { "text": "Effective 100% remote working since 2020", "icon": "🏠" }
     ],
     "education": [
         {
@@ -22,6 +22,7 @@
             "institution": "IES Jaume II el Just — Tabernes de la Valldigna, Valencia, Spain — EQF Level 5 | 120 ECTS | Europass",
             "date": "2024 – 2025",
             "type": "degree",
+            "documents": [{ "labelKey": "education.europass", "file": "europass-daw" }],
             "description": "Official qualification at EQF Level 5 with Europass Supplement, recognised across the European Union. Core modules: client and server-side web development (JavaScript, PHP, Node.js), web application deployment, accessible interface design (HTML5, CSS3), relational databases and ERP/CRM with Odoo."
         },
         {
@@ -29,6 +30,7 @@
             "institution": "IES Jaume II el Just — Tabernes de la Valldigna, Valencia, Spain — EQF Level 5 | 120 ECTS | Europass",
             "date": "2021 – 2024",
             "type": "degree",
+            "documents": [{ "labelKey": "education.europass", "file": "europass-dam" }],
             "description": "Official qualification at EQF Level 5 with Europass Supplement, recognised across the European Union. Core modules: object-oriented programming in Java, mobile development (Android/Kotlin, Flutter/Dart), data access with Hibernate and ORM, ERP/CRM Odoo, TDD and UML. Completed whilst working full-time."
         },
         {
@@ -174,7 +176,7 @@
             "title": "CookCode System — Restaurant & Kitchen Management Suite",
             "tech": ["PHP 8.2", "MySQL 8", "WordPress", "WooCommerce", "Python", "PySide6", "Docker", "MQTT"],
             "description": "End-to-end gastronomy platform unifying central kitchen, restaurant POS and e-commerce under a single source of truth. Four interconnected services — WordPress shop with custom WooCommerce APIs, kitchen app with batch traceability and QR labels, restaurant POS with MQTT scanner integration, and the MiniChef voice assistant (PySide6 + Vosk + Coqui TTS + Gemini) — orchestrated by a single docker-compose with six containers.",
-            "github": "https://gitlab.com/lotharsan/cookcodesystem",
+            "gitlab": "https://gitlab.com/lotharsan/cookcodesystem",
             "demo": "",
             "status": "completed"
         },
@@ -182,7 +184,7 @@
             "title": "Portfolio Frontend — vicentepau.is-a.dev",
             "tech": ["React 19", "Vite 7", "Three.js", "Chart.js", "Leaflet", "i18next", "Vitest", "Playwright"],
             "description": "This very portfolio. Desktop-OS UI metaphor with draggable, resizable floating windows, six interactive 3D backgrounds, three color themes, a Groq-powered AI chatbot, six locales, visitor tracking and a private admin dashboard with job aggregation, AI matching, Kanban pipeline and AI-generated CVs. 313 vitest + 17 Playwright tests. Deployed on Cloudflare Pages.",
-            "github": "https://gitlab.com/lotharsan/reactportfolio-front",
+            "gitlab": "https://gitlab.com/lotharsan/reactportfolio-front",
             "demo": "https://vicentepau.is-a.dev",
             "status": "in-progress"
         },
@@ -190,7 +192,7 @@
             "title": "Parakeet — Budgie Phone Integration",
             "tech": ["Vala", "GTK 3", "Meson", "D-Bus", "KDE Connect"],
             "description": "Budgie Desktop panel applet that brings an Android phone into the Linux workflow via KDE Connect. One-click popover shows device status, battery level, the last ten notifications, find-my-phone and an SFTP file browser — all driven by D-Bus signals from the KDE Connect daemon, with no polling or background services.",
-            "github": "https://gitlab.com/lotharsan/parakeet",
+            "gitlab": "https://gitlab.com/lotharsan/parakeet",
             "demo": "",
             "status": "in-progress"
         },
@@ -198,7 +200,7 @@
             "title": "Photoloop — NAS-Streaming Digital Photo Frame",
             "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
             "description": "Flutter Android app that turns any phone, tablet or Android TV into a digital photo frame. Streams photos from a SMB-enabled NAS with zero-config subnet discovery and a sliding cache, or reads from local storage. Three transition styles, orientation filtering, wakelock during playback and secure credential storage via the Android Keystore.",
-            "github": "https://gitlab.com/lotharsan/photoloop",
+            "gitlab": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
             "status": "completed"
         },
@@ -206,7 +208,7 @@
             "title": "Reddit Gallery — Android Multimedia Client",
             "tech": ["Flutter", "Dart", "Provider", "Dio", "Reddit JSON API"],
             "description": "Lightweight Flutter Android client to browse and download images and videos from Reddit without an account, as a replacement for the discontinued Gallery for Reddit. Combined feed of your subscriptions with infinite scroll, full-screen media viewer with zoom, support for v.redd.it / Redgifs / Imgur / Streamable, configurable filters and JSON backup/restore of subscriptions.",
-            "github": "https://gitlab.com/lotharsan/reddit_gallery",
+            "gitlab": "https://gitlab.com/lotharsan/reddit_gallery",
             "demo": "",
             "status": "completed"
         },
@@ -214,7 +216,7 @@
             "title": "Movies React — TMDB Browser SPA",
             "tech": ["React 18", "Vite", "React Router 6", "Axios", "Vitest"],
             "description": "Single-page application built on React 18 + Vite that browses The Movie Database (TMDB). Authentication with 30-minute session expiry, favourites persisted to localStorage, debounced search with cancellable requests via AbortController, incremental pagination, skeleton loaders, protected routes and a fully tested business layer.",
-            "github": "https://gitlab.com/lotharsan/movies-react",
+            "gitlab": "https://gitlab.com/lotharsan/movies-react",
             "demo": "",
             "status": "completed"
         }
@@ -232,9 +234,8 @@
     "contact": {
         "message": "Looking for a senior IT profile with experience in critical infrastructure and conversational AI for a remote position? Get in touch directly or use the chatbot to explore my background in detail.",
         "social": {
-            "linkedin": "",
-            "github": "",
-            "twitter": ""
+            "linkedin": "https://www.linkedin.com/in/vicentedev/",
+            "gitlab": "https://gitlab.com/lotharsan"
         }
     }
 }

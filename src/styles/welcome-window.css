@@ -13,14 +13,14 @@
 
 .welcome-header h2 {
   margin: 0 0 8px 0;
-  font-size: 28px;
+  font-size: var(--fs-display);
   color: #00ffff;
   text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
 }
 
 .welcome-subtitle {
   margin: 0;
-  font-size: 18px;
+  font-size: var(--fs-section);
   color: #D3D3D3;
   font-style: italic;
 }
@@ -33,7 +33,7 @@
 .welcome-body p {
   margin: 10px 0;
   line-height: 1.6;
-  font-size: 16px;
+  font-size: var(--fs-lead);
 }
 
 .instructions {
@@ -46,7 +46,7 @@
 
 .instructions h3 {
   margin: 0 0 12px 0;
-  font-size: 18px;
+  font-size: var(--fs-section);
   color: #00ffff;
 }
 
@@ -59,14 +59,14 @@
 .instructions li {
   margin: 10px 0;
   padding-left: 8px;
-  font-size: 15px;
+  font-size: var(--fs-body);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .instructions .icon {
-  font-size: 18px;
+  font-size: var(--fs-section);
   min-width: 25px;
   text-align: center;
 }
@@ -95,7 +95,7 @@
   padding: 12px;
   margin: 15px 0;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: var(--fs-body);
 }
 
 .welcome-footer {
@@ -110,9 +110,9 @@
   border: none;
   border-radius: 25px;
   color: #000;
-  font-size: 16px;
+  font-size: var(--fs-lead);
   font-weight: bold;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
   font-family: 'Courier New', monospace;

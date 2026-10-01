@@ -4,8 +4,7 @@ import FloatingWindow from './FloatingWindow';
 
 const SOCIAL_LINKS = [
     { key: 'linkedin', label: 'LinkedIn', prefix: 'https://linkedin.com/in/' },
-    { key: 'github', label: 'GitHub', prefix: 'https://github.com/' },
-    { key: 'twitter', label: 'Twitter', prefix: 'https://twitter.com/' },
+    { key: 'gitlab', label: 'GitLab', prefix: 'https://gitlab.com/' },
 ];
 
 const ContactWindow = ({ data, initialPosition }) => {

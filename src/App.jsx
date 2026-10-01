@@ -32,6 +32,7 @@ const ExperienceWindow = lazy(() => import('./components/Windows/ExperienceWindo
 const AchievementsWindow = lazy(() => import('./components/Windows/AchievementsWindow'));
 const ChatWindow = lazy(() => import('./components/Windows/ChatWindow'));
 const TerminalWindow = lazy(() => import('./components/Windows/TerminalWindow'));
+const DocumentViewerWindow = lazy(() => import('./components/Windows/DocumentViewerWindow'));
 
 // this is what is shown while a window is loading
 const WindowLoader = memo(() => (
@@ -62,6 +63,7 @@ WindowLoader.displayName = 'WindowLoader';
 // Desktop: floating windows with drag/resize/minimize
 const DesktopPortfolioContent = memo(({ portfolioData }) => {
   const [showTerminal, setShowTerminal] = useState(false);
+  const [openDocument, setOpenDocument] = useState(null);
 
   const portfolioWindowIds = [
     'profile-window',
@@ -109,6 +111,7 @@ const DesktopPortfolioContent = memo(({ portfolioData }) => {
       <EducationWindow
         data={portfolioData}
         initialPosition={{ x: 200, y: 160 }}
+        onOpenDocument={setOpenDocument}
       />
 
       <ExperienceWindow
@@ -147,6 +150,16 @@ const DesktopPortfolioContent = memo(({ portfolioData }) => {
       />
 
     </Suspense>
+
+    {openDocument && (
+      <Suspense fallback={<WindowLoader />}>
+        <DocumentViewerWindow
+          title={openDocument.title}
+          fileUrl={openDocument.fileUrl}
+          onClose={() => setOpenDocument(null)}
+        />
+      </Suspense>
+    )}
 
     {showTerminal && (
       <Suspense fallback={<WindowLoader />}>

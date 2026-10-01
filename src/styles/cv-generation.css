@@ -14,7 +14,7 @@
     color: var(--primary, #00ffff);
     font-family: 'Courier New', monospace;
     font-size: 11px;
-    cursor: pointer;
+    cursor: var(--cursor-pointer, pointer);
     white-space: nowrap;
     transition: background-color 0.2s, color 0.2s;
 }
@@ -93,7 +93,7 @@
     color: var(--primary, #00ffff);
     font-family: 'Courier New', monospace;
     font-size: 11px;
-    cursor: pointer;
+    cursor: var(--cursor-pointer, pointer);
 }
 
 .cv-gen-btn-cancel {

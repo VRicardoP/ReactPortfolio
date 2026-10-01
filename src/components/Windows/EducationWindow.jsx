@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
-// detect education type for badge styling — uses explicit type field if available
 const getEducationType = (edu) => {
     if (edu.type) return edu.type;
     const text = `${edu.title} ${edu.institution || ''}`.toLowerCase();
@@ -19,9 +18,10 @@ const TYPE_LABEL_KEYS = {
     course: 'education.typeCourse'
 };
 
-const EducationWindow = ({ data, initialPosition }) => {
-    const { t } = useTranslation();
+const EducationWindow = ({ data, initialPosition, onOpenDocument }) => {
+    const { t, i18n } = useTranslation();
     const [expandedIndex, setExpandedIndex] = useState(null);
+    const documentLanguage = (i18n.language || 'en').split('-')[0] === 'es' ? 'es' : 'en';
 
     const toggleExpand = useCallback((index) => {
         setExpandedIndex(prev => prev === index ? null : index);
@@ -45,16 +45,14 @@ const EducationWindow = ({ data, initialPosition }) => {
 
                         return (
                             <div
-                                key={index}
+                                key={`${edu.title}-${edu.date}`}
                                 className={`timeline-item${isExpanded ? ' expanded' : ''}`}
                                 onClick={() => toggleExpand(index)}
                             >
                                 <div className="timeline-dot" />
-                                {edu.date && (
-                                    <div className="timeline-date">{edu.date}</div>
-                                )}
+                                {edu.date && <div className="timeline-date">{edu.date}</div>}
                                 <div className="timeline-card">
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                    <div className="timeline-card-heading">
                                         <span className="timeline-card-title">{edu.title}</span>
                                         <span className={`education-badge education-badge-${type}`}>
                                             {t(TYPE_LABEL_KEYS[type])}
@@ -68,6 +66,36 @@ const EducationWindow = ({ data, initialPosition }) => {
                                             {edu.description}
                                         </div>
                                     )}
+                                    {edu.documents?.map((document) => {
+                                        const fileUrl = `/docs/${document.file}-${documentLanguage}.pdf`;
+                                        const title = `${edu.title} — ${t(document.labelKey)}`;
+                                        const stopPropagation = (event) => event.stopPropagation();
+
+                                        return onOpenDocument ? (
+                                            <button
+                                                type="button"
+                                                key={document.file}
+                                                className="education-document-link"
+                                                onClick={(event) => {
+                                                    stopPropagation(event);
+                                                    onOpenDocument({ title, fileUrl });
+                                                }}
+                                            >
+                                                {t(document.labelKey)}
+                                            </button>
+                                        ) : (
+                                            <a
+                                                key={document.file}
+                                                className="education-document-link"
+                                                href={fileUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={stopPropagation}
+                                            >
+                                                {t(document.labelKey)}
+                                            </a>
+                                        );
+                                    })}
                                     {edu.description && (
                                         <span className="timeline-expand-hint">
                                             {isExpanded ? '[-]' : '[+]'}

@@ -35,10 +35,7 @@
     "frontend": "FRONTEND",
     "backend": "BACKEND",
     "databases": "BASES DE DONNÉES",
-    "others": "AUTRES",
-    "viewBars": "Barres",
-    "viewRadar": "Radar",
-    "viewMatrix": "Matrice"
+    "others": "AUTRES"
   },
   "profile": {
     "yearsExp": "20+ ans",
@@ -49,7 +46,9 @@
     "normalView": "Profil Complet",
     "downloadCV": "Télécharger CV",
     "exportJSON": "JSON Resume",
-    "exportPDF": "Imprimer PDF",
+    "exportPDF": "Télécharger le PDF",
+    "downloadFailed": "Le CV n’a pas pu être téléchargé. Veuillez réessayer.",
+    "downloadRateLimited": "Trop de tentatives. Veuillez patienter une minute.",
     "recruiterTopImpact": "Impact Majeur",
     "recruiterTopImpact1": "99%+ de disponibilité réseau (santé)",
     "recruiterTopImpact2": "60% d'amélioration des performances infra",
@@ -63,36 +62,21 @@
     "recruiterKeyMetrics2": "1 000+ terminaux gérés",
     "recruiterKeyMetrics3": "Support à distance dans 4 pays"
   },
-  "softSkills": {
-    "desc0": "Tient ses engagements et assume la responsabilité des résultats",
-    "desc1": "Évalue les situations complexes avec logique et raisonnement fondé sur les données",
-    "desc2": "Maintient des standards éthiques et la transparence dans toutes les interactions",
-    "desc3": "Comprend les besoins des utilisateurs et conçoit des solutions en tenant compte de leur perspective",
-    "desc4": "Gère les désaccords pour trouver des solutions gagnant-gagnant",
-    "desc5": "Acquiert de nouvelles compétences de manière proactive et reste à jour sur les tendances du secteur",
-    "desc6": "Collabore entre les différents rôles et contribue aux objectifs communs",
-    "desc7": "Identifie les opportunités et agit sans attendre qu'on le lui demande",
-    "desc8": "Garde son calme et sa productivité sous pression",
-    "desc9": "S'épanouit dans les environnements changeants et s'adapte rapidement si nécessaire",
-    "desc10": "Décompose les défis complexes en solutions concrètes et réalisables",
-    "desc11": "Communique ses idées efficacement auprès d'audiences techniques et non techniques",
-    "desc12": "Fixe ses objectifs de manière autonome et maintient sa concentration sans supervision externe"
-  },
   "education": {
     "typeDegree": "Diplôme",
     "typeBootcamp": "Bootcamp",
     "typeCert": "Certificat",
-    "typeCourse": "Formation"
+    "typeCourse": "Formation",
+    "europass": "Supplément Europass"
+  },
+  "documentViewer": {
+    "openNewTab": "Ouvrir dans un nouvel onglet",
+    "download": "Télécharger",
+    "close": "Fermer"
   },
   "portfolio": {
     "statusCompleted": "Terminé",
     "statusInProgress": "En cours"
-  },
-  "fitMatrix": {
-    "skill": "Compétence",
-    "category": "Catégorie",
-    "proficiency": "Maîtrise",
-    "level": "Niv"
   },
   "windows": {
     "profile": "Profil",
@@ -105,7 +89,6 @@
     "achievements": "Réalisations",
     "contact": "Contact",
     "chat": "Kusanagi AI",
-    "fitMatrix": "Matrice de Compétences",
     "jobSearch": "Recherche d'emploi"
   },
   "app": {
@@ -460,7 +443,8 @@
       "progressEmbedding": "Encodage des offres {{done}}/{{total}}",
       "progressRerank": "Évaluation IA — lot {{done}}/{{total}}",
       "progressFinalize": "Finalisation…",
-      "computedAt": "Analyse de {{time}}"
+      "computedAt": "Analyse de {{time}}",
+      "noDescription": "Cette source ne publie pas la description — ouvre l’offre sur le portail."
     },
     "tab": {
       "overview": "Aperçu",

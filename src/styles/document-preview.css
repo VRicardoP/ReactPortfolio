@@ -20,7 +20,7 @@
     color: #888;
     font-family: 'Courier New', monospace;
     font-size: 13px;
-    cursor: pointer;
+    cursor: var(--cursor-pointer, pointer);
     transition: color 0.2s, border-color 0.2s;
 }
 

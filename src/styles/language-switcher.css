@@ -17,7 +17,7 @@
   font-size: 12px;
   font-weight: bold;
   letter-spacing: 0.5px;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
   transition: border-color 0.2s, box-shadow 0.2s;
   display: flex;
   align-items: center;
@@ -64,7 +64,7 @@
   color: rgba(255, 255, 255, 0.7);
   font-family: 'Courier New', monospace;
   font-size: 12px;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
   text-align: left;
   transition: background-color 0.15s, color 0.15s;
 }

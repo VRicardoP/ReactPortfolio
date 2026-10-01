@@ -7,14 +7,14 @@
         "description": "Professionnel IT avec plus de 25 ans d'expérience continue en administration systèmes, infrastructures critiques et développement logiciel. Profil dual : solidité éprouvée en infrastructure d'entreprise haute disponibilité — hôpitaux, centres de données nationaux, réseaux de santé régionaux — combinée à un développement full-stack moderne et à la conception d'agents conversationnels par intelligence artificielle. Citoyen de l'Union européenne, disponible pour des postes à distance avec couverture complète des heures d'affaires CET. À la recherche d'organisations partageant des valeurs de précision technique, de fiabilité et de qualité durable."
     },
     "softSkills": [
-        "Prise de décision autonome dans des environnements critiques sans supervision directe",
-        "Initiative proactive — améliorations proposées et mises en œuvre sans demande préalable",
-        "Anglais professionnel C1 pour la communication technique et les escalades internationales",
-        "Résolution structurée de problèmes en conditions de forte pression",
-        "Documentation technique comme pratique systématique intégrée au travail quotidien",
-        "Formation continue soutenue en parallèle d'un emploi à temps plein",
-        "Responsabilité de bout en bout sur les projets techniques",
-        "Travail à distance 100 % efficace depuis 2020"
+        { "text": "Prise de décision autonome dans des environnements critiques sans supervision directe", "icon": "🎯" },
+        { "text": "Initiative proactive — améliorations proposées et mises en œuvre sans demande préalable", "icon": "🚀" },
+        { "text": "Anglais professionnel C1 pour la communication technique et les escalades internationales", "icon": "💬" },
+        { "text": "Résolution structurée de problèmes en conditions de forte pression", "icon": "🔧" },
+        { "text": "Documentation technique comme pratique systématique intégrée au travail quotidien", "icon": "📝" },
+        { "text": "Formation continue soutenue en parallèle d'un emploi à temps plein", "icon": "📚" },
+        { "text": "Responsabilité de bout en bout sur les projets techniques", "icon": "⭐" },
+        { "text": "Travail à distance 100 % efficace depuis 2020", "icon": "🏠" }
     ],
     "education": [
         {
@@ -22,6 +22,7 @@
             "institution": "IES Jaume II el Just — Tabernes de la Valldigna, Valence, Espagne — EQF niveau 5 | 120 ECTS | Europass",
             "date": "2024 – 2025",
             "type": "degree",
+            "documents": [{ "labelKey": "education.europass", "file": "europass-daw" }],
             "description": "Diplôme officiel de niveau EQF 5 avec supplément Europass, reconnu dans toute l'Union européenne. Modules principaux : développement web côté client et serveur (JavaScript, PHP, Node.js), déploiement d'applications web, conception d'interfaces accessibles (HTML5, CSS3), bases de données relationnelles et ERP/CRM avec Odoo."
         },
         {
@@ -29,6 +30,7 @@
             "institution": "IES Jaume II el Just — Tabernes de la Valldigna, Valence, Espagne — EQF niveau 5 | 120 ECTS | Europass",
             "date": "2021 – 2024",
             "type": "degree",
+            "documents": [{ "labelKey": "education.europass", "file": "europass-dam" }],
             "description": "Diplôme officiel de niveau EQF 5 avec supplément Europass, reconnu dans toute l'Union européenne. Modules principaux : programmation orientée objet en Java, développement mobile (Android/Kotlin, Flutter/Dart), accès aux données avec Hibernate et ORM, ERP/CRM Odoo, TDD et UML. Obtenu en parallèle d'un emploi à temps plein."
         },
         {
@@ -174,7 +176,7 @@
             "title": "CookCode System — Gestion intégrée de restaurant et cuisine",
             "tech": ["PHP 8.2", "MySQL 8", "WordPress", "WooCommerce", "Python", "PySide6", "Docker", "MQTT"],
             "description": "Plateforme gastronomique de bout en bout qui unifie cuisine centrale, caisse de restaurant et boutique en ligne autour d'une source de vérité unique. Quatre services interconnectés — boutique WordPress avec APIs WooCommerce sur mesure, application de cuisine avec traçabilité par lots et étiquettes QR, caisse de restaurant avec scanner MQTT, et l'assistant vocal MiniChef (PySide6 + Vosk + Coqui TTS + Gemini) — orchestrés par un unique docker-compose à six conteneurs.",
-            "github": "https://gitlab.com/lotharsan/cookcodesystem",
+            "gitlab": "https://gitlab.com/lotharsan/cookcodesystem",
             "demo": "",
             "status": "completed"
         },
@@ -182,7 +184,7 @@
             "title": "Portfolio Frontend — vicentepau.is-a.dev",
             "tech": ["React 19", "Vite 7", "Three.js", "Chart.js", "Leaflet", "i18next", "Vitest", "Playwright"],
             "description": "Ce portfolio. Métaphore d'OS de bureau avec fenêtres flottantes déplaçables et redimensionnables, six arrière-plans 3D interactifs, trois thèmes de couleurs, un chatbot IA propulsé par Groq, six langues, suivi des visiteurs et un dashboard d'administration privé avec agrégation d'offres d'emploi, matching IA, pipeline Kanban et CVs générés par IA. 313 tests vitest + 17 Playwright. Déployé sur Cloudflare Pages.",
-            "github": "https://gitlab.com/lotharsan/reactportfolio-front",
+            "gitlab": "https://gitlab.com/lotharsan/reactportfolio-front",
             "demo": "https://vicentepau.is-a.dev",
             "status": "in-progress"
         },
@@ -190,7 +192,7 @@
             "title": "Parakeet — Intégration téléphone pour Budgie",
             "tech": ["Vala", "GTK 3", "Meson", "D-Bus", "KDE Connect"],
             "description": "Applet du panneau Budgie qui intègre un téléphone Android au flux de travail Linux via KDE Connect. Un clic ouvre une popover affichant l'état de l'appareil, le niveau de batterie, les dix dernières notifications, la fonction « find my phone » et un explorateur de fichiers SFTP — le tout piloté par signaux D-Bus du démon KDE Connect, sans polling ni services en arrière-plan.",
-            "github": "https://gitlab.com/lotharsan/parakeet",
+            "gitlab": "https://gitlab.com/lotharsan/parakeet",
             "demo": "",
             "status": "in-progress"
         },
@@ -198,7 +200,7 @@
             "title": "Photoloop — Cadre photo numérique avec streaming NAS",
             "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
             "description": "Application Flutter Android qui transforme tout téléphone, tablette ou Android TV en cadre photo numérique. Streaming depuis un NAS SMB avec découverte automatique du sous-réseau et cache glissant, ou lecture depuis le stockage local. Trois styles de transition, filtre d'orientation, wakelock pendant la lecture et stockage sécurisé des identifiants SMB via l'Android Keystore.",
-            "github": "https://gitlab.com/lotharsan/photoloop",
+            "gitlab": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
             "status": "completed"
         },
@@ -206,7 +208,7 @@
             "title": "Reddit Gallery — Client multimédia Android",
             "tech": ["Flutter", "Dart", "Provider", "Dio", "API JSON Reddit"],
             "description": "Client Flutter Android léger pour parcourir et télécharger images et vidéos de Reddit sans compte, en remplacement de Gallery for Reddit (discontinuée). Flux combiné de vos abonnements avec défilement infini, visionneuse plein écran avec zoom, prise en charge de v.redd.it / Redgifs / Imgur / Streamable, filtres configurables et sauvegarde/restauration des abonnements au format JSON.",
-            "github": "https://gitlab.com/lotharsan/reddit_gallery",
+            "gitlab": "https://gitlab.com/lotharsan/reddit_gallery",
             "demo": "",
             "status": "completed"
         },
@@ -214,7 +216,7 @@
             "title": "Movies React — SPA d'exploration TMDB",
             "tech": ["React 18", "Vite", "React Router 6", "Axios", "Vitest"],
             "description": "Application single-page React 18 + Vite qui interroge The Movie Database (TMDB). Authentification avec session de 30 minutes, favoris persistés dans localStorage, recherche avec debounce et requêtes annulables via AbortController, pagination incrémentale, skeleton loaders, routes protégées et couche métier entièrement testée.",
-            "github": "https://gitlab.com/lotharsan/movies-react",
+            "gitlab": "https://gitlab.com/lotharsan/movies-react",
             "demo": "",
             "status": "completed"
         }
@@ -232,9 +234,8 @@
     "contact": {
         "message": "Vous recherchez un profil IT senior combinant expérience en infrastructures critiques et intelligence artificielle conversationnelle pour un poste à distance ? N'hésitez pas à me contacter directement ou à utiliser le chatbot pour explorer mon parcours en détail.",
         "social": {
-            "linkedin": "",
-            "github": "",
-            "twitter": ""
+            "linkedin": "https://www.linkedin.com/in/vicentedev/",
+            "gitlab": "https://gitlab.com/lotharsan"
         }
     }
 }

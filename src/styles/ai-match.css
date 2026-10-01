@@ -45,7 +45,7 @@
   border-radius: 3px;
   font-family: 'Courier New', monospace;
   font-size: 11px;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
 }
 
 .ai-match-page-btn:disabled {
@@ -211,7 +211,7 @@
   background: rgba(255, 200, 0, 0.15);
   border: 1px solid rgba(255, 200, 0, 0.3);
   color: #ffc800;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
   transition: opacity 0.2s;
 }
 
@@ -254,7 +254,7 @@
   border: none;
   border-bottom: 2px solid transparent;
   color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
   transition: color 0.2s, border-color 0.2s;
 }
 
@@ -307,7 +307,7 @@
   border: 1px solid rgba(255, 100, 100, 0.3);
   background: rgba(255, 100, 100, 0.08);
   color: #ff6b6b;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
   transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
@@ -353,7 +353,7 @@
   font-family: 'Courier New', monospace;
   font-size: 13px;
   font-weight: bold;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
   transition: opacity 0.2s;
 }
 
@@ -416,7 +416,7 @@
 
 .ai-match-skills-toggle {
   font-size: 11px;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
   padding: 4px 0;
   font-family: 'Courier New', monospace;
   opacity: 0.8;

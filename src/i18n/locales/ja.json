@@ -35,10 +35,7 @@
     "frontend": "フロントエンド",
     "backend": "バックエンド",
     "databases": "データベース",
-    "others": "その他",
-    "viewBars": "バー",
-    "viewRadar": "レーダー",
-    "viewMatrix": "マトリックス"
+    "others": "その他"
   },
   "profile": {
     "yearsExp": "20年以上",
@@ -49,7 +46,9 @@
     "normalView": "フルプロフィール",
     "downloadCV": "CVダウンロード",
     "exportJSON": "JSON Resume",
-    "exportPDF": "PDF印刷",
+    "exportPDF": "PDFをダウンロード",
+    "downloadFailed": "CVをダウンロードできませんでした。もう一度お試しください。",
+    "downloadRateLimited": "ダウンロード回数が多すぎます。1分お待ちください。",
     "recruiterTopImpact": "主な実績",
     "recruiterTopImpact1": "99%以上のネットワーク稼働率（医療）",
     "recruiterTopImpact2": "インフラ性能60%向上",
@@ -63,36 +62,21 @@
     "recruiterKeyMetrics2": "1,000台以上の端末を管理",
     "recruiterKeyMetrics3": "4カ国でリモートサポート"
   },
-  "softSkills": {
-    "desc0": "約束を守り、結果に責任を持つ",
-    "desc1": "論理とデータに基づく推論で複雑な状況を評価",
-    "desc2": "すべてのやり取りで倫理基準と透明性を維持",
-    "desc3": "ユーザーのニーズを理解し、その視点でソリューションを設計",
-    "desc4": "意見の相違をWin-Winの結果に導く",
-    "desc5": "新しいスキルを積極的に習得し、業界トレンドを把握",
-    "desc6": "役割を超えて協力し、共有目標に貢献",
-    "desc7": "機会を見つけ、指示を待たずに行動",
-    "desc8": "プレッシャー下でも冷静さと生産性を維持",
-    "desc9": "変化する環境で活躍し、素早く対応",
-    "desc10": "困難な課題を実行可能なソリューションに分解",
-    "desc11": "技術者にも非技術者にも効果的にアイデアを伝達",
-    "desc12": "独立して目標を設定し、外部の監督なしに集中を維持"
-  },
   "education": {
     "typeDegree": "学位",
     "typeBootcamp": "ブートキャンプ",
     "typeCert": "資格",
-    "typeCourse": "コース"
+    "typeCourse": "コース",
+    "europass": "Europass補足資料"
+  },
+  "documentViewer": {
+    "openNewTab": "新しいタブで開く",
+    "download": "ダウンロード",
+    "close": "閉じる"
   },
   "portfolio": {
     "statusCompleted": "完了",
     "statusInProgress": "進行中"
-  },
-  "fitMatrix": {
-    "skill": "スキル",
-    "category": "カテゴリ",
-    "proficiency": "習熟度",
-    "level": "Lv"
   },
   "windows": {
     "profile": "プロフィール",
@@ -105,7 +89,6 @@
     "achievements": "実績",
     "contact": "連絡先",
     "chat": "クサナギ AI",
-    "fitMatrix": "スキル適合マトリクス",
     "jobSearch": "求人検索"
   },
   "app": {
@@ -460,7 +443,8 @@
       "progressEmbedding": "求人をエンコード中 {{done}}/{{total}}",
       "progressRerank": "AI評価 — バッチ {{done}}/{{total}}",
       "progressFinalize": "仕上げ中…",
-      "computedAt": "{{time}}の分析"
+      "computedAt": "{{time}}の分析",
+      "noDescription": "この情報源では説明が公開されていません。ポータルで求人を開いてください。"
     },
     "tab": {
       "overview": "概要",

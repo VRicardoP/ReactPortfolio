@@ -42,18 +42,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: grab;
+  cursor: var(--cursor-grab, grab);
   user-select: none;
 }
 
 .window-header:active {
-  cursor: grabbing;
+  cursor: var(--cursor-grabbing, grabbing);
 }
 
 /* Title */
 .window-title {
   flex-grow: 1;
-  font-size: 20px;
+  font-size: var(--fs-window-title);
   color: #ffffff;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
   text-align: center;
@@ -72,7 +72,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
   transition: opacity 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   border: none;
 }
@@ -133,18 +133,18 @@
   height: 40px !important;
   border-radius: 20px;
   background-color: rgba(var(--theme-primary-rgb, 0, 255, 255), 0.1) !important;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
 }
 
 .window-collapsed .window-header {
   border-bottom: none;
   height: 100%;
   padding: 0 15px;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
 }
 
 .window-collapsed .window-title {
-  font-size: 16px;
+  font-size: var(--fs-lead);
 }
 
 .window-collapsed .window-content {
@@ -181,7 +181,7 @@
   left: 0;
   width: 100%;
   height: 7px;
-  cursor: ns-resize;
+  cursor: var(--cursor-resize-y, ns-resize);
 }
 
 .resize-handle-s {
@@ -189,7 +189,7 @@
   left: 0;
   width: 100%;
   height: 7px;
-  cursor: ns-resize;
+  cursor: var(--cursor-resize-y, ns-resize);
 }
 
 .resize-handle-e {
@@ -197,7 +197,7 @@
   right: 0;
   width: 7px;
   height: 100%;
-  cursor: ew-resize;
+  cursor: var(--cursor-resize-x, ew-resize);
 }
 
 .resize-handle-w {
@@ -205,7 +205,7 @@
   left: 0;
   width: 7px;
   height: 100%;
-  cursor: ew-resize;
+  cursor: var(--cursor-resize-x, ew-resize);
 }
 
 .resize-handle-ne {
@@ -213,7 +213,7 @@
   right: 0;
   width: 15px;
   height: 15px;
-  cursor: nesw-resize;
+  cursor: var(--cursor-resize-nesw, nesw-resize);
 }
 
 .resize-handle-nw {
@@ -221,7 +221,7 @@
   left: 0;
   width: 15px;
   height: 15px;
-  cursor: nwse-resize;
+  cursor: var(--cursor-resize-nwse, nwse-resize);
 }
 
 .resize-handle-se {
@@ -229,7 +229,7 @@
   right: 0;
   width: 15px;
   height: 15px;
-  cursor: nwse-resize;
+  cursor: var(--cursor-resize-nwse, nwse-resize);
 }
 
 .resize-handle-sw {
@@ -237,7 +237,7 @@
   left: 0;
   width: 15px;
   height: 15px;
-  cursor: nesw-resize;
+  cursor: var(--cursor-resize-nesw, nesw-resize);
 }
 
 .resize-handle:hover::after {
@@ -265,7 +265,7 @@
   }
 
   .window-title {
-    font-size: 18px;
+    font-size: var(--fs-section);
   }
 
   .window-content {
@@ -286,12 +286,12 @@
   }
 
   .window-title {
-    font-size: 16px;
+    font-size: var(--fs-lead);
   }
 
   .window-content {
     padding: 12px;
-    font-size: 14px;
+    font-size: var(--fs-body);
   }
 
   .control-btn {
@@ -305,7 +305,7 @@
   }
 
   .window-collapsed .window-title {
-    font-size: 14px;
+    font-size: var(--fs-body);
   }
 
   /* Larger resize handles on tablets */
@@ -343,12 +343,12 @@
   }
 
   .window-title {
-    font-size: 14px;
+    font-size: var(--fs-body);
   }
 
   .window-content {
     padding: 10px;
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 
   .window-content::-webkit-scrollbar {
@@ -376,7 +376,7 @@
   }
 
   .window-collapsed .window-title {
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 
   /* Even larger resize handles on mobile */
@@ -415,12 +415,12 @@
   }
 
   .window-content {
-    font-size: 12px;
+    font-size: var(--fs-sm);
     padding: 8px;
   }
 
   .window-title {
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 
   .control-btn {
@@ -498,12 +498,12 @@
 /* Large screens (> 1440px) */
 @media (min-width: 1440px) {
   .window-title {
-    font-size: 22px;
+    font-size: var(--fs-window-title);
   }
 
   .window-content {
     padding: 24px;
-    font-size: 16px;
+    font-size: var(--fs-lead);
   }
 
   .control-btn {

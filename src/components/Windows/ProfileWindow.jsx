@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
-import { BACKEND_URL } from '../../config/api';
+import { BACKEND_URL, DEFAULT_HEADERS } from '../../config/api';
+import { showToast } from '../UI/Toast';
 
 const QUICK_STATS = [
     { key: 'yearsExp', fallback: '20+ yrs' },
@@ -15,6 +16,29 @@ const RECRUITER_SECTIONS = [
     { labelKey: 'profile.recruiterCoreStack', itemKeys: ['profile.recruiterCoreStack1', 'profile.recruiterCoreStack2', 'profile.recruiterCoreStack3'] },
     { labelKey: 'profile.recruiterKeyMetrics', itemKeys: ['profile.recruiterKeyMetrics1', 'profile.recruiterKeyMetrics2', 'profile.recruiterKeyMetrics3'] },
 ];
+
+const downloadFile = async (url, filename) => {
+    let objectUrl;
+    let anchor;
+    try {
+        const response = await fetch(url, { headers: DEFAULT_HEADERS });
+        if (!response.ok) {
+            const error = new Error(`Download failed with status ${response.status}`);
+            error.status = response.status;
+            throw error;
+        }
+
+        objectUrl = URL.createObjectURL(await response.blob());
+        anchor = document.createElement('a');
+        anchor.href = objectUrl;
+        anchor.download = filename;
+        document.body.appendChild(anchor);
+        anchor.click();
+    } finally {
+        anchor?.remove();
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+    }
+};
 
 const ProfileWindow = ({ data, initialPosition }) => {
     const { t, i18n } = useTranslation();
@@ -34,38 +58,23 @@ const ProfileWindow = ({ data, initialPosition }) => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [showCvMenu]);
 
-    const handleExportJSON = useCallback(async () => {
+    const handleDownload = useCallback(async (format) => {
+        const lang = (i18n.language || 'en').split('-')[0];
+        const isPdf = format === 'pdf';
         try {
-            const lang = (i18n.language || 'en').split('-')[0];
-            const response = await fetch(`${BACKEND_URL}/api/v1/cv/json-resume?lang=${lang}`);
-            const json = await response.json();
-            const blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'resume.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        } catch {
-            // Silently fail
+            await downloadFile(
+                `${BACKEND_URL}/api/v1/cv/${isPdf ? 'pdf' : 'json-resume'}?lang=${lang}`,
+                isPdf ? 'vicente-pau-cv.pdf' : 'resume.json'
+            );
+        } catch (error) {
+            showToast(t(error.status === 429 ? 'profile.downloadRateLimited' : 'profile.downloadFailed'));
+        } finally {
+            setShowCvMenu(false);
         }
-        setShowCvMenu(false);
-    }, [i18n.language]);
+    }, [i18n.language, t]);
 
-    const handleExportPDF = useCallback(async () => {
-        try {
-            const lang = (i18n.language || 'en').split('-')[0];
-            const response = await fetch(`${BACKEND_URL}/api/v1/cv/html?lang=${lang}`);
-            const html = await response.text();
-            const win = window.open('', '_blank');
-            win.document.write(html);
-            win.document.close();
-            setTimeout(() => win.print(), 500);
-        } catch {
-            // Silently fail
-        }
-        setShowCvMenu(false);
-    }, [i18n.language]);
+    const handleExportJSON = useCallback(() => handleDownload('json'), [handleDownload]);
+    const handleExportPDF = useCallback(() => handleDownload('pdf'), [handleDownload]);
 
     if (!data) return null;
 

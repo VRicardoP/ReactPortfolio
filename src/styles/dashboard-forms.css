@@ -40,7 +40,7 @@
     border-radius: 3px;
     font-family: 'Courier New', monospace;
     font-size: 11px;
-    cursor: pointer;
+    cursor: var(--cursor-pointer, pointer);
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
@@ -91,7 +91,7 @@
     font-family: 'Courier New', monospace;
     font-size: 11px;
     color: var(--theme-text, #d3d3d3);
-    cursor: pointer;
+    cursor: var(--cursor-pointer, pointer);
 }
 
 .dash-checkbox-row input[type="checkbox"] {
@@ -139,7 +139,7 @@
     border-radius: 4px;
     font-family: 'Courier New', monospace;
     font-size: 12px;
-    cursor: pointer;
+    cursor: var(--cursor-pointer, pointer);
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     align-self: flex-start;
 }
@@ -164,7 +164,7 @@
     background: transparent;
     border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.15));
     color: var(--theme-text, #d3d3d3);
-    cursor: pointer;
+    cursor: var(--cursor-pointer, pointer);
     font-family: 'Courier New', monospace;
     font-size: 11px;
     border-radius: 4px;

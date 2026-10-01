@@ -1,6 +1,18 @@
+:root {
+  --fs-caption: 11px;
+  --fs-sm: 12px;
+  --fs-body: 14px;
+  --fs-lead: 16px;
+  --fs-section: 18px;
+  --fs-window-title: 20px;
+  --fs-display: 28px;
+  --lh-tight: 1.2;
+  --lh-body: 1.5;
+}
+
 body {
   margin: 0;
-  font-family: 'Courier New', monospace;
+  font-family: 'Courier New', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', monospace;
   background-color: #000000;
   color: #00ffff;
 }
@@ -56,7 +68,7 @@ body {
 
 /* Japanese CJK font support */
 :lang(ja) {
-  font-family: 'Courier New', 'Noto Sans Mono CJK JP', 'MS Gothic', 'Osaka-Mono', monospace;
+  font-family: 'Courier New', 'Noto Sans Mono CJK JP', 'MS Gothic', 'Osaka-Mono', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', monospace;
 }
 
 /* Three.js canvas fixed in background */
@@ -99,7 +111,7 @@ canvas.rain-canvas {
   z-index: 50;
   user-select: none;
   pointer-events: none;
-  font-family: 'Courier New', monospace;
+  font-family: 'Courier New', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', monospace;
   max-width: 90%;
   text-align: center;
 }
@@ -135,7 +147,7 @@ canvas.rain-canvas {
   white-space: nowrap;
   display: inline-block;
   color: #00ffff;
-  font-family: 'Courier New', monospace;
+  font-family: 'Courier New', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', monospace;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -151,7 +163,7 @@ canvas.rain-canvas {
 /* Small tablets and large mobile (481px - 768px) */
 @media (max-width: 768px) {
   .main-title {
-    font-size: 24px;
+    font-size: var(--fs-window-title);
     top: 15px;
     max-width: 85%;
   }
@@ -168,11 +180,11 @@ canvas.rain-canvas {
 
   .floating-window .window-content {
     padding: 12px;
-    font-size: 14px;
+    font-size: var(--fs-body);
   }
 
   .floating-window .window-title {
-    font-size: 16px;
+    font-size: var(--fs-lead);
   }
 
   /* Responsive grid */
@@ -189,13 +201,13 @@ canvas.rain-canvas {
 /* Mobile (320px - 480px) */
 @media (max-width: 480px) {
   .main-title {
-    font-size: 18px;
+    font-size: var(--fs-section);
     top: 10px;
     padding: 0 10px;
   }
 
   .typewriter-container {
-    font-size: 16px;
+    font-size: var(--fs-lead);
   }
 
   .terminal-cursor {
@@ -216,11 +228,11 @@ canvas.rain-canvas {
 
   .floating-window .window-content {
     padding: 10px;
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 
   .floating-window .window-title {
-    font-size: 14px;
+    font-size: var(--fs-body);
   }
 
   .control-btn {
@@ -239,25 +251,25 @@ canvas.rain-canvas {
 
   /* Chat on mobile */
   .chat-input {
-    font-size: 13px;
+    font-size: var(--fs-sm);
     padding: 8px;
   }
 
   .chat-send-btn {
     padding: 8px 12px;
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 
   .chat-message {
     max-width: 90%;
-    font-size: 13px;
+    font-size: var(--fs-sm);
   }
 }
 
 /* Very small mobile (< 320px) */
 @media (max-width: 320px) {
   .main-title {
-    font-size: 16px;
+    font-size: var(--fs-lead);
   }
 
   .floating-window {
@@ -265,14 +277,14 @@ canvas.rain-canvas {
   }
 
   .floating-window .window-content {
-    font-size: 12px;
+    font-size: var(--fs-sm);
   }
 }
 
 /* Landscape orientation on mobile */
 @media (max-height: 500px) and (orientation: landscape) {
   .main-title {
-    font-size: 18px;
+    font-size: var(--fs-section);
     top: 5px;
   }
 
@@ -292,7 +304,7 @@ canvas.rain-canvas {
   }
 
   .floating-window .window-content {
-    font-size: 16px;
+    font-size: var(--fs-lead);
   }
 }
 
@@ -336,4 +348,20 @@ canvas.rain-canvas {
     animation: none;
     opacity: 1;
   }
+}
+html,
+body {
+  cursor: var(--cursor-default, auto);
+}
+
+a,
+button,
+[role='button'] {
+  cursor: var(--cursor-pointer, pointer);
+}
+
+input,
+textarea,
+[contenteditable='true'] {
+  cursor: text;
 }

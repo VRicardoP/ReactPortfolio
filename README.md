@@ -14,6 +14,7 @@ Built with a desktop OS metaphor: draggable, resizable floating windows, 6 immer
 - **11 portfolio windows** — Welcome, Profile, Soft Skills, Education, Experience, Languages, Tech Skills, Portfolio, Achievements, Chat, Terminal (easter egg)
 - **AI Chatbot** — Kusanagi assistant powered by Groq, responds in the visitor's language
 - **Internationalization** — 6 locales: English, Spanish, French, German, Italian, Japanese
+- **Education documents** — four Europass supplements available through an in-app PDF viewer (direct links on mobile)
 - **Visitor tracking** — geolocation and device data sent to backend once per session
 - **Interaction heatmap** — click and focus events batched via `sendBeacon` every 10s
 
@@ -39,7 +40,7 @@ Built with a desktop OS metaphor: draggable, resizable floating windows, 6 immer
 | Routing | React Router v7 |
 | State | React Context API (split state/callbacks) |
 | i18n | react-i18next (6 locales) |
-| Testing | Vitest + @testing-library/react (365 tests en 32 ficheros) |
+| Testing | Vitest + @testing-library/react (405 tests in 43 files) |
 | E2E | Playwright (17 tests) |
 | Styles | Pure CSS (no CSS-in-JS) |
 | Hosting | Cloudflare Pages |
@@ -48,8 +49,8 @@ Built with a desktop OS metaphor: draggable, resizable floating windows, 6 immer
 
 ```bash
 # Clone and enter the directory
-git clone https://github.com/VRicardoP/ReactPortfolio.git
-cd ReactPortfolio/frontend
+git clone https://gitlab.com/lotharsan/reactportfolio-front.git
+cd reactportfolio-front
 
 # Install dependencies
 npm install

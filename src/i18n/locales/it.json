@@ -35,10 +35,7 @@
     "frontend": "FRONTEND",
     "backend": "BACKEND",
     "databases": "DATABASE",
-    "others": "ALTRO",
-    "viewBars": "Barre",
-    "viewRadar": "Radar",
-    "viewMatrix": "Matrice"
+    "others": "ALTRO"
   },
   "profile": {
     "yearsExp": "20+ anni",
@@ -49,7 +46,9 @@
     "normalView": "Profilo Completo",
     "downloadCV": "Scarica CV",
     "exportJSON": "JSON Resume",
-    "exportPDF": "Stampa PDF",
+    "exportPDF": "Scarica PDF",
+    "downloadFailed": "Impossibile scaricare il CV. Riprova.",
+    "downloadRateLimited": "Troppi tentativi di download. Attendi un minuto.",
     "recruiterTopImpact": "Impatto Principale",
     "recruiterTopImpact1": "99%+ uptime di rete (sanità)",
     "recruiterTopImpact2": "60% miglioramento prestazioni infrastruttura",
@@ -63,36 +62,21 @@
     "recruiterKeyMetrics2": "1.000+ terminali gestiti",
     "recruiterKeyMetrics3": "Supporto remoto in 4 paesi"
   },
-  "softSkills": {
-    "desc0": "Mantiene le promesse e si assume la responsabilità dei risultati",
-    "desc1": "Valuta situazioni complesse con logica e ragionamento basato sui dati",
-    "desc2": "Mantiene standard etici e trasparenza in tutte le interazioni",
-    "desc3": "Comprende le esigenze degli utenti e progetta soluzioni dalla loro prospettiva",
-    "desc4": "Gestisce i disaccordi per trovare soluzioni vantaggiose per tutti",
-    "desc5": "Acquisisce proattivamente nuove competenze e resta aggiornato sulle tendenze",
-    "desc6": "Collabora tra ruoli e contribuisce agli obiettivi condivisi",
-    "desc7": "Identifica opportunità e agisce senza aspettare istruzioni",
-    "desc8": "Mantiene la calma e la produttività sotto pressione",
-    "desc9": "Prospera in ambienti in cambiamento e si adatta rapidamente",
-    "desc10": "Scompone sfide difficili in soluzioni attuabili",
-    "desc11": "Comunica idee efficacemente sia al pubblico tecnico che non tecnico",
-    "desc12": "Stabilisce obiettivi in autonomia e mantiene la concentrazione senza supervisione"
-  },
   "education": {
     "typeDegree": "Titolo",
     "typeBootcamp": "Bootcamp",
     "typeCert": "Certificato",
-    "typeCourse": "Corso"
+    "typeCourse": "Corso",
+    "europass": "Supplemento Europass"
+  },
+  "documentViewer": {
+    "openNewTab": "Apri in una nuova scheda",
+    "download": "Scarica",
+    "close": "Chiudi"
   },
   "portfolio": {
     "statusCompleted": "Completato",
     "statusInProgress": "In Corso"
-  },
-  "fitMatrix": {
-    "skill": "Competenza",
-    "category": "Categoria",
-    "proficiency": "Padronanza",
-    "level": "Liv"
   },
   "windows": {
     "profile": "Profilo",
@@ -105,7 +89,6 @@
     "achievements": "Risultati",
     "contact": "Contatto",
     "chat": "Kusanagi AI",
-    "fitMatrix": "Matrice Competenze",
     "jobSearch": "Ricerca lavoro"
   },
   "app": {
@@ -460,7 +443,8 @@
       "progressEmbedding": "Codifica offerte {{done}}/{{total}}",
       "progressRerank": "Valutazione IA — lotto {{done}}/{{total}}",
       "progressFinalize": "Finalizzazione…",
-      "computedAt": "Analisi delle {{time}}"
+      "computedAt": "Analisi delle {{time}}",
+      "noDescription": "Questa fonte non pubblica la descrizione — apri l’offerta sul portale."
     },
     "tab": {
       "overview": "Panoramica",

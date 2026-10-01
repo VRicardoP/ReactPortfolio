@@ -7,14 +7,14 @@
         "description": "Profesional de tecnología con más de 25 años de experiencia continua en administración de sistemas, infraestructura crítica y desarrollo de software. Perfil dual: solidez en infraestructura empresarial de alta disponibilidad —hospitales, CPDs nacionales, redes sanitarias autonómicas— combinada con desarrollo full-stack moderno y diseño de agentes conversacionales con inteligencia artificial. Ciudadano de la UE disponible para posiciones remotas con cobertura horaria CET completa. Busco entornos que compartan valores de precisión, fiabilidad y calidad técnica sostenida."
     },
     "softSkills": [
-        "Autonomía en entornos críticos sin supervisión directa",
-        "Iniciativa y propuesta de mejoras no solicitadas",
-        "Comunicación técnica en inglés a nivel C1 profesional",
-        "Resolución de problemas complejos bajo presión",
-        "Documentación técnica como práctica sistemática",
-        "Aprendizaje continuo compaginado con trabajo a tiempo completo",
-        "Ownership end-to-end de proyectos técnicos",
-        "Trabajo 100% remoto efectivo desde 2020"
+        { "text": "Autonomía en entornos críticos sin supervisión directa", "icon": "🎯" },
+        { "text": "Iniciativa y propuesta de mejoras no solicitadas", "icon": "🚀" },
+        { "text": "Comunicación técnica en inglés a nivel C1 profesional", "icon": "💬" },
+        { "text": "Resolución de problemas complejos bajo presión", "icon": "🔧" },
+        { "text": "Documentación técnica como práctica sistemática", "icon": "📝" },
+        { "text": "Aprendizaje continuo compaginado con trabajo a tiempo completo", "icon": "📚" },
+        { "text": "Ownership end-to-end de proyectos técnicos", "icon": "⭐" },
+        { "text": "Trabajo 100% remoto efectivo desde 2020", "icon": "🏠" }
     ],
     "education": [
         {
@@ -22,6 +22,7 @@
             "institution": "IES Jaume II el Just — Tabernes de la Valldigna, Valencia — EQF Level 5 | 120 ECTS | Europass",
             "date": "2024 – 2025",
             "type": "degree",
+            "documents": [{ "labelKey": "education.europass", "file": "europass-daw" }],
             "description": "Titulación oficial de nivel EQF 5 con Suplemento Europass, válida en toda la Unión Europea. Módulos principales: desarrollo web cliente y servidor (JavaScript, PHP, Node.js), despliegue de aplicaciones web, diseño de interfaces accesibles (HTML5, CSS3), bases de datos relacionales y ERP/CRM con Odoo."
         },
         {
@@ -29,6 +30,7 @@
             "institution": "IES Jaume II el Just — Tabernes de la Valldigna, Valencia — EQF Level 5 | 120 ECTS | Europass",
             "date": "2021 – 2024",
             "type": "degree",
+            "documents": [{ "labelKey": "education.europass", "file": "europass-dam" }],
             "description": "Titulación oficial de nivel EQF 5 con Suplemento Europass, válida en toda la Unión Europea. Módulos principales: programación orientada a objetos en Java, desarrollo móvil (Android/Kotlin, Flutter/Dart), acceso a datos con Hibernate y ORM, ERP/CRM Odoo, TDD y UML. Cursada compaginando trabajo a tiempo completo."
         },
         {
@@ -174,7 +176,7 @@
             "title": "CookCode System — Gestión integral de restaurante y cocina",
             "tech": ["PHP 8.2", "MySQL 8", "WordPress", "WooCommerce", "Python", "PySide6", "Docker", "MQTT"],
             "description": "Plataforma gastronómica integral que unifica cocina central, TPV de restaurante y tienda online bajo una misma fuente de verdad. Cuatro servicios interconectados — tienda WordPress con APIs propias para WooCommerce, app de cocina con trazabilidad por lotes y etiquetas QR, TPV de restaurante con escáner por MQTT, y el asistente por voz MiniChef (PySide6 + Vosk + Coqui TTS + Gemini) — orquestados con un único docker-compose de seis contenedores.",
-            "github": "https://gitlab.com/lotharsan/cookcodesystem",
+            "gitlab": "https://gitlab.com/lotharsan/cookcodesystem",
             "demo": "",
             "status": "completed"
         },
@@ -182,7 +184,7 @@
             "title": "Portfolio Frontend — vicentepau.is-a.dev",
             "tech": ["React 19", "Vite 7", "Three.js", "Chart.js", "Leaflet", "i18next", "Vitest", "Playwright"],
             "description": "Este mismo portfolio. Metáfora de escritorio con ventanas flotantes arrastrables y redimensionables, seis fondos 3D interactivos, tres temas de color, chatbot IA con Groq, seis idiomas, tracking de visitantes y un dashboard privado con agregación de empleo, matching IA, pipeline Kanban y CVs generados por IA. 313 tests vitest + 17 Playwright. Desplegado en Cloudflare Pages.",
-            "github": "https://gitlab.com/lotharsan/reactportfolio-front",
+            "gitlab": "https://gitlab.com/lotharsan/reactportfolio-front",
             "demo": "https://vicentepau.is-a.dev",
             "status": "in-progress"
         },
@@ -190,7 +192,7 @@
             "title": "Parakeet — Integración de móvil para Budgie",
             "tech": ["Vala", "GTK 3", "Meson", "D-Bus", "KDE Connect"],
             "description": "Applet para el panel del escritorio Budgie que integra un teléfono Android en el flujo de trabajo de Linux a través de KDE Connect. Un clic muestra el estado del dispositivo, batería, últimas diez notificaciones, función «find my phone» y explorador de archivos por SFTP — todo dirigido por señales D-Bus del demonio KDE Connect, sin polling ni servicios en segundo plano.",
-            "github": "https://gitlab.com/lotharsan/parakeet",
+            "gitlab": "https://gitlab.com/lotharsan/parakeet",
             "demo": "",
             "status": "in-progress"
         },
@@ -198,7 +200,7 @@
             "title": "Photoloop — Marco de fotos digital con streaming desde NAS",
             "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
             "description": "App Flutter para Android que convierte cualquier móvil, tablet o Android TV en un marco de fotos digital. Stream desde NAS por SMB con descubrimiento automático de la subred y caché deslizante, o lectura desde almacenamiento local. Tres estilos de transición, filtro por orientación, wakelock durante la reproducción y credenciales SMB guardadas en el Android Keystore.",
-            "github": "https://gitlab.com/lotharsan/photoloop",
+            "gitlab": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
             "status": "completed"
         },
@@ -206,7 +208,7 @@
             "title": "Reddit Gallery — Cliente multimedia para Android",
             "tech": ["Flutter", "Dart", "Provider", "Dio", "API JSON de Reddit"],
             "description": "Cliente Flutter ligero para Android que permite explorar y descargar imágenes y vídeos de Reddit sin necesidad de cuenta, como sustituto de la discontinuada Gallery for Reddit. Feed combinado de tus suscripciones con scroll infinito, visor a pantalla completa con zoom, soporte de v.redd.it / Redgifs / Imgur / Streamable, filtros configurables y backup/restauración de suscripciones en JSON.",
-            "github": "https://gitlab.com/lotharsan/reddit_gallery",
+            "gitlab": "https://gitlab.com/lotharsan/reddit_gallery",
             "demo": "",
             "status": "completed"
         },
@@ -214,7 +216,7 @@
             "title": "Movies React — SPA de exploración de TMDB",
             "tech": ["React 18", "Vite", "React Router 6", "Axios", "Vitest"],
             "description": "Aplicación single-page con React 18 + Vite que consulta The Movie Database (TMDB). Autenticación con sesión de 30 minutos, favoritos persistidos en localStorage, búsqueda con debounce y peticiones cancelables vía AbortController, paginación incremental, skeleton loaders, rutas protegidas y capa de negocio cubierta con tests.",
-            "github": "https://gitlab.com/lotharsan/movies-react",
+            "gitlab": "https://gitlab.com/lotharsan/movies-react",
             "demo": "",
             "status": "completed"
         }
@@ -232,9 +234,8 @@
     "contact": {
         "message": "¿Buscas un perfil IT senior con experiencia en infraestructura crítica e inteligencia artificial conversacional para trabajo remoto? Escríbeme directamente o usa el chatbot para explorar mi experiencia en detalle.",
         "social": {
-            "linkedin": "",
-            "github": "",
-            "twitter": ""
+            "linkedin": "https://www.linkedin.com/in/vicentedev/",
+            "gitlab": "https://gitlab.com/lotharsan"
         }
     }
 }

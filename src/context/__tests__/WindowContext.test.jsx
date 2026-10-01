@@ -228,4 +228,42 @@ describe('WindowContext', () => {
 
     expect(screen.getByTestId('active').textContent).toBe('win-y')
   })
+  it('keeps the user-selected minimize anchor when fitToContent centers the window', () => {
+    renderWithProvider()
+
+    act(() => {
+      contextRef.current.registerWindow('win-anchor', { position: { x: 100, y: 100 } })
+    })
+    act(() => {
+      contextRef.current.updatePosition('win-anchor', { x: 320, y: 240 })
+      contextRef.current.fitToContent('win-anchor', { width: 400, height: 300 })
+    })
+
+    let windows = JSON.parse(screen.getByTestId('windows').textContent)
+    const openPosition = windows['win-anchor'].position
+    expect(windows['win-anchor'].minimizePosition).toEqual({ x: 320, y: 240 })
+    expect(openPosition).not.toEqual({ x: 320, y: 240 })
+
+    act(() => contextRef.current.toggleMinimize('win-anchor'))
+    windows = JSON.parse(screen.getByTestId('windows').textContent)
+    expect(windows['win-anchor'].position).toEqual({ x: 320, y: 240 })
+
+    act(() => contextRef.current.toggleMinimize('win-anchor'))
+    windows = JSON.parse(screen.getByTestId('windows').textContent)
+    expect(windows['win-anchor'].position).toEqual(openPosition)
+  })
+
+  it('clamps a minimized pill inside the viewport', () => {
+    renderWithProvider()
+
+    act(() => {
+      contextRef.current.registerWindow('win-clamp', { position: { x: 5000, y: 5000 } })
+      contextRef.current.toggleMinimize('win-clamp')
+    })
+
+    const windows = JSON.parse(screen.getByTestId('windows').textContent)
+    expect(windows['win-clamp'].position.x).toBeLessThanOrEqual(window.innerWidth - 180)
+    expect(windows['win-clamp'].position.y).toBeLessThanOrEqual(window.innerHeight - 40)
+  })
+
 })

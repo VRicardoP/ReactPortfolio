@@ -73,7 +73,7 @@
   color: #000;
   border: 1px solid var(--theme-primary, #00ffff);
   border-radius: 4px;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
   font-size: 16px;
   font-weight: bold;
   font-family: 'Courier New', monospace;

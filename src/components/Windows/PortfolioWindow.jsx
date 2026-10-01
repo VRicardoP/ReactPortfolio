@@ -41,10 +41,10 @@ const PortfolioWindow = ({ data, initialPosition }) => {
 
                             <div className="portfolio-description">{project.description}</div>
 
-                            {(project.github || project.demo) && (
+                            {(project.gitlab || project.github || project.demo) && (
                                 <div className="portfolio-links">
-                                    {project.github && (
-                                        <a href={project.github} target="_blank" rel="noopener noreferrer"
+                                    {(project.gitlab || project.github) && (
+                                        <a href={project.gitlab || project.github} target="_blank" rel="noopener noreferrer"
                                             className="portfolio-link">[Repo]</a>
                                     )}
                                     {project.demo && (

@@ -50,7 +50,7 @@
     width: 18px;
     height: 18px;
     border-radius: 3px;
-    cursor: pointer;
+    cursor: var(--cursor-pointer, pointer);
     font-size: 12px;
     line-height: 1;
     display: flex;
@@ -86,7 +86,7 @@
     border: 1px solid;
     padding: 4px;
     border-radius: 3px;
-    cursor: pointer;
+    cursor: var(--cursor-pointer, pointer);
     font-family: 'Courier New', monospace;
     font-size: 11px;
 }
@@ -104,7 +104,7 @@
     padding: 6px 8px;
     border: 1px solid;
     border-radius: 3px;
-    cursor: grab;
+    cursor: var(--cursor-grab, grab);
     transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
 }
 
@@ -165,7 +165,7 @@
     color: inherit;
     font-size: 12px;
     line-height: 1;
-    cursor: pointer;
+    cursor: var(--cursor-pointer, pointer);
     text-decoration: none;
     transition: background-color 0.15s ease, border-color 0.15s ease;
 }
@@ -212,7 +212,7 @@
     color: inherit;
     font-size: 10px;
     padding: 2px 6px;
-    cursor: pointer;
+    cursor: var(--cursor-pointer, pointer);
     font-family: 'Courier New', monospace;
     transition: background-color 0.15s ease, border-color 0.15s ease;
 }

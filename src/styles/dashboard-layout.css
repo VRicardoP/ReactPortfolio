@@ -26,7 +26,7 @@
   color: var(--theme-primary, #00ffff);
   font-family: 'Courier New', monospace;
   font-size: 13px;
-  cursor: pointer;
+  cursor: var(--cursor-pointer, pointer);
   transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
   backdrop-filter: blur(5px);
 }

@@ -35,10 +35,7 @@
     "frontend": "FRONTEND",
     "backend": "BACKEND",
     "databases": "DATENBANKEN",
-    "others": "SONSTIGES",
-    "viewBars": "Balken",
-    "viewRadar": "Radar",
-    "viewMatrix": "Matrix"
+    "others": "SONSTIGES"
   },
   "profile": {
     "yearsExp": "20+ Jahre",
@@ -49,7 +46,9 @@
     "normalView": "Vollständiges Profil",
     "downloadCV": "CV herunterladen",
     "exportJSON": "JSON Resume",
-    "exportPDF": "PDF drucken",
+    "exportPDF": "PDF herunterladen",
+    "downloadFailed": "Der Lebenslauf konnte nicht heruntergeladen werden. Bitte erneut versuchen.",
+    "downloadRateLimited": "Zu viele Downloadversuche. Bitte eine Minute warten.",
     "recruiterTopImpact": "Wichtigste Erfolge",
     "recruiterTopImpact1": "99%+ Netzwerk-Verfügbarkeit (Gesundheitswesen)",
     "recruiterTopImpact2": "60% Infrastruktur-Leistungssteigerung",
@@ -63,36 +62,21 @@
     "recruiterKeyMetrics2": "1.000+ verwaltete Terminals",
     "recruiterKeyMetrics3": "Remote-Support in 4 Ländern"
   },
-  "softSkills": {
-    "desc0": "Hält Versprechen und übernimmt Verantwortung für Ergebnisse",
-    "desc1": "Bewertet komplexe Situationen mit Logik und datenbasierter Analyse",
-    "desc2": "Wahrt ethische Standards und Transparenz in allen Interaktionen",
-    "desc3": "Versteht Benutzerbedürfnisse und entwirft Lösungen aus deren Perspektive",
-    "desc4": "Navigiert Meinungsverschiedenheiten zu Win-Win-Lösungen",
-    "desc5": "Eignet sich proaktiv neue Fähigkeiten an und bleibt auf dem neuesten Stand",
-    "desc6": "Arbeitet rollenübergreifend zusammen und trägt zu gemeinsamen Zielen bei",
-    "desc7": "Erkennt Chancen und handelt eigeninitiativ",
-    "desc8": "Bewahrt Gelassenheit und Produktivität unter Druck",
-    "desc9": "Gedeiht in sich verändernden Umgebungen und passt sich schnell an",
-    "desc10": "Zerlegt schwierige Herausforderungen in umsetzbare Lösungen",
-    "desc11": "Vermittelt Ideen effektiv an technische und nicht-technische Zielgruppen",
-    "desc12": "Setzt sich eigenständig Ziele und bleibt ohne externe Aufsicht fokussiert"
-  },
   "education": {
     "typeDegree": "Abschluss",
     "typeBootcamp": "Bootcamp",
     "typeCert": "Zertifikat",
-    "typeCourse": "Kurs"
+    "typeCourse": "Kurs",
+    "europass": "Europass-Zeugniserläuterung"
+  },
+  "documentViewer": {
+    "openNewTab": "In neuem Tab öffnen",
+    "download": "Herunterladen",
+    "close": "Schließen"
   },
   "portfolio": {
     "statusCompleted": "Abgeschlossen",
     "statusInProgress": "In Bearbeitung"
-  },
-  "fitMatrix": {
-    "skill": "Fähigkeit",
-    "category": "Kategorie",
-    "proficiency": "Kompetenz",
-    "level": "Niv"
   },
   "windows": {
     "profile": "Profil",
@@ -105,7 +89,6 @@
     "achievements": "Erfolge",
     "contact": "Kontakt",
     "chat": "Kusanagi AI",
-    "fitMatrix": "Kompetenzmatrix",
     "jobSearch": "Jobsuche"
   },
   "app": {
