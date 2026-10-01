@@ -6,8 +6,11 @@ vi.mock('../../context/AuthContext', () => ({
   useAuth: vi.fn(),
 }))
 
+// DT-129: el hook ya envia DEFAULT_HEADERS (sin ellas, ngrok devuelve su aviso
+// en HTML sin Access-Control-Allow-Origin y el stream no conecta nunca).
 vi.mock('../../config/api', () => ({
   BACKEND_URL: 'http://test',
+  DEFAULT_HEADERS: { 'ngrok-skip-browser-warning': 'true' },
 }))
 
 vi.mock('../../components/UI/Toast', () => ({
@@ -198,7 +201,10 @@ describe('useSSENotifications', () => {
     expect(global.fetch).toHaveBeenCalledWith(
       'http://test/api/v1/notifications/stream',
       expect.objectContaining({
-        headers: { Authorization: 'Bearer my-jwt-token' },
+        headers: {
+          'ngrok-skip-browser-warning': 'true',
+          Authorization: 'Bearer my-jwt-token',
+        },
         signal: expect.any(AbortSignal),
       })
     )

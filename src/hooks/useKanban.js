@@ -3,18 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
+// DT-127: las columnas del pipeline son UNA sola lista (config/kanbanColumns).
+// Se re-exporta para no cambiar la API pública de este hook.
+import { COLUMN_KEYS } from '../config/kanbanColumns';
+
+export { COLUMN_KEYS };
 
 const INITIAL_NEW_APP = { title: '', company: '', url: '' };
 
 /** Column keys in pipeline order (rendering metadata like colors lives in the component). */
-export const COLUMN_KEYS = [
-    'saved',
-    'applied',
-    'phone_screen',
-    'technical',
-    'offer',
-    'rejected',
-];
 
 /**
  * Kanban pipeline state management and CRUD.

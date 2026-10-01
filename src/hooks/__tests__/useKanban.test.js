@@ -64,8 +64,10 @@ describe('useKanban', () => {
 
   // --- 1. COLUMN_KEYS export ---
   it('exports COLUMN_KEYS with all pipeline statuses', () => {
+    // DT-127: `interested` FALTABA aquí mientras el Kanban ya pintaba su
+    // columna, y `grouped['interested']` undefined tumbaba cuatro ventanas.
     expect(COLUMN_KEYS).toEqual([
-      'saved', 'applied', 'phone_screen', 'technical', 'offer', 'rejected',
+      'interested', 'saved', 'applied', 'phone_screen', 'technical', 'offer', 'rejected',
     ])
   })
 
@@ -426,8 +428,15 @@ describe('useKanban', () => {
   })
 
   // --- 16. handleMoveCard at boundary is no-op ---
+  // DT-127: los extremos se DERIVAN de COLUMN_KEYS. Estaban escritos a mano
+  // ('saved' primera, 'rejected' ultima) y al entrar la columna `interested`
+  // el movimiento a la izquierda desde 'saved' dejo de ser un no-op: el test
+  // se quedaba esperando un PATCH que su mock no tenia preparado.
+  const PRIMERA = COLUMN_KEYS[0]
+  const ULTIMA = COLUMN_KEYS[COLUMN_KEYS.length - 1]
+
   it('does not move card beyond first column', async () => {
-    const apps = [makeApp({ id: 1, status: 'saved' })]
+    const apps = [makeApp({ id: 1, status: PRIMERA })]
     mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse(apps))
 
     const { result } = renderHook(() => useKanban())
@@ -440,13 +449,13 @@ describe('useKanban', () => {
       await result.current.handleMoveCard(1, -1) // move left from first column
     })
 
-    // No PATCH call — still in saved
+    // No PATCH call — sigue en la primera columna
     expect(mockAuthenticatedFetch).toHaveBeenCalledTimes(1)
-    expect(result.current.grouped.saved).toHaveLength(1)
+    expect(result.current.grouped[PRIMERA]).toHaveLength(1)
   })
 
   it('does not move card beyond last column', async () => {
-    const apps = [makeApp({ id: 1, status: 'rejected' })]
+    const apps = [makeApp({ id: 1, status: ULTIMA })]
     mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse(apps))
 
     const { result } = renderHook(() => useKanban())
@@ -460,7 +469,7 @@ describe('useKanban', () => {
     })
 
     expect(mockAuthenticatedFetch).toHaveBeenCalledTimes(1)
-    expect(result.current.grouped.rejected).toHaveLength(1)
+    expect(result.current.grouped[ULTIMA]).toHaveLength(1)
   })
 
   // --- 17. handleMoveCard reverts on error ---

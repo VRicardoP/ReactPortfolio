@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { BACKEND_URL } from '../config/api';
+import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
 import { showToast } from '../components/UI/Toast';
 import i18n from '../i18n';
 
@@ -26,8 +26,13 @@ export const useSSENotifications = () => {
 
         const connectSSE = async () => {
             try {
+                // DT-129: sin DEFAULT_HEADERS el túnel ngrok devolvía su
+                // página de aviso (HTML, ERR_NGROK_6024) SIN
+                // Access-Control-Allow-Origin, y el navegador lo leía como
+                // error de CORS: el stream no conectaba NUNCA en producción, en
+                // bucle de reintentos y sin nada visible en pantalla.
                 const response = await fetch(`${BACKEND_URL}/api/v1/notifications/stream`, {
-                    headers: { 'Authorization': `Bearer ${token}` },
+                    headers: { ...DEFAULT_HEADERS, 'Authorization': `Bearer ${token}` },
                     signal: controller.signal,
                 });
 

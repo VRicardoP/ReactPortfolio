@@ -39,13 +39,12 @@ const MobileDashboardLayout = memo(({
             <div className="mobile-dashboard-container">
                 <div className="mobile-dashboard-content">
                     {activeTab === 'overview' && (
-                        <ErrorBoundary>
-                            <Suspense fallback={<DashboardLoader />}>
-                                <StatsWindow data={stats} defaultExpanded />
-                                <RecentVisitorsWindow data={stats} />
-                                <HeatmapWindow />
-                            </Suspense>
-                        </ErrorBoundary>
+                        <Suspense fallback={<DashboardLoader />}>
+                            {/* DT-128: un ErrorBoundary POR ventana, como en escritorio. */}
+                            <ErrorBoundary><StatsWindow data={stats} defaultExpanded /></ErrorBoundary>
+                            <ErrorBoundary><RecentVisitorsWindow data={stats} /></ErrorBoundary>
+                            <ErrorBoundary><HeatmapWindow /></ErrorBoundary>
+                        </Suspense>
                     )}
 
                     {activeTab === 'map' && (
@@ -65,15 +64,13 @@ const MobileDashboardLayout = memo(({
                     )}
 
                     {activeTab === 'jobs' && (
-                        <ErrorBoundary>
-                            <Suspense fallback={<DashboardLoader />}>
-                                <JobBoardTabbedWindow jobData={jobData} defaultExpanded />
-                                <JobMarketAnalyticsWindow jobData={jobData} />
-                                <SelectedOffersPanel />
-                                <JobSearchWindow />
-                                <AIJobMatchWindow />
-                            </Suspense>
-                        </ErrorBoundary>
+                        <Suspense fallback={<DashboardLoader />}>
+                            <ErrorBoundary><JobBoardTabbedWindow jobData={jobData} defaultExpanded /></ErrorBoundary>
+                            <ErrorBoundary><JobMarketAnalyticsWindow jobData={jobData} /></ErrorBoundary>
+                            <ErrorBoundary><SelectedOffersPanel /></ErrorBoundary>
+                            <ErrorBoundary><JobSearchWindow /></ErrorBoundary>
+                            <ErrorBoundary><AIJobMatchWindow /></ErrorBoundary>
+                        </Suspense>
                     )}
 
                     {activeTab === 'settings' && (

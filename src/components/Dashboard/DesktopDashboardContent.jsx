@@ -81,79 +81,90 @@ const DesktopDashboardContent = memo(({
 
     return (
         <>
-            {/* Overview group */}
-            <ErrorBoundary>
-                <Suspense fallback={<DashboardLoader />}>
+            {/* DT-128: UN ErrorBoundary POR VENTANA. Antes había uno por GRUPO, así
+                que el TypeError de una sola (DT-127, en el Kanban que importa
+                SelectedOffersPanel) se llevaba las otras tres del grupo «Jobs»:
+                Job Board, Job Search y AI Job Match funcionaban y no se veían.
+                El Suspense sigue compartido: la carga diferida no es un fallo. */}
+            <Suspense fallback={<DashboardLoader />}>
+                {/* Overview group */}
+                <ErrorBoundary>
                     <StatsWindow
                         data={stats}
                         initialPosition={{ x: 100, y: 120 }}
                     />
+                </ErrorBoundary>
+                <ErrorBoundary>
                     <RecentVisitorsWindow
                         data={stats}
                         initialPosition={{ x: 130, y: 130 }}
                     />
-                </Suspense>
-            </ErrorBoundary>
+                </ErrorBoundary>
 
-            {/* Map group */}
-            <ErrorBoundary>
-                <Suspense fallback={<DashboardLoader />}>
+                {/* Map group */}
+                <ErrorBoundary>
                     <MapWindow
                         data={mapData}
                         initialPosition={{ x: 160, y: 140 }}
                     />
-                </Suspense>
-            </ErrorBoundary>
+                </ErrorBoundary>
 
-            {/* Analytics group */}
-            <ErrorBoundary>
-                <Suspense fallback={<DashboardLoader />}>
+                {/* Analytics group */}
+                <ErrorBoundary>
                     <ChatAnalyticsWindow
                         data={chatAnalytics}
                         initialPosition={{ x: 190, y: 150 }}
                     />
+                </ErrorBoundary>
+                <ErrorBoundary>
                     <JobMarketAnalyticsWindow
                         jobData={jobData}
                         initialPosition={{ x: 250, y: 170 }}
                     />
+                </ErrorBoundary>
+                <ErrorBoundary>
                     <HeatmapWindow
                         initialPosition={{ x: 310, y: 190 }}
                     />
-                </Suspense>
-            </ErrorBoundary>
+                </ErrorBoundary>
 
-            {/* Jobs group */}
-            <ErrorBoundary>
-                <Suspense fallback={<DashboardLoader />}>
+                {/* Jobs group */}
+                <ErrorBoundary>
                     <JobBoardTabbedWindow
                         jobData={jobData}
                         initialPosition={{ x: 220, y: 160 }}
                     />
+                </ErrorBoundary>
+                <ErrorBoundary>
                     <SelectedOffersPanel
                         initialPosition={{ x: 280, y: 180 }}
                     />
+                </ErrorBoundary>
+                <ErrorBoundary>
                     <JobSearchWindow
                         initialPosition={{ x: 370, y: 210 }}
                     />
+                </ErrorBoundary>
+                <ErrorBoundary>
                     <AIJobMatchWindow
                         initialPosition={{ x: 520, y: 260 }}
                     />
-                </Suspense>
-            </ErrorBoundary>
+                </ErrorBoundary>
 
-            {/* Schools group */}
-            <ErrorBoundary>
-                <Suspense fallback={<DashboardLoader />}>
+                {/* Schools group */}
+                <ErrorBoundary>
                     <SchoolJobsWindow
                         schoolData={schoolData}
                         initialPosition={{ x: 340, y: 200 }}
                     />
+                </ErrorBoundary>
+                <ErrorBoundary>
                     <SchoolManualContactsWindow
                         schoolData={schoolData}
                         initialPosition={{ x: 400, y: 220 }}
                     />
-                </Suspense>
-            </ErrorBoundary>
+                </ErrorBoundary>
+            </Suspense>
         </>
     );
 });
