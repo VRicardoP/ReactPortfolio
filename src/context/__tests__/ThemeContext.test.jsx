@@ -145,4 +145,17 @@ describe('ThemeContext', () => {
     expect(root.style.getPropertyValue('--theme-text')).toBe('#D3D3D3')
     expect(root.style.getPropertyValue('--theme-text-highlight')).toBe('#00ffff')
   })
+
+  it('injects compact cursors with rounded strokes', () => {
+    render(
+      <ThemeProvider>
+        <ThemeConsumer />
+      </ThemeProvider>
+    )
+
+    const cursor = document.documentElement.style.getPropertyValue('--cursor-default')
+    expect(cursor).toContain('width%3D%2226%22')
+    expect(cursor).toContain('stroke-linecap%3D%22round%22')
+    expect(cursor).toContain('2 2, auto')
+  })
 })

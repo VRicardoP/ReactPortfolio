@@ -78,20 +78,22 @@ const ThemeContext = createContext(null);
 // Available 3D/2D background effects. First entry is the default.
 const BACKGROUND_EFFECTS = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
 
+const CURSOR_SIZE = 26;
+
 const cursorValue = (body, color, hotspot, fallback) => {
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">${body.replaceAll('COLOR', color)}</svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CURSOR_SIZE}" height="${CURSOR_SIZE}" viewBox="0 0 32 32"><g stroke-linecap="round" stroke-linejoin="round">${body.replaceAll('COLOR', color)}</g></svg>`;
     return `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${hotspot}, ${fallback}`;
 };
 
 const themedCursors = (color) => ({
-    '--cursor-default': cursorValue('<path d="M3 2v24l6-7 5 11 4-2-5-10h10z" fill="#050505" stroke="COLOR" stroke-width="2"/>', color, '3 2', 'auto'),
-    '--cursor-pointer': cursorValue('<circle cx="16" cy="16" r="8" fill="#050505" stroke="COLOR" stroke-width="2"/><path d="M16 2v8M16 22v8M2 16h8M22 16h8" stroke="COLOR" stroke-width="2"/>', color, '16 16', 'pointer'),
-    '--cursor-grab': cursorValue('<path d="M9 15V9a2 2 0 014 0v4-6a2 2 0 014 0v6-5a2 2 0 014 0v6-3a2 2 0 014 0v8c0 6-4 10-10 10h-1c-4 0-7-2-9-6l-2-5a2 2 0 014-2l3 4" fill="#050505" stroke="COLOR" stroke-width="1.5"/>', color, '16 15', 'grab'),
-    '--cursor-grabbing': cursorValue('<path d="M8 16V9a2 2 0 014 0v5-7a2 2 0 014 0v7-6a2 2 0 014 0v6-4a2 2 0 014 0v9c0 6-4 10-10 10h-1c-4 0-7-2-9-6l-2-4a2 2 0 014-2l3 4" fill="#050505" stroke="COLOR" stroke-width="2"/>', color, '16 16', 'grabbing'),
-    '--cursor-resize-x': cursorValue('<path d="M3 16h26M3 16l6-6M3 16l6 6M29 16l-6-6M29 16l-6 6" stroke="COLOR" stroke-width="2"/>', color, '16 16', 'ew-resize'),
-    '--cursor-resize-y': cursorValue('<path d="M16 3v26M16 3l-6 6M16 3l6 6M16 29l-6-6M16 29l6-6" stroke="COLOR" stroke-width="2"/>', color, '16 16', 'ns-resize'),
-    '--cursor-resize-nwse': cursorValue('<path d="M5 5l22 22M5 5h9M5 5v9M27 27h-9M27 27v-9" stroke="COLOR" stroke-width="2"/>', color, '16 16', 'nwse-resize'),
-    '--cursor-resize-nesw': cursorValue('<path d="M27 5L5 27M27 5h-9M27 5v9M5 27h9M5 27v-9" stroke="COLOR" stroke-width="2"/>', color, '16 16', 'nesw-resize'),
+    '--cursor-default': cursorValue('<path d="M3 2v24l6-7 5 11 4-2-5-10h10z" fill="#050505" stroke="COLOR" stroke-width="1.5"/>', color, '2 2', 'auto'),
+    '--cursor-pointer': cursorValue('<circle cx="16" cy="16" r="7" fill="#050505" stroke="COLOR" stroke-width="1.5"/><path d="M16 3v7M16 22v7M3 16h7M22 16h7" stroke="COLOR" stroke-width="1.5"/>', color, '13 13', 'pointer'),
+    '--cursor-grab': cursorValue('<path d="M9 15V9a2 2 0 014 0v4-6a2 2 0 014 0v6-5a2 2 0 014 0v6-3a2 2 0 014 0v8c0 6-4 10-10 10h-1c-4 0-7-2-9-6l-2-5a2 2 0 014-2l3 4" fill="#050505" stroke="COLOR" stroke-width="1.5"/>', color, '13 12', 'grab'),
+    '--cursor-grabbing': cursorValue('<path d="M8 16V9a2 2 0 014 0v5-7a2 2 0 014 0v7-6a2 2 0 014 0v6-4a2 2 0 014 0v9c0 6-4 10-10 10h-1c-4 0-7-2-9-6l-2-4a2 2 0 014-2l3 4" fill="#050505" stroke="COLOR" stroke-width="1.5"/>', color, '13 13', 'grabbing'),
+    '--cursor-resize-x': cursorValue('<path d="M3 16h26M3 16l6-6M3 16l6 6M29 16l-6-6M29 16l-6 6" stroke="COLOR" stroke-width="1.5"/>', color, '13 13', 'ew-resize'),
+    '--cursor-resize-y': cursorValue('<path d="M16 3v26M16 3l-6 6M16 3l6 6M16 29l-6-6M16 29l6-6" stroke="COLOR" stroke-width="1.5"/>', color, '13 13', 'ns-resize'),
+    '--cursor-resize-nwse': cursorValue('<path d="M5 5l22 22M5 5h9M5 5v9M27 27h-9M27 27v-9" stroke="COLOR" stroke-width="1.5"/>', color, '13 13', 'nwse-resize'),
+    '--cursor-resize-nesw': cursorValue('<path d="M27 5L5 27M27 5h-9M27 5v9M5 27h9M5 27v-9" stroke="COLOR" stroke-width="1.5"/>', color, '13 13', 'nesw-resize'),
 });
 
 export const ThemeProvider = ({ children }) => {
