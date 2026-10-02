@@ -39,12 +39,11 @@ const roleLabel = (t, score) => {
     return t('dashboard.schoolJobs.relevance.irrelevant');
 };
 
-const buildApplyLink = (school) => {
-    if (school?.contact_email) {
-        return `mailto:${school.contact_email}?subject=${encodeURIComponent('Spontaneous application — IT role')}`;
-    }
-    return school?.portal_url || school?.jobs_page_url || null;
-};
+const buildEmailLink = (email) => email
+    ? `mailto:${email}?subject=${encodeURIComponent('Spontaneous application — IT role')}`
+    : null;
+
+const getJobsPage = (school) => school?.jobs_page_url || school?.portal_url || null;
 
 const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
     const { t } = useTranslation();
@@ -118,8 +117,9 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
                             <tbody>
                                 {jobs.map((job) => {
                                     const school = schoolsById[job.school_id];
-                                    const link = buildApplyLink(school);
                                     const rscore = roleScoreNum(job.role_score);
+                                    const jobsPage = job.url ? null : getJobsPage(school);
+                                    const emailLink = buildEmailLink(school?.contact_email);
                                     return (
                                         <tr
                                             key={job.id}
@@ -150,7 +150,12 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
                                                     {school?.policy}
                                                 </div>
                                             </td>
-                                            <td>{job.title}</td>
+                                            <td>
+                                                {job.title}
+                                                {job.description_snippet && (
+                                                    <div className="school-job-description">{job.description_snippet}</div>
+                                                )}
+                                            </td>
                                             <td>{new Date(job.date_detected).toLocaleString()}</td>
                                             <td>
                                                 {job.url && (
@@ -158,11 +163,14 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
                                                         {t('dashboard.schoolJobs.viewOffer')}
                                                     </a>
                                                 )}
-                                                {link && (
-                                                    <a href={link} target="_blank" rel="noopener noreferrer">
-                                                        {school?.contact_email
-                                                            ? t('dashboard.schoolJobs.emailContact')
-                                                            : t('dashboard.schoolJobs.openPortal')}
+                                                {jobsPage && (
+                                                    <a href={jobsPage} target="_blank" rel="noopener noreferrer" className="school-action-link">
+                                                        {t('dashboard.schoolJobs.openPortal')}
+                                                    </a>
+                                                )}
+                                                {emailLink && (
+                                                    <a href={emailLink}>
+                                                        {t('dashboard.schoolJobs.emailContact')}
                                                     </a>
                                                 )}
                                             </td>
