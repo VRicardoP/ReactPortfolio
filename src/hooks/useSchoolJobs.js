@@ -5,6 +5,7 @@ import { BACKEND_URL } from '../config/api';
 
 const SCHOOLS_URL = `${BACKEND_URL}/api/v1/schools/`;
 const SCHOOL_JOBS_URL = `${BACKEND_URL}/api/v1/schools/jobs/all`;
+const SCHOOL_JOB_ACTIONS_URL = `${BACKEND_URL}/api/v1/schools/jobs`;
 const REFRESH_URL = `${BACKEND_URL}/api/v1/schools/refresh`;
 
 // Espera tras POST /refresh antes de re-pollear (el scraper corre en background)
@@ -21,6 +22,8 @@ const useSchoolJobs = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [dismissError, setDismissError] = useState(null);
+  const [dismissingJobIds, setDismissingJobIds] = useState(() => new Set());
 
   // DT-93: timers + mounted flag para evitar setState tras unmount
   const scrapePollTimerRef = useRef(null);
@@ -45,6 +48,7 @@ const useSchoolJobs = () => {
     if (mountedRef.current) {
       setLoading(true);
       setError(null);
+      setDismissError(null);
     }
     try {
       const [schoolsRes, jobsRes] = await Promise.all([
@@ -93,7 +97,44 @@ const useSchoolJobs = () => {
     }
   }, [authenticatedFetch, isAuthenticated, refresh]);
 
-  return { schools, jobs, loading, error, refresh, refreshing, triggerScrape };
+  const dismissJob = useCallback(async (jobId) => {
+    if (!isAuthenticated || dismissingJobIds.has(jobId)) return;
+    setDismissError(null);
+    setDismissingJobIds((current) => new Set(current).add(jobId));
+    try {
+      // DT-141: la ruta anterior insertaba /all antes del UUID y no existia.
+      // await authenticatedFetch(`${SCHOOL_JOBS_URL}/${jobId}/dismiss`, { method: 'POST' });
+      await authenticatedFetch(`${SCHOOL_JOB_ACTIONS_URL}/${jobId}/dismiss`, { method: 'POST' });
+      if (mountedRef.current) {
+        setJobs((current) => current.filter((job) => job.id !== jobId));
+      }
+    } catch (err) {
+      if (mountedRef.current) setDismissError(err.message || 'Failed to dismiss school job');
+    } finally {
+      if (mountedRef.current) {
+        setDismissingJobIds((current) => {
+          const next = new Set(current);
+          next.delete(jobId);
+          return next;
+        });
+      }
+    }
+  }, [authenticatedFetch, dismissingJobIds, isAuthenticated]);
+
+  // DT-141: firma anterior, sustituida por la variante que expone el descarte persistente.
+  // return { schools, jobs, loading, error, refresh, refreshing, triggerScrape };
+  return {
+    schools,
+    jobs,
+    loading,
+    error,
+    dismissError,
+    refresh,
+    refreshing,
+    triggerScrape,
+    dismissJob,
+    dismissingJobIds,
+  };
 };
 
 export default useSchoolJobs;

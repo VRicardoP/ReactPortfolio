@@ -25,6 +25,7 @@ const JOBS = [{ id: 'j1', title: 'Informatiker' }]
 function routeByUrl() {
   mockAuthenticatedFetch.mockImplementation((url) => {
     if (url.endsWith('/refresh')) return Promise.resolve({ ok: true, json: () => Promise.resolve({}) })
+    if (url.endsWith('/dismiss')) return Promise.resolve({ ok: true })
     if (url.includes('/jobs/all')) return Promise.resolve({ ok: true, json: () => Promise.resolve(JOBS) })
     return Promise.resolve({ ok: true, json: () => Promise.resolve(SCHOOLS) })
   })
@@ -83,6 +84,23 @@ describe('useSchoolJobs', () => {
 
     expect(mockAuthenticatedFetch).not.toHaveBeenCalled()
     expect(result.current.schools).toEqual([])
+  })
+
+  it('dismisses a job persistently and removes it from the visible list', async () => {
+    const { result } = renderHook(() => useSchoolJobs())
+
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    await act(async () => {
+      await result.current.dismissJob('j1')
+    })
+
+    expect(mockAuthenticatedFetch).toHaveBeenCalledWith(
+      expect.stringMatching(/\/schools\/jobs\/j1\/dismiss$/),
+      { method: 'POST' }
+    )
+    expect(result.current.jobs).toEqual([])
+    expect(result.current.dismissError).toBeNull()
+    expect(result.current.dismissingJobIds.size).toBe(0)
   })
 
   it('triggerScrape posts /refresh, sets refreshing, then re-polls after the delay', async () => {

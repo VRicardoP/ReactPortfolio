@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: key => key }) }));
@@ -34,6 +34,9 @@ const schoolData = (job = JOB) => ({
     refreshing: false,
     triggerScrape: vi.fn(),
     refresh: vi.fn(),
+    dismissJob: vi.fn(),
+    dismissingJobIds: new Set(),
+    dismissError: null,
 });
 
 describe('SchoolJobsWindow', () => {
@@ -46,6 +49,15 @@ describe('SchoolJobsWindow', () => {
         expect(screen.getByRole('link', { name: 'dashboard.schoolJobs.emailContact' }).getAttribute('href'))
             .toContain(`mailto:${SCHOOL.contact_email}`);
         expect(screen.queryByRole('link', { name: 'dashboard.schoolJobs.viewOffer' })).toBeNull();
+    });
+
+    it('offers a persistent discard action for each job', () => {
+        const data = schoolData();
+        render(<SchoolJobsWindow initialPosition={{ x: 0, y: 0 }} schoolData={data} />);
+
+        fireEvent.click(screen.getByRole('button', { name: 'dashboard.jobBoard.discard' }));
+
+        expect(data.dismissJob).toHaveBeenCalledWith(JOB.id);
     });
 
     it('uses the individual offer instead of the generic jobs page when available', () => {

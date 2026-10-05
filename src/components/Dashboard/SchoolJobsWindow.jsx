@@ -47,7 +47,20 @@ const getJobsPage = (school) => school?.jobs_page_url || school?.portal_url || n
 
 const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
     const { t } = useTranslation();
-    const { schools, jobs, loading, error, refreshing, triggerScrape, refresh } = schoolData;
+    // DT-141: firma anterior, sustituida por la que incorpora el descarte persistente.
+    // const { schools, jobs, loading, error, refreshing, triggerScrape, refresh } = schoolData;
+    const {
+        schools,
+        jobs,
+        loading,
+        error,
+        dismissError,
+        refreshing,
+        triggerScrape,
+        refresh,
+        dismissJob,
+        dismissingJobIds,
+    } = schoolData;
 
     const schoolsById = useMemo(() => {
         const map = {};
@@ -87,6 +100,12 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
                     {error && (
                         <div className="school-error">
                             {t('dashboard.schoolJobs.error', { message: error })}
+                        </div>
+                    )}
+
+                    {dismissError && (
+                        <div className="school-error">
+                            {t('dashboard.schoolJobs.error', { message: dismissError })}
                         </div>
                     )}
 
@@ -173,6 +192,14 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
                                                         {t('dashboard.schoolJobs.emailContact')}
                                                     </a>
                                                 )}
+                                                <button
+                                                    type="button"
+                                                    className="school-discard-btn"
+                                                    onClick={() => dismissJob(job.id)}
+                                                    disabled={dismissingJobIds.has(job.id)}
+                                                >
+                                                    {t('dashboard.jobBoard.discard')}
+                                                </button>
                                             </td>
                                         </tr>
                                     );
