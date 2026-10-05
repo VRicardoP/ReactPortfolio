@@ -299,7 +299,8 @@
       "error": "Error: {{message}}",
       "count": "{{count}} job(s) detected",
       "viewOffer": "View offer",
-      "emailContact": "Email contact",
+      "emailContact": "Email",
+      "discard": "Discard",
       "openPortal": "Open portal",
       "urgency": {
         "push": "Push",

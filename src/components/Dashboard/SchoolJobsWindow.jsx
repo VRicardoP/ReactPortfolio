@@ -198,7 +198,9 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
                                                     onClick={() => dismissJob(job.id)}
                                                     disabled={dismissingJobIds.has(job.id)}
                                                 >
-                                                    {t('dashboard.jobBoard.discard')}
+                                                    {/* DT-142: la clave anterior no existe; i18next mostraba el literal. */}
+                                                    {/* {t('dashboard.jobBoard.discard')} */}
+                                                    {t('dashboard.schoolJobs.discard')}
                                                 </button>
                                             </td>
                                         </tr>

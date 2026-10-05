@@ -463,7 +463,8 @@
       "error": "Error: {{message}}",
       "count": "{{count}} job(s) detected",
       "viewOffer": "求人を見る",
-      "emailContact": "メールで連絡",
+      "emailContact": "メール",
+      "discard": "非表示",
       "openPortal": "ポータルを開く",
       "urgency": {
         "push": "即時",

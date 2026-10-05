@@ -463,7 +463,8 @@
       "error": "Error: {{message}}",
       "count": "{{count}} job(s) detected",
       "viewOffer": "Stelle ansehen",
-      "emailContact": "E-Mail schreiben",
+      "emailContact": "E-Mail",
+      "discard": "Verwerfen",
       "openPortal": "Portal öffnen",
       "urgency": {
         "push": "Sofort",

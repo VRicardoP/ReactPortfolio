@@ -299,7 +299,8 @@
       "error": "Error: {{message}}",
       "count": "{{count}} oferta(s) detectada(s)",
       "viewOffer": "Ver oferta",
-      "emailContact": "Escribir email",
+      "emailContact": "Email",
+      "discard": "Descartar",
       "openPortal": "Abrir portal",
       "urgency": {
         "push": "Inmediato",

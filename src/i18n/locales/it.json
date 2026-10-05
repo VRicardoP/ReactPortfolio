@@ -463,7 +463,8 @@
       "error": "Error: {{message}}",
       "count": "{{count}} job(s) detected",
       "viewOffer": "Vedi offerta",
-      "emailContact": "Scrivi email",
+      "emailContact": "Email",
+      "discard": "Scarta",
       "openPortal": "Apri portale",
       "urgency": {
         "push": "Immediato",

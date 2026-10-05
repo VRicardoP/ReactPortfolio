@@ -55,7 +55,7 @@ describe('SchoolJobsWindow', () => {
         const data = schoolData();
         render(<SchoolJobsWindow initialPosition={{ x: 0, y: 0 }} schoolData={data} />);
 
-        fireEvent.click(screen.getByRole('button', { name: 'dashboard.jobBoard.discard' }));
+        fireEvent.click(screen.getByRole('button', { name: 'dashboard.schoolJobs.discard' }));
 
         expect(data.dismissJob).toHaveBeenCalledWith(JOB.id);
     });
