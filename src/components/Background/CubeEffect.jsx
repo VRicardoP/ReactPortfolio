@@ -27,6 +27,13 @@ const CubeEffect = () => {
         renderer.domElement.style.height = '100%';
         renderer.domElement.style.zIndex = '-1';
 
+        // DT-140: the full-screen wrapper stays transparent to pointer events,
+        // while the canvas opts back in only for mouse/trackpad interaction.
+        // Foreground windows remain the topmost hit target and touch scrolling
+        // keeps the non-interactive background behavior.
+        const supportsOrbitInteraction = window.matchMedia('(pointer: fine)').matches;
+        renderer.domElement.style.pointerEvents = supportsOrbitInteraction ? 'auto' : 'none';
+
         mountRef.current.appendChild(renderer.domElement);
 
         // scene and camera
@@ -86,6 +93,8 @@ const CubeEffect = () => {
         controls.target.set(0, 0, 0);
         controls.rotateSpeed = 0.9;
         controls.enableZoom = false;
+        controls.enablePan = false;
+        controls.enabled = supportsOrbitInteraction;
         controls.enableDamping = true;
         controls.dampingFactor = 0.02;
         controls.update();
@@ -149,7 +158,8 @@ const CubeEffect = () => {
         };
     }, []);
 
-    // Note: pointerEvents 'none' also disables OrbitControls interaction, acceptable for a background effect
+    // DT-140: keep the wrapper passive; the canvas explicitly opts into fine
+    // pointer events above so OrbitControls cannot block foreground controls.
     return <div ref={mountRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />;
 };
 

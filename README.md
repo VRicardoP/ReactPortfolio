@@ -41,7 +41,7 @@ Built with a desktop OS metaphor: draggable, resizable floating windows, 6 immer
 | State | React Context API (split state/callbacks) |
 | i18n | react-i18next (6 locales) |
 | Testing | Vitest + @testing-library/react (414 tests in 44 files) |
-| E2E | Playwright (17 tests) |
+| E2E | Playwright (18 tests) |
 | Styles | Pure CSS (no CSS-in-JS) |
 | Hosting | Cloudflare Pages |
 
