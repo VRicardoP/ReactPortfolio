@@ -186,6 +186,9 @@
   padding: 2px 8px;
 }
 
+/* DT-132: commented because AIJobMatchWindow.jsx renders
+   `ai-match-progress-track/fill/label`, not the retired spinner. */
+/*
 .ai-match-spinner {
   width: 24px;
   height: 24px;
@@ -195,6 +198,7 @@
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
+*/
 
 .ai-match-stage-info {
   font-size: 10px;
@@ -330,10 +334,14 @@
   cursor: default;
 }
 
+/* DT-132: commented with the retired spinner rule above; reduced-motion is now
+   handled by the progress bar's normal non-looping width transition. */
 @media (prefers-reduced-motion: reduce) {
+  /*
   .ai-match-spinner {
     animation: none;
   }
+  */
 }
 
 /* AI Match — Card-level styles (from dashboard) */
@@ -460,10 +468,14 @@
   border-radius: 4px;
 }
 
+/* DT-132: commented because its only consumer, `.ai-match-spinner`, is
+   commented above; `AIJobMatchWindow.jsx` renders `.ai-match-progress-bar`. */
+/*
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+*/
 
 /* Resumen de la oferta (2-3 frases) bajo los metadatos de la tarjeta */
 .ai-match-summary {

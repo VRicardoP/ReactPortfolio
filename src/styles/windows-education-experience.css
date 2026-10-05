@@ -7,6 +7,9 @@
   gap: 20px;
 }
 
+/* DT-132: commented because EducationWindow.jsx renders each entry with
+   `timeline-*`; only `education-content`, badges and document links remain active. */
+/*
 .education-item {
   padding-bottom: 15px;
   border-bottom: 1px solid rgba(0, 255, 255, 0.3);
@@ -43,6 +46,7 @@
   line-height: 1.5;
   color: #D3D3D3;
 }
+*/
 
 /* Education type badges */
 .education-badge {
@@ -232,9 +236,12 @@
 /* Tablets (768px - 1024px) */
 @media (max-width: 1024px) {
 
+  /* DT-132: ExperienceWindow.jsx uses `timeline`, never `experience-grid`. */
+  /*
   .experience-grid {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
+  */
 }
 
 /* Small tablets and large mobile (481px - 768px) */
@@ -245,6 +252,9 @@
   }
 
   /* Education */
+  /* DT-132: EducationWindow.jsx emits `timeline-card-*`, not these retired
+     title/institution/date/description classes. */
+  /*
   .education-title {
     font-size: var(--fs-lead);
   }
@@ -260,8 +270,12 @@
   .education-description {
     font-size: var(--fs-body);
   }
+  */
 
   /* Experience */
+  /* DT-132: ExperienceWindow.jsx emits `timeline-*`; the old grid/item classes
+     below have no JSX emitter. */
+  /*
   .experience-grid {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -290,6 +304,7 @@
   .experience-description {
     font-size: var(--fs-sm);
   }
+  */
 }
 
 /* Mobile (320px - 480px) */
@@ -300,6 +315,8 @@
   }
 
   /* Education */
+  /* DT-132: retired by EducationWindow.jsx `timeline-card-*` markup. */
+  /*
   .education-item {
     padding-bottom: 12px;
   }
@@ -322,8 +339,11 @@
     font-size: var(--fs-sm);
     line-height: 1.4;
   }
+  */
 
   /* Experience */
+  /* DT-132: retired by ExperienceWindow.jsx `timeline-*` markup. */
+  /*
   .experience-grid {
     gap: 10px;
   }
@@ -354,11 +374,15 @@
     font-size: var(--fs-sm);
     line-height: 1.4;
   }
+  */
 }
 
 /* Very small mobile (< 320px) */
 @media (max-width: 320px) {
 
+  /* DT-132: neither retired title/description selector has a JSX emitter;
+     both windows use `timeline-card-*`. */
+  /*
   .education-title,
   .experience-title {
     font-size: var(--fs-body);
@@ -367,6 +391,7 @@
   .experience-description {
     font-size: var(--fs-caption);
   }
+  */
 }
 
 /* Landscape orientation on mobile */
@@ -376,19 +401,27 @@
     gap: 10px;
   }
 
+  /* DT-132: `education-item` was replaced by `timeline-item`. */
+  /*
   .education-item {
     margin-bottom: 10px;
   }
+  */
 
+  /* DT-132: `experience-grid` was replaced by `timeline`. */
+  /*
   .experience-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
+  */
 }
 
 /* Touch devices */
 @media (hover: none) and (pointer: coarse) {
 
+  /* DT-132: ExperienceWindow.jsx emits `timeline-item`, not `experience-item`. */
+  /*
   .experience-item {
     padding: 14px;
   }
@@ -396,11 +429,15 @@
   .experience-item:active {
     background: rgba(0, 255, 255, 0.15);
   }
+  */
 }
 
 /* Large screens (> 1440px) */
 @media (min-width: 1440px) {
 
+  /* DT-132: these legacy education/experience selectors were replaced by
+     `timeline-card-*` and `timeline`. */
+  /*
   .education-title {
     font-size: var(--fs-window-title);
   }
@@ -416,6 +453,7 @@
   .experience-grid {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
+  */
 }
 
 .education-document-link {

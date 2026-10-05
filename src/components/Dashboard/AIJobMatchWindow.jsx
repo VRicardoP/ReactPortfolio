@@ -385,17 +385,21 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                 {missingSkills.map(skill => {
                                     const isAdded = addedSkills.has(skill);
                                     const isToggling = togglingSkill === skill;
+                                    /* DT-135: commented because ai-match.css
+                                       `.ai-match-skill-toggle-btn.added` already defines these values;
+                                       the inline background also prevented `.added:hover` from winning.
+                                       Original JSX prop:
+                                       style={isAdded ? {
+                                           background: 'rgba(0, 255, 100, 0.1)',
+                                           borderColor: 'rgba(0, 255, 100, 0.3)',
+                                           color: '#00ff64',
+                                       } : {}} */
                                     return (
                                         <button
                                             key={skill}
                                             className={`ai-match-skill-toggle-btn ${isAdded ? 'added' : ''}`}
                                             onClick={() => toggleSkill(skill)}
                                             disabled={isToggling}
-                                            style={isAdded ? {
-                                                background: 'rgba(0, 255, 100, 0.1)',
-                                                borderColor: 'rgba(0, 255, 100, 0.3)',
-                                                color: '#00ff64',
-                                            } : {}}
                                         >
                                             {isToggling ? '...' : isAdded ? '✓' : '+'} {skill}
                                         </button>

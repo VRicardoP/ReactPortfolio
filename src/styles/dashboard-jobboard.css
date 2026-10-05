@@ -358,7 +358,9 @@
   opacity: 0.7;
 }
 
-/* Match badge for skills matching */
+/* DT-132: commented because JobBoardTabbedWindow and its card components no
+   longer emit `jobboard-match-badge`; matching is shown in AIJobMatchWindow. */
+/* Match badge for skills matching
 .jobboard-match-badge {
   font-size: 11px;
   font-weight: bold;
@@ -384,8 +386,11 @@
   color: #ff8888;
   border: 1px solid rgba(255, 100, 100, 0.2);
 }
+*/
 
-/* Bookmark button */
+/* DT-132: commented because no current JSX emits `jobboard-bookmark-btn` or
+   `bookmarked-card`; saved state uses `jobboard-save-btn.saved`. */
+/* Bookmark button
 .jobboard-bookmark-btn {
   background: none;
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -409,10 +414,11 @@
   text-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
 }
 
-/* Bookmarked jobs card */
+Bookmarked jobs card:
 .bookmarked-card {
   border-left: 3px solid #ffd700;
 }
+*/
 
 /* Job Board Responsive */
 @media (max-width: 768px) {

@@ -96,6 +96,9 @@
   color: #39ff1444;
 }
 
+/* DT-132: commented because TerminalWindow.jsx emits only typed `terminal-line`
+   divs plus the input row; it emits no skill bars or table markup. */
+/*
 .terminal-skill-bar {
   display: inline-block;
   height: 10px;
@@ -122,6 +125,7 @@
 .terminal-table td:first-child {
   color: #00ffff;
 }
+*/
 
 /* Scanline effect for extra retro feel */
 .terminal-body::after {

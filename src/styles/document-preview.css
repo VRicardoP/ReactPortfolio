@@ -1,15 +1,21 @@
 /* Document Preview */
+/* DT-132: commented because DocumentPreview.jsx starts at `cv-gen-doc-panel`;
+   no component emits the retired `cv-gen-preview-container`. */
+/*
 .cv-gen-preview-container {
     display: flex;
     flex-direction: column;
     height: 100%;
 }
+*/
 
 .cv-gen-tabs {
     display: flex;
     gap: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    margin-bottom: 12px;
+    /* DT-135: commented because the only emitter, DocumentPreview.jsx, sets
+       `style={{ marginBottom: 0, borderBottom: 'none' }}` on this element. */
+    /* border-bottom: 1px solid rgba(255, 255, 255, 0.1); */
+    /* margin-bottom: 12px; */
 }
 
 .cv-gen-tab {
@@ -25,8 +31,11 @@
 }
 
 .cv-gen-tab.active {
-    color: var(--primary, #00ffff);
-    border-bottom-color: var(--primary, #00ffff);
+    /* DT-134: `--primary` is never defined; ThemeContext.jsx sets `--theme-primary`. */
+    /* color: var(--primary, #00ffff); */
+    color: var(--theme-primary, #00ffff);
+    /* border-bottom-color: var(--primary, #00ffff); */
+    border-bottom-color: var(--theme-primary, #00ffff);
 }
 
 .cv-gen-tab:hover {
@@ -59,7 +68,8 @@
 }
 
 .cv-preview-section h3 {
-    color: var(--primary, #00ffff);
+    /* DT-134: color: var(--primary, #00ffff); --primary has no producer. */
+    color: var(--theme-primary, #00ffff);
     font-size: 14px;
     margin: 0 0 6px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -153,6 +163,10 @@
 }
 
 /* History remains reachable when the Kanban application has been deleted. */
-.document-library { padding: 8px; border-bottom: 1px solid var(--primary, #00ffff); }
+.document-library {
+    padding: 8px;
+    /* DT-134: border-bottom: 1px solid var(--primary, #00ffff); --primary has no producer. */
+    border-bottom: 1px solid var(--theme-primary, #00ffff);
+}
 .document-library-list { max-height: 260px; overflow: auto; padding-inline-start: 20px; }
 .document-library-list li { padding-block: 6px; overflow-wrap: anywhere; }

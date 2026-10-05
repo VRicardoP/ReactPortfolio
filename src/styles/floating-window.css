@@ -275,6 +275,9 @@
 
 /* Small tablets and large mobile (481px - 768px) */
 @media (max-width: 768px) {
+  /* DT-131: commented because useIsMobile.js selects FloatingWindowMobile at
+     this exact breakpoint; it emits `mobile-section-*`, none of these classes. */
+  /*
   .floating-window {
     max-width: 95vw;
     max-height: 80vh;
@@ -307,8 +310,11 @@
   .window-collapsed .window-title {
     font-size: var(--fs-body);
   }
+  */
 
   /* Larger resize handles on tablets */
+  /* DT-131: FloatingWindowMobile emits no resize handles at <=768px. */
+  /*
   .resize-handle-n,
   .resize-handle-s {
     height: 10px;
@@ -326,10 +332,14 @@
     width: 18px;
     height: 18px;
   }
+  */
 }
 
 /* Mobile (320px - 480px) */
 @media (max-width: 480px) {
+  /* DT-131: commented because FloatingWindowMobile replaces the desktop window
+     tree below 768px; none of these selectors can match. */
+  /*
   .floating-window {
     max-width: 98vw !important;
     max-height: 90vh !important;
@@ -378,8 +388,11 @@
   .window-collapsed .window-title {
     font-size: var(--fs-sm);
   }
+  */
 
   /* Even larger resize handles on mobile */
+  /* DT-131: FloatingWindowMobile emits no resize handles. */
+  /*
   .resize-handle-n,
   .resize-handle-s {
     height: 12px;
@@ -397,8 +410,12 @@
     width: 20px;
     height: 20px;
   }
+  */
 
   /* Adjust position so it doesn't go off screen */
+  /* DT-131/DT-135: no `.floating-window` exists at this breakpoint and
+     ThemeContext/WindowContext never define the referenced `--x`/`--y`. */
+  /*
   .floating-window[style*="left"] {
     left: clamp(5px, var(--x), calc(100vw - 285px)) !important;
   }
@@ -406,10 +423,13 @@
   .floating-window[style*="top"] {
     top: clamp(80px, var(--y), calc(100vh - 100px)) !important;
   }
+  */
 }
 
 /* Very small mobile (< 320px) */
 @media (max-width: 320px) {
+  /* DT-131: FloatingWindowMobile emits only `mobile-section-*` below 768px. */
+  /*
   .floating-window {
     min-width: 260px !important;
   }
@@ -427,6 +447,7 @@
     width: 9px;
     height: 9px;
   }
+  */
 }
 
 /* Landscape orientation on mobile */

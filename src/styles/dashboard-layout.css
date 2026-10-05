@@ -332,9 +332,13 @@
   }
 
   /* Adjust table for horizontal scroll if necessary */
+  /* DT-132: commented because RecentVisitorsWindow.jsx wraps the table in an
+     unclassed inline-style div and never emits `visitors-table-container`. */
+  /*
   .visitors-table-container {
     overflow-x: auto;
   }
+  */
 
   /* Leaflet on mobile */
   .leaflet-popup-content {

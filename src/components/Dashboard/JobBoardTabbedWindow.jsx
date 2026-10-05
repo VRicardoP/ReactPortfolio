@@ -137,13 +137,14 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
 
                 {/* Search */}
                 <div className="jobboard-filters">
+                    {/* DT-135: style={{ flex: 1 }} commented because
+                        dashboard-jobboard.css `.jobboard-search` already defines `flex: 1`. */}
                     <input
                         type="text"
                         placeholder={t('dashboard.jobBoard.searchPlaceholder')}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="jobboard-search"
-                        style={{ flex: 1 }}
                     />
                     {search && (
                         <button onClick={() => setSearch('')} className="jobboard-clear-btn">

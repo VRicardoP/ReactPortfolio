@@ -173,6 +173,9 @@ canvas.rain-canvas {
   }
 
   /* Adjust floating windows */
+  /* DT-131: commented because useIsMobile.js switches at max-width:768px and
+     FloatingWindow.jsx emits `mobile-section-*`, never desktop window classes. */
+  /*
   .floating-window {
     max-width: 95vw !important;
     max-height: 85vh !important;
@@ -186,6 +189,7 @@ canvas.rain-canvas {
   .floating-window .window-title {
     font-size: var(--fs-lead);
   }
+  */
 
   /* Responsive grid */
   .experience-grid,
@@ -193,9 +197,13 @@ canvas.rain-canvas {
     grid-template-columns: 1fr !important;
   }
 
+  /* DT-133: commented because dashboard-layout.css defines the same
+     `.stats-container { grid-template-columns: 1fr; }` in this media query. */
+  /*
   .stats-container {
     grid-template-columns: 1fr !important;
   }
+  */
 }
 
 /* Mobile (320px - 480px) */
@@ -216,6 +224,9 @@ canvas.rain-canvas {
   }
 
   /* Floating windows on mobile */
+  /* DT-131: no desktop window DOM exists at <=480px; FloatingWindowMobile emits
+     `mobile-section-*` under the max-width:768px dispatcher. */
+  /*
   .floating-window {
     max-width: 98vw !important;
     max-height: 90vh !important;
@@ -239,8 +250,12 @@ canvas.rain-canvas {
     width: 10px;
     height: 10px;
   }
+  */
 
   /* Adjust initial position on mobile */
+  /* DT-131/DT-135: no `.floating-window` exists here; floating-window.css's
+     alternate rules also depended on undefined `--x`/`--y`. */
+  /*
   .floating-window[style*="left"] {
     left: 5vw !important;
   }
@@ -248,8 +263,12 @@ canvas.rain-canvas {
   .floating-window[style*="top"] {
     top: 80px !important;
   }
+  */
 
   /* Chat on mobile */
+  /* DT-133: commented because chat.css's max-width:480px rules load later and
+     replace these padding/max-width declarations for the same emitted classes. */
+  /*
   .chat-input {
     font-size: var(--fs-sm);
     padding: 8px;
@@ -264,6 +283,7 @@ canvas.rain-canvas {
     max-width: 90%;
     font-size: var(--fs-sm);
   }
+  */
 }
 
 /* Very small mobile (< 320px) */
@@ -272,6 +292,8 @@ canvas.rain-canvas {
     font-size: var(--fs-lead);
   }
 
+  /* DT-131: FloatingWindowMobile emits no desktop window classes at <=320px. */
+  /*
   .floating-window {
     min-width: 260px !important;
   }
@@ -279,6 +301,7 @@ canvas.rain-canvas {
   .floating-window .window-content {
     font-size: var(--fs-sm);
   }
+  */
 }
 
 /* Landscape orientation on mobile */
@@ -288,6 +311,9 @@ canvas.rain-canvas {
     top: 5px;
   }
 
+  /* DT-133: commented because floating-window.css's landscape rules load later;
+     they replace max-height and duplicate the same 8px content padding. */
+  /*
   .floating-window {
     max-height: 80vh !important;
   }
@@ -295,6 +321,7 @@ canvas.rain-canvas {
   .floating-window .window-content {
     padding: 8px;
   }
+  */
 }
 
 /* Large screens (> 1440px) */
@@ -310,6 +337,9 @@ canvas.rain-canvas {
 
 /* Touch mode (touch devices) */
 @media (hover: none) and (pointer: coarse) {
+  /* DT-133: commented because floating-window.css defines the canonical 24px
+     control and identical 10px header padding later in the cascade. */
+  /*
   .control-btn {
     width: 14px;
     height: 14px;
@@ -318,8 +348,12 @@ canvas.rain-canvas {
   .floating-window .window-header {
     padding: 10px;
   }
+  */
 
   /* Increase touch area */
+  /* DT-133: commented because these `!important` 12/15px dimensions always
+     override floating-window.css's canonical edge/corner touch handles. */
+  /*
   .resize-handle {
     width: 15px !important;
     height: 15px !important;
@@ -334,6 +368,7 @@ canvas.rain-canvas {
   .resize-handle-w {
     width: 12px !important;
   }
+  */
 }
 
 /* Reduced motion preference */

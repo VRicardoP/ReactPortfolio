@@ -116,8 +116,13 @@ const FloatingWindowDesktop = ({
     const windowStyle = {
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: isMinimized ? '180px' : isMaximized ? '100vw' : `${size.width}px`,
-        height: isMinimized ? '40px' : isMaximized ? '100vh' : `${size.height}px`,
+        // DT-135: the conditional branches below were always overridden by
+        // floating-window.css `.window-collapsed`/`.window-maximized` `!important`.
+        // width: isMinimized ? '180px' : isMaximized ? '100vw' : `${size.width}px`,
+        // height: isMinimized ? '40px' : isMaximized ? '100vh' : `${size.height}px`,
+        // Normal-state dimensions remain inline because drag/resize updates them.
+        width: `${size.width}px`,
+        height: `${size.height}px`,
         zIndex: zIndex
     };
 

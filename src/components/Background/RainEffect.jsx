@@ -39,12 +39,14 @@ const RainEffect = () => {
 
         // place the canvas fullscreen in the background
         renderer.domElement.className = 'rain-canvas';
-        renderer.domElement.style.position = 'fixed';
-        renderer.domElement.style.top = '0';
-        renderer.domElement.style.left = '0';
-        renderer.domElement.style.width = '100%';
-        renderer.domElement.style.height = '100%';
-        renderer.domElement.style.zIndex = '-1';
+        // DT-135: commented because base.css `canvas.rain-canvas` defines these
+        // same six properties with `!important`, so these assignments never win.
+        // renderer.domElement.style.position = 'fixed';
+        // renderer.domElement.style.top = '0';
+        // renderer.domElement.style.left = '0';
+        // renderer.domElement.style.width = '100%';
+        // renderer.domElement.style.height = '100%';
+        // renderer.domElement.style.zIndex = '-1';
 
         mountRef.current.appendChild(renderer.domElement);
 

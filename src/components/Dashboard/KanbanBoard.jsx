@@ -80,29 +80,36 @@ const KanbanBoard = memo(({
                             className="kanban-add-form"
                             style={{ borderBottom: `1px solid ${theme.borderLight}` }}
                         >
+                            {/* DT-135: original `style={{ borderColor: theme.border, color: theme.text }}`
+                                is commented for borderColor because kanban.css `.kanban-input:focus`
+                                must control the focused border; dynamic text color remains inline. */}
                             <input
                                 type="text"
                                 placeholder={t('dashboard.kanban.titlePlaceholder')}
                                 value={newApp.title}
                                 onChange={(e) => handleNewAppChange('title', e.target.value)}
                                 className="kanban-input"
-                                style={{ borderColor: theme.border, color: theme.text }}
+                                style={{ color: theme.text }}
                             />
+                            {/* DT-135: original `style={{ borderColor: theme.border, color: theme.text }}`;
+                                borderColor is superseded by `.kanban-input:focus`. */}
                             <input
                                 type="text"
                                 placeholder={t('dashboard.kanban.companyPlaceholder')}
                                 value={newApp.company}
                                 onChange={(e) => handleNewAppChange('company', e.target.value)}
                                 className="kanban-input"
-                                style={{ borderColor: theme.border, color: theme.text }}
+                                style={{ color: theme.text }}
                             />
+                            {/* DT-135: original `style={{ borderColor: theme.border, color: theme.text }}`;
+                                borderColor is superseded by `.kanban-input:focus`. */}
                             <input
                                 type="text"
                                 placeholder={t('dashboard.kanban.urlPlaceholder')}
                                 value={newApp.url}
                                 onChange={(e) => handleNewAppChange('url', e.target.value)}
                                 className="kanban-input"
-                                style={{ borderColor: theme.border, color: theme.text }}
+                                style={{ color: theme.text }}
                             />
                             <button
                                 onClick={() => handleAdd(col.key)}

@@ -8,10 +8,13 @@
 
 .cv-gen-btn {
     padding: 4px 10px;
-    border: 1px solid var(--primary, #00ffff);
+    /* DT-134: `--primary` is never defined; ThemeContext.jsx sets `--theme-primary`. */
+    /* border: 1px solid var(--primary, #00ffff); */
+    border: 1px solid var(--theme-primary, #00ffff);
     border-radius: 4px;
     background: transparent;
-    color: var(--primary, #00ffff);
+    /* color: var(--primary, #00ffff); */
+    color: var(--theme-primary, #00ffff);
     font-family: 'Courier New', monospace;
     font-size: 11px;
     cursor: var(--cursor-pointer, pointer);
@@ -20,7 +23,9 @@
 }
 
 .cv-gen-btn:hover:not(:disabled) {
-    background: var(--primary, #00ffff);
+    /* DT-134: `--primary` is never defined; ThemeContext.jsx sets `--theme-primary`. */
+    /* background: var(--primary, #00ffff); */
+    background: var(--theme-primary, #00ffff);
     color: #000;
 }
 
@@ -49,6 +54,9 @@
     color: #fff;
 }
 
+/* DT-132: commented because no JSX emits `cv-gen-btn-view`; DocumentPreview uses
+   `cv-gen-btn-download` and `cv-gen-btn-generate` instead. */
+/*
 .cv-gen-btn-view {
     border-color: #ff9800;
     color: #ff9800;
@@ -58,6 +66,7 @@
     background: #ff9800;
     color: #000;
 }
+*/
 
 .cv-gen-btn-reject {
     border-color: #f44336;
@@ -69,11 +78,15 @@
     color: #fff;
 }
 
+/* DT-132: commented because no JSX emits `cv-gen-btn-desc`; description editing
+   was removed from the current document workflow. */
+/*
 .cv-gen-btn-desc {
     border-color: #9e9e9e;
     color: #9e9e9e;
     font-size: 10px;
 }
+*/
 
 .cv-gen-btn-download {
     border-color: #00bcd4;
@@ -87,10 +100,13 @@
 
 .cv-gen-btn-small {
     padding: 3px 8px;
-    border: 1px solid var(--primary, #00ffff);
+    /* DT-134: `--primary` is never defined; ThemeContext.jsx sets `--theme-primary`. */
+    /* border: 1px solid var(--primary, #00ffff); */
+    border: 1px solid var(--theme-primary, #00ffff);
     border-radius: 3px;
     background: transparent;
-    color: var(--primary, #00ffff);
+    /* color: var(--primary, #00ffff); */
+    color: var(--theme-primary, #00ffff);
     font-family: 'Courier New', monospace;
     font-size: 11px;
     cursor: var(--cursor-pointer, pointer);
@@ -102,6 +118,9 @@
 }
 
 /* Badges */
+/* DT-132: commented because `cv-gen-badge`, `cv-gen-badge-ready` and
+   `cv-gen-badge-loading` have no JSX emitter in the current document flow. */
+/*
 .cv-gen-badge {
     display: inline-block;
     padding: 2px 8px;
@@ -123,8 +142,12 @@
     border: 1px solid rgba(255, 152, 0, 0.3);
     animation: pulse 1.5s infinite;
 }
+*/
 
 /* Description input */
+/* DT-132: commented because description editing no longer emits these four
+   selectors; the current flow previews generated documents read-only. */
+/*
 .cv-gen-description-input {
     margin: 8px 0;
 }
@@ -151,16 +174,25 @@
     gap: 6px;
     margin-top: 4px;
 }
+*/
 
 /* Applied job time badge */
+/* DT-132: commented because no JSX emits `applied-job-time`; application state
+   is represented by the active Kanban and document-library components. */
+/*
 .applied-job-time {
     color: #9e9e9e;
     font-size: 12px;
     font-style: italic;
     margin: 4px 0;
 }
+*/
 
+/* DT-132: commented because its only consumer, `.cv-gen-badge-loading`, is
+   commented above after confirming that no frontend component emits it. */
+/*
 @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
 }
+*/

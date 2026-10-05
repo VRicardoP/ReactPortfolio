@@ -143,9 +143,13 @@
 /* Tablets (768px - 1024px) */
 @media (max-width: 1024px) {
 
+  /* DT-132: commented because TechSkillsWindow and SoftSkillsWindow emit no
+     `skills-description`; their active text uses category/card selectors. */
+  /*
   .skills-description {
     font-size: var(--fs-body);
   }
+  */
 }
 
 /* Small tablets and large mobile (481px - 768px) */
@@ -261,9 +265,12 @@
 /* Very small mobile (< 320px) */
 @media (max-width: 320px) {
 
+  /* DT-132: no `skills-description` emitter; see TechSkillsWindow.jsx. */
+  /*
   .skills-description {
     font-size: var(--fs-sm);
   }
+  */
 
   .category-title {
     font-size: var(--fs-body);
@@ -298,9 +305,12 @@
     font-size: var(--fs-section);
   }
 
+  /* DT-132: no `skills-description` emitter; see TechSkillsWindow.jsx. */
+  /*
   .skills-description {
     font-size: var(--fs-section);
   }
+  */
 
   .category-title {
     font-size: var(--fs-window-title);
