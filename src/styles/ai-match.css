@@ -242,6 +242,69 @@
   cursor: help;
 }
 
+/* DT-139: filtros del feed completo por portal y modalidad remota. */
+.ai-match-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ai-match-source-tabs {
+  display: flex;
+  flex: 1;
+  gap: 5px;
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 3px;
+  scrollbar-width: thin;
+}
+
+.ai-match-source-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.58);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  cursor: var(--cursor-pointer, pointer);
+  white-space: nowrap;
+}
+
+.ai-match-source-tab:hover,
+.ai-match-source-tab.active {
+  border-color: var(--source-color);
+  background: color-mix(in srgb, var(--source-color) 13%, transparent);
+}
+
+.ai-match-source-count {
+  min-width: 17px;
+  padding: 1px 4px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.09);
+  text-align: center;
+}
+
+.ai-match-remote-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  cursor: var(--cursor-pointer, pointer);
+}
+
+.ai-match-remote-filter input {
+  accent-color: var(--theme-primary, #00ffff);
+  cursor: inherit;
+}
+
 /* ===== TABS ===== */
 
 .ai-match-tabs {

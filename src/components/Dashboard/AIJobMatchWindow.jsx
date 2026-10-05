@@ -4,9 +4,10 @@ import FloatingWindow from '../Windows/FloatingWindow';
 import { useTheme } from '../../context/ThemeContext';
 import useJobApplication from '../../hooks/useJobApplication';
 import useSkillsGap from '../../hooks/useSkillsGap';
-import useAIJobMatch, { TAB_RESULTS, TAB_SKILLS_GAP } from '../../hooks/useAIJobMatch';
+import useAIJobMatch, { ALL_MATCH_SOURCES, TAB_RESULTS, TAB_SKILLS_GAP } from '../../hooks/useAIJobMatch';
 import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
 import { AI_MATCH_PAGE_SIZE } from './dashboardConstants';
+import { SOURCE_COLOR_MAP } from '../../config/jobSources';
 import '../../styles/ai-match.css';
 
 const FIT_COLORS = {
@@ -50,6 +51,13 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
         page,
         totalPages,
         pagedResults,
+        filteredResults = results,
+        availableSources = [],
+        sourceCounts = {},
+        sourceFilter = ALL_MATCH_SOURCES,
+        selectSource = () => {},
+        remoteOnly = false,
+        toggleRemoteOnly = () => {},
         prevPage,
         nextPage,
         expandedId,
@@ -138,6 +146,48 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                     </div>
                 )}
 
+                {results.length > 0 && activeTab === TAB_RESULTS && (
+                    <div className="ai-match-filter-bar">
+                        <div
+                            className="ai-match-source-tabs"
+                            role="group"
+                            aria-label={t('dashboard.jobBoard.windowTitle', { defaultValue: 'Job portals' })}
+                        >
+                            {[ALL_MATCH_SOURCES, ...availableSources].map(source => {
+                                const color = SOURCE_COLOR_MAP[source] || theme.primary;
+                                const labelKey = source === ALL_MATCH_SOURCES
+                                    ? 'dashboard.jobBoard.tabAll'
+                                    : 'dashboard.jobBoard.tab'
+                                        + source.charAt(0).toUpperCase() + source.slice(1);
+                                return (
+                                    <button
+                                        key={source}
+                                        type="button"
+                                        aria-pressed={sourceFilter === source}
+                                        className={'ai-match-source-tab ' + (sourceFilter === source ? 'active' : '')}
+                                        onClick={() => selectSource(source)}
+                                        style={{
+                                            '--source-color': color,
+                                            color: sourceFilter === source ? color : undefined,
+                                        }}
+                                    >
+                                        {t(labelKey, { defaultValue: source })}
+                                        <span className="ai-match-source-count">{sourceCounts[source] || 0}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        <label className="ai-match-remote-filter">
+                            <input
+                                type="checkbox"
+                                checked={remoteOnly}
+                                onChange={toggleRemoteOnly}
+                            />
+                            <span>{t('dashboard.jobBoard.remote')}</span>
+                        </label>
+                    </div>
+                )}
+
                 {/* Loading state: real progress of the server-side background run */}
                 {loading && (
                     <div className="ai-match-loading">
@@ -172,7 +222,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                 {results.length > 0 && activeTab === TAB_RESULTS && (
                     <>
                         <div className="ai-match-pagination" style={{ color: theme.text }}>
-                            <span>{results.length} {t('dashboard.jobFilter.resultsFound')}</span>
+                            <span>{filteredResults.length} {t('dashboard.jobFilter.resultsFound')}</span>
                             {totalPages > 1 && (
                                 <div>
                                     <button

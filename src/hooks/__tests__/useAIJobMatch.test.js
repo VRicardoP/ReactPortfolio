@@ -1,6 +1,6 @@
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import useAIJobMatch, { TAB_RESULTS, TAB_SKILLS_GAP } from '../useAIJobMatch'
+import useAIJobMatch, { ALL_MATCH_SOURCES, TAB_RESULTS, TAB_SKILLS_GAP } from '../useAIJobMatch'
 
 // Characterization tests for the AI match hook: async analysis lifecycle
 // (start + progress polling + persisted result), pagination, translation
@@ -177,6 +177,34 @@ describe('useAIJobMatch', () => {
     act(() => result.current.prevPage())
     expect(result.current.pagedResults[0].id).toBe('j0')
   })
+
+  it('filters the complete feed by portal and remote jobs before paginating', async () => {
+    const jobs = [
+      { id: 'j0', title: 'A', source: 'jobicy', remote: true },
+      { id: 'j1', title: 'B', source: 'jobicy', remote: false },
+      { id: 'j2', title: 'C', source: 'remotive', remote: true },
+      { id: 'j3', title: 'D', source: 'remotive', remote: false },
+    ];
+    routeFetch([
+      ['/analyze/result', storedResult(jobs)],
+      ['/analyze/progress', okJson({ state: 'idle' })],
+    ]);
+    const { result } = renderHook(() => useAIJobMatch());
+    await waitFor(() => expect(result.current.results).toHaveLength(4));
+
+    expect(result.current.availableSources).toEqual(['jobicy', 'remotive']);
+    expect(result.current.sourceCounts[ALL_MATCH_SOURCES]).toBe(4);
+
+    act(() => result.current.selectSource('jobicy'));
+    expect(result.current.filteredResults.map(job => job.id)).toEqual(['j0', 'j1']);
+
+    act(() => result.current.toggleRemoteOnly());
+    expect(result.current.filteredResults.map(job => job.id)).toEqual(['j0']);
+    expect(result.current.sourceCounts).toMatchObject({ all: 2, jobicy: 1, remotive: 1 });
+
+    act(() => result.current.selectSource('remotive'));
+    expect(result.current.filteredResults.map(job => job.id)).toEqual(['j2']);
+  });
 
   it('toggleExpanded expands a global slot and collapses it on repeat', async () => {
     routeFetch(idleMountRoutes)

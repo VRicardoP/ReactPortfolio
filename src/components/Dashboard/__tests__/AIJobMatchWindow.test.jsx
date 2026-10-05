@@ -36,7 +36,11 @@ vi.mock('../../../hooks/useAIJobMatch', () => ({
         runAnalysis: vi.fn(), page: 0, totalPages: 1, pagedResults: RESULTS, prevPage: vi.fn(), nextPage: vi.fn(),
         expandedId: null, toggleExpanded: vi.fn(), translatedTitles: {}, translating: false, translateTitles: vi.fn(),
         activeTab: 'results', selectTab: vi.fn(), llmUnavailable: false,
+        filteredResults: RESULTS, availableSources: ['arbeitnow', 'jobgether'],
+        sourceCounts: { all: 3, arbeitnow: 2, jobgether: 1 }, sourceFilter: 'all',
+        selectSource: vi.fn(), remoteOnly: false, toggleRemoteOnly: vi.fn(),
     }),
+    ALL_MATCH_SOURCES: 'all',
     TAB_RESULTS: 'results',
     TAB_SKILLS_GAP: 'skills_gap',
 }));
@@ -44,6 +48,14 @@ vi.mock('../../../hooks/useAIJobMatch', () => ({
 import AIJobMatchWindow from '../AIJobMatchWindow';
 
 describe('AIJobMatchWindow — titulo traducido y resumen', () => {
+    it('muestra filtros por portal y para ofertas remotas', () => {
+        render(<AIJobMatchWindow />);
+        expect(screen.getByText('dashboard.jobBoard.tabAll')).toBeTruthy();
+        expect(screen.getByText('dashboard.jobBoard.tabArbeitnow')).toBeTruthy();
+        expect(screen.getByText('dashboard.jobBoard.tabJobgether')).toBeTruthy();
+        expect(screen.getByRole('checkbox')).toBeTruthy();
+    });
+
     it('muestra el titulo en ingles con su insignia, y el resumen', () => {
         render(<AIJobMatchWindow />);
         expect(screen.getByText(/Software Developer \(m\/f\/d\)/)).toBeTruthy();

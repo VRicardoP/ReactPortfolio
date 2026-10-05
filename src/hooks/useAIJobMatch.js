@@ -1,10 +1,11 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
 import { AI_MATCH_PAGE_SIZE } from '../components/Dashboard/dashboardConstants';
 
 export const TAB_RESULTS = 'results';
 export const TAB_SKILLS_GAP = 'skills-gap';
+export const ALL_MATCH_SOURCES = 'all';
 
 // The analysis runs server-side in background: polling this often is cheap
 // (a tiny JSON) and keeps the progress bar responsive.
@@ -44,6 +45,8 @@ const useAIJobMatch = () => {
     const [translatedTitles, setTranslatedTitles] = useState({});
     const [translating, setTranslating] = useState(false);
     const [activeTab, setActiveTab] = useState(TAB_RESULTS);
+    const [sourceFilter, setSourceFilter] = useState(ALL_MATCH_SOURCES);
+    const [remoteOnly, setRemoteOnly] = useState(false);
 
     const mountedRef = useRef(true);
     useEffect(() => {
@@ -165,8 +168,51 @@ const useAIJobMatch = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const totalPages = Math.max(1, Math.ceil(results.length / AI_MATCH_PAGE_SIZE));
-    const pagedResults = results.slice(page * AI_MATCH_PAGE_SIZE, (page + 1) * AI_MATCH_PAGE_SIZE);
+    // DT-139: el feed del Core llega completo. Se filtra antes de paginar para
+    // mantener solo diez tarjetas montadas aunque existan miles de evaluaciones.
+    const availableSources = useMemo(() => (
+        [...new Set(results.map(job => job.source).filter(Boolean))].sort()
+    ), [results]);
+
+    const remoteResults = useMemo(() => (
+        remoteOnly ? results.filter(job => job.remote === true) : results
+    ), [results, remoteOnly]);
+
+    const sourceCounts = useMemo(() => {
+        const counts = { [ALL_MATCH_SOURCES]: remoteResults.length };
+        for (const source of availableSources) counts[source] = 0;
+        for (const job of remoteResults) {
+            if (job.source) counts[job.source] = (counts[job.source] || 0) + 1;
+        }
+        return counts;
+    }, [availableSources, remoteResults]);
+
+    const filteredResults = useMemo(() => (
+        sourceFilter === ALL_MATCH_SOURCES
+            ? remoteResults
+            : remoteResults.filter(job => job.source === sourceFilter)
+    ), [remoteResults, sourceFilter]);
+
+    // Paginacion anterior sin filtros, conservada como referencia de DT-139:
+    // const totalPages = Math.max(1, Math.ceil(results.length / AI_MATCH_PAGE_SIZE));
+    // const pagedResults = results.slice(page * AI_MATCH_PAGE_SIZE, (page + 1) * AI_MATCH_PAGE_SIZE);
+    const totalPages = Math.max(1, Math.ceil(filteredResults.length / AI_MATCH_PAGE_SIZE));
+    const pagedResults = filteredResults.slice(
+        page * AI_MATCH_PAGE_SIZE,
+        (page + 1) * AI_MATCH_PAGE_SIZE
+    );
+
+    const selectSource = useCallback((source) => {
+        setSourceFilter(source);
+        setPage(0);
+        setExpandedId(null);
+    }, []);
+
+    const toggleRemoteOnly = useCallback(() => {
+        setRemoteOnly(value => !value);
+        setPage(0);
+        setExpandedId(null);
+    }, []);
 
     const translateTitles = useCallback(async () => {
         const titlesToTranslate = pagedResults
@@ -219,6 +265,13 @@ const useAIJobMatch = () => {
         page,
         totalPages,
         pagedResults,
+        filteredResults,
+        availableSources,
+        sourceCounts,
+        sourceFilter,
+        selectSource,
+        remoteOnly,
+        toggleRemoteOnly,
         prevPage,
         nextPage,
         expandedId,
