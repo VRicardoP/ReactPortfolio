@@ -48,15 +48,25 @@ const FloatingWindowDesktop = ({
     // stable callback references to prevent re-renders from killing drag/resize listeners
     const handlePositionChange = useCallback((pos) => updatePosition(id, pos), [id, updatePosition]);
     const handleSizeChange = useCallback((size) => updateSize(id, size), [id, updateSize]);
-    const handleBringToFront = useCallback(() => bringToFront(id), [id, bringToFront]);
+    // DT-137: commented because the pointer event bubbles to the window's
+    // `onPointerDown`, which now performs the single canonical bringToFront.
+    // const handleBringToFront = useCallback(() => bringToFront(id), [id, bringToFront]);
 
     // this allows dragging and resizing the window
-    const { handleMouseDown: handleDragStart } = useDraggable(
+    // DT-137: previous mouse-only binding preserved; Pointer Events provide
+    // capture and keep movement on the header without document listeners.
+    // const { handleMouseDown: handleDragStart } = useDraggable(
+    const {
+        handlePointerDown: handleDragStart,
+        handlePointerMove: handleDragMove,
+        handlePointerUp: handleDragEnd,
+        handlePointerCancel: handleDragCancel,
+        handleLostPointerCapture: handleDragCaptureLost
+    } = useDraggable(
         windowRef,
         windowState?.isMinimized,
         windowState?.isMaximized,
-        handlePositionChange,
-        handleBringToFront
+        handlePositionChange
     );
 
     const { handleResizeStart, handleKeyboardResize } = useResizable(
@@ -135,20 +145,28 @@ const FloatingWindowDesktop = ({
         isActive && 'window-active'
     ].filter(Boolean).join(' ');
 
+    // DT-137: previous root binding `onMouseDown={handleWindowClick}` is
+    // superseded by the pointer event shared with the drag header.
     return (
         <div
             ref={windowRef}
             className={windowClasses}
             style={windowStyle}
-            onMouseDown={handleWindowClick}
+            onPointerDown={handleWindowClick}
             onKeyDown={handleKeyDown}
             role="dialog"
             aria-labelledby={`${id}-title`}
             tabIndex={-1}
         >
+            {/* DT-137: `onMouseDown={handleDragStart}` is superseded by Pointer
+                Events so the header can retain capture outside its bounds. */}
             <div
                 className="window-header"
-                onMouseDown={handleDragStart}
+                onPointerDown={handleDragStart}
+                onPointerMove={handleDragMove}
+                onPointerUp={handleDragEnd}
+                onPointerCancel={handleDragCancel}
+                onLostPointerCapture={handleDragCaptureLost}
             >
                 <div className="window-controls">
                     <Tooltip text="Minimize" position="bottom">

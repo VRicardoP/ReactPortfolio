@@ -19,6 +19,12 @@
   backdrop-filter: none;
 }
 
+.floating-window.dragging {
+  /* DT-137: the class exists only during drag, so the compositor hint does not
+     retain a layer for every mounted window while idle. */
+  will-change: transform;
+}
+
 .floating-window:hover {
   box-shadow: 0 0 30px rgba(var(--theme-primary-rgb, 0, 255, 255), 0.7);
   border-color: var(--theme-primary, #00ffff);
@@ -44,6 +50,7 @@
   align-items: center;
   cursor: var(--cursor-grab, grab);
   user-select: none;
+  touch-action: none;
 }
 
 .window-header:active {
