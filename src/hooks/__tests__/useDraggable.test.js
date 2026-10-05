@@ -2,13 +2,23 @@ import { renderHook, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import useDraggable from '../useDraggable'
 
-const makeWindowRef = (overrides = {}) => ({
-  current: {
-    getBoundingClientRect: () => ({ left: 100, top: 100, width: 400, height: 300, ...overrides }),
-    style: {},
-    classList: { add: vi.fn(), remove: vi.fn() },
-  },
-})
+const makeWindowRef = (overrides = {}) => {
+  const animationListeners = {}
+  const animation = {
+    addEventListener: vi.fn((event, callback) => { animationListeners[event] = callback }),
+    cancel: vi.fn(() => animationListeners.cancel?.()),
+    finish: () => animationListeners.finish?.(),
+  }
+  return {
+    animation,
+    current: {
+      getBoundingClientRect: () => ({ left: 100, top: 100, width: 400, height: 300, ...overrides }),
+      style: {},
+      classList: { add: vi.fn(), remove: vi.fn() },
+      animate: vi.fn(() => animation),
+    },
+  }
+}
 
 const makeCaptureTarget = () => {
   let capturedPointerId = null
@@ -118,6 +128,7 @@ describe('useDraggable', () => {
     expect(windowRef.current.classList.add).toHaveBeenCalledWith('dragging')
     expect(windowRef.current.style.willChange).toBe('transform')
     expect(windowRef.current.style.backdropFilter).toBe('none')
+    expect(windowRef.current.style.transformOrigin).toBe('50px 20px')
     expect(event.preventDefault).toHaveBeenCalledTimes(1)
   })
 
@@ -139,7 +150,11 @@ describe('useDraggable', () => {
     expect(windowRef.current.style.top).toBeUndefined()
 
     act(flushFrame)
-    expect(windowRef.current.style.transform).toBe('translate3d(50px, 50px, 0)')
+    // DT-138: previous translation-only expectation preserved for rollback.
+    // expect(windowRef.current.style.transform).toBe('translate3d(50px, 50px, 0)')
+    expect(windowRef.current.style.transform).toMatch(
+      /^translate3d\(50px, 50px, 0\) skewX\(-?[\d.]+deg\) scaleY\([\d.]+\)$/
+    )
   })
 
   it('commits the final absolute position and clears the transform on pointerup', () => {
@@ -157,11 +172,37 @@ describe('useDraggable', () => {
     expect(windowRef.current.style.left).toBe('150px')
     expect(windowRef.current.style.top).toBe('150px')
     expect(windowRef.current.style.transform).toBe('')
-    expect(windowRef.current.style.willChange).toBe('')
+    // DT-138: previously cleared immediately; now retained for the compositor
+    // until the short settling animation reports completion.
+    // expect(windowRef.current.style.willChange).toBe('')
+    expect(windowRef.current.style.willChange).toBe('transform')
     expect(windowRef.current.style.backdropFilter).toBe('')
     expect(windowRef.current.classList.remove).toHaveBeenCalledWith('dragging')
     expect(captureTarget.releasePointerCapture).toHaveBeenCalledWith(7)
     expect(onPositionChange).toHaveBeenCalledWith({ x: 150, y: 150 })
+
+    act(() => windowRef.animation.finish())
+    expect(windowRef.current.style.willChange).toBe('')
+    expect(windowRef.current.style.transformOrigin).toBe('')
+    expect(windowRef.animation.cancel).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps the DT-137 translation-only behavior for reduced motion', () => {
+    vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: true })))
+    const windowRef = makeWindowRef()
+    const captureTarget = makeCaptureTarget()
+    const { result } = renderHook(() =>
+      useDraggable(windowRef, false, false, onPositionChange)
+    )
+
+    act(() => result.current.handlePointerDown(makePointerEvent({ currentTarget: captureTarget })))
+    act(() => result.current.handlePointerMove(makePointerEvent({ clientX: 200, clientY: 170 })))
+    act(flushFrame)
+
+    expect(windowRef.current.style.transform).toBe('translate3d(50px, 50px, 0)')
+    act(() => result.current.handlePointerUp(makePointerEvent({ currentTarget: captureTarget })))
+    expect(windowRef.current.animate).not.toHaveBeenCalled()
+    expect(windowRef.current.style.transformOrigin).toBe('')
   })
 
   it.each([
@@ -241,6 +282,7 @@ describe('useDraggable', () => {
     expect(windowRef.current.style.transform).toBe('')
     expect(windowRef.current.style.willChange).toBe('')
     expect(windowRef.current.style.backdropFilter).toBe('')
+    expect(windowRef.current.style.transformOrigin).toBe('')
   })
 })
 

@@ -1,5 +1,9 @@
 import { useCallback, useRef, useEffect } from 'react';
 
+const MAX_SHEAR_DEGREES = 3.5;
+const MAX_VERTICAL_STRETCH = 0.035;
+const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
+
 const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => {
   const dragStateRef = useRef({
     isDragging: false,
@@ -11,7 +15,13 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
     startPosX: 0,
     startPosY: 0,
     finalX: undefined,
-    finalY: undefined
+    finalY: undefined,
+    renderedX: 0,
+    renderedY: 0,
+    shearX: 0,
+    stretchY: 1,
+    wobbleEnabled: true,
+    settleAnimation: null
   });
 
   const applyPendingPosition = useCallback(() => {
@@ -22,7 +32,28 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
 
     const deltaX = dragState.finalX - dragState.startPosX;
     const deltaY = dragState.finalY - dragState.startPosY;
-    windowRef.current.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0)`;
+    const frameDeltaX = dragState.finalX - dragState.renderedX;
+    const frameDeltaY = dragState.finalY - dragState.renderedY;
+    dragState.renderedX = dragState.finalX;
+    dragState.renderedY = dragState.finalY;
+
+    let wobbleTransform = '';
+    if (dragState.wobbleEnabled) {
+      const targetShear = clamp(-frameDeltaX * 0.18, -MAX_SHEAR_DEGREES, MAX_SHEAR_DEGREES);
+      const targetStretch = 1 + clamp(
+        -frameDeltaY * 0.0025,
+        -MAX_VERTICAL_STRETCH,
+        MAX_VERTICAL_STRETCH
+      );
+      dragState.shearX += (targetShear - dragState.shearX) * 0.65;
+      dragState.stretchY += (targetStretch - dragState.stretchY) * 0.65;
+      wobbleTransform = ` skewX(${dragState.shearX.toFixed(2)}deg) scaleY(${dragState.stretchY.toFixed(3)})`;
+    }
+
+    // DT-138: the translation-only assignment is preserved as the exact
+    // rollback behavior. The active line appends compositor-only deformation.
+    // windowRef.current.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0)`;
+    windowRef.current.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0)${wobbleTransform}`;
   }, [windowRef]);
 
   const handlePointerMove = useCallback((e) => {
@@ -59,9 +90,46 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
         node.style.top = `${dragState.finalY}px`;
       }
       node.style.transform = '';
-      node.style.willChange = '';
       node.style.backdropFilter = '';
       node.classList.remove('dragging');
+
+      const shouldSettle = dragState.wobbleEnabled &&
+        typeof node.animate === 'function' &&
+        (Math.abs(dragState.shearX) > 0.05 || Math.abs(dragState.stretchY - 1) > 0.002);
+
+      if (shouldSettle) {
+        const shear = dragState.shearX;
+        const stretchOffset = dragState.stretchY - 1;
+        const animation = node.animate([
+          { transform: `skewX(${shear.toFixed(2)}deg) scaleY(${dragState.stretchY.toFixed(3)})` },
+          { transform: `skewX(${(-shear * 0.32).toFixed(2)}deg) scaleY(${(1 - stretchOffset * 0.32).toFixed(3)})`, offset: 0.42 },
+          { transform: 'skewX(0deg) scaleY(1)' }
+        ], {
+          duration: 360,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+        });
+        animation.id = 'window-wobble-settle';
+        dragState.settleAnimation = animation;
+        node.style.willChange = 'transform';
+
+        const clearSettlingStyles = () => {
+          if (dragState.settleAnimation !== animation) return;
+          dragState.settleAnimation = null;
+          node.style.willChange = '';
+          node.style.transformOrigin = '';
+        };
+        // DT-138: the direct finish listener is preserved as reference. It
+        // cleaned styles but left the finished Animation attached in Chromium.
+        // animation.addEventListener('finish', clearSettlingStyles, { once: true });
+        animation.addEventListener('finish', () => {
+          clearSettlingStyles();
+          animation.cancel();
+        }, { once: true });
+        animation.addEventListener('cancel', clearSettlingStyles, { once: true });
+      } else {
+        node.style.willChange = '';
+        node.style.transformOrigin = '';
+      }
     }
 
     if (dragState.captureTarget?.hasPointerCapture?.(pointerId)) {
@@ -99,6 +167,14 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
     dragState.startPosY = rect.top;
     dragState.finalX = undefined;
     dragState.finalY = undefined;
+    dragState.renderedX = rect.left;
+    dragState.renderedY = rect.top;
+    dragState.shearX = 0;
+    dragState.stretchY = 1;
+    dragState.wobbleEnabled = !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+    dragState.settleAnimation?.cancel();
+    dragState.settleAnimation = null;
 
     node.classList.add('dragging');
     // DT-137: bringToFront causes a React className render that can remove the
@@ -106,6 +182,9 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
     // render cannot disable them in the middle of the gesture.
     node.style.willChange = 'transform';
     node.style.backdropFilter = 'none';
+    node.style.transformOrigin = dragState.wobbleEnabled
+      ? `${e.clientX - rect.left}px ${e.clientY - rect.top}px`
+      : '';
     e.currentTarget.setPointerCapture?.(e.pointerId);
     e.preventDefault();
   }, [isMaximized, windowRef]);
@@ -117,6 +196,8 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
       if (dragState.animationFrameId !== null) {
         cancelAnimationFrame(dragState.animationFrameId);
       }
+      dragState.settleAnimation?.cancel();
+      dragState.settleAnimation = null;
       dragState.isDragging = false;
       /* DT-137: se conservan comentadas las lecturas anteriores del ref. React
          puede haber cambiado `windowRef.current` antes de ejecutar el cleanup,
@@ -129,6 +210,7 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
         node.style.transform = '';
         node.style.willChange = '';
         node.style.backdropFilter = '';
+        node.style.transformOrigin = '';
       }
     };
   }, [windowRef]);
