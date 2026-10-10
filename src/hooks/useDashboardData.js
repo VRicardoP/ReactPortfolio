@@ -1,7 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
-import { JOB_SOURCES, extractJobs, normalizeJob } from '../config/jobSources';
+import {
+  CORE_SOURCE_BY_KEY,
+  JOB_SOURCES,
+  extractJobs,
+  normalizeCoreJob,
+  normalizeJob,
+} from '../config/jobSources';
 
 const SSE_REFETCH_DEBOUNCE_MS = 3000;
 
@@ -64,16 +70,23 @@ export const useDashboardData = () => {
 
       // Job data — loads in background, normalize at fetch time so render is cheap
       JOB_SOURCES.forEach(({ key, urlPath }) => {
-        authenticatedFetch(`${BACKEND_URL}${urlPath}`)
-          .then(res => res.json())
+        const coreSource = CORE_SOURCE_BY_KEY[key];
+        const path = coreSource
+          ? `/api/v1/jobs/search?source=${encodeURIComponent(coreSource)}&limit=100&oneshot=true`
+          : urlPath;
+        authenticatedFetch(`${BACKEND_URL}${path}`)
+          .then(res => {
+            if (!res.ok) throw new Error(`Job source ${key} returned ${res.status}`);
+            return res.json();
+          })
           .then(data => {
             if (aborted) return;
             const raw = extractJobs(data);
-            const _normalized = raw.reduce((acc, j) => {
+            const _normalized = raw.reduce((acc, job) => {
               try {
-                acc.push(normalizeJob(j, key));
+                acc.push(coreSource ? normalizeCoreJob(job, key) : normalizeJob(job, key));
               } catch (e) {
-                if (import.meta.env.DEV) console.warn(`[useDashboardData] Failed to normalize job from ${key}:`, j, e);
+                if (import.meta.env.DEV) console.warn(`[useDashboardData] Failed to normalize job from ${key}:`, job, e);
               }
               return acc;
             }, []);

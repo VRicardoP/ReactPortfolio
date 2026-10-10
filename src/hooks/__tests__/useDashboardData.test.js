@@ -4,6 +4,7 @@ import { useDashboardData } from '../useDashboardData'
 
 // Mock the useAuth hook to provide authenticatedFetch
 const mockAuthenticatedFetch = vi.fn()
+const mockCoreSources = vi.hoisted(() => ({}))
 
 vi.mock('../../context/AuthContext', () => ({
   useAuth: () => ({
@@ -16,6 +17,7 @@ vi.mock('../../context/AuthContext', () => ({
 
 // Mock jobSources to avoid loading all 16 sources in tests
 vi.mock('../../config/jobSources', () => ({
+  CORE_SOURCE_BY_KEY: mockCoreSources,
   JOB_SOURCES: [
     { key: 'testjobs', urlPath: '/api/v1/test-jobs/recent' },
   ],
@@ -38,11 +40,13 @@ vi.mock('../../config/jobSources', () => ({
     source,
     employmentType: '',
   }),
+  normalizeCoreJob: (job, source) => ({ ...job, id: job.id, source }),
 }))
 
 describe('useDashboardData', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    for (const source of Object.keys(mockCoreSources)) delete mockCoreSources[source]
   })
 
   const makeMockResponse = (data) => ({
@@ -119,6 +123,27 @@ describe('useDashboardData', () => {
     // Individual catch blocks handle these, stats/map will be null
     expect(result.current.stats).toBeNull()
     expect(result.current.mapData).toEqual([])
+  })
+
+  it('loads transferred sources from Core and preserves the vacancy identity', async () => {
+    mockCoreSources.testjobs = 'core-testjobs'
+    mockAuthenticatedFetch
+      .mockResolvedValueOnce(makeMockResponse({}))
+      .mockResolvedValueOnce(makeMockResponse([]))
+      .mockResolvedValueOnce(makeMockResponse({ general: null, top_questions: [], timeline_daily: [], by_country: [] }))
+      .mockResolvedValueOnce(makeMockResponse({ data: [{ id: 'core-vacancy', title: 'Current role' }] }))
+
+    const { result } = renderHook(() => useDashboardData())
+
+    await waitFor(() => expect(result.current.jobData.testjobs).toBeDefined())
+    expect(mockAuthenticatedFetch).toHaveBeenNthCalledWith(
+      4,
+      expect.stringContaining('/api/v1/jobs/search?source=core-testjobs&limit=100&oneshot=true'),
+    )
+    expect(result.current.jobData.testjobs._normalized[0]).toMatchObject({
+      id: 'core-vacancy',
+      source: 'testjobs',
+    })
   })
 
   it('includes jobData in the result', async () => {

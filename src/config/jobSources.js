@@ -3,6 +3,19 @@
  * All job-related components import from here instead of defining their own lists.
  */
 
+// Sources whose live harvesting is authoritative in Core. The dashboard keeps
+// the established tab names; NAV is the only namespace that differs in Core.
+export const CORE_SOURCE_BY_KEY = Object.freeze({
+  arbeitnow: 'arbeitnow',
+  jobgether: 'jobgether',
+  nav: 'nav_arbeidsplassen',
+  ostjob: 'ostjob',
+  remotive: 'remotive',
+  thehub: 'thehub',
+  weworkremotely: 'weworkremotely',
+  zentraljob: 'zentraljob',
+});
+
 export const JOB_SOURCES = [
   {
     key: 'jobicy',
@@ -421,6 +434,17 @@ export function normalizeJob(job, source) {
     remote: false,
     source,
     employmentType: '',
+  };
+}
+
+/** Preserve Core's stable vacancy identity while retaining each tab's existing
+ * display defaults (for example, remote-only portals). */
+export function normalizeCoreJob(job, source) {
+  return {
+    ...normalizeJob(job, source),
+    id: job.id,
+    jobRef: job.job_ref || job.id,
+    source,
   };
 }
 
