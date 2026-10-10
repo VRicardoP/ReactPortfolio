@@ -31,9 +31,11 @@ const MapResizeHandler = () => {
     const map = useMap();
 
     useEffect(() => {
-        // tell the map to recalculate its size
+        // Coalesce resize bursts and cancel work before Leaflet is removed.
+        let resizeTimer;
         const handleResize = () => {
-            setTimeout(() => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
                 map.invalidateSize();
             }, 100);
         };
@@ -56,6 +58,7 @@ const MapResizeHandler = () => {
         window.addEventListener('resize', handleResize);
 
         return () => {
+            clearTimeout(resizeTimer);
             resizeObserver.disconnect();
             window.removeEventListener('resize', handleResize);
         };
