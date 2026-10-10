@@ -7,6 +7,7 @@
 // the established tab names; NAV is the only namespace that differs in Core.
 export const CORE_SOURCE_BY_KEY = Object.freeze({
   arbeitnow: 'arbeitnow',
+  irishjobs: 'irishjobs',
   jobgether: 'jobgether',
   nav: 'nav_arbeidsplassen',
   ostjob: 'ostjob',
