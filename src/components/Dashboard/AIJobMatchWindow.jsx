@@ -107,10 +107,12 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                         <span className="ai-match-meta">
                             {dataSource === 'core'
                                 ? t('dashboard.aiMatch.coreFeed', { count: results.length })
-                                : t('dashboard.aiMatch.analyzed', {
-                                    total: metadata.total_jobs_analyzed,
-                                    time: (metadata.total_time_ms / 1000).toFixed(1)
-                                })}
+                                : dataSource === 'composite'
+                                    ? t('dashboard.aiMatch.compositeFeed', { count: results.length })
+                                    : t('dashboard.aiMatch.analyzed', {
+                                        total: metadata.total_jobs_analyzed,
+                                        time: (metadata.total_time_ms / 1000).toFixed(1)
+                                    })}
                             {metadata.computed_at && (
                                 <> · {t('dashboard.aiMatch.computedAt', {
                                     time: new Date(metadata.computed_at).toLocaleString()

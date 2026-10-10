@@ -417,6 +417,7 @@
       "analyzing": "Stellen werden mit KI analysiert...",
       "analyzed": "{{total}} Stellen in {{time}}s analysiert",
       "coreFeed": "Core-Feed: {{count}} Stellen",
+      "compositeFeed": "Core + beibehaltene lokale Quellen: {{count}} Stellen",
       "localFallback": "Der Core ist nicht verfügbar: Das lokale Ersatzergebnis wird angezeigt.",
       "stageInfo": "Phase 1: Embeddings → Phase 2: LLM-Bewertung",
       "skillsAnalysis": "Kompetenzanalyse",

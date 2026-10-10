@@ -32,7 +32,7 @@ const RESULTS = [
 
 vi.mock('../../../hooks/useAIJobMatch', () => ({
     default: () => ({
-        results: RESULTS, metadata: null, dataSource: 'core', loading: false, progress: null, error: null,
+        results: RESULTS, metadata: { total_time_ms: 0 }, dataSource: 'composite', loading: false, progress: null, error: null,
         runAnalysis: vi.fn(), page: 0, totalPages: 1, pagedResults: RESULTS, prevPage: vi.fn(), nextPage: vi.fn(),
         expandedId: null, toggleExpanded: vi.fn(), translatedTitles: {}, translating: false, translateTitles: vi.fn(),
         activeTab: 'results', selectTab: vi.fn(), llmUnavailable: false,
@@ -48,6 +48,11 @@ vi.mock('../../../hooks/useAIJobMatch', () => ({
 import AIJobMatchWindow from '../AIJobMatchWindow';
 
 describe('AIJobMatchWindow — titulo traducido y resumen', () => {
+    it('identifica el resultado combinado de Core y fuentes locales', () => {
+        render(<AIJobMatchWindow />);
+        expect(screen.getByText('dashboard.aiMatch.compositeFeed')).toBeTruthy();
+    });
+
     it('muestra filtros por portal y para ofertas remotas', () => {
         render(<AIJobMatchWindow />);
         expect(screen.getByText('dashboard.jobBoard.tabAll')).toBeTruthy();

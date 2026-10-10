@@ -464,6 +464,7 @@
       "analyzing": "Analizando empleos con IA...",
       "analyzed": "{{total}} empleos analizados en {{time}}s",
       "coreFeed": "Feed del core: {{count}} ofertas",
+      "compositeFeed": "Core + fuentes locales conservadas: {{count}} ofertas",
       "localFallback": "El core no está disponible: se muestra el resultado local de respaldo.",
       "stageInfo": "Fase 1: Embeddings → Fase 2: Scoring LLM",
       "skillsAnalysis": "Análisis de habilidades",
