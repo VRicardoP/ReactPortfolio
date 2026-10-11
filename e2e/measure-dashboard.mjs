@@ -167,6 +167,20 @@ async function inspectWindows(page) {
   return windows;
 }
 
+async function withTimeout(operation, timeoutMs, message) {
+  let timer;
+  try {
+    return await Promise.race([
+      operation,
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error(message)), timeoutMs);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function measureDrag(page) {
   const window = page.locator('[aria-labelledby="stats-window-title"]');
   await window.getByRole('button', { name: 'Minimize', exact: true }).click();
@@ -243,7 +257,11 @@ async function main() {
     const loadMs = Date.now() - started;
     record(`loaded ${loadMs}`);
     const windows = await inspectWindows(page);
-    const drag = await measureDrag(page);
+    const drag = await withTimeout(
+      measureDrag(page),
+      60_000,
+      'Drag measurement exceeded 60 seconds',
+    );
     const screenshot = output.endsWith('.json') ? output.slice(0, -5) + '.png' : `${output}.png`;
     await page.screenshot({ path: screenshot });
 
