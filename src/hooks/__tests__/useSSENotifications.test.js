@@ -28,7 +28,7 @@ describe('useSSENotifications', () => {
     originalFetch = global.fetch
     vi.clearAllMocks()
     // Default: not authenticated
-    useAuth.mockReturnValue({ token: null, isAuthenticated: false })
+    useAuth.mockReturnValue({ authenticatedFetch: vi.fn(), isAuthenticated: false })
   })
 
   afterEach(() => {
@@ -54,7 +54,7 @@ describe('useSSENotifications', () => {
 
   it('dismissNotification removes a notification by id', async () => {
     // Set up authenticated state with a stream that sends one event
-    useAuth.mockReturnValue({ token: 'test-token', isAuthenticated: true })
+    useAuth.mockReturnValue({ authenticatedFetch: (...args) => global.fetch(...args), isAuthenticated: true })
 
     const mockStream = new ReadableStream({
       start(controller) {
@@ -90,7 +90,7 @@ describe('useSSENotifications', () => {
   })
 
   it('clearAll clears all notifications', async () => {
-    useAuth.mockReturnValue({ token: 'test-token', isAuthenticated: true })
+    useAuth.mockReturnValue({ authenticatedFetch: (...args) => global.fetch(...args), isAuthenticated: true })
 
     const mockStream = new ReadableStream({
       start(controller) {
@@ -121,17 +121,20 @@ describe('useSSENotifications', () => {
     expect(result.current.notifications).toHaveLength(0)
   })
 
-  it('does not fetch when token is null', () => {
-    useAuth.mockReturnValue({ token: null, isAuthenticated: true })
-    global.fetch = vi.fn()
+  it('connects without exposing a browser-readable token', () => {
+    const authenticatedFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      body: new ReadableStream({ start() {} }),
+    })
+    useAuth.mockReturnValue({ authenticatedFetch, isAuthenticated: true })
 
     renderHook(() => useSSENotifications())
 
-    expect(global.fetch).not.toHaveBeenCalled()
+    expect(authenticatedFetch).toHaveBeenCalledTimes(1)
   })
 
   it('cleanup aborts the connection on unmount', () => {
-    useAuth.mockReturnValue({ token: 'test-token', isAuthenticated: true })
+    useAuth.mockReturnValue({ authenticatedFetch: (...args) => global.fetch(...args), isAuthenticated: true })
 
     // Use a stream that stays open
     const mockStream = new ReadableStream({
@@ -158,7 +161,7 @@ describe('useSSENotifications', () => {
   })
 
   it('shows toast for new_jobs events', async () => {
-    useAuth.mockReturnValue({ token: 'test-token', isAuthenticated: true })
+    useAuth.mockReturnValue({ authenticatedFetch: (...args) => global.fetch(...args), isAuthenticated: true })
 
     const mockStream = new ReadableStream({
       start(controller) {
@@ -187,24 +190,19 @@ describe('useSSENotifications', () => {
     expect(showToast).toHaveBeenCalledWith(expect.any(String), 4000)
   })
 
-  it('fetches with correct URL and authorization header', () => {
-    useAuth.mockReturnValue({ token: 'my-jwt-token', isAuthenticated: true })
-
-    const mockStream = new ReadableStream({ start() {} })
-    global.fetch = vi.fn().mockResolvedValue({
+  it('uses authenticatedFetch with the ngrok header and no Authorization token', () => {
+    const authenticatedFetch = vi.fn().mockResolvedValue({
       ok: true,
-      body: mockStream,
+      body: new ReadableStream({ start() {} }),
     })
+    useAuth.mockReturnValue({ authenticatedFetch, isAuthenticated: true })
 
     renderHook(() => useSSENotifications())
 
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(authenticatedFetch).toHaveBeenCalledWith(
       'http://test/api/v1/notifications/stream',
       expect.objectContaining({
-        headers: {
-          'ngrok-skip-browser-warning': 'true',
-          Authorization: 'Bearer my-jwt-token',
-        },
+        headers: { 'ngrok-skip-browser-warning': 'true' },
         signal: expect.any(AbortSignal),
       })
     )

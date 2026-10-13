@@ -5,7 +5,7 @@ import { showToast } from '../components/UI/Toast';
 import i18n from '../i18n';
 
 export const useSSENotifications = () => {
-    const { token, isAuthenticated } = useAuth();
+    const { authenticatedFetch, isAuthenticated } = useAuth();
     const [notifications, setNotifications] = useState([]);
     const reconnectAttempts = useRef(0);
     const reconnectTimerRef = useRef(null);
@@ -19,7 +19,7 @@ export const useSSENotifications = () => {
     }, []);
 
     useEffect(() => {
-        if (!isAuthenticated || !token) return;
+        if (!isAuthenticated) return;
 
         const controller = new AbortController();
         let mounted = true;
@@ -31,10 +31,10 @@ export const useSSENotifications = () => {
                 // Access-Control-Allow-Origin, y el navegador lo leía como
                 // error de CORS: el stream no conectaba NUNCA en producción, en
                 // bucle de reintentos y sin nada visible en pantalla.
-                const response = await fetch(`${BACKEND_URL}/api/v1/notifications/stream`, {
-                    headers: { ...DEFAULT_HEADERS, 'Authorization': `Bearer ${token}` },
-                    signal: controller.signal,
-                });
+                const response = await authenticatedFetch(
+                    `${BACKEND_URL}/api/v1/notifications/stream`,
+                    { headers: DEFAULT_HEADERS, signal: controller.signal },
+                );
 
                 if (!response.ok) {
                     if (!controller.signal.aborted) {
@@ -120,7 +120,7 @@ export const useSSENotifications = () => {
                 reconnectTimerRef.current = null;
             }
         };
-    }, [isAuthenticated, token]);
+    }, [authenticatedFetch, isAuthenticated]);
 
     return { notifications, dismissNotification, clearAll };
 };

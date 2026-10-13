@@ -59,6 +59,16 @@ async function mockBackendAPI(page) {
     });
   });
 
+  // Authenticated browser state is represented by a cookie, as in production.
+  await page.route(`${API}/v1/auth/users/me`, async (route) => {
+    const cookie = route.request().headers().cookie || '';
+    return route.fulfill({
+      status: cookie.includes('e2e_auth=1') ? 200 : 401,
+      contentType: 'application/json',
+      body: JSON.stringify(cookie.includes('e2e_auth=1') ? { username: 'admin@example.com' } : { detail: 'Not authenticated' }),
+    });
+  });
+
   // Auth: login
   await page.route(`${API}/v1/auth/token`, async (route) => {
     const request = route.request();
@@ -72,11 +82,8 @@ async function mockBackendAPI(page) {
         return route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify({
-            access_token: MOCK_ACCESS_TOKEN,
-            refresh_token: MOCK_REFRESH_TOKEN,
-            token_type: 'bearer',
-          }),
+          headers: { 'Set-Cookie': 'e2e_auth=1; Path=/; SameSite=Lax' },
+          body: JSON.stringify({ access_token: MOCK_ACCESS_TOKEN, token_type: 'bearer' }),
         });
       }
       return route.fulfill({
@@ -88,18 +95,24 @@ async function mockBackendAPI(page) {
     return route.continue();
   });
 
-  // Auth: refresh
+  // Auth: refresh uses the HttpOnly-cookie contract.
   await page.route(`${API}/v1/auth/refresh`, async (route) => {
+    const cookie = route.request().headers().cookie || '';
     return route.fulfill({
-      status: 200,
+      status: cookie.includes('e2e_auth=1') ? 200 : 401,
       contentType: 'application/json',
-      body: JSON.stringify({
-        access_token: MOCK_ACCESS_TOKEN,
-        refresh_token: MOCK_REFRESH_TOKEN,
-        token_type: 'bearer',
-      }),
+      body: JSON.stringify(cookie.includes('e2e_auth=1')
+        ? { access_token: MOCK_ACCESS_TOKEN, token_type: 'bearer' }
+        : { detail: 'Invalid refresh token' }),
     });
   });
+
+  await page.route(`${API}/v1/auth/logout`, async (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    headers: { 'Set-Cookie': 'e2e_auth=; Max-Age=0; Path=/' },
+    body: JSON.stringify({ message: 'Logged out' }),
+  }));
 
   // Analytics: stats
   await page.route(`${API}/v1/analytics/stats`, async (route) => {
@@ -226,14 +239,10 @@ async function mockBackendAPI(page) {
 
 }
 
-/**
- * Pre-authenticate by injecting tokens into sessionStorage.
- * Call this before navigating to /dashboard.
- */
+/** Pre-authenticate with the same cookie-only browser contract used in production. */
 async function injectAuth(page) {
   await page.addInitScript(() => {
-    sessionStorage.setItem('accessToken', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsImV4cCI6OTk5OTk5OTk5OX0.mock-signature');
-    sessionStorage.setItem('refreshToken', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInR5cGUiOiJyZWZyZXNoIiwiZXhwIjo5OTk5OTk5OTk5fQ.mock-refresh');
+    document.cookie = 'e2e_auth=1; Path=/; SameSite=Lax';
   });
 }
 
