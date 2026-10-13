@@ -64,18 +64,17 @@ const DashboardPage = () => {
                         <span className="terminal-cursor"></span>
                     </h1>
                 </div>
-                <div style={{
-                    position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    textAlign: 'center',
-                    color: '#00ffff',
-                    fontFamily: 'Courier New',
-                    zIndex: 100
-                }}>
-                    <div style={{ fontSize: '48px', marginBottom: '20px' }}>⏳</div>
-                    <p style={{ fontSize: '18px' }}>{t('dashboard.fetchingData')}</p>
+                <div
+                    className="dashboard-data-loading"
+                    role="status"
+                    aria-live="polite"
+                    aria-busy="true"
+                >
+                    <span
+                        className="app-loading-spinner app-loading-spinner-large"
+                        aria-hidden="true"
+                    />
+                    <p>{t('dashboard.fetchingData')}</p>
                 </div>
             </>
         );

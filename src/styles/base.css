@@ -150,6 +150,61 @@ canvas.rain-canvas {
   font-family: 'Courier New', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', monospace;
 }
 
+/* Font-independent loading indicator shared by full-page and lazy window states. */
+.app-loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--theme-primary, #00ffff);
+  font-family: 'Courier New', monospace;
+  font-size: var(--fs-body);
+}
+
+.app-loading-content,
+.dashboard-data-loading {
+  text-align: center;
+}
+
+.app-loading-spinner {
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin: 0 auto 10px;
+  border: 3px solid rgba(var(--theme-primary-rgb, 0, 255, 255), 0.2);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: app-loading-spin 0.8s linear infinite;
+}
+
+.app-loading-spinner-large {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 20px;
+  border-width: 4px;
+}
+
+.dashboard-data-loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 100;
+  color: var(--theme-primary, #00ffff);
+  font-family: 'Courier New', monospace;
+  transform: translate(-50%, -50%);
+}
+
+.dashboard-data-loading p {
+  margin: 0;
+  font-size: var(--fs-section);
+}
+
+@keyframes app-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 
 /* Tablets and medium screens (768px - 1024px) */
@@ -382,6 +437,10 @@ canvas.rain-canvas {
   .terminal-cursor {
     animation: none;
     opacity: 1;
+  }
+
+  .app-loading-spinner {
+    animation: none;
   }
 }
 html,

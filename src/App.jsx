@@ -36,23 +36,9 @@ const DocumentViewerWindow = lazy(() => import('./components/Windows/DocumentVie
 
 // this is what is shown while a window is loading
 const WindowLoader = memo(() => (
-  <div style={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-    color: '#00ffff',
-    fontFamily: 'Courier New',
-    fontSize: '14px'
-  }}>
-    <div style={{ textAlign: 'center' }}>
-      <div style={{
-        fontSize: '24px',
-        marginBottom: '10px',
-        animation: 'pulse 1.5s infinite'
-      }}>
-        ⏳
-      </div>
+  <div className="app-loading-state" role="status" aria-live="polite" aria-busy="true">
+    <div className="app-loading-content">
+      <span className="app-loading-spinner" aria-hidden="true" />
       Loading...
     </div>
   </div>
