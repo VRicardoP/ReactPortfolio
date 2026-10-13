@@ -25,7 +25,7 @@ const MobileDashboardLayout = memo(({
     onLogout, onGoHome,
 }) => {
     const { t } = useTranslation();
-    const { cycleTheme, themeName, cycleBackground, backgroundEffect } = useTheme();
+    const { theme, cycleTheme, cycleBackground, backgroundEffect } = useTheme();
     const [activeTab, setActiveTab] = useState('overview');
 
     useSSENotifications();
@@ -82,23 +82,25 @@ const MobileDashboardLayout = memo(({
                                             className="mobile-nav-dropdown-item"
                                             onClick={cycleTheme}
                                         >
-                                            <span className="mobile-nav-dropdown-item-icon">
-                                                {themeName === 'cyan' ? '🔵' : themeName === 'silver' ? '⚪' : '🟠'}
-                                            </span>
+                                            <span
+                                                className="mobile-theme-swatch"
+                                                style={{ backgroundColor: theme.primary }}
+                                                aria-hidden="true"
+                                            />
                                             {t('dashboard.theme')}
                                         </button>
                                         <button
                                             className="mobile-nav-dropdown-item"
                                             onClick={cycleBackground}
                                         >
-                                            <span className="mobile-nav-dropdown-item-icon">🎨</span>
+                                            <span className="mobile-nav-dropdown-item-icon" aria-hidden="true">BG</span>
                                             {t(`dashboard.${backgroundEffect === 'rain' ? 'bgRain' : backgroundEffect === 'parallax' ? 'bgParallax' : backgroundEffect === 'matrix' ? 'bgMatrix' : backgroundEffect === 'lensflare' ? 'bgLensflare' : backgroundEffect === 'cube' ? 'bgCube' : 'bgSmoke'}`)}
                                         </button>
                                         <button
                                             className="mobile-nav-dropdown-item"
                                             onClick={onGoHome}
                                         >
-                                            <span className="mobile-nav-dropdown-item-icon">🏠</span>
+                                            <span className="mobile-nav-dropdown-item-icon" aria-hidden="true">HOME</span>
                                             {t('dashboard.backToPortfolio')}
                                         </button>
                                         <button
@@ -106,7 +108,7 @@ const MobileDashboardLayout = memo(({
                                             onClick={onLogout}
                                             style={{ color: '#ff6b6b' }}
                                         >
-                                            <span className="mobile-nav-dropdown-item-icon">🚪</span>
+                                            <span className="mobile-nav-dropdown-item-icon" aria-hidden="true">EXIT</span>
                                             {t('dashboard.logout')}
                                         </button>
                                     </div>
@@ -126,7 +128,7 @@ const MobileDashboardLayout = memo(({
                         className={`mobile-dashboard-tab${activeTab === tab.key ? ' active' : ''}`}
                         onClick={() => setActiveTab(tab.key)}
                     >
-                        <span className="mobile-dashboard-tab-icon">{tab.icon}</span>
+                        <span className="mobile-dashboard-tab-icon" aria-hidden="true">{tab.icon}</span>
                         <span>{t(`dashboard.tab.${tab.key}`)}</span>
                     </button>
                 ))}

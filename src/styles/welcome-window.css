@@ -66,9 +66,21 @@
 }
 
 .instructions .icon {
-  font-size: var(--fs-section);
-  min-width: 25px;
+  min-width: 34px;
   text-align: center;
+}
+
+.instructions .text-icon,
+.tip-label {
+  display: inline-block;
+  color: #00ffff;
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.tip-label {
+  min-width: 28px;
 }
 
 .purple-dot {

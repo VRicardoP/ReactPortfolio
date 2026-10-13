@@ -15,7 +15,7 @@
     "maximizeDesc": "黄色のボタン（右）をクリック。2回目でフルスクリーン",
     "tip": "ヒント：",
     "tipText": "各ウィンドウを探索して、経験、スキル、プロジェクトについて詳しく知りましょう。上級ユーザー：Ctrl+`でサプライズ。",
-    "gotIt": "了解、始めましょう！→"
+    "gotIt": "了解、始めましょう！ ->"
   },
   "chat": {
     "greeting": "こんにちは！クサナギです！{{name}}について何か質問はありますか？",
@@ -114,7 +114,7 @@
     "checkConsole": "ブラウザコンソールで詳細エラーを確認",
     "checkCors": "バックエンドでCORSが正しく設定されているか確認",
     "retry": "再試行",
-    "backToPortfolio": "← ポートフォリオ",
+    "backToPortfolio": "<- ポートフォリオ",
     "logout": "ログアウト",
     "theme": "テーマ",
     "bgRain": "レイン",
@@ -198,9 +198,9 @@
       "save": "保存",
       "saved": "保存済み",
       "interested": "興味あり",
-      "interestedDone": "興味あり ✓",
+      "interestedDone": "興味あり [OK]",
       "viewOffer": "求人を見る",
-      "opened": "開いた ✓"
+      "opened": "開いた [OK]"
     },
     "selectedOffers": {
       "title": "選択した求人",
@@ -419,12 +419,12 @@
       "coreFeed": "コアのフィード：{{count}}件の求人",
       "compositeFeed": "Core＋保持中のローカルソース：{{count}}件の求人",
       "localFallback": "コアに接続できないため、ローカルの代替結果を表示しています。",
-      "stageInfo": "ステージ1: エンベディング → ステージ2: LLMスコアリング",
+      "stageInfo": "ステージ1: エンベディング -> ステージ2: LLMスコアリング",
       "skillsAnalysis": "スキル分析",
       "matchingSkills": "一致",
       "missingSkills": "不足",
       "saveToBoard": "保存",
-      "saved": "保存済み ✓",
+      "saved": "保存済み [OK]",
       "noResults": "「AI分析を実行」をクリックして最適な求人を見つけましょう",
       "translateTitles": "タイトルを翻訳",
       "translating": "翻訳中...",
@@ -585,7 +585,7 @@
     "invalidCredentials": "認証情報が無効です",
     "authenticating": "認証中...",
     "login": "ログイン",
-    "backToPortfolio": "← ポートフォリオに戻る",
+    "backToPortfolio": "<- ポートフォリオに戻る",
     "sessionExpiredInactivity": "無操作のためセッションが期限切れになりました"
   }
 }

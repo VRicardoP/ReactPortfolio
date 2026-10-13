@@ -15,7 +15,7 @@ const MobileChatSheet = ({ data }) => {
                 onClick={() => setIsOpen(true)}
                 aria-label={t('mobile.openChat')}
             >
-                {'💬'}
+                <span className="mobile-chat-icon" aria-hidden="true" />
             </button>
 
             {isOpen && (
@@ -32,7 +32,7 @@ const MobileChatSheet = ({ data }) => {
                                 onClick={() => setIsOpen(false)}
                                 aria-label={t('mobile.closeChat')}
                             >
-                                {'\u00D7'}
+                                <span className="mobile-close-icon" aria-hidden="true" />
                             </button>
                         </div>
                         <div className="mobile-chat-sheet-body">

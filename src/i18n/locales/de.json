@@ -15,7 +15,7 @@
     "maximizeDesc": "Klicken Sie auf die gelbe Schaltfläche (rechts). Ein zweiter Klick wechselt in den Vollbildmodus",
     "tip": "Tipp:",
     "tipText": "Erkunden Sie die verschiedenen Fenster, um mehr über meine Erfahrung, Fähigkeiten und Projekte zu erfahren. Für Profis: Strg+` für eine Überraschung.",
-    "gotIt": "Verstanden, los geht's! →"
+    "gotIt": "Verstanden, los geht's! ->"
   },
   "chat": {
     "greeting": "Hallo! Ich bin Kusanagi! Haben Sie Fragen zu {{name}}?",
@@ -114,7 +114,7 @@
     "checkConsole": "Prüfen Sie die Browser-Konsole für Details",
     "checkCors": "Stellen Sie sicher, dass CORS korrekt konfiguriert ist",
     "retry": "Erneut versuchen",
-    "backToPortfolio": "← Portfolio",
+    "backToPortfolio": "<- Portfolio",
     "logout": "Abmelden",
     "theme": "Design",
     "bgRain": "Regen",
@@ -198,9 +198,9 @@
       "save": "Speichern",
       "saved": "Gespeichert",
       "interested": "Interessiert mich",
-      "interestedDone": "Interessiert ✓",
+      "interestedDone": "Interessiert [OK]",
       "viewOffer": "Angebot ansehen",
-      "opened": "Geöffnet ✓"
+      "opened": "Geöffnet [OK]"
     },
     "selectedOffers": {
       "title": "Ausgewählte Angebote",
@@ -419,12 +419,12 @@
       "coreFeed": "Core-Feed: {{count}} Stellen",
       "compositeFeed": "Core + beibehaltene lokale Quellen: {{count}} Stellen",
       "localFallback": "Der Core ist nicht verfügbar: Das lokale Ersatzergebnis wird angezeigt.",
-      "stageInfo": "Phase 1: Embeddings → Phase 2: LLM-Bewertung",
+      "stageInfo": "Phase 1: Embeddings -> Phase 2: LLM-Bewertung",
       "skillsAnalysis": "Kompetenzanalyse",
       "matchingSkills": "Übereinstimmend",
       "missingSkills": "Fehlend",
       "saveToBoard": "Speichern",
-      "saved": "Gespeichert ✓",
+      "saved": "Gespeichert [OK]",
       "noResults": "Klicken Sie auf 'KI-Analyse starten', um Ihre besten Stellenangebote zu finden",
       "translateTitles": "Titel übersetzen",
       "translating": "Übersetze...",
@@ -585,7 +585,7 @@
     "invalidCredentials": "Ungültige Anmeldedaten",
     "authenticating": "Authentifizierung läuft...",
     "login": "Anmelden",
-    "backToPortfolio": "← Zurück zum Portfolio",
+    "backToPortfolio": "<- Zurück zum Portfolio",
     "sessionExpiredInactivity": "Sitzung wegen Inaktivität abgelaufen"
   }
 }

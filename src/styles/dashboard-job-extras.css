@@ -53,7 +53,7 @@
 }
 
 .jsearch-salary::before {
-  content: '💰 ';
+  content: '[PAY] ';
 }
 
 .jsearch-source {

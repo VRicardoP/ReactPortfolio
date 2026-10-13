@@ -84,7 +84,12 @@
 }
 
 .soft-skill-icon {
-  font-size: var(--fs-window-title);
+  min-width: 34px;
+  color: #00ffff;
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-align: center;
   flex-shrink: 0;
 }
 
@@ -231,7 +236,7 @@
   }
 
   .soft-skill-icon {
-    font-size: var(--fs-section);
+    font-size: 9px;
   }
 
   .soft-skill-name {

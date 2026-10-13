@@ -84,7 +84,7 @@ const DocumentPreview = memo(({
             <div className="cv-gen-doc-panel">
                 <div className="cv-gen-doc-panel-header">
                     <span>{t('dashboard.cvGeneration.title')}</span>
-                    <button className="cv-gen-btn-small cv-gen-btn-cancel" onClick={onClose}>✕</button>
+                    <button className="cv-gen-btn-small cv-gen-btn-cancel" onClick={onClose}>X</button>
                 </div>
                 <div className="jobboard-empty">
                     {t('dashboard.cvGeneration.noDocuments')}
@@ -113,7 +113,7 @@ const DocumentPreview = memo(({
                         {t('dashboard.cvGeneration.tabCoverLetter')}
                     </button>
                 </div>
-                <button className="cv-gen-btn-small cv-gen-btn-cancel" onClick={onClose}>✕</button>
+                <button className="cv-gen-btn-small cv-gen-btn-cancel" onClick={onClose}>X</button>
             </div>
 
             <div className="cv-gen-preview-content">

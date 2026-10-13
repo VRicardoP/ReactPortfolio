@@ -184,7 +184,7 @@ const KanbanBoard = memo(({
                                                 aria-label={t('dashboard.kanban.moveLeft')}
                                                 onClick={(e) => { e.stopPropagation(); handleMoveCard(app.id, -1); }}
                                             >
-                                                ◀
+                                                &lt;
                                             </button>
                                         )}
                                         {colIndex < COLUMNS.length - 1 && (
@@ -193,7 +193,7 @@ const KanbanBoard = memo(({
                                                 aria-label={t('dashboard.kanban.moveRight')}
                                                 onClick={(e) => { e.stopPropagation(); handleMoveCard(app.id, 1); }}
                                             >
-                                                ▶
+                                                &gt;
                                             </button>
                                         )}
                                     </div>
@@ -211,7 +211,7 @@ const KanbanBoard = memo(({
                                                 hasDocs ? onViewDocuments(app.id) : onGenerate(app.id);
                                             }}
                                         >
-                                            {isGenerating ? '⏳' : hasDocs ? '📋' : '⚡'}
+                                            {isGenerating ? '...' : hasDocs ? 'DOC' : 'GEN'}
                                         </button>
                                         {/* 2. Download docs */}
                                         <button
@@ -221,7 +221,7 @@ const KanbanBoard = memo(({
                                             disabled={!hasDocs}
                                             onClick={(e) => { e.stopPropagation(); onDownloadPdf(app.id); }}
                                         >
-                                            ⬇
+                                            DL
                                         </button>
                                         {/* 3. Open URL (does NOT move to applied) */}
                                         <a
@@ -235,7 +235,7 @@ const KanbanBoard = memo(({
                                             tabIndex={app.url ? 0 : -1}
                                             onClick={(e) => { e.stopPropagation(); if (!app.url) e.preventDefault(); }}
                                         >
-                                            🔗
+                                            URL
                                         </a>
                                         {/* 4. Mark as applied */}
                                         <button
@@ -245,7 +245,7 @@ const KanbanBoard = memo(({
                                             disabled={app.status === 'applied'}
                                             onClick={(e) => { e.stopPropagation(); handleMarkApplied(app.id); }}
                                         >
-                                            ✓
+                                            OK
                                         </button>
                                         {/* 5. Delete */}
                                         <button
@@ -254,7 +254,7 @@ const KanbanBoard = memo(({
                                             title={t('dashboard.kanban.deleteApp')}
                                             onClick={(e) => { e.stopPropagation(); handleDelete(app.id); onDelete?.(app.id); }}
                                         >
-                                            ✕
+                                            X
                                         </button>
                                     </div>
                                 </div>

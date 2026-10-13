@@ -15,7 +15,7 @@
     "maximizeDesc": "Click the yellow button (right). A second click expands to full screen",
     "tip": "Tip:",
     "tipText": "Explore the different windows to learn more about my experience, skills, and projects. Power users: try Ctrl+` for a surprise.",
-    "gotIt": "Got it, let's go! →"
+    "gotIt": "Got it, let's go! ->"
   },
   "chat": {
     "greeting": "Hi there! I'm Kusanagi! Do you have any questions about {{name}}?",
@@ -114,7 +114,7 @@
     "checkConsole": "Check browser console for detailed errors",
     "checkCors": "Ensure CORS is properly configured on backend",
     "retry": "Retry",
-    "backToPortfolio": "← Portfolio",
+    "backToPortfolio": "<- Portfolio",
     "logout": "Logout",
     "theme": "Theme",
     "bgRain": "Rain",
@@ -198,9 +198,9 @@
       "save": "Save",
       "saved": "Saved",
       "interested": "I'm interested",
-      "interestedDone": "Interested ✓",
+      "interestedDone": "Interested [OK]",
       "viewOffer": "View offer",
-      "opened": "Opened ✓"
+      "opened": "Opened [OK]"
     },
     "selectedOffers": {
       "title": "Selected Offers",
@@ -466,12 +466,12 @@
       "coreFeed": "Core feed: {{count}} offers",
       "compositeFeed": "Core + retained local sources: {{count}} offers",
       "localFallback": "Core is unavailable: showing the local fallback result.",
-      "stageInfo": "Stage 1: Embeddings → Stage 2: LLM scoring",
+      "stageInfo": "Stage 1: Embeddings -> Stage 2: LLM scoring",
       "skillsAnalysis": "Skills Analysis",
       "matchingSkills": "Matching",
       "missingSkills": "Missing",
       "saveToBoard": "Save",
-      "saved": "Saved ✓",
+      "saved": "Saved [OK]",
       "noResults": "Click 'Run AI Analysis' to find your best job matches",
       "translateTitles": "Translate Titles",
       "translating": "Translating...",
@@ -585,7 +585,7 @@
     "invalidCredentials": "Invalid credentials",
     "authenticating": "Authenticating...",
     "login": "Login",
-    "backToPortfolio": "← Back to Portfolio",
+    "backToPortfolio": "<- Back to Portfolio",
     "sessionExpiredInactivity": "Session expired due to inactivity"
   }
 }

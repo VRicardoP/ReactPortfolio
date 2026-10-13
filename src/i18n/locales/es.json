@@ -15,7 +15,7 @@
     "maximizeDesc": "Click en el botón amarillo (derecha). Un segundo click amplía a pantalla completa",
     "tip": "Tip:",
     "tipText": "Explora las diferentes ventanas para conocer más sobre mi experiencia, habilidades y proyectos. Usuarios avanzados: prueba Ctrl+` para una sorpresa.",
-    "gotIt": "Entendido, ¡empecemos! →"
+    "gotIt": "Entendido, ¡empecemos! ->"
   },
   "chat": {
     "greeting": "¡Hola! ¡Soy Kusanagi! ¿Tienes alguna pregunta sobre {{name}}?",
@@ -114,7 +114,7 @@
     "checkConsole": "Revisa la consola del navegador para más detalles",
     "checkCors": "Asegúrate de que CORS esté correctamente configurado en el backend",
     "retry": "Reintentar",
-    "backToPortfolio": "← Portfolio",
+    "backToPortfolio": "<- Portfolio",
     "logout": "Cerrar sesión",
     "theme": "Tema",
     "bgRain": "Lluvia",
@@ -198,9 +198,9 @@
       "save": "Guardar",
       "saved": "Guardado",
       "interested": "Me interesa",
-      "interestedDone": "Te interesa ✓",
+      "interestedDone": "Te interesa [OK]",
       "viewOffer": "Ver oferta",
-      "opened": "Abierta ✓"
+      "opened": "Abierta [OK]"
     },
     "selectedOffers": {
       "title": "Panel de Ofertas Seleccionadas",
@@ -466,12 +466,12 @@
       "coreFeed": "Feed del core: {{count}} ofertas",
       "compositeFeed": "Core + fuentes locales conservadas: {{count}} ofertas",
       "localFallback": "El core no está disponible: se muestra el resultado local de respaldo.",
-      "stageInfo": "Fase 1: Embeddings → Fase 2: Scoring LLM",
+      "stageInfo": "Fase 1: Embeddings -> Fase 2: Scoring LLM",
       "skillsAnalysis": "Análisis de habilidades",
       "matchingSkills": "Coincidentes",
       "missingSkills": "Faltantes",
       "saveToBoard": "Guardar",
-      "saved": "Guardado ✓",
+      "saved": "Guardado [OK]",
       "noResults": "Pulsa 'Ejecutar Análisis IA' para encontrar tus mejores ofertas",
       "translateTitles": "Traducir títulos",
       "translating": "Traduciendo...",
@@ -585,7 +585,7 @@
     "invalidCredentials": "Credenciales inválidas",
     "authenticating": "Autenticando...",
     "login": "Iniciar sesión",
-    "backToPortfolio": "← Volver al Portfolio",
+    "backToPortfolio": "<- Volver al Portfolio",
     "sessionExpiredInactivity": "Sesión expirada por inactividad"
   }
 }

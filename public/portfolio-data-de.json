@@ -7,14 +7,14 @@
         "description": "IT-Fachmann mit über 25 Jahren ununterbrochener Berufserfahrung in Systemadministration, kritischer Infrastruktur und Softwareentwicklung. Duales Profil: bewährte Kompetenz in hochverfügbarer Unternehmensinfrastruktur — Krankenhäuser, nationale Rechenzentren, regionale Gesundheitsnetzwerke — kombiniert mit moderner Full-Stack-Entwicklung und Conversational-AI-Engineering. EU-Bürger, verfügbar für Remote-Positionen mit vollständiger Abdeckung der CET-Geschäftszeiten. Auf der Suche nach Organisationen, die Werte wie technische Präzision, Zuverlässigkeit und nachhaltige Qualität teilen."
     },
     "softSkills": [
-        { "text": "Eigenverantwortliche Entscheidungsfindung in kritischen Umgebungen ohne direkte Aufsicht", "icon": "🎯" },
-        { "text": "Proaktive Eigeninitiative — selbst vorgeschlagene Verbesserungen ohne vorherigen Auftrag", "icon": "🚀" },
-        { "text": "Englisch C1 für technische Kommunikation und internationale Eskalationen", "icon": "💬" },
-        { "text": "Strukturierte Problemlösung unter Hochdruckbedingungen", "icon": "🔧" },
-        { "text": "Technische Dokumentation als systematische Praxis im Arbeitsalltag", "icon": "📝" },
-        { "text": "Kontinuierliche Weiterbildung neben Vollzeitbeschäftigung", "icon": "📚" },
-        { "text": "End-to-End-Verantwortung für technische Projekte", "icon": "⭐" },
-        { "text": "Effektives 100-%-Remote-Arbeiten seit 2020", "icon": "🏠" }
+        { "text": "Eigenverantwortliche Entscheidungsfindung in kritischen Umgebungen ohne direkte Aufsicht", "icon": "AIM" },
+        { "text": "Proaktive Eigeninitiative — selbst vorgeschlagene Verbesserungen ohne vorherigen Auftrag", "icon": "GO" },
+        { "text": "Englisch C1 für technische Kommunikation und internationale Eskalationen", "icon": "COM" },
+        { "text": "Strukturierte Problemlösung unter Hochdruckbedingungen", "icon": "FIX" },
+        { "text": "Technische Dokumentation als systematische Praxis im Arbeitsalltag", "icon": "DOC" },
+        { "text": "Kontinuierliche Weiterbildung neben Vollzeitbeschäftigung", "icon": "EDU" },
+        { "text": "End-to-End-Verantwortung für technische Projekte", "icon": "OWN" },
+        { "text": "Effektives 100-%-Remote-Arbeiten seit 2020", "icon": "REM" }
     ],
     "education": [
         {

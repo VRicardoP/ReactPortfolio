@@ -15,7 +15,7 @@
     "maximizeDesc": "Cliquez sur le bouton jaune (droite). Un second clic passe en plein écran",
     "tip": "Astuce :",
     "tipText": "Explorez les différentes fenêtres pour en savoir plus sur mon expérience, mes compétences et mes projets. Utilisateurs avancés : essayez Ctrl+` pour une surprise.",
-    "gotIt": "Compris, c'est parti ! →"
+    "gotIt": "Compris, c'est parti ! ->"
   },
   "chat": {
     "greeting": "Bonjour ! Je suis Kusanagi ! Avez-vous des questions sur {{name}} ?",
@@ -114,7 +114,7 @@
     "checkConsole": "Consultez la console du navigateur pour les erreurs détaillées",
     "checkCors": "Assurez-vous que le CORS est correctement configuré sur le backend",
     "retry": "Réessayer",
-    "backToPortfolio": "← Portfolio",
+    "backToPortfolio": "<- Portfolio",
     "logout": "Déconnexion",
     "theme": "Thème",
     "bgRain": "Pluie",
@@ -198,9 +198,9 @@
       "save": "Sauvegarder",
       "saved": "Sauvegardé",
       "interested": "Ça m'intéresse",
-      "interestedDone": "Intéressé ✓",
+      "interestedDone": "Intéressé [OK]",
       "viewOffer": "Voir l'offre",
-      "opened": "Ouverte ✓"
+      "opened": "Ouverte [OK]"
     },
     "selectedOffers": {
       "title": "Offres Sélectionnées",
@@ -419,12 +419,12 @@
       "coreFeed": "Flux du core : {{count}} offres",
       "compositeFeed": "Core + sources locales conservées : {{count}} offres",
       "localFallback": "Le core est indisponible : affichage du résultat local de secours.",
-      "stageInfo": "Étape 1 : Embeddings → Étape 2 : Scoring LLM",
+      "stageInfo": "Étape 1 : Embeddings -> Étape 2 : Scoring LLM",
       "skillsAnalysis": "Analyse des compétences",
       "matchingSkills": "Correspondantes",
       "missingSkills": "Manquantes",
       "saveToBoard": "Sauvegarder",
-      "saved": "Sauvegardé ✓",
+      "saved": "Sauvegardé [OK]",
       "noResults": "Cliquez sur 'Lancer l'analyse IA' pour trouver vos meilleures offres",
       "translateTitles": "Traduire les titres",
       "translating": "Traduction...",
@@ -585,7 +585,7 @@
     "invalidCredentials": "Identifiants invalides",
     "authenticating": "Authentification...",
     "login": "Se connecter",
-    "backToPortfolio": "← Retour au Portfolio",
+    "backToPortfolio": "<- Retour au Portfolio",
     "sessionExpiredInactivity": "Session expirée pour inactivité"
   }
 }

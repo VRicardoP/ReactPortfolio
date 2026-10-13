@@ -17,7 +17,7 @@ const WelcomeWindow = ({ portfolioData }) => {
     return (
         <FloatingWindow
             id="welcome-window"
-            title={`🚀 ${t('welcome.title', { name: portfolioData?.name || 'Portfolio' })}`}
+            title={t('welcome.title', { name: portfolioData?.name || 'Portfolio' })}
             initialPosition={{ x: Math.max(0, initialPosition.x), y: Math.max(0, initialPosition.y) }}
             initialSize={{ width: 750, height: 550 }}
         >
@@ -32,17 +32,17 @@ const WelcomeWindow = ({ portfolioData }) => {
                     <p>{t('welcome.description')}</p>
 
                     <div className="instructions">
-                        <h3>📋 {t('welcome.howToNavigate')}</h3>
+                        <h3>{t('welcome.howToNavigate')}</h3>
                         <ul>
-                            <li><span className="icon">🖱️</span> <strong>{t('welcome.drag')}</strong> {t('welcome.dragDesc')}</li>
-                            <li><span className="icon">↔️</span> <strong>{t('welcome.resize')}</strong> {t('welcome.resizeDesc')}</li>
+                            <li><span className="icon text-icon" aria-hidden="true">MOVE</span> <strong>{t('welcome.drag')}</strong> {t('welcome.dragDesc')}</li>
+                            <li><span className="icon text-icon" aria-hidden="true">SIZE</span> <strong>{t('welcome.resize')}</strong> {t('welcome.resizeDesc')}</li>
                             <li><span className="icon purple-dot"></span> <strong>{t('welcome.minimize')}</strong> {t('welcome.minimizeDesc')}</li>
                             <li><span className="icon yellow-dot"></span> <strong>{t('welcome.maximize')}</strong> {t('welcome.maximizeDesc')}</li>
                         </ul>
                     </div>
 
                     <div className="welcome-tip">
-                        💡 <strong>{t('welcome.tip')}</strong> {t('welcome.tipText')}
+                        <span className="tip-label" aria-hidden="true">TIP</span> <strong>{t('welcome.tip')}</strong> {t('welcome.tipText')}
                     </div>
                 </div>
 

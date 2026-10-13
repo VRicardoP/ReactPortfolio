@@ -7,14 +7,14 @@
         "description": "Profesional de tecnología con más de 25 años de experiencia continua en administración de sistemas, infraestructura crítica y desarrollo de software. Perfil dual: solidez en infraestructura empresarial de alta disponibilidad —hospitales, CPDs nacionales, redes sanitarias autonómicas— combinada con desarrollo full-stack moderno y diseño de agentes conversacionales con inteligencia artificial. Ciudadano de la UE disponible para posiciones remotas con cobertura horaria CET completa. Busco entornos que compartan valores de precisión, fiabilidad y calidad técnica sostenida."
     },
     "softSkills": [
-        { "text": "Autonomía en entornos críticos sin supervisión directa", "icon": "🎯" },
-        { "text": "Iniciativa y propuesta de mejoras no solicitadas", "icon": "🚀" },
-        { "text": "Comunicación técnica en inglés a nivel C1 profesional", "icon": "💬" },
-        { "text": "Resolución de problemas complejos bajo presión", "icon": "🔧" },
-        { "text": "Documentación técnica como práctica sistemática", "icon": "📝" },
-        { "text": "Aprendizaje continuo compaginado con trabajo a tiempo completo", "icon": "📚" },
-        { "text": "Ownership end-to-end de proyectos técnicos", "icon": "⭐" },
-        { "text": "Trabajo 100% remoto efectivo desde 2020", "icon": "🏠" }
+        { "text": "Autonomía en entornos críticos sin supervisión directa", "icon": "AIM" },
+        { "text": "Iniciativa y propuesta de mejoras no solicitadas", "icon": "GO" },
+        { "text": "Comunicación técnica en inglés a nivel C1 profesional", "icon": "COM" },
+        { "text": "Resolución de problemas complejos bajo presión", "icon": "FIX" },
+        { "text": "Documentación técnica como práctica sistemática", "icon": "DOC" },
+        { "text": "Aprendizaje continuo compaginado con trabajo a tiempo completo", "icon": "EDU" },
+        { "text": "Ownership end-to-end de proyectos técnicos", "icon": "OWN" },
+        { "text": "Trabajo 100% remoto efectivo desde 2020", "icon": "REM" }
     ],
     "education": [
         {

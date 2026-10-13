@@ -25,19 +25,10 @@ const BACKGROUND_LABELS = {
     smoke: 'bgSmoke',
 };
 
-const BACKGROUND_EMOJIS = {
-    rain: '🌧️',
-    parallax: '✨',
-    matrix: '🟩',
-    lensflare: '🌟',
-    cube: '🧊',
-    smoke: '💨',
-};
-
 const DashboardPage = () => {
     const { t } = useTranslation();
     const { logout } = useAuth();
-    const { theme, cycleTheme, themeName, backgroundEffect, cycleBackground } = useTheme();
+    const { theme, cycleTheme, backgroundEffect, cycleBackground } = useTheme();
     const navigate = useNavigate();
     const isMobile = useIsMobile();
     const typedText = useTypewriter(t('dashboard.title'), 100);
@@ -168,8 +159,6 @@ const DashboardPage = () => {
     }
 
     const bgKey = BACKGROUND_LABELS[backgroundEffect] || 'bgRain';
-    const bgEmoji = BACKGROUND_EMOJIS[backgroundEffect] || '🌧️';
-
     // Desktop: floating windows dashboard
     return (
         <>
@@ -192,7 +181,7 @@ const DashboardPage = () => {
                             border: `1px solid ${theme.primary}`
                         }}
                     >
-                        {themeName === 'cyan' ? '🔵' : themeName === 'silver' ? '⚪' : '🟠'} {t('dashboard.theme')}
+                        {t('dashboard.theme')}
                     </button>
                     <button
                         onClick={cycleBackground}
@@ -204,7 +193,7 @@ const DashboardPage = () => {
                             border: `1px solid ${theme.primary}`
                         }}
                     >
-                        {bgEmoji} {t(`dashboard.${bgKey}`)}
+                        {t(`dashboard.${bgKey}`)}
                     </button>
                     <button onClick={handleGoHome} className="nav-button">
                         {t('dashboard.backToPortfolio')}

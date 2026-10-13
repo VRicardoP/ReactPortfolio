@@ -7,14 +7,14 @@
         "description": "Professionista IT con oltre 25 anni di esperienza continua in amministrazione di sistemi, infrastrutture critiche e sviluppo software. Profilo duale: comprovata solidità in infrastruttura aziendale ad alta disponibilità — ospedali, data centre nazionali, reti sanitarie regionali — combinata con sviluppo full-stack moderno e ingegneria di agenti conversazionali basati su intelligenza artificiale. Cittadino dell'Unione Europea, disponibile per posizioni da remoto con copertura completa dell'orario lavorativo CET. Alla ricerca di organizzazioni che condividano valori di precisione tecnica, affidabilità e qualità sostenuta nel tempo."
     },
     "softSkills": [
-        { "text": "Autonomia decisionale in ambienti critici senza supervisione diretta", "icon": "🎯" },
-        { "text": "Iniziativa proattiva — miglioramenti proposti e realizzati senza richiesta preventiva", "icon": "🚀" },
-        { "text": "Inglese professionale C1 per comunicazione tecnica ed escalation internazionali", "icon": "💬" },
-        { "text": "Risoluzione strutturata dei problemi in condizioni di alta pressione", "icon": "🔧" },
-        { "text": "Documentazione tecnica come pratica sistematica integrata nel lavoro quotidiano", "icon": "📝" },
-        { "text": "Formazione continua sostenuta parallelamente a un impiego a tempo pieno", "icon": "📚" },
-        { "text": "Responsabilità end-to-end sui progetti tecnici", "icon": "⭐" },
-        { "text": "Lavoro da remoto 100 % efficace dal 2020", "icon": "🏠" }
+        { "text": "Autonomia decisionale in ambienti critici senza supervisione diretta", "icon": "AIM" },
+        { "text": "Iniziativa proattiva — miglioramenti proposti e realizzati senza richiesta preventiva", "icon": "GO" },
+        { "text": "Inglese professionale C1 per comunicazione tecnica ed escalation internazionali", "icon": "COM" },
+        { "text": "Risoluzione strutturata dei problemi in condizioni di alta pressione", "icon": "FIX" },
+        { "text": "Documentazione tecnica come pratica sistematica integrata nel lavoro quotidiano", "icon": "DOC" },
+        { "text": "Formazione continua sostenuta parallelamente a un impiego a tempo pieno", "icon": "EDU" },
+        { "text": "Responsabilità end-to-end sui progetti tecnici", "icon": "OWN" },
+        { "text": "Lavoro da remoto 100 % efficace dal 2020", "icon": "REM" }
     ],
     "education": [
         {

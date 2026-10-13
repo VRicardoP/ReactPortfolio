@@ -25,7 +25,10 @@ const MobileNav = ({ title, onTerminalToggle }) => {
                     aria-label={t('mobile.menu')}
                     aria-expanded={menuOpen}
                 >
-                    {menuOpen ? '\u00D7' : '\u2630'}
+                    <span
+                        className={menuOpen ? 'mobile-close-icon' : 'mobile-menu-icon'}
+                        aria-hidden="true"
+                    />
                 </button>
             </div>
 

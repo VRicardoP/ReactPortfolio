@@ -328,7 +328,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                             onClick={() => toggleExpanded(globalIdx)}
                                             aria-expanded={isExpanded}
                                         >
-                                            {t('dashboard.aiMatch.skillsAnalysis')} {isExpanded ? '▲' : '▼'}
+                                            {t('dashboard.aiMatch.skillsAnalysis')} {isExpanded ? '-' : '+'}
                                         </button>
 
                                         {isExpanded && (
@@ -336,7 +336,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                                 {job.matching_skills?.length > 0 && (
                                                     <div className="ai-match-skills-group">
                                                         <span className="ai-match-skills-label" style={{ color: '#00ff64' }}>
-                                                            ✓ {t('dashboard.aiMatch.matchingSkills')}:
+                                                            [OK] {t('dashboard.aiMatch.matchingSkills')}:
                                                         </span>
                                                         <div className="ai-match-skills-tags">
                                                             {job.matching_skills.map(s => (
@@ -348,7 +348,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                                 {job.missing_skills?.length > 0 && (
                                                     <div className="ai-match-skills-group">
                                                         <span className="ai-match-skills-label" style={{ color: '#ff6b6b' }}>
-                                                            ✗ {t('dashboard.aiMatch.missingSkills')}:
+                                                            [X] {t('dashboard.aiMatch.missingSkills')}:
                                                         </span>
                                                         <div className="ai-match-skills-tags">
                                                             {job.missing_skills.map(s => (
@@ -446,7 +446,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                             onClick={() => toggleSkill(skill)}
                                             disabled={isToggling}
                                         >
-                                            {isToggling ? '...' : isAdded ? '✓' : '+'} {skill}
+                                            {isToggling ? '...' : isAdded ? '[OK]' : '+'} {skill}
                                         </button>
                                     );
                                 })}

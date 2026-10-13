@@ -234,7 +234,7 @@
 }
 
 .jobboard-country::before {
-  content: '📍 ';
+  content: '[LOC] ';
 }
 
 .jobboard-industry {
@@ -242,7 +242,7 @@
 }
 
 .jobboard-industry::before {
-  content: '🏢 ';
+  content: '[ORG] ';
 }
 
 .jobboard-skills {

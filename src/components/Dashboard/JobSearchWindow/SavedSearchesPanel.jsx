@@ -13,7 +13,7 @@ const filterSummary = (filters) => {
     if (filters.salary_min || filters.salary_max) {
         const min = filters.salary_min ? `$${Number(filters.salary_min).toLocaleString()}` : '';
         const max = filters.salary_max ? `$${Number(filters.salary_max).toLocaleString()}` : '';
-        parts.push(min && max ? `${min}-${max}` : min || `≤${max}`);
+        parts.push(min && max ? `${min}-${max}` : min || `<=${max}`);
     }
     if (filters.remote_only) parts.push('Remote');
     // Legacy

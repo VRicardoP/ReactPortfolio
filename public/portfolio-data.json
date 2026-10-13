@@ -7,14 +7,14 @@
         "description": "IT professional with 25+ years of uninterrupted experience in systems administration, critical infrastructure and software development. Dual profile: enterprise infrastructure in high-availability environments — hospitals, national data centres, regional health networks — combined with modern full-stack development and conversational AI engineering. EU citizen available for remote positions with full CET business hours overlap. Seeking organisations that share values of technical precision, reliability and sustained quality."
     },
     "softSkills": [
-        { "text": "Autonomous decision-making in critical environments without direct supervision", "icon": "🎯" },
-        { "text": "Proactive initiative — self-proposed improvements without prior request", "icon": "🚀" },
-        { "text": "C1 professional English for technical communication and international escalations", "icon": "💬" },
-        { "text": "Structured problem-solving under high-pressure conditions", "icon": "🔧" },
-        { "text": "Technical documentation as a systematic practice, not an afterthought", "icon": "📝" },
-        { "text": "Continuous learning sustained alongside full-time employment", "icon": "📚" },
-        { "text": "End-to-end ownership of technical projects", "icon": "⭐" },
-        { "text": "Effective 100% remote working since 2020", "icon": "🏠" }
+        { "text": "Autonomous decision-making in critical environments without direct supervision", "icon": "AIM" },
+        { "text": "Proactive initiative — self-proposed improvements without prior request", "icon": "GO" },
+        { "text": "C1 professional English for technical communication and international escalations", "icon": "COM" },
+        { "text": "Structured problem-solving under high-pressure conditions", "icon": "FIX" },
+        { "text": "Technical documentation as a systematic practice, not an afterthought", "icon": "DOC" },
+        { "text": "Continuous learning sustained alongside full-time employment", "icon": "EDU" },
+        { "text": "End-to-end ownership of technical projects", "icon": "OWN" },
+        { "text": "Effective 100% remote working since 2020", "icon": "REM" }
     ],
     "education": [
         {

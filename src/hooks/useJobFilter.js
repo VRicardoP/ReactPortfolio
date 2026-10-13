@@ -175,7 +175,7 @@ const useJobFilter = (onSaveSearch) => {
         const cur = currency || 'USD';
         if (min && max) return `${cur} ${Number(min).toLocaleString()} - ${Number(max).toLocaleString()}`;
         if (min) return `${cur} ${Number(min).toLocaleString()}+`;
-        if (max) return `${cur} ≤${Number(max).toLocaleString()}`;
+        if (max) return `${cur} <=${Number(max).toLocaleString()}`;
         return '';
     }, []);
 

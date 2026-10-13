@@ -15,7 +15,7 @@
     "maximizeDesc": "Clicca il pulsante giallo (a destra). Un secondo clic espande a schermo intero",
     "tip": "Suggerimento:",
     "tipText": "Esplora le diverse finestre per scoprire di più sulla mia esperienza, competenze e progetti. Utenti esperti: prova Ctrl+` per una sorpresa.",
-    "gotIt": "Capito, andiamo! →"
+    "gotIt": "Capito, andiamo! ->"
   },
   "chat": {
     "greeting": "Ciao! Sono Kusanagi! Hai domande su {{name}}?",
@@ -114,7 +114,7 @@
     "checkConsole": "Controlla la console del browser per errori dettagliati",
     "checkCors": "Assicurati che CORS sia configurato correttamente sul backend",
     "retry": "Riprova",
-    "backToPortfolio": "← Portfolio",
+    "backToPortfolio": "<- Portfolio",
     "logout": "Esci",
     "theme": "Tema",
     "bgRain": "Pioggia",
@@ -198,9 +198,9 @@
       "save": "Salva",
       "saved": "Salvato",
       "interested": "Mi interessa",
-      "interestedDone": "Interessato ✓",
+      "interestedDone": "Interessato [OK]",
       "viewOffer": "Vedi offerta",
-      "opened": "Aperta ✓"
+      "opened": "Aperta [OK]"
     },
     "selectedOffers": {
       "title": "Offerte Selezionate",
@@ -419,12 +419,12 @@
       "coreFeed": "Feed del core: {{count}} offerte",
       "compositeFeed": "Core + fonti locali mantenute: {{count}} offerte",
       "localFallback": "Il core non è disponibile: viene mostrato il risultato locale di riserva.",
-      "stageInfo": "Fase 1: Embeddings → Fase 2: Scoring LLM",
+      "stageInfo": "Fase 1: Embeddings -> Fase 2: Scoring LLM",
       "skillsAnalysis": "Analisi delle competenze",
       "matchingSkills": "Corrispondenti",
       "missingSkills": "Mancanti",
       "saveToBoard": "Salva",
-      "saved": "Salvato ✓",
+      "saved": "Salvato [OK]",
       "noResults": "Clicca 'Avvia analisi IA' per trovare le migliori offerte per te",
       "translateTitles": "Traduci titoli",
       "translating": "Traduzione...",
@@ -585,7 +585,7 @@
     "invalidCredentials": "Credenziali non valide",
     "authenticating": "Autenticazione in corso...",
     "login": "Accedi",
-    "backToPortfolio": "← Torna al Portfolio",
+    "backToPortfolio": "<- Torna al Portfolio",
     "sessionExpiredInactivity": "Sessione scaduta per inattività"
   }
 }

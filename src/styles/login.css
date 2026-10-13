@@ -107,6 +107,17 @@
   font-family: 'Courier New', monospace;
 }
 
+.error-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
 .inactivity-message {
   color: #d29922;
   margin-bottom: 16px;

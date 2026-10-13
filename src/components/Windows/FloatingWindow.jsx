@@ -254,9 +254,7 @@ const FloatingWindowMobile = ({ id, title, children, defaultExpanded = false }) 
                 <span
                     className={`mobile-section-chevron${isExpanded ? ' rotated' : ''}`}
                     aria-hidden="true"
-                >
-                    {'\u25B6'}
-                </span>
+                />
             </div>
             {isExpanded && (
                 <div className="mobile-section-content">

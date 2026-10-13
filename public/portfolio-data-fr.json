@@ -7,14 +7,14 @@
         "description": "Professionnel IT avec plus de 25 ans d'expérience continue en administration systèmes, infrastructures critiques et développement logiciel. Profil dual : solidité éprouvée en infrastructure d'entreprise haute disponibilité — hôpitaux, centres de données nationaux, réseaux de santé régionaux — combinée à un développement full-stack moderne et à la conception d'agents conversationnels par intelligence artificielle. Citoyen de l'Union européenne, disponible pour des postes à distance avec couverture complète des heures d'affaires CET. À la recherche d'organisations partageant des valeurs de précision technique, de fiabilité et de qualité durable."
     },
     "softSkills": [
-        { "text": "Prise de décision autonome dans des environnements critiques sans supervision directe", "icon": "🎯" },
-        { "text": "Initiative proactive — améliorations proposées et mises en œuvre sans demande préalable", "icon": "🚀" },
-        { "text": "Anglais professionnel C1 pour la communication technique et les escalades internationales", "icon": "💬" },
-        { "text": "Résolution structurée de problèmes en conditions de forte pression", "icon": "🔧" },
-        { "text": "Documentation technique comme pratique systématique intégrée au travail quotidien", "icon": "📝" },
-        { "text": "Formation continue soutenue en parallèle d'un emploi à temps plein", "icon": "📚" },
-        { "text": "Responsabilité de bout en bout sur les projets techniques", "icon": "⭐" },
-        { "text": "Travail à distance 100 % efficace depuis 2020", "icon": "🏠" }
+        { "text": "Prise de décision autonome dans des environnements critiques sans supervision directe", "icon": "AIM" },
+        { "text": "Initiative proactive — améliorations proposées et mises en œuvre sans demande préalable", "icon": "GO" },
+        { "text": "Anglais professionnel C1 pour la communication technique et les escalades internationales", "icon": "COM" },
+        { "text": "Résolution structurée de problèmes en conditions de forte pression", "icon": "FIX" },
+        { "text": "Documentation technique comme pratique systématique intégrée au travail quotidien", "icon": "DOC" },
+        { "text": "Formation continue soutenue en parallèle d'un emploi à temps plein", "icon": "EDU" },
+        { "text": "Responsabilité de bout en bout sur les projets techniques", "icon": "OWN" },
+        { "text": "Travail à distance 100 % efficace depuis 2020", "icon": "REM" }
     ],
     "education": [
         {

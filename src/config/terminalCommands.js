@@ -75,8 +75,8 @@ function skillsCommand(_args, { portfolioData, t }) {
       output.push({ text: `\n  [${section.toUpperCase()}]`, type: 'highlight' });
       for (const skill of skills[section]) {
         const filled = Math.round(skill.level / SKILL_LEVEL_DIVISOR);
-        const bar = '\u2588'.repeat(filled);
-        const empty = '\u2591'.repeat(SKILL_BAR_LENGTH - filled);
+        const bar = '#'.repeat(filled);
+        const empty = '.'.repeat(SKILL_BAR_LENGTH - filled);
         output.push({
           text: `  ${skill.name.padEnd(SKILL_NAME_PAD)} ${bar}${empty} ${skill.level}%`,
           type: 'success',

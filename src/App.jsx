@@ -211,7 +211,7 @@ const MobilePortfolioLayout = memo(({ portfolioData }) => {
                 onClick={() => setShowTerminal(false)}
                 aria-label="Close terminal"
               >
-                {'\u00D7'}
+                <span className="mobile-close-icon" aria-hidden="true" />
               </button>
             </div>
             <div className="mobile-terminal-body">
