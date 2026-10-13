@@ -33,6 +33,16 @@ describe('job source handover', () => {
     expect(CORE_SOURCE_BY_KEY).toEqual(CORE_SOURCES)
   })
 
+  it('keeps legacy paths only for Portfolio-owned sources', () => {
+    for (const source of JOB_SOURCES) {
+      if (Object.hasOwn(CORE_SOURCE_BY_KEY, source.key)) {
+        expect(source).not.toHaveProperty('urlPath')
+      } else {
+        expect(source.urlPath).toMatch(/^\/api\/v1\/.+-jobs\/recent$/)
+      }
+    }
+  })
+
   it('keeps every Portfolio-only source in the dashboard registry', () => {
     const keys = JOB_SOURCES.map(({ key }) => key)
     const exclusive = keys

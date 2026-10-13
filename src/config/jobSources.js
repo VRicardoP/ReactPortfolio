@@ -40,7 +40,6 @@ export const JOB_SOURCES = [
   {
     key: 'remotive',
     color: '#ab47bc',
-    urlPath: '/api/v1/remotive-jobs/recent',
     skillsField: 'tags',
     alwaysRemote: true,
     normalize: (job) => ({
@@ -59,7 +58,6 @@ export const JOB_SOURCES = [
   {
     key: 'arbeitnow',
     color: '#ff9800',
-    urlPath: '/api/v1/arbeitnow-jobs/recent',
     skillsField: 'tags',
     alwaysRemote: false,
     normalize: (job) => ({
@@ -154,7 +152,6 @@ export const JOB_SOURCES = [
   {
     key: 'weworkremotely',
     color: '#9c27b0',
-    urlPath: '/api/v1/weworkremotely-jobs/recent',
     skillsField: 'tags',
     alwaysRemote: true,
     normalize: (job) => ({
@@ -173,7 +170,6 @@ export const JOB_SOURCES = [
   {
     key: 'ostjob',
     color: '#d32f2f',
-    urlPath: '/api/v1/ostjob-jobs/recent',
     skillsField: 'tags',
     alwaysRemote: false,
     normalize: (job) => ({
@@ -192,7 +188,6 @@ export const JOB_SOURCES = [
   {
     key: 'zentraljob',
     color: '#f44336',
-    urlPath: '/api/v1/zentraljob-jobs/recent',
     skillsField: 'tags',
     alwaysRemote: false,
     normalize: (job) => ({
@@ -325,7 +320,6 @@ export const JOB_SOURCES = [
   {
     key: 'thehub',
     color: '#1de9b6',
-    urlPath: '/api/v1/thehub-jobs/recent',
     skillsField: 'tags',
     alwaysRemote: true,
     normalize: (job) => ({
@@ -344,7 +338,6 @@ export const JOB_SOURCES = [
   {
     key: 'jobgether',
     color: '#7c4dff',
-    urlPath: '/api/v1/jobgether-jobs/recent',
     skillsField: 'tags',
     alwaysRemote: true,
     normalize: (job) => ({
@@ -363,7 +356,6 @@ export const JOB_SOURCES = [
   {
     key: 'nav',
     color: '#0d47a1',
-    urlPath: '/api/v1/nav-jobs/recent',
     skillsField: 'tags',
     alwaysRemote: false,
     normalize: (job) => ({
@@ -382,7 +374,6 @@ export const JOB_SOURCES = [
   {
     key: 'irishjobs',
     color: '#2e7d32',
-    urlPath: '/api/v1/irishjobs-jobs/recent',
     skillsField: 'tags',
     alwaysRemote: false,
     normalize: (job) => ({
