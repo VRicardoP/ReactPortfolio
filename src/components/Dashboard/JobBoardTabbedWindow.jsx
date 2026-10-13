@@ -6,7 +6,7 @@ import FloatingWindow from '../Windows/FloatingWindow';
 import JobBoardControls from './JobBoardControls';
 import useJobBoardControls from '../../hooks/useJobBoardControls';
 import useJobApplication from '../../hooks/useJobApplication';
-import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
+import { CompanyResearchName, JobBadges, JobDate, JobSummary } from './JobCardExtras';
 
 const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
     const { t } = useTranslation();
@@ -202,24 +202,17 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
                                         )}
                                     </h3>
                                     <div style={{ display: 'flex', gap: '5px', alignItems: 'center', flexShrink: 0 }}>
-                                        {job.remote && (
-                                            <span className="jobboard-remote-badge">REMOTE</span>
-                                        )}
-                                        {activeTab === 'all' && (
-                                            <span
-                                                className="jobboard-source-badge"
-                                                style={{
-                                                    backgroundColor: `${sourceColor(job.source)}22`,
-                                                    color: sourceColor(job.source),
-                                                    borderColor: `${sourceColor(job.source)}55`,
-                                                }}
-                                            >
-                                                {job.source}
-                                            </span>
-                                        )}
-                                        {job.employmentType && (
-                                            <span className="jobboard-type">{job.employmentType}</span>
-                                        )}
+                                        <JobBadges
+                                            remote={job.remote}
+                                            source={activeTab === 'all' ? job.source : null}
+                                            employmentType={job.employmentType}
+                                            sourceStyle={{
+                                                backgroundColor: `${sourceColor(job.source)}22`,
+                                                color: sourceColor(job.source),
+                                                borderColor: `${sourceColor(job.source)}55`,
+                                            }}
+                                            employmentClassName="jobboard-type"
+                                        />
                                     </div>
                                 </div>
 
@@ -233,19 +226,7 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
                                     </div>
                                 )}
 
-                                {/* Dos o tres frases para decidir sin salir de la
-                                    lista: resumen del LLM; si aun no esta, el
-                                    principio de la descripcion YA limpia de
-                                    marcado; si la fuente no publica texto, se dice. */}
-                                {job.summary ? (
-                                    <p className="jobboard-summary">{job.summary}</p>
-                                ) : job.description_snippet ? (
-                                    <p className="jobboard-summary secondary">{job.description_snippet}</p>
-                                ) : (
-                                    <p className="jobboard-summary muted">
-                                        {t('dashboard.aiMatch.noDescription')}
-                                    </p>
-                                )}
+                                <JobSummary job={job} className="jobboard-summary" />
                                 {job.tags && job.tags.length > 0 && (
                                     <div className="jobboard-skills">
                                         {job.tags.slice(0, 5).map(tag => (
@@ -262,10 +243,7 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
                                 )}
 
                                 <div className="jobboard-card-footer">
-                                    <span className="jobboard-date">
-                                        {job.date ? new Date(job.date).toLocaleDateString() : ''}
-                                        <FreshnessBadge dateStr={job.date} />
-                                    </span>
+                                    <JobDate date={job.date} className="jobboard-date" />
                                     <div className="jobboard-card-btns">
                                         {job.url && (
                                             <a

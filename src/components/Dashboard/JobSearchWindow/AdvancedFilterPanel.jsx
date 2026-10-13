@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../context/ThemeContext';
-import { FreshnessBadge, CompanyResearchName } from '../JobCardExtras';
+import { CompanyResearchName, JobBadges, JobDate } from '../JobCardExtras';
 
 // Advanced filter tab — multi-field aggregated search (formerly JobFilterWindow).
 // Purely presentational: filter state/logic lives in useJobFilter (passed in as `filter`),
@@ -172,19 +172,15 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                                 </div>
                             </div>
                             <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexShrink: 0 }}>
-                                {job.remote && (
-                                    <span className="jobboard-remote-badge">REMOTE</span>
-                                )}
-                                <span
-                                    className="jobboard-source-badge"
-                                    style={{
+                                <JobBadges
+                                    remote={job.remote}
+                                    source={job.source}
+                                    sourceStyle={{
                                         backgroundColor: 'rgba(255,255,255,0.08)',
                                         color: theme.primary,
                                         borderColor: `rgba(${theme.primaryRgb}, 0.3)`,
                                     }}
-                                >
-                                    {job.source}
-                                </span>
+                                />
                             </div>
                         </div>
 
@@ -202,11 +198,15 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                                     {formatSalary(job.salary_min, job.salary_max, job.salary_currency)}
                                 </span>
                             )}
-                            {job.employment_type && (
-                                <span style={{ fontFamily: 'Courier New', fontSize: '10px', color: theme.text, opacity: 0.5 }}>
-                                    {job.employment_type}
-                                </span>
-                            )}
+                            <JobBadges
+                                employmentType={job.employment_type}
+                                employmentStyle={{
+                                    fontFamily: 'Courier New',
+                                    fontSize: '10px',
+                                    color: theme.text,
+                                    opacity: 0.5,
+                                }}
+                            />
                         </div>
 
                         {job.tags && job.tags.length > 0 && (
@@ -223,10 +223,15 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                             marginTop: '6px',
                         }}>
-                            <span style={{ fontFamily: 'Courier New', fontSize: '10px', color: theme.text, opacity: 0.5 }}>
-                                {job.date ? new Date(job.date).toLocaleDateString() : ''}
-                                <FreshnessBadge dateStr={job.date} />
-                            </span>
+                            <JobDate
+                                date={job.date}
+                                style={{
+                                    fontFamily: 'Courier New',
+                                    fontSize: '10px',
+                                    color: theme.text,
+                                    opacity: 0.5,
+                                }}
+                            />
                             {job.url && (
                                 <button
                                     onClick={() => handleOpenOffer(job)}

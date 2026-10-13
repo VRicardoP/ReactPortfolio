@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { memo, useState, useCallback, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Calculate job freshness based on date string.
@@ -45,6 +46,55 @@ export const FreshnessBadge = memo(({ dateStr }) => {
 });
 
 FreshnessBadge.displayName = 'FreshnessBadge';
+
+
+export const JobSummary = memo(({ job, className = '', style }) => {
+    const { t } = useTranslation();
+    const summary = job.summary || job.description_snippet;
+    const variant = job.summary ? '' : summary ? 'secondary' : 'muted';
+
+    return (
+        <p className={[className, variant].filter(Boolean).join(' ')} style={style}>
+            {summary || t('dashboard.aiMatch.noDescription')}
+        </p>
+    );
+});
+
+JobSummary.displayName = 'JobSummary';
+
+export const JobDate = memo(({ date, className = '', style }) => (
+    <span className={className} style={style}>
+        {date ? new Date(date).toLocaleDateString() : ''}
+        <FreshnessBadge dateStr={date} />
+    </span>
+));
+
+JobDate.displayName = 'JobDate';
+
+export const JobBadges = memo(({
+    remote,
+    source,
+    employmentType,
+    sourceStyle,
+    employmentClassName = '',
+    employmentStyle,
+}) => (
+    <>
+        {remote && <span className="jobboard-remote-badge">REMOTE</span>}
+        {source && (
+            <span className="jobboard-source-badge" style={sourceStyle}>
+                {source}
+            </span>
+        )}
+        {employmentType && (
+            <span className={employmentClassName} style={employmentStyle}>
+                {employmentType}
+            </span>
+        )}
+    </>
+));
+
+JobBadges.displayName = 'JobBadges';
 
 /**
  * Company name with clickable research links.

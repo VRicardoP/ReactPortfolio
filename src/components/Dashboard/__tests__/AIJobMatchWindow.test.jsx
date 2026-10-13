@@ -10,10 +10,6 @@ vi.mock('../../../context/ThemeContext', () => ({
     useTheme: () => ({ theme: { textHighlight: '#fff', text: '#ddd', primary: '#0f0', borderLight: '#333' } }),
 }));
 vi.mock('../../Windows/FloatingWindow', () => ({ default: ({ children }) => <div>{children}</div> }));
-vi.mock('../JobCardExtras', () => ({
-    FreshnessBadge: () => null,
-    CompanyResearchName: ({ children }) => <span>{children}</span>,
-}));
 vi.mock('../../../hooks/useJobApplication', () => ({
     default: () => ({ handleOpenOffer: vi.fn(), openedIds: new Set(), handleInterested: vi.fn(), interestedIds: new Set(), handleSave: vi.fn(), savedIds: new Set() }),
 }));

@@ -5,7 +5,7 @@ import { useTheme } from '../../context/ThemeContext';
 import useJobApplication from '../../hooks/useJobApplication';
 import useSkillsGap from '../../hooks/useSkillsGap';
 import useAIJobMatch, { ALL_MATCH_SOURCES, TAB_RESULTS, TAB_SKILLS_GAP } from '../../hooks/useAIJobMatch';
-import { FreshnessBadge, CompanyResearchName } from './JobCardExtras';
+import { CompanyResearchName, JobBadges, JobDate, JobSummary } from './JobCardExtras';
 import { AI_MATCH_PAGE_SIZE } from './dashboardConstants';
 import { SOURCE_COLOR_MAP } from '../../config/jobSources';
 import '../../styles/ai-match.css';
@@ -303,33 +303,25 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                                     {job.location}
                                                 </span>
                                             )}
-                                            {job.remote && (
-                                                <span className="jobboard-remote-badge">REMOTE</span>
-                                            )}
-                                            <span className="jobboard-source-badge" style={{
-                                                backgroundColor: 'rgba(255,255,255,0.08)',
-                                                color: theme.primary,
-                                                borderColor: `rgba(${theme.primaryRgb}, 0.3)`,
-                                            }}>
-                                                {job.source}
-                                            </span>
-                                            {job.employment_type && (
-                                                <span className="ai-match-card-meta-text secondary" style={{ color: theme.text }}>
-                                                    {job.employment_type}
-                                                </span>
-                                            )}
+                                            <JobBadges
+                                                remote={job.remote}
+                                                source={job.source}
+                                                employmentType={job.employment_type}
+                                                sourceStyle={{
+                                                    backgroundColor: 'rgba(255,255,255,0.08)',
+                                                    color: theme.primary,
+                                                    borderColor: `rgba(${theme.primaryRgb}, 0.3)`,
+                                                }}
+                                                employmentClassName="ai-match-card-meta-text secondary"
+                                                employmentStyle={{ color: theme.text }}
+                                            />
                                         </div>
 
-                                        {/* Resumen de 2-3 frases (LLM, resuelto en segundo plano); mientras
-                                            no exista, el principio de la descripcion; si la fuente no publica
-                                            texto (jobgether, colegios), se dice en vez de dejar un hueco. */}
-                                        {job.summary ? (
-                                            <p className="ai-match-summary" style={{ color: theme.text }}>{job.summary}</p>
-                                        ) : job.description_snippet ? (
-                                            <p className="ai-match-summary secondary" style={{ color: theme.text }}>{job.description_snippet}</p>
-                                        ) : (
-                                            <p className="ai-match-summary muted" style={{ color: theme.text }}>{t('dashboard.aiMatch.noDescription')}</p>
-                                        )}
+                                        <JobSummary
+                                            job={job}
+                                            className="ai-match-summary"
+                                            style={{ color: theme.text }}
+                                        />
                                         <button
                                             className="ai-match-skills-toggle"
                                             style={{ color: theme.primary }}
@@ -372,10 +364,11 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                         )}
 
                                         <div className="ai-match-card-footer">
-                                            <span className="ai-match-card-date" style={{ color: theme.text }}>
-                                                {job.date ? new Date(job.date).toLocaleDateString() : ''}
-                                                <FreshnessBadge dateStr={job.date} />
-                                            </span>
+                                            <JobDate
+                                                date={job.date}
+                                                className="ai-match-card-date"
+                                                style={{ color: theme.text }}
+                                            />
                                             <div className="ai-match-card-actions">
                                                 {/* «Me interesa»: marca ligera, primer paso del embudo. Faltaba
                                                     porque ese estado no existía en el backend (tt33u2264w20). */}
