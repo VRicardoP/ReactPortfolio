@@ -1,7 +1,13 @@
+// Panel que muestra una vista previa del currículum o de la carta de
+// presentación generados por IA, con pestañas para cambiar entre ambos y
+// botones para descargarlos o volver a generarlos.
+
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../../styles/document-preview.css';
 
+// Dibuja el contenido de un currículum: resumen, habilidades destacadas,
+// experiencia y puntos clave de encaje con la oferta.
 const CvContent = memo(({ data }) => {
     const { t } = useTranslation();
     return (
@@ -50,6 +56,7 @@ const CvContent = memo(({ data }) => {
 
 CvContent.displayName = 'CvContent';
 
+// Dibuja el contenido de una carta de presentación: saludo, párrafos y firma.
 const CoverLetterContent = memo(({ data }) => (
     <div className="cv-preview cover-letter-preview">
         <p className="cl-greeting">{data.greeting}</p>

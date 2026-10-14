@@ -1,3 +1,6 @@
+// Valores compartidos del panel de administración: cuántas ofertas se
+// muestran por página, y las pestañas del menú en la versión móvil.
+
 export const JOBS_PAGE_SIZE = 20;
 export const AI_MATCH_PAGE_SIZE = 10;
 

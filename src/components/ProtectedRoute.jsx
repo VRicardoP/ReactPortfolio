@@ -1,3 +1,7 @@
+// Portero de las páginas privadas (como el panel de control): si el
+// usuario no ha iniciado sesión, lo manda a la página de login en vez de
+// dejarle ver la página protegida.
+
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 

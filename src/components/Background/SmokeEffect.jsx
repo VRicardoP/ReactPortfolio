@@ -1,9 +1,14 @@
+// Efecto de fondo en 3D: 150 planos con una textura de humo flotando y
+// girando despacio, dando sensación de niebla en movimiento.
+
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 const SmokeEffect = () => {
     const mountRef = useRef(null);
     const animationIdRef = useRef(null);
 
+    // Monta la escena 3D una sola vez: crea las partículas de humo y el
+    // bucle de animación, y lo limpia todo al desmontar el componente.
     useEffect(() => {
         if (!mountRef.current) return;
 

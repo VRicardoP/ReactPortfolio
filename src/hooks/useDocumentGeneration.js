@@ -8,6 +8,11 @@ const logger = {
 };
 
 /**
+ * Maneja todo el ciclo de vida de los documentos generados por IA
+ * (currículum y carta de presentación): pedir que se generen, consultarlos,
+ * descargarlos en PDF o JSON, y borrarlos — cuidando que una respuesta
+ * tardía del servidor nunca pise un cambio más reciente hecho en el navegador.
+ *
  * Hook for AI document generation (CV + cover letter).
  * Manages generation state per application and provides download functions.
  */
@@ -35,6 +40,9 @@ export default function useDocumentGeneration() {
     // escritura local de cada solicitud.
     const writesRef = useRef({ tick: 0, perApplication: {} });
 
+    // Anota que se ha hecho un cambio local en los documentos de una
+    // candidatura, para poder detectar después si una respuesta del servidor
+    // ha llegado antes o después de ese cambio.
     const markLocalWrite = useCallback((applicationId) => {
         const w = writesRef.current;
         w.tick += 1;
@@ -49,6 +57,9 @@ export default function useDocumentGeneration() {
         (writesRef.current.perApplication[applicationId] ?? 0) > stamp
     ), []);
 
+    // Pide a la IA que genere el currículum y/o la carta de presentación
+    // para una candidatura, evitando generarlos dos veces si ya hay una
+    // petición en marcha.
     const generate = useCallback(async (applicationId, options = {}) => {
         if (inFlight.current.has(applicationId)) throw new Error(t('dashboard.cvGeneration.alreadyGenerating'));
         inFlight.current.add(applicationId);
@@ -103,6 +114,7 @@ export default function useDocumentGeneration() {
         }
     }, [authenticatedFetch, markLocalWrite, t]);
 
+    // Trae del servidor los documentos ya generados de una candidatura concreta.
     const fetchDocuments = useCallback(async (applicationId) => {
         // Es el camino de `SelectedOffersPanel.handleViewDocs`, que se dispara al
         // abrir la vista previa de la MISMA tarjeta que se esta generando: sin
@@ -129,6 +141,7 @@ export default function useDocumentGeneration() {
         }
     }, [authenticatedFetch, stampRead, isStaleFor]);
 
+    // Trae del servidor los documentos generados de TODAS las candidaturas.
     const fetchAllDocuments = useCallback(async () => {
         const stamp = stampRead();
         try {
@@ -165,10 +178,12 @@ export default function useDocumentGeneration() {
         }
     }, [authenticatedFetch, stampRead, isStaleFor]);
 
+    // Devuelve los documentos ya guardados en memoria para una candidatura.
     const getDocumentsFor = useCallback((applicationId) => {
         return documents[applicationId] || null;
     }, [documents]);
 
+    // Descarga un documento como fichero PDF.
     const downloadPdf = useCallback(async (docId, filename) => {
         try {
             const resp = await authenticatedFetch(
@@ -186,6 +201,7 @@ export default function useDocumentGeneration() {
         }
     }, [authenticatedFetch]);
 
+    // Descarga un documento como fichero JSON (el dato tal cual).
     const downloadJson = useCallback(async (docId, filename) => {
         try {
             const resp = await authenticatedFetch(
@@ -205,6 +221,7 @@ export default function useDocumentGeneration() {
         }
     }, [authenticatedFetch]);
 
+    // Borra un documento generado, tanto en el servidor como en memoria.
     const deleteDocument = useCallback(async (docId, applicationId) => {
         try {
             await authenticatedFetch(`${BACKEND_URL}/api/v1/cv-generation/${docId}`, {
@@ -242,6 +259,7 @@ export default function useDocumentGeneration() {
         }
     }, [authenticatedFetch, markLocalWrite]);
 
+    // Dice si en este momento se está generando un documento para esa candidatura.
     const isGenerating = useCallback((applicationId) => {
         return generating.has(applicationId);
     }, [generating]);

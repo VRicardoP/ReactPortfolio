@@ -1,3 +1,7 @@
+// Ventana única de búsqueda de empleo con tres pestañas (búsqueda en vivo,
+// filtro avanzado, búsquedas guardadas), que antes eran tres ventanas
+// separadas. Cada pestaña guarda su propio estado aunque se cambie de pestaña.
+
 import { memo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../../Windows/FloatingWindow';
@@ -36,6 +40,8 @@ const JobSearchWindow = memo(({ initialPosition }) => {
     const [activeTab, setActiveTab] = useState('live');
 
     // WAI-ARIA tab keyboard navigation (ArrowLeft/Right, Home/End)
+    // Permite cambiar de pestaña con las flechas del teclado (izquierda,
+    // derecha, Inicio, Fin), como pide la accesibilidad.
     const handleTabKeyDown = useCallback((e) => {
         const currentIdx = TABS.findIndex(tab => tab.key === activeTab);
         let nextIdx;

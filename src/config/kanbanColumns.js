@@ -1,3 +1,7 @@
+// Lista de las columnas del tablero de candidaturas (interesado, guardada,
+// aplicada, entrevista telefónica, técnica, oferta, rechazada), con su
+// color y su orden. Cualquier parte de la app que necesite esas columnas
+// las lee de aquí, para que no haya dos listas que puedan desincronizarse.
 /**
  * Columnas del pipeline de candidaturas — FUENTE ÚNICA (DT-127).
  *

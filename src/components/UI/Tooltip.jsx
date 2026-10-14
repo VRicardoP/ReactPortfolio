@@ -1,3 +1,7 @@
+// Envuelve cualquier elemento y le añade una burbuja de ayuda que aparece
+// al pasar el ratón o el foco por encima, colocada automáticamente para
+// que no se salga de la pantalla.
+
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import '../../styles/tooltip.css';
@@ -8,6 +12,8 @@ const Tooltip = ({ children, text, position = 'top' }) => {
     const wrapperRef = useRef(null);
     const tooltipRef = useRef(null);
 
+    // Calcula en qué punto de la pantalla debe dibujarse la burbuja,
+    // ajustándola si no cabe en el lado preferido o se saldría del borde.
     const updatePosition = useCallback(() => {
         if (!wrapperRef.current || !tooltipRef.current) return;
 
@@ -40,6 +46,8 @@ const Tooltip = ({ children, text, position = 'top' }) => {
         });
     }, [position]);
 
+    // Recalcula la posición mientras la burbuja está visible, por si la
+    // página se desplaza o cambia de tamaño.
     useLayoutEffect(() => {
         if (!isVisible || !text) return undefined;
 

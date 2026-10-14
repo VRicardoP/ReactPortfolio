@@ -1,3 +1,8 @@
+// Ventana del panel con gráficos sobre el mercado de empleo: las
+// habilidades más pedidas, cuántas ofertas son remotas, de qué fuente
+// vienen, y un segundo bloque con estadísticas de salario (por rango,
+// por tipo de contrato, por fuente).
+
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bar, Doughnut } from 'react-chartjs-2';
@@ -25,6 +30,8 @@ const SALARY_BUCKETS = [
     { label: '150k+', min: 150000, max: Infinity },
 ];
 
+// Calcula el salario "medio" de una oferta (el punto intermedio entre su
+// mínimo y su máximo, o el que haya si solo se conoce uno).
 const getMidSalary = (job) => {
     const minSal = job.job_min_salary || job.min_salary || 0;
     const maxSal = job.job_max_salary || job.max_salary || 0;
@@ -52,6 +59,8 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     const [salaryTab, setSalaryTab] = useState('ranges');
 
     // Aggregate all jobs from all sources
+    // Junta en una sola lista las ofertas de las 20 fuentes, con sus
+    // habilidades y si son remotas.
     const allJobs = useMemo(() => {
         if (!jobData) return [];
         const jobs = [];
@@ -71,6 +80,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     }, [jobData]);
 
     // --- Market charts ---
+    // Prepara el gráfico de las 10 habilidades más pedidas.
     const skillsChartData = useMemo(() => {
         const counts = {};
         allJobs.forEach(j => {
@@ -92,6 +102,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         };
     }, [allJobs, theme, t]);
 
+    // Prepara el gráfico de tarta remoto/presencial.
     const remoteChartData = useMemo(() => {
         let remote = 0, onsite = 0;
         allJobs.forEach(j => j.remote ? remote++ : onsite++);
@@ -109,6 +120,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         };
     }, [allJobs, theme, t]);
 
+    // Prepara el gráfico de ofertas por fuente.
     const sourceChartData = useMemo(() => {
         const counts = {};
         allJobs.forEach(j => { counts[j.source] = (counts[j.source] || 0) + 1; });
@@ -128,6 +140,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     }, [allJobs, theme, t]);
 
     // --- Salary charts ---
+    // Se queda solo con las ofertas que tienen algún dato de salario.
     const jobsWithSalary = useMemo(() => {
         return allJobs.filter(job => {
             const minSal = job.job_min_salary || job.min_salary || 0;
@@ -136,6 +149,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         });
     }, [allJobs]);
 
+    // Prepara el gráfico de cuántas ofertas hay en cada rango de salario.
     const rangesChartData = useMemo(() => {
         const counts = SALARY_BUCKETS.map(() => 0);
         jobsWithSalary.forEach(job => {
@@ -159,6 +173,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         };
     }, [jobsWithSalary, theme, t]);
 
+    // Prepara el gráfico de salario medio por tipo de contrato.
     const byTypeChartData = useMemo(() => {
         const grouped = {};
         jobsWithSalary.forEach(job => {
@@ -181,6 +196,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         };
     }, [jobsWithSalary, theme, t]);
 
+    // Prepara el gráfico de salario medio por fuente.
     const bySourceChartData = useMemo(() => {
         const grouped = {};
         jobsWithSalary.forEach(job => {
@@ -206,6 +222,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     }, [jobsWithSalary, theme, t]);
 
     // --- Shared chart options ---
+    // Opciones visuales comunes para los gráficos de barras, según el tema actual.
     const chartOptions = useMemo(() => ({
         responsive: true,
         maintainAspectRatio: false,
@@ -219,6 +236,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         },
     }), [theme]);
 
+    // Opciones visuales para el gráfico de tarta.
     const doughnutOptions = useMemo(() => ({
         responsive: true,
         maintainAspectRatio: false,
@@ -247,6 +265,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     const setActiveTab = section === 'market' ? setMarketTab : setSalaryTab;
     const tabs = section === 'market' ? MARKET_TABS : SALARY_TABS;
 
+    // Elige qué gráfico dibujar según la sección y la pestaña activas.
     const renderChart = () => {
         if (section === 'market') {
             if (marketTab === 'skills') return <Bar data={skillsChartData} options={chartOptions} />;

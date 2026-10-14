@@ -1,6 +1,11 @@
+// Ventana del portfolio que muestra la lista de proyectos: título, estado,
+// tecnologías usadas, descripción, y enlaces al repositorio o a la demo.
+
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
+// Traduce el estado interno de un proyecto ("completed", "in-progress") a
+// la clave de texto que hay que mostrar.
 const STATUS_LABEL_KEYS = {
     'completed': 'portfolio.statusCompleted',
     'in-progress': 'portfolio.statusInProgress',

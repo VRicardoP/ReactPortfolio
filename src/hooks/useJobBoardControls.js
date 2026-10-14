@@ -7,6 +7,8 @@ const PAGE_SIZE = 20;
  * @param {Array} filteredJobs - already-filtered job list
  * @param {object} options - { dateField: string, companyField: string, titleField: string }
  */
+// Hook compartido por todos los tableros de ofertas: ordena la lista (por
+// fecha, empresa o título) y la reparte en páginas de 20 en 20.
 const useJobBoardControls = (filteredJobs, options = {}) => {
     const {
         dateField = 'date',
@@ -18,12 +20,15 @@ const useJobBoardControls = (filteredJobs, options = {}) => {
     const [page, setPage] = useState(0);
 
     // Reset page when sort changes or list changes
+    // Cambia el criterio de orden y vuelve a la primera página.
     const handleSortChange = useCallback((value) => {
         setSortBy(value);
         setPage(0);
     }, []);
 
     // Parse date - handles both ISO strings and unix timestamps in seconds
+    // Convierte una fecha (venga como texto o como número) a milisegundos,
+    // para poder comparar fechas de distintas fuentes entre sí.
     const parseDate = useCallback((val) => {
         if (!val) return 0;
         if (typeof val === 'number') {
@@ -34,6 +39,8 @@ const useJobBoardControls = (filteredJobs, options = {}) => {
     }, []);
 
     // Sort
+    // Ordena las ofertas según el criterio elegido (más recientes, más
+    // antiguas, por empresa, o por título).
     const sortedJobs = useMemo(() => {
         const jobs = [...filteredJobs];
         switch (sortBy) {
@@ -54,6 +61,7 @@ const useJobBoardControls = (filteredJobs, options = {}) => {
     }, [filteredJobs, sortBy, dateField, companyField, titleField, parseDate]);
 
     // Paginate
+    // Calcula qué trozo de la lista ordenada corresponde a la página actual.
     const totalPages = Math.max(1, Math.ceil(sortedJobs.length / PAGE_SIZE));
     const safePage = Math.min(page, totalPages - 1);
     const pagedJobs = sortedJobs.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
@@ -62,6 +70,8 @@ const useJobBoardControls = (filteredJobs, options = {}) => {
     const to = Math.min((safePage + 1) * PAGE_SIZE, sortedJobs.length);
 
     // Reset page when filtered list shrinks past current page
+    // Si al filtrar la lista se queda más corta que la página en la que
+    // estábamos, retrocede a la última página que sí existe.
     useEffect(() => {
         const maxPage = Math.max(0, Math.ceil(sortedJobs.length / PAGE_SIZE) - 1);
         if (page > maxPage) {

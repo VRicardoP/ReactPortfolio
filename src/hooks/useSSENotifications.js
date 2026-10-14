@@ -1,3 +1,7 @@
+// Mantiene abierto un canal en directo con el servidor para recibir avisos
+// en tiempo real (nueva visita, nuevo chat, nuevas ofertas), reconectando
+// solo si la conexión se cae.
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
@@ -10,14 +14,19 @@ export const useSSENotifications = () => {
     const reconnectAttempts = useRef(0);
     const reconnectTimerRef = useRef(null);
 
+    // Quita un aviso concreto de la lista.
     const dismissNotification = useCallback((id) => {
         setNotifications(prev => prev.filter(n => n.id !== id));
     }, []);
 
+    // Borra todos los avisos de golpe.
     const clearAll = useCallback(() => {
         setNotifications([]);
     }, []);
 
+    // Mientras haya sesión iniciada, mantiene el canal en directo abierto,
+    // procesando cada aviso que llega y reconectando (con espera creciente)
+    // si la conexión se interrumpe.
     useEffect(() => {
         if (!isAuthenticated) return;
 

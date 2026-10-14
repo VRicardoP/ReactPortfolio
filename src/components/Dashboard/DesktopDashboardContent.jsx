@@ -1,3 +1,8 @@
+// Versión de escritorio del panel de administración: dibuja todas las
+// ventanas flotantes (estadísticas, mapa, chat, ofertas, colegios...) cada
+// una protegida por su propio manejador de errores, para que si una falla
+// las demás sigan funcionando.
+
 import { lazy, Suspense, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useWindowLayout from '../../hooks/useWindowLayout';
@@ -20,6 +25,7 @@ const SchoolJobsWindow = lazy(() => import('./SchoolJobsWindow'));
 const SchoolManualContactsWindow = lazy(() => import('./SchoolManualContactsWindow'));
 
 // What is shown while the dashboard is loading
+// Lo que se ve mientras el panel está cargando: un pequeño indicador de "cargando".
 export const DashboardLoader = memo(() => {
     const { t } = useTranslation();
 
@@ -61,6 +67,8 @@ const DesktopDashboardContent = memo(({
 
     // Fetch schools + detected jobs ONCE here and share with both school windows
     // (avoids the duplicate GETs from each window calling the hook — DT-98).
+    // Carga los datos de colegios UNA sola vez aquí y los comparte entre las
+    // dos ventanas de colegios, para no pedirlos dos veces.
     const schoolData = useSchoolJobs();
 
     useWindowLayout(DASHBOARD_WINDOW_IDS, LAYOUT_ANIMATION_DELAY_MS);

@@ -1,4 +1,8 @@
 /**
+ * Apunta cómo interactúa el visitante con la página (clics y cuánto tiempo
+ * mira cada ventana), y manda esos datos al servidor en lotes cada 10
+ * segundos (o justo antes de cerrar la página) para el mapa de calor.
+ *
  * Tracks user interactions on the portfolio page:
  * - Clicks with viewport-normalized coordinates
  * - Window focus duration (via custom events from WindowContext)
@@ -35,6 +39,7 @@ const useInteractionTracking = () => {
 
         // --- Flush batched events to backend ---
         // useBeacon=true for beforeunload (fire-and-forget), false for interval flush
+        // Envía al servidor el lote de eventos guardados hasta ahora, y lo vacía.
         const flush = (useBeacon = false) => {
             if (bufferRef.current.length === 0) return;
 
@@ -59,6 +64,7 @@ const useInteractionTracking = () => {
         };
 
         // --- Click handler ---
+        // Anota un clic y en qué parte de la pantalla se hizo.
         const handleClick = (e) => {
             const vw = window.innerWidth;
             const vh = window.innerHeight;
@@ -78,11 +84,14 @@ const useInteractionTracking = () => {
         };
 
         // --- Window focus/blur via custom events from WindowContext ---
+        // Apunta el momento en que una ventana pasa a estar activa.
         const handleWindowFocus = (e) => {
             const { windowId } = e.detail;
             focusTimersRef.current[windowId] = Date.now();
         };
 
+        // Cuando una ventana deja de estar activa, calcula cuánto tiempo
+        // estuvo en primer plano y lo guarda.
         const handleWindowBlur = (e) => {
             const { windowId } = e.detail;
             const start = focusTimersRef.current[windowId];
@@ -97,6 +106,8 @@ const useInteractionTracking = () => {
         };
 
         // --- Page unload: flush remaining data ---
+        // Justo antes de cerrar la página, cierra las ventanas que seguían
+        // activas, anota el fin de la sesión, y envía todo lo pendiente.
         const handleUnload = () => {
             // Flush any open focus timers
             Object.entries(focusTimersRef.current).forEach(([wid, start]) => {

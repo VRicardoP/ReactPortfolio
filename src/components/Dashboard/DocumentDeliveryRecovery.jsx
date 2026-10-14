@@ -1,3 +1,7 @@
+// Panel para recuperar documentos (currículum/carta) cuya generación se
+// quedó pendiente de entregar: lista los casos atascados y permite
+// reintentar cada uno sin volver a generarlo desde cero.
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
@@ -12,6 +16,7 @@ export default function DocumentDeliveryRecovery({ onDelivered }) {
     const [error, setError] = useState(false);
     const endpoint = `${BACKEND_URL}/api/v1/cv-generation/operations/`;
 
+    // Pide al servidor la lista de entregas pendientes.
     const load = async () => {
         const response = await authenticatedFetch(endpoint);
         const data = await response.json();
@@ -20,11 +25,13 @@ export default function DocumentDeliveryRecovery({ onDelivered }) {
         }
         setItems(data);
     };
+    // Vuelve a cargar la lista de pendientes.
     const refresh = async () => {
         setBusy(true);
         setError(false);
         try { await load(); } catch { setError(true); } finally { setBusy(false); }
     };
+    // Reintenta entregar un documento concreto que se había quedado atascado.
     const retry = async (item) => {
         setBusy(true);
         setError(false);

@@ -1,3 +1,8 @@
+// Ventana de "coincidencia con IA": pide al backend que compare el perfil
+// del usuario con todas las ofertas, y muestra los resultados ordenados por
+// puntuación, con pestañas de resultados y de "habilidades que faltan".
+// Toda la lógica vive en el hook useAIJobMatch (este fichero solo pinta la UI).
+
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
@@ -10,6 +15,8 @@ import { AI_MATCH_PAGE_SIZE } from './dashboardConstants';
 import { SOURCE_COLOR_MAP } from '../../config/jobSources';
 import '../../styles/ai-match.css';
 
+// Colores de la etiqueta según lo bien que encaja la oferta (excelente,
+// buena, parcial, mala, desconocida).
 const FIT_COLORS = {
     excellent: { bg: 'rgba(0, 255, 100, 0.15)', text: '#00ff64', border: 'rgba(0, 255, 100, 0.3)' },
     good: { bg: 'rgba(0, 200, 255, 0.15)', text: '#00c8ff', border: 'rgba(0, 200, 255, 0.3)' },
@@ -18,6 +25,8 @@ const FIT_COLORS = {
     unknown: { bg: 'rgba(150, 150, 150, 0.15)', text: '#999', border: 'rgba(150, 150, 150, 0.2)' },
 };
 
+// Da el texto que se muestra mientras el análisis corre en el servidor,
+// según en qué fase va (comparando ofertas, puntuando con IA, terminando...).
 /** i18n label for the current background-analysis stage. */
 const stageLabel = (t, progress) => {
     switch (progress?.stage) {
@@ -36,6 +45,9 @@ const stageLabel = (t, progress) => {
     }
 };
 
+// Componente principal de la ventana: solo pinta la interfaz, toda la
+// lógica (analizar, filtrar, paginar, traducir, marcar habilidades) viene
+// de los hooks useAIJobMatch, useJobApplication y useSkillsGap.
 const AIJobMatchWindow = memo(({ initialPosition }) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
@@ -81,6 +93,8 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
             initialSize={{ width: 700, height: 600 }}
         >
             <div className="ai-match-content">
+                {/* Cabecera: botón para lanzar el análisis, botón de traducir
+                    títulos, y un texto con cuántas ofertas se analizaron. */}
                 {/* Header: analyze button + metadata */}
                 <div className="ai-match-header">
                     <button
@@ -126,6 +140,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                     <p role="status">{t('dashboard.aiMatch.localFallback')}</p>
                 )}
 
+                {/* Pestañas para cambiar entre "Resultados" y "Habilidades que faltan". */}
                 {/* Tabs */}
                 {results.length > 0 && (
                     <div className="ai-match-tabs">
@@ -148,6 +163,8 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                     </div>
                 )}
 
+                {/* Barra de filtros: pestañas por fuente de empleo (todas/Jobicy/...)
+                    y una casilla para ver solo ofertas remotas. */}
                 {results.length > 0 && activeTab === TAB_RESULTS && (
                     <div className="ai-match-filter-bar">
                         <div
@@ -190,6 +207,8 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                     </div>
                 )}
 
+                {/* Mientras se analiza: barra de progreso real que viene del
+                    servidor (no es una animación falsa). */}
                 {/* Loading state: real progress of the server-side background run */}
                 {loading && (
                     <div className="ai-match-loading">
@@ -213,6 +232,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
 
                 {error && <div className="ai-match-error">{error}</div>}
 
+                {/* Mensaje cuando todavía no hay ningún resultado que mostrar. */}
                 {/* No results placeholder */}
                 {!loading && !error && results.length === 0 && (
                     <div className="ai-match-empty" style={{ color: theme.text }}>
@@ -220,6 +240,9 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                     </div>
                 )}
 
+                {/* Pestaña "Resultados": lista paginada de ofertas con su
+                    puntuación de IA, insignia de encaje, y botones para
+                    marcar interés, guardar o abrir la oferta. */}
                 {/* Results tab */}
                 {results.length > 0 && activeTab === TAB_RESULTS && (
                     <>
@@ -412,6 +435,9 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                     </>
                 )}
 
+                {/* Pestaña "Habilidades que faltan": lista de habilidades pedidas
+                    por las ofertas que el perfil no tiene, con un botón para
+                    añadirlas al CV con un clic. */}
                 {/* Skills Gap tab */}
                 {results.length > 0 && activeTab === TAB_SKILLS_GAP && (
                     <div className="ai-match-skills-gap">

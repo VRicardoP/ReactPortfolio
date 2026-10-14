@@ -1,3 +1,7 @@
+// Controla todas las "ventanas flotantes" del escritorio (posición, tamaño,
+// si están minimizadas/maximizadas, cuál está activa) y ofrece las acciones
+// para moverlas, cambiarlas de tamaño, minimizarlas, etc.
+
 import { createContext, useContext, useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import { showToast } from '../components/UI/Toast';
 import i18n from '../i18n';
@@ -6,6 +10,9 @@ const WindowStateContext = createContext();
 const WindowCallbacksContext = createContext();
 
 // Granular hooks — use these when you only need state OR callbacks
+// Da acceso solo a los DATOS de las ventanas (cuáles hay, cuál está activa),
+// sin las funciones de acción — así un componente que solo lee no se vuelve
+// a dibujar cuando cambian las funciones.
 // eslint-disable-next-line react-refresh/only-export-components
 export const useWindowState = () => {
     const context = useContext(WindowStateContext);
@@ -15,6 +22,9 @@ export const useWindowState = () => {
     return context;
 };
 
+// Da acceso solo a las ACCIONES sobre las ventanas (abrir, cerrar,
+// minimizar...), sin los datos — así un componente que solo actúa no se
+// vuelve a dibujar cada vez que una ventana cambia de posición o tamaño.
 // eslint-disable-next-line react-refresh/only-export-components
 export const useWindowCallbacks = () => {
     const context = useContext(WindowCallbacksContext);
@@ -29,6 +39,8 @@ export const useWindowCallbacks = () => {
 // consumers of this hook. If your component only needs callbacks (openWindow, closeWindow, etc.)
 // and does NOT read `windows`, `activeWindowId`, or `loading`, use `useWindowCallbacks()` directly
 // to avoid unnecessary re-renders.
+// Da acceso a TODO (datos + acciones) de una vez, para no tener que usar los
+// dos hooks anteriores por separado.
 // eslint-disable-next-line react-refresh/only-export-components
 export const useWindowContext = () => {
     const state = useWindowState();
@@ -43,11 +55,14 @@ const BASE_Z_INDEX = 100;
 const Z_INDEX_NORMALIZE_THRESHOLD = 10000; // reset z-indexes once they climb this high
 const MINIMIZED_WINDOW_SIZE = { width: 180, height: 40 };
 
+// Evita que una ventana minimizada quede colocada fuera de la pantalla.
 const clampMinimizePosition = (position) => ({
     x: Math.min(Math.max(position.x, 0), Math.max(globalThis.innerWidth - MINIMIZED_WINDOW_SIZE.width, 0)),
     y: Math.min(Math.max(position.y, 0), Math.max(globalThis.innerHeight - MINIMIZED_WINDOW_SIZE.height, 0)),
 });
 
+// Envuelve toda la aplicación y guarda el estado de cada ventana flotante,
+// ofreciendo las funciones para crearlas, cerrarlas y manipularlas.
 export const WindowProvider = ({ children }) => {
     const [windows, setWindows] = useState({});
     const [activeWindowId, setActiveWindowId] = useState(null);
@@ -56,6 +71,8 @@ export const WindowProvider = ({ children }) => {
     const prevActiveRef = useRef(null);
 
     // Dispatch custom events for interaction tracking (low coupling via DOM events)
+    // Cuando cambia la ventana activa, avisa al resto de la aplicación (por
+    // ejemplo, para medir cuánto tiempo se ha mirado cada ventana).
     useEffect(() => {
         if (prevActiveRef.current && prevActiveRef.current !== activeWindowId) {
             window.dispatchEvent(new CustomEvent('window-blurred', {
@@ -71,6 +88,8 @@ export const WindowProvider = ({ children }) => {
     }, [activeWindowId]);
 
     // to show notifications without duplicates
+    // Muestra un mensaje emergente breve sobre una ventana, evitando que se
+    // amontonen varios mensajes iguales a la vez.
     const showWindowToast = useCallback((windowId, message) => {
         if (toastTimeoutRef.current[windowId]) {
             clearTimeout(toastTimeoutRef.current[windowId]);
@@ -84,6 +103,8 @@ export const WindowProvider = ({ children }) => {
     }, []);
 
     // when I create a new window I store it here
+    // Da de alta una ventana nueva, con su posición y tamaño iniciales (si ya
+    // existía, no hace nada).
     const registerWindow = useCallback((windowId, initialState = {}) => {
         setWindows(prev => {
             // if it already exists don't create it again
@@ -107,6 +128,7 @@ export const WindowProvider = ({ children }) => {
     }, []);
 
     // when I close a window I remove it from the list
+    // Quita una ventana de la lista cuando se cierra.
     const unregisterWindow = useCallback((windowId) => {
         setWindows(prev => {
             const newWindows = { ...prev };
@@ -116,6 +138,8 @@ export const WindowProvider = ({ children }) => {
     }, []);
 
     // bring a window in front of all the others
+    // Pone una ventana por delante de todas las demás (al hacer clic en ella),
+    // y de vez en cuando reordena los números internos para que no crezcan sin límite.
     const bringToFront = useCallback((windowId) => {
         setActiveWindowId(windowId);
         setWindows(prev => {
@@ -146,6 +170,7 @@ export const WindowProvider = ({ children }) => {
     }, []);
 
     // get translated window title from windowId
+    // Calcula el título traducido de una ventana a partir de su identificador.
     const getWindowTitle = useCallback((windowId) => {
         const key = windowId.replace('-window', '').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
         const fallback = key.charAt(0).toUpperCase() + key.slice(1);
@@ -153,6 +178,8 @@ export const WindowProvider = ({ children }) => {
     }, []);
 
     // Minimized pills keep their own anchor; programmatic centering must not move it.
+    // Minimiza o restaura una ventana, recordando por separado dónde estaba
+    // minimizada y dónde estaba normal, para no perder ninguna de las dos posiciones.
     const toggleMinimize = useCallback((windowId) => {
         setWindows(prev => {
             const window = prev[windowId];
@@ -186,6 +213,8 @@ export const WindowProvider = ({ children }) => {
     }, [showWindowToast, getWindowTitle]);
 
     // to toggle the window fullscreen on or off
+    // Pone o quita el modo pantalla completa de una ventana (y si estaba
+    // minimizada, primero la restaura).
     const toggleMaximize = useCallback((windowId) => {
         setWindows(prev => {
             const window = prev[windowId];
@@ -226,6 +255,8 @@ export const WindowProvider = ({ children }) => {
     }, [showWindowToast, getWindowTitle]);
 
     // fit the window to the optimal size to show all the content
+    // Ajusta el tamaño de una ventana para que quepa justo todo su contenido,
+    // y la centra en la pantalla.
     const fitToContent = useCallback((windowId, contentSize) => {
         setWindows(prev => {
             const window = prev[windowId];
@@ -262,6 +293,7 @@ export const WindowProvider = ({ children }) => {
     }, [showWindowToast, getWindowTitle]);
 
     // save where the window is when I move it
+    // Guarda la nueva posición de una ventana cuando el usuario la arrastra.
     const updatePosition = useCallback((windowId, position) => {
         setWindows(prev => {
             const window = prev[windowId];
@@ -284,6 +316,7 @@ export const WindowProvider = ({ children }) => {
     }, []);
 
     // save the new size when I resize the window
+    // Guarda el nuevo tamaño de una ventana cuando el usuario la redimensiona.
     const updateSize = useCallback((windowId, size) => {
         setWindows(prev => {
             const window = prev[windowId];

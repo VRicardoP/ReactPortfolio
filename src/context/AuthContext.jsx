@@ -1,3 +1,7 @@
+// Controla si el usuario ha iniciado sesión en el panel de administración:
+// guarda ese estado, ofrece las funciones de entrar y salir, y protege las
+// llamadas al servidor para que se desconecten solas si la sesión caduca.
+
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
@@ -7,12 +11,16 @@ const AuthContext = createContext();
 const INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000;
 const ACTIVITY_EVENTS = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
 const SETTLED = Object.freeze({ COMMITTED: 'committed', FAILED: 'failed', STALE: 'stale' });
+// Borra tokens de una versión antigua de la app que guardaba la sesión en el
+// navegador en vez de en una cookie segura.
 const clearLegacyTokens = () => {
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('refreshToken');
     sessionStorage.removeItem('tokenType');
 };
 
+// Da acceso, desde cualquier componente, a si el usuario ha iniciado sesión
+// y a las funciones para entrar/salir.
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
     const context = useContext(AuthContext);
@@ -20,6 +28,8 @@ export const useAuth = () => {
     return context;
 };
 
+// Envuelve toda la aplicación y se encarga de la sesión: quién ha entrado,
+// cómo renovarla automáticamente, y cómo cerrarla.
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -30,18 +40,24 @@ export const AuthProvider = ({ children }) => {
     const loginAttemptRef = useRef(0);
     const inactivityTimerRef = useRef(null);
 
+    // Marca el inicio de una sesión nueva (login o logout), para que las
+    // respuestas de peticiones antiguas que lleguen tarde se puedan descartar.
     const openSession = useCallback(() => {
         refreshPromiseRef.current = null;
         authEpochRef.current += 1;
         return authEpochRef.current;
     }, []);
 
+    // Aplica el resultado de una comprobación de sesión, pero solo si nadie
+    // ha abierto una sesión más nueva mientras tanto (si no, se descarta).
     const settleSession = useCallback((epoch, authenticated) => {
         if (authEpochRef.current !== epoch) return SETTLED.STALE;
         setIsAuthenticated(authenticated);
         return authenticated ? SETTLED.COMMITTED : SETTLED.FAILED;
     }, []);
 
+    // Intenta renovar la sesión sin pedir la contraseña; si ya hay una
+    // renovación en marcha, se apunta a esa misma en vez de duplicarla.
     const tryRefresh = useCallback(async () => {
         const epoch = authEpochRef.current;
         if (refreshPromiseRef.current) return refreshPromiseRef.current;
@@ -68,6 +84,8 @@ export const AuthProvider = ({ children }) => {
         return flight;
     }, [settleSession]);
 
+    // Al cargar la aplicación, comprueba si ya hay una sesión activa (y si no,
+    // intenta renovarla antes de rendirse).
     useEffect(() => {
         let mounted = true;
         const init = async () => {
@@ -94,6 +112,8 @@ export const AuthProvider = ({ children }) => {
         return () => { mounted = false; };
     }, [settleSession, tryRefresh]);
 
+    // Procesa el intento de inicio de sesión: envía usuario y contraseña, y si
+    // son correctos, marca la sesión como iniciada.
     const login = useCallback(async (username, password) => {
         const attempt = ++loginAttemptRef.current;
         const epochBefore = authEpochRef.current;
@@ -135,6 +155,8 @@ export const AuthProvider = ({ children }) => {
         }
     }, [openSession, settleSession]);
 
+    // Cierra la sesión: la marca como cerrada de inmediato en la pantalla, y
+    // en segundo plano avisa al servidor para que invalide el token.
     const logout = useCallback(() => {
         clearLegacyTokens();
         loginControllerRef.current?.abort();
@@ -152,6 +174,8 @@ export const AuthProvider = ({ children }) => {
         return flight;
     }, [openSession, settleSession]);
 
+    // Si el usuario pasa 15 minutos sin tocar nada (ratón, teclado, scroll...)
+    // mientras tiene sesión abierta, se le cierra la sesión automáticamente.
     useEffect(() => {
         if (!isAuthenticated) return;
         const resetTimer = () => {
@@ -171,6 +195,9 @@ export const AuthProvider = ({ children }) => {
         };
     }, [isAuthenticated, logout]);
 
+    // Hace una petición al servidor añadiendo las credenciales de sesión, y si
+    // el servidor dice que la sesión caducó, intenta renovarla y reintenta una
+    // vez; si tampoco funciona, cierra la sesión.
     const authenticatedFetch = useCallback(async (url, options = {}) => {
         if (!isAuthenticated) throw new Error('No authenticated session');
         const epoch = authEpochRef.current;

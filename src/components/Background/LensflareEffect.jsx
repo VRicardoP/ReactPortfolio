@@ -1,3 +1,7 @@
+// Efecto de fondo en 3D: un campo de cubos flotando en el espacio con
+// varias luces que brillan con destello de lente (lensflare), y la cámara
+// se mueve mirando hacia donde está el ratón.
+
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js';
@@ -20,6 +24,8 @@ const LensflareEffect = () => {
         }
     }, [theme]);
 
+    // Monta toda la escena 3D una sola vez: cubos, luces, destellos y los
+    // controles de ratón para mirar y moverse por la escena.
     useEffect(() => {
         if (!mountRef.current) return;
 
@@ -84,6 +90,8 @@ const LensflareEffect = () => {
         scene.add(dirLight);
 
         // function to create lensflare textures procedurally
+        // Dibuja a mano, en un canvas pequeño, el degradado de color que
+        // sirve de textura para el brillo del destello de lente.
         const createFlareTexture = (size, type) => {
             const canvas = document.createElement('canvas');
             canvas.width = size;
@@ -122,6 +130,8 @@ const LensflareEffect = () => {
         const textureFlare0 = createFlareTexture(512, 'main');
 
         // function to add lights with lensflare
+        // Crea una luz puntual con su propio destello de lente, en el color
+        // y la posición indicados.
         const addLight = (h, s, l, x, y, z) => {
             const light = new THREE.PointLight(0xffffff, 1.5, 2000, 0);
             light.color.setHSL(h, s, l);
@@ -182,6 +192,9 @@ const LensflareEffect = () => {
         document.addEventListener('mouseup', onMouseUp);
         renderer.domElement.addEventListener('contextmenu', onContextMenu);
 
+        // Bucle de animación: gira la dirección de la cámara según la
+        // posición del ratón y mueve la cámara hacia delante/atrás si se
+        // mantiene pulsado un botón del ratón.
         // animation loop
         const animate = () => {
             animationIdRef.current = requestAnimationFrame(animate);

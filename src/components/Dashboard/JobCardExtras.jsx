@@ -1,4 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
+// Piezas pequeñas y reutilizables para las tarjetas de oferta de empleo:
+// la etiqueta de "nueva/reciente", el resumen, la fecha, los distintivos
+// (remoto, fuente, tipo de contrato), y el nombre de la empresa con un
+// menú de enlaces para investigarla (LinkedIn, Glassdoor, Crunchbase).
+
 import { memo, useState, useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -6,6 +11,8 @@ import { useTranslation } from 'react-i18next';
  * Calculate job freshness based on date string.
  * Returns 'new' (<24h), 'recent' (<3d), or 'old' (>3d)
  */
+// Calcula si una oferta es "nueva" (menos de 24h), "reciente" (menos de 3
+// días) o "antigua", a partir de su fecha.
 export const getJobFreshness = (dateStr) => {
     if (!dateStr) return null;
 
@@ -34,6 +41,8 @@ const FRESHNESS_LABELS = {
 /**
  * Freshness badge component for job cards.
  */
+// Muestra la etiqueta "Nueva"/"Reciente" sobre una tarjeta de oferta, o
+// nada si la oferta ya es antigua.
 export const FreshnessBadge = memo(({ dateStr }) => {
     const freshness = getJobFreshness(dateStr);
     if (!freshness || freshness === 'old') return null;
@@ -48,6 +57,8 @@ export const FreshnessBadge = memo(({ dateStr }) => {
 FreshnessBadge.displayName = 'FreshnessBadge';
 
 
+// Muestra el resumen de una oferta (o la descripción, o un texto por
+// defecto si no hay ninguno de los dos).
 export const JobSummary = memo(({ job, className = '', style }) => {
     const { t } = useTranslation();
     const summary = job.summary || job.description_snippet;
@@ -62,6 +73,7 @@ export const JobSummary = memo(({ job, className = '', style }) => {
 
 JobSummary.displayName = 'JobSummary';
 
+// Muestra la fecha de la oferta junto con su etiqueta de "nueva/reciente".
 export const JobDate = memo(({ date, className = '', style }) => (
     <span className={className} style={style}>
         {date ? new Date(date).toLocaleDateString() : ''}
@@ -71,6 +83,8 @@ export const JobDate = memo(({ date, className = '', style }) => (
 
 JobDate.displayName = 'JobDate';
 
+// Muestra los distintivos de una oferta: si es remota, de qué fuente
+// viene, y el tipo de contrato.
 export const JobBadges = memo(({
     remote,
     source,
@@ -99,6 +113,8 @@ JobBadges.displayName = 'JobBadges';
 /**
  * Company name with clickable research links.
  */
+// Muestra el nombre de la empresa como un botón que, al pulsarlo, abre un
+// pequeño menú con enlaces para buscarla en LinkedIn, Glassdoor y Crunchbase.
 export const CompanyResearchName = memo(({ company, children }) => {
     const [showPanel, setShowPanel] = useState(false);
     const panelRef = useRef(null);
@@ -110,6 +126,7 @@ export const CompanyResearchName = memo(({ company, children }) => {
     const encoded = company ? encodeURIComponent(company) : '';
 
     // Close panel on outside click
+    // Cierra el menú si se hace clic fuera de él.
     useEffect(() => {
         if (!showPanel) return;
 
@@ -123,6 +140,7 @@ export const CompanyResearchName = memo(({ company, children }) => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [showPanel]);
 
+    // Abre o cierra el menú de enlaces.
     const handleClick = useCallback((e) => {
         e.stopPropagation();
         setShowPanel(prev => !prev);

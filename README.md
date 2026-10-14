@@ -21,7 +21,7 @@ Built with a desktop OS metaphor: draggable, resizable floating windows, 6 immer
 ### Dashboard (admin only)
 
 - **Analytics** — visitor stats, interactive map, chat statistics, interaction heatmap
-- **Job Board** — 12 job API sources in a tabbed interface with sort, pagination, and cache age badges
+- **Job Board** — 20 job sources in a tabbed interface with sort, pagination, and cache age badges
 - **AI Job Match** — complete canonical Core feed with per-portal and remote-only filters; Skills Gap shows missing skills
 - **Kanban Pipeline** — drag-and-drop job application tracker (saved → applied → interview → offer → rejected)
 - **AI CV / Cover Letter** — generate, preview, and download PDF/JSON documents adapted to each job offer
@@ -40,7 +40,7 @@ Built with a desktop OS metaphor: draggable, resizable floating windows, 6 immer
 | Routing | React Router v7 |
 | State | React Context API (split state/callbacks) |
 | i18n | react-i18next (6 locales) |
-| Testing | Vitest + @testing-library/react (414 tests in 44 files) |
+| Testing | Vitest + @testing-library/react (416 tests in 44 files) |
 | E2E | Playwright (18 tests) |
 | Styles | Pure CSS (no CSS-in-JS) |
 | Hosting | Cloudflare Pages |
@@ -106,7 +106,7 @@ frontend/
 │   │   └── UI/               # Toast, Tooltip
 │   ├── config/
 │   │   ├── api.js            # Centralized backend URL
-│   │   ├── jobSources.js     # Registry for all 12 job sources
+│   │   ├── jobSources.js     # Registry for all 20 job sources
 │   │   └── terminalCommands.js # Terminal command registry (19 commands)
 │   ├── context/
 │   │   ├── AuthContext.jsx   # JWT auth + authenticatedFetch

@@ -1,6 +1,11 @@
+// Ventana del portfolio que muestra las habilidades "blandas" (como
+// trabajo en equipo, comunicación) en tarjetas con un icono corto y su nombre.
+
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
+// Traduce los emojis de una versión antigua de los datos a una etiqueta de
+// texto corta, para los casos en que el icono guardado ya no es válido.
 const LEGACY_ICON_LABELS = {
     '\u{1F3AF}': 'AIM',
     '\u{1F680}': 'GO',
@@ -8,11 +13,13 @@ const LEGACY_ICON_LABELS = {
     '\u{1F527}': 'FIX',
     '\u{1F4DD}': 'DOC',
     '\u{1F4DA}': 'EDU',
-    '\u2B50': 'OWN',
+    '⭐': 'OWN',
     '\u{1F3E0}': 'REM',
     '\u{1F9D8}': 'CALM',
 };
 
+// Decide qué etiqueta de icono mostrar para una habilidad: la traducción
+// de un emoji antiguo, el texto si ya es una etiqueta válida, o una por defecto.
 const iconLabel = (icon) => {
     if (LEGACY_ICON_LABELS[icon]) return LEGACY_ICON_LABELS[icon];
     return /^[A-Z0-9]{1,5}$/.test(icon || '') ? icon : 'SKL';

@@ -1,3 +1,7 @@
+// Barra de controles que comparten los tableros de ofertas: el selector de
+// orden, cuántas ofertas se están mostrando, la edad de la caché, y los
+// botones de página anterior/siguiente.
+
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 

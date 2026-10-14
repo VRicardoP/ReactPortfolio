@@ -1,3 +1,6 @@
+// Efecto de fondo animado: miles de gotas de lluvia cayendo en 3D, con la
+// cámara moviéndose un poco según la posición del ratón.
+
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { useTheme } from '../../context/ThemeContext';
@@ -8,6 +11,8 @@ const RainEffect = () => {
     const rainMaterialRef = useRef(null);
     const { theme } = useTheme();
 
+    // Cambia el color de la lluvia cuando cambia el tema, sin tener que
+    // reconstruir toda la escena 3D.
     // Update rain color when theme changes — no scene rebuild needed
     useEffect(() => {
         if (rainMaterialRef.current) {
@@ -15,6 +20,8 @@ const RainEffect = () => {
         }
     }, [theme]);
 
+    // Monta la escena 3D una sola vez: crea la cámara, la luz, el suelo y
+    // las gotas, pone en marcha la animación, y lo limpia todo al desmontar.
     useEffect(() => {
         if (!mountRef.current) return;
 

@@ -14,6 +14,11 @@ const POLL_INTERVAL_MS = 2500;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
+ * Maneja la ventana que compara las ofertas de empleo con el perfil usando
+ * IA: lanza el análisis en el servidor, sigue su progreso con una barra
+ * real, pagina y filtra los resultados, y traduce los títulos que no
+ * están en inglés o español.
+ *
  * State + logic for the AI job match window.
  *
  * Analysis lifecycle (async, server-side):
@@ -58,12 +63,15 @@ const useAIJobMatch = () => {
 
     // If the LLM re-ranking becomes unavailable while Skills Gap is open,
     // force the user back to the Results tab
+    // Si la IA deja de estar disponible mientras se mira la pestaña de
+    // "habilidades que faltan", vuelve automáticamente a la de resultados.
     useEffect(() => {
         if (llmUnavailable && activeTab === TAB_SKILLS_GAP) {
             setActiveTab(TAB_RESULTS);
         }
     }, [llmUnavailable, activeTab]);
 
+    // Guarda un resultado de análisis ya terminado y vuelve a la primera página.
     const installResult = useCallback((data, source = null) => {
         if (!mountedRef.current) return;
         setResults(data.results || []);
@@ -73,6 +81,7 @@ const useAIJobMatch = () => {
         setPage(0);
     }, []);
 
+    // Carga el último resultado ya calculado y guardado.
     /** Load the latest persisted result. Returns true when one was available. */
     const fetchResult = useCallback(async () => {
         const response = await authenticatedFetch(
@@ -85,6 +94,8 @@ const useAIJobMatch = () => {
         return true;
     }, [authenticatedFetch, installResult]);
 
+    // Consulta el progreso una y otra vez hasta que el análisis termine, y
+    // entonces carga el resultado.
     /** Poll /analyze/progress until the background run ends, then load the result. */
     const followRunningAnalysis = useCallback(async () => {
         for (;;) {
@@ -107,6 +118,8 @@ const useAIJobMatch = () => {
         }
     }, [authenticatedFetch, fetchResult]);
 
+    // Pide que se lance (o se vuelva a lanzar) el análisis completo, y
+    // sigue su progreso hasta tener el resultado.
     const runAnalysis = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -136,6 +149,8 @@ const useAIJobMatch = () => {
 
     // On mount: show the stored result instantly; if a background analysis is
     // already running (post-deploy warm-up, another session), attach to it.
+    // Al abrir la ventana, muestra de inmediato el último resultado guardado;
+    // si ya había un análisis en marcha, se engancha a su progreso.
     useEffect(() => {
         let cancelled = false;
         (async () => {
@@ -170,14 +185,17 @@ const useAIJobMatch = () => {
 
     // DT-139: el feed del Core llega completo. Se filtra antes de paginar para
     // mantener solo diez tarjetas montadas aunque existan miles de evaluaciones.
+    // Lista de fuentes distintas presentes en los resultados, para el filtro.
     const availableSources = useMemo(() => (
         [...new Set(results.map(job => job.source).filter(Boolean))].sort()
     ), [results]);
 
+    // Si está activo el filtro "solo remoto", se queda solo con esas ofertas.
     const remoteResults = useMemo(() => (
         remoteOnly ? results.filter(job => job.remote === true) : results
     ), [results, remoteOnly]);
 
+    // Cuenta cuántas ofertas hay por cada fuente, para mostrarlo en el filtro.
     const sourceCounts = useMemo(() => {
         const counts = { [ALL_MATCH_SOURCES]: remoteResults.length };
         for (const source of availableSources) counts[source] = 0;
@@ -187,6 +205,7 @@ const useAIJobMatch = () => {
         return counts;
     }, [availableSources, remoteResults]);
 
+    // Aplica el filtro de fuente elegido a los resultados (ya filtrados por remoto).
     const filteredResults = useMemo(() => (
         sourceFilter === ALL_MATCH_SOURCES
             ? remoteResults
@@ -202,18 +221,22 @@ const useAIJobMatch = () => {
         (page + 1) * AI_MATCH_PAGE_SIZE
     );
 
+    // Cambia el filtro de fuente y vuelve a la primera página.
     const selectSource = useCallback((source) => {
         setSourceFilter(source);
         setPage(0);
         setExpandedId(null);
     }, []);
 
+    // Activa o desactiva el filtro "solo ofertas remotas".
     const toggleRemoteOnly = useCallback(() => {
         setRemoteOnly(value => !value);
         setPage(0);
         setExpandedId(null);
     }, []);
 
+    // Traduce al inglés los títulos de la página actual que no se hayan
+    // traducido ya (nunca se vuelve a traducir uno que ya tenga traducción).
     const translateTitles = useCallback(async () => {
         const titlesToTranslate = pagedResults
             .map(j => j.title)
@@ -240,15 +263,19 @@ const useAIJobMatch = () => {
         }
     }, [pagedResults, translatedTitles, authenticatedFetch]);
 
+    // Va a la página anterior o siguiente.
     const prevPage = useCallback(() => setPage(p => p - 1), []);
     const nextPage = useCallback(() => setPage(p => p + 1), []);
 
+    // Abre o cierra el detalle de una oferta concreta.
     const toggleExpanded = useCallback((globalIdx) => {
         setExpandedId(prev => (prev === globalIdx ? null : globalIdx));
     }, []);
 
     // Guarded tab selection: Skills Gap is blocked while the LLM is unavailable
     // (the component keeps the `disabled` attribute for styling/accessibility)
+    // Cambia de pestaña, salvo que se intente ir a "habilidades que faltan"
+    // mientras la IA no esté disponible.
     const selectTab = useCallback((tab) => {
         if (tab === TAB_SKILLS_GAP && llmUnavailable) return;
         setActiveTab(tab);

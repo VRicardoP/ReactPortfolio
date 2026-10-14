@@ -1,3 +1,7 @@
+// Configura el sistema de traducciones: carga los textos de los 6
+// idiomas, detecta qué idioma prefiere el visitante (lo que guardó antes,
+// o el de su navegador) y deja "en" como idioma de reserva si algo falla.
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';

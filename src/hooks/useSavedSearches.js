@@ -17,6 +17,9 @@ const INITIAL_FORM = {
 };
 
 /**
+ * Maneja las búsquedas de empleo guardadas: crearlas, listarlas, ejecutarlas
+ * (mostrando/ocultando sus resultados) y borrarlas.
+ *
  * Business logic for saved searches: CRUD operations, running searches,
  * and managing form state. Used by SavedSearchesWindow.
  */
@@ -39,6 +42,7 @@ const useSavedSearches = () => {
     const runGenerationRef = useRef(0);
 
     // Fetch saved searches on mount
+    // Pide al servidor la lista de búsquedas guardadas.
     const fetchSearches = useCallback(async () => {
         setLoading(true);
         try {
@@ -57,11 +61,14 @@ const useSavedSearches = () => {
         fetchSearches();
     }, [fetchSearches]);
 
+    // Actualiza un campo del formulario de nueva búsqueda.
     const handleFormChange = useCallback((field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     }, []);
 
     // Build an auto-name from filters when no explicit name given
+    // Si no se escribe un nombre, genera uno automático a partir de los
+    // filtros elegidos.
     const autoName = useCallback(() => {
         const parts = [];
         if (formData.q) parts.push(formData.q);
@@ -77,6 +84,7 @@ const useSavedSearches = () => {
     }, [formData]);
 
     // Create a new saved search
+    // Guarda una búsqueda nueva con los filtros del formulario.
     const handleCreate = useCallback(async () => {
         const name = formData.name.trim() || autoName();
         if (!name) return;
@@ -106,6 +114,8 @@ const useSavedSearches = () => {
     }, [authenticatedFetch, formData, fetchSearches, autoName, t]);
 
     // Run a saved search (toggle expand/collapse)
+    // Ejecuta una búsqueda guardada y muestra sus resultados (o los oculta
+    // si ya estaban mostrados).
     const handleRun = useCallback(async (search) => {
         const generation = (runGenerationRef.current += 1);
         const isCurrent = () => generation === runGenerationRef.current;
@@ -160,6 +170,7 @@ const useSavedSearches = () => {
     }, [authenticatedFetch, expandedId, t]);
 
     // Delete a saved search
+    // Borra una búsqueda guardada, pidiendo confirmación antes.
     const handleDelete = useCallback(async (id) => {
         const confirmed = window.confirm(t('dashboard.savedSearches.confirmDelete'));
         if (!confirmed) return;

@@ -1,3 +1,7 @@
+// Ventana del panel con las estadísticas del chatbot, en cuatro pestañas:
+// un resumen numérico, las preguntas más frecuentes, un gráfico de
+// preguntas por día, y un gráfico de preguntas por país.
+
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bar, Doughnut } from 'react-chartjs-2';
@@ -30,16 +34,19 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
     const { theme } = useTheme();
     const { t } = useTranslation();
 
+    // Las estadísticas generales (totales, tasa de éxito...).
     const stats = useMemo(() => {
         if (!data?.general) return null;
         return data.general;
     }, [data]);
 
+    // Las 5 preguntas más repetidas.
     const topQuestions = useMemo(() => {
         if (!data?.top_questions) return [];
         return data.top_questions.slice(0, 5);
     }, [data]);
 
+    // Prepara los datos del gráfico de barras de preguntas por día (últimos 7 días).
     const dailyTimeline = useMemo(() => {
         if (!data?.timeline_daily || data.timeline_daily.length === 0) return null;
         const timeline = data.timeline_daily.slice(-7);
@@ -58,6 +65,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
         };
     }, [data, theme, t]);
 
+    // Prepara los datos del gráfico de tarta de preguntas por país (top 5).
     const countryData = useMemo(() => {
         if (!data?.by_country || data.by_country.length === 0) return null;
         const countries = data.by_country.slice(0, 5);
@@ -72,6 +80,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
         };
     }, [data, theme, t]);
 
+    // Opciones visuales del gráfico de barras, ajustadas al tema de color actual.
     const chartOptions = useMemo(() => ({
         responsive: true,
         maintainAspectRatio: false,
@@ -98,6 +107,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
         }
     }), [theme]);
 
+    // Opciones visuales del gráfico de tarta, ajustadas al tema de color actual.
     const doughnutOptions = useMemo(() => ({
         responsive: true,
         maintainAspectRatio: false,

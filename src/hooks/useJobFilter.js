@@ -16,6 +16,10 @@ const INITIAL_FILTERS = {
 };
 
 /**
+ * Maneja el panel de filtros avanzados de ofertas: guarda los filtros
+ * elegidos, busca con ellos, permite pedir "más resultados" sin perder los
+ * ya mostrados, y descarta las respuestas tardías de búsquedas antiguas.
+ *
  * Business logic for the job filter window: search state, filter management,
  * query building, cursor/offset pagination ("load more"), and
  * save-to-saved-searches integration. Used by AdvancedFilterPanel.
@@ -57,10 +61,12 @@ const useJobFilter = (onSaveSearch) => {
     // resultados, cursor y token de secuencia viejos (P2-1 auditoria externa).
     const requestGenerationRef = useRef(0);
 
+    // Actualiza un filtro concreto (país, ciudad, salario...).
     const handleFilterChange = useCallback((field, value) => {
         setFilters(prev => ({ ...prev, [field]: value }));
     }, []);
 
+    // Construye los parámetros de la URL de búsqueda a partir de los filtros actuales.
     const buildQueryParams = useCallback(({ offset = 0, cursor = null, seq = null } = {}) => {
         return buildJobSearchParams({
             q: filters.q,
@@ -78,6 +84,8 @@ const useJobFilter = (onSaveSearch) => {
         }).toString();
     }, [filters]);
 
+    // Pide una página de resultados con los filtros actuales, bien como
+    // búsqueda nueva o como continuación ("cargar más") de la anterior.
     const fetchPage = useCallback(async ({ offset = 0, cursor = null, seq = null, append = false }) => {
         // Una busqueda abre generacion nueva; un "cargar mas" continua la vigente.
         const generation = append
@@ -128,8 +136,11 @@ const useJobFilter = (onSaveSearch) => {
         }
     }, [authenticatedFetch, buildQueryParams, t]);
 
+    // Lanza una búsqueda nueva desde el principio.
     const handleSearch = useCallback(() => fetchPage({ offset: 0 }), [fetchPage]);
 
+    // Pide la siguiente página de resultados, añadiéndola a los que ya se
+    // estaban mostrando (en vez de sustituirlos).
     const handleLoadMore = useCallback(() => {
         if (loading) return Promise.resolve();
         // Cursor when the backend gave one (core keyset); accumulated offset
@@ -141,6 +152,7 @@ const useJobFilter = (onSaveSearch) => {
         );
     }, [fetchPage, nextCursor, sequence, results.length, loading]);
 
+    // Borra todos los filtros y resultados, volviendo al estado inicial.
     const handleClear = useCallback(() => {
         // Vaciar la vista invalida tambien lo pendiente: nada en vuelo debe
         // repoblar los resultados que el usuario acaba de limpiar.
@@ -155,6 +167,7 @@ const useJobFilter = (onSaveSearch) => {
         setSearched(false);
     }, []);
 
+    // Guarda los filtros actuales como una búsqueda favorita.
     const handleSave = useCallback(() => {
         if (onSaveSearch) {
             onSaveSearch({
@@ -171,6 +184,7 @@ const useJobFilter = (onSaveSearch) => {
     const hasFilters = filters.country || filters.city
         || filters.salaryMin || filters.salaryMax || filters.q || filters.remoteOnly;
 
+    // Da el rango de salario en un texto legible.
     const formatSalary = useCallback((min, max, currency) => {
         const cur = currency || 'USD';
         if (min && max) return `${cur} ${Number(min).toLocaleString()} - ${Number(max).toLocaleString()}`;

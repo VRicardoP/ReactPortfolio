@@ -1,3 +1,7 @@
+// Trae los datos del portfolio (currículum, experiencia, habilidades...) en
+// el idioma actual: primero intenta pedirlos al servidor, y si no responde,
+// usa una copia guardada en ficheros estáticos como respaldo.
+
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
@@ -19,6 +23,8 @@ const usePortfolioData = () => {
     // es el que muestra el conmutador.
     let cancelled = false;
 
+    // Pide los datos del portfolio: primero a la API, y si falla o está vacía,
+    // recurre al fichero JSON estático guardado en la propia web.
     const loadData = async () => {
       setLoading(true);
       // El error es del intento ANTERIOR: `App.jsx` pinta su pantalla antes de

@@ -1,3 +1,7 @@
+// Barra de navegación superior para móvil: muestra el título de la
+// página y un botón que abre un pequeño menú (de momento solo con la
+// opción de abrir el Terminal).
+
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../../styles/mobile.css';
@@ -6,10 +10,12 @@ const MobileNav = ({ title, onTerminalToggle }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const { t } = useTranslation();
 
+    // Abre o cierra el menú desplegable.
     const handleToggleMenu = useCallback(() => {
         setMenuOpen(prev => !prev);
     }, []);
 
+    // Cierra el menú y abre la ventana del Terminal.
     const handleTerminal = useCallback(() => {
         setMenuOpen(false);
         onTerminalToggle();

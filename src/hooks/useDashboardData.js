@@ -1,3 +1,7 @@
+// Trae todos los datos que necesita el panel de administración: las
+// estadísticas de visitantes, el mapa, las del chat, y las ofertas de todas
+// las fuentes de empleo a la vez (si alguna falla, no bloquea a las demás).
+
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
@@ -21,6 +25,8 @@ export const useDashboardData = () => {
   const [error, setError] = useState(null);
   const [warnings, setWarnings] = useState([]);
 
+  // Pide los datos más importantes del panel (estadísticas, mapa, chat) a la
+  // vez; si alguno falla, lo apunta como aviso pero sigue con los demás.
   const fetchCritical = useCallback(async ({ silent = false } = {}) => {
     // DT-95: el reset de `error` se hace siempre, incluso en silent. Antes solo
     // se reseteaba si !silent → un error previo se quedaba "pegado" cuando el
@@ -61,6 +67,8 @@ export const useDashboardData = () => {
     }
   }, [authenticatedFetch]);
 
+  // Al abrir el panel, pide primero lo importante, y luego va pidiendo las
+  // ofertas de cada fuente de empleo en segundo plano, una por una.
   useEffect(() => {
     let aborted = false;
 
@@ -102,6 +110,9 @@ export const useDashboardData = () => {
 
   // Refresh critical data when SSE signals new visitor/chat. Debounced so a burst
   // of events triggers a single refetch.
+  // Cuando llega un aviso en tiempo real de visita o chat nuevo, vuelve a
+  // pedir los datos importantes (esperando un poco para no repetirlo si
+  // llegan varios avisos juntos).
   useEffect(() => {
     let timer;
     const handler = () => {

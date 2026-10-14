@@ -1,3 +1,7 @@
+// Efecto de fondo con partículas flotantes que se conectan entre sí y
+// reaccionan al mover el ratón (efecto "parallax"), usando la librería
+// tsparticles.
+
 import { useEffect, useState, useCallback } from 'react';
 import Particles, { initParticlesEngine } from '@tsparticles/react';
 import { loadSlim } from '@tsparticles/slim';
@@ -7,6 +11,7 @@ const ParallaxEffect = () => {
     const [init, setInit] = useState(false);
     const { theme } = useTheme();
 
+    // Carga el motor de partículas una sola vez antes de poder mostrarlas.
     useEffect(() => {
         initParticlesEngine(async (engine) => {
             await loadSlim(engine);
@@ -17,6 +22,8 @@ const ParallaxEffect = () => {
 
     const particlesLoaded = useCallback(async () => {}, []);
 
+    // Configuración de las partículas: color, cuántas hay, cómo se mueven
+    // y cómo reaccionan al pasar el ratón por encima.
     const options = {
         fullScreen: {
             enable: true,

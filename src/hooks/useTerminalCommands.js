@@ -7,6 +7,9 @@ import commandRegistry, { ASCII_BANNER } from '../config/terminalCommands';
  * Hook that encapsulates terminal state management, command dispatch, and keyboard handling.
  * Command logic lives in config/terminalCommands.js (registry pattern).
  */
+// Hace funcionar la "terminal" oculta del portfolio: guarda las líneas de
+// texto que se ven, entiende los comandos que se escriben, y recuerda el
+// historial para poder subir/bajar con las flechas del teclado.
 export default function useTerminalCommands({ portfolioData, onClose }) {
   const { t, i18n } = useTranslation();
   const { backgroundEffect, setBackground, setTheme, themeName, availableThemes } = useTheme();
@@ -20,6 +23,7 @@ export default function useTerminalCommands({ portfolioData, onClose }) {
   const name = portfolioData?.name || 'Vicente';
 
   // Show welcome banner on mount
+  // Al abrir la terminal por primera vez, muestra el mensaje de bienvenida.
   useEffect(() => {
     if (showBanner) {
       const bannerLines = [
@@ -33,10 +37,13 @@ export default function useTerminalCommands({ portfolioData, onClose }) {
     }
   }, [showBanner, name, t]);
 
+  // Añade nuevas líneas de texto a la pantalla de la terminal.
   const addLines = useCallback((newLines) => {
     setLines(prev => [...prev, ...newLines]);
   }, []);
 
+  // Interpreta el texto escrito por el visitante: busca el comando
+  // correspondiente en el registro y ejecuta su acción.
   const executeCommand = useCallback((input) => {
     const trimmed = input.trim();
     if (!trimmed) return;
@@ -79,6 +86,7 @@ export default function useTerminalCommands({ portfolioData, onClose }) {
     }
   }, [addLines, portfolioData, name, history, t, i18n, onClose, backgroundEffect, setBackground, themeName, setTheme, availableThemes]);
 
+  // Se ejecuta al pulsar Enter: guarda el comando en el historial y lo ejecuta.
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
     const trimmed = inputValue.trim();
@@ -90,6 +98,8 @@ export default function useTerminalCommands({ portfolioData, onClose }) {
     setInputValue('');
   }, [inputValue, executeCommand]);
 
+  // Permite navegar por los comandos anteriores con las flechas arriba/abajo,
+  // como en una terminal real.
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'ArrowUp') {
       e.preventDefault();

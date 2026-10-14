@@ -1,3 +1,7 @@
+// Panel plegable con el historial completo de documentos generados (todos
+// los currículums y cartas, de cualquier candidatura), con botones para
+// descargarlos o borrarlos.
+
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
@@ -14,6 +18,7 @@ export default function DocumentLibrary({ onDownloadPdf, onDownloadJson, onDelet
     const [error, setError] = useState(false);
     const endpoint = `${BACKEND_URL}/api/v1/cv-generation/`;
 
+    // Pide al servidor la lista completa de documentos generados.
     const refresh = async () => {
         setBusy(true);
         setError(false);
@@ -31,6 +36,7 @@ export default function DocumentLibrary({ onDownloadPdf, onDownloadJson, onDelet
         }
     };
 
+    // Borra un documento, pidiendo confirmación antes.
     const remove = async (doc) => {
         if (!window.confirm(t('dashboard.cvGeneration.confirmDeleteDocument'))) return;
         setBusy(true);

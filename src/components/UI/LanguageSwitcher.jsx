@@ -1,7 +1,11 @@
+// Botón con un menú desplegable para cambiar el idioma de toda la web
+// entre los 6 idiomas disponibles.
+
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../../styles/language-switcher.css';
 
+// Lista de idiomas que se pueden elegir, con su código y su nombre.
 const LANGUAGES = [
   { code: 'en', label: 'EN', name: 'English' },
   { code: 'es', label: 'ES', name: 'Español' },
@@ -18,6 +22,7 @@ const LanguageSwitcher = () => {
 
   const currentLang = (i18n.language || 'en').split('-')[0];
 
+  // Cierra el menú si se hace clic fuera de él.
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
@@ -26,6 +31,7 @@ const LanguageSwitcher = () => {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  // Cambia el idioma de la app y cierra el menú.
   const handleChange = useCallback((code) => {
     i18n.changeLanguage(code);
     setOpen(false);

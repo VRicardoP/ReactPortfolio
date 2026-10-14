@@ -15,6 +15,8 @@ const SCRAPE_POLL_DELAY_MS = 8000;
  * Fetches schools metadata + detected school jobs.
  * Returns: { schools, jobs, loading, error, refresh, refreshing, triggerScrape }
  */
+// Trae del servidor la lista de colegios vigilados y las ofertas detectadas
+// en ellos, y permite forzar una revisión manual o descartar una oferta.
 const useSchoolJobs = () => {
   const { authenticatedFetch, isAuthenticated } = useAuth();
   const [schools, setSchools] = useState([]);
@@ -40,6 +42,7 @@ const useSchoolJobs = () => {
     };
   }, []);
 
+  // Vuelve a pedir la lista de colegios y sus ofertas detectadas.
   const refresh = useCallback(async () => {
     if (!isAuthenticated) {
       if (mountedRef.current) setLoading(false);
@@ -69,10 +72,13 @@ const useSchoolJobs = () => {
     }
   }, [authenticatedFetch, isAuthenticated]);
 
+  // Carga los datos la primera vez que se usa el hook.
   useEffect(() => {
     refresh();
   }, [refresh]);
 
+  // Pide al servidor que revise ahora mismo todos los colegios, y vuelve a
+  // consultar los resultados pasado un tiempo (la revisión tarda en segundo plano).
   const triggerScrape = useCallback(async () => {
     if (!isAuthenticated) return;
     setRefreshing(true);
@@ -97,6 +103,7 @@ const useSchoolJobs = () => {
     }
   }, [authenticatedFetch, isAuthenticated, refresh]);
 
+  // Oculta una oferta de colegio concreta (sin borrar el dato original).
   const dismissJob = useCallback(async (jobId) => {
     if (!isAuthenticated || dismissingJobIds.has(jobId)) return;
     setDismissError(null);

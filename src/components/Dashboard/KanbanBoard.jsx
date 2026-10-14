@@ -1,3 +1,9 @@
+// Dibuja el tablero "Kanban" de candidaturas: las columnas, las tarjetas
+// que se pueden arrastrar entre ellas, el formulario para añadir una nueva,
+// y los botones de cada tarjeta (generar/ver documentos, descargar, abrir
+// la oferta, marcar como aplicada, borrar). Toda la lógica vive en el
+// hook useKanban.
+
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';

@@ -1,3 +1,7 @@
+// Punto de arranque de toda la web: monta la app en la página, define las
+// 3 rutas (portfolio público, login y panel privado protegido) y envuelve
+// todo con los proveedores de tema, sesión y manejo de errores.
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';

@@ -1,3 +1,7 @@
+// Permite mover una ventana flotante arrastrándola con el ratón o el dedo,
+// con un ligero efecto de "bamboleo" al moverla rápido (como una pegatina),
+// que se endereza solo al soltarla.
+
 import { useCallback, useRef, useEffect } from 'react';
 
 const MAX_SHEAR_DEGREES = 3.5;
@@ -24,6 +28,9 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
     settleAnimation: null
   });
 
+  // Aplica la posición más reciente calculada durante el arrastre,
+  // junto con el pequeño efecto de inclinación/estiramiento según la
+  // velocidad del movimiento, sincronizado con el refresco de pantalla.
   const applyPendingPosition = useCallback(() => {
     const dragState = dragStateRef.current;
     dragState.animationFrameId = null;
@@ -56,6 +63,8 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
     windowRef.current.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0)${wobbleTransform}`;
   }, [windowRef]);
 
+  // Se llama mientras se mueve el ratón/dedo durante el arrastre: calcula
+  // la nueva posición (sin salir de la pantalla) y programa su aplicación.
   const handlePointerMove = useCallback((e) => {
     const dragState = dragStateRef.current;
     if (!dragState.isDragging || e.pointerId !== dragState.pointerId) return;
@@ -73,6 +82,9 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
     }
   }, [applyPendingPosition]);
 
+  // Termina el arrastre: fija la posición final de verdad, deshace el
+  // efecto de inclinación con una pequeña animación de "vuelta a la
+  // normalidad", y avisa del cambio de posición definitivo.
   const finishDrag = useCallback((pointerId) => {
     const dragState = dragStateRef.current;
     if (!dragState.isDragging || pointerId !== dragState.pointerId) return;
@@ -146,10 +158,13 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
     dragState.finalY = undefined;
   }, [onPositionChange, windowRef]);
 
+  // Se llama al soltar el ratón/dedo: termina el arrastre.
   const handlePointerUp = useCallback((e) => {
     finishDrag(e.pointerId);
   }, [finishDrag]);
 
+  // Se llama al pulsar sobre la ventana para empezar a arrastrarla: anota
+  // la posición de partida y activa el efecto visual de arrastre.
   const handlePointerDown = useCallback((e) => {
     if (isMaximized || e.button !== 0 || e.target.closest?.('.control-btn')) return;
 
@@ -189,6 +204,8 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
     e.preventDefault();
   }, [isMaximized, windowRef]);
 
+  // Al desmontar el componente, limpia cualquier animación o estilo que
+  // hubiera quedado a medias de un arrastre en curso.
   useEffect(() => {
     const dragState = dragStateRef.current;
     const node = windowRef.current;

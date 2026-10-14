@@ -1,6 +1,11 @@
+// Ventana del portfolio que muestra los idiomas y su nivel, usando puntos
+// rellenos (de 1 a 5) en vez de solo texto.
+
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
+// Traduce el texto del nivel de idioma (en varios idiomas: "nativo", "C2",
+// "básico"...) a un número de puntos rellenos, de 1 a 5.
 const LEVEL_MAP = {
     'native': 5,
     'nativo': 5,
@@ -29,6 +34,8 @@ const LEVEL_MAP = {
     '基礎': 1,
 };
 
+// Busca en el texto del nivel alguna palabra clave conocida y devuelve
+// cuántos puntos hay que rellenar (3 por defecto si no se reconoce ninguna).
 const getLevelDots = (levelStr) => {
     const lower = (levelStr || '').toLowerCase();
     for (const [key, dots] of Object.entries(LEVEL_MAP)) {

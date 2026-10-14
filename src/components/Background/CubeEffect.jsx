@@ -1,3 +1,7 @@
+// Efecto de fondo en 3D: un cubo con bordes redondeados y textura
+// metálica, rodeado de barras de luz, que gira solo y se puede orbitar
+// con el ratón en pantallas que lo permiten.
+
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -7,6 +11,8 @@ const CubeEffect = () => {
     const mountRef = useRef(null);
     const animationIdRef = useRef(null);
 
+    // Monta la escena 3D una sola vez: el cubo, las barras de luz, la
+    // cámara orbitable y el bucle de animación, con su limpieza al salir.
     useEffect(() => {
         if (!mountRef.current) return;
 

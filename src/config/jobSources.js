@@ -1,8 +1,14 @@
+// Lista única con los datos de las 20 páginas de empleo de donde se
+// recogen ofertas (color, URL para pedirlas, y cómo convertir cada oferta
+// al mismo formato común). Cualquier ventana que muestre ofertas lee de
+// aquí, para no tener que repetir esta información en cada sitio.
 /**
  * Centralized job sources registry — single source of truth.
  * All job-related components import from here instead of defining their own lists.
  */
 
+// Relaciona el nombre de cada fuente con el nombre que usa el sistema
+// central ("Core") que las recoge en vivo; solo NAV se llama distinto ahí.
 // Sources whose live harvesting is authoritative in Core. The dashboard keeps
 // the established tab names; NAV is the only namespace that differs in Core.
 export const CORE_SOURCE_BY_KEY = Object.freeze({
@@ -17,6 +23,10 @@ export const CORE_SOURCE_BY_KEY = Object.freeze({
   zentraljob: 'zentraljob',
 });
 
+// Las 20 fuentes de empleo. Cada una tiene su color, (a veces) la URL
+// donde pedir sus ofertas, y una función `normalize` que convierte el
+// formato propio de esa página al formato común que usa toda la app
+// (título, empresa, ubicación, fecha, url, etiquetas, si es remoto...).
 export const JOB_SOURCES = [
   {
     key: 'jobicy',
@@ -391,6 +401,8 @@ export const JOB_SOURCES = [
   },
 ];
 
+// Listas y mapas calculados a partir de JOB_SOURCES, listos para que los
+// usen las pestañas, los colores de las tarjetas, etc.
 // Derived lookups consumed by multiple components
 export const SOURCE_TAB_DATA = [
   { key: 'all', color: '#ffffff' },
@@ -408,6 +420,9 @@ const NORMALIZE_MAP = Object.fromEntries(
   JOB_SOURCES.map(({ key, normalize }) => [key, normalize])
 );
 
+// Convierte una oferta de cualquier fuente al formato común de la app,
+// usando la función `normalize` de esa fuente concreta (o unos valores
+// por defecto si la fuente no está en la lista).
 /**
  * Normalize a job from any source to a common schema.
  * Delegates to the source-specific normalize function from the registry.
@@ -429,6 +444,9 @@ export function normalizeJob(job, source) {
   };
 }
 
+// Igual que normalizeJob, pero usando el identificador estable que da el
+// sistema central ("Core") para la misma oferta, sin perder los valores
+// por defecto de cada pestaña (como "siempre remoto").
 /** Preserve Core's stable vacancy identity while retaining each tab's existing
  * display defaults (for example, remote-only portals). */
 export function normalizeCoreJob(job, source) {
@@ -440,6 +458,8 @@ export function normalizeCoreJob(job, source) {
   };
 }
 
+// Saca la lista de ofertas de la respuesta del servidor, sin importar si
+// viene como un array directo o envuelta en un campo "data" o "jobs".
 /**
  * Extract raw job array from different API response formats.
  */

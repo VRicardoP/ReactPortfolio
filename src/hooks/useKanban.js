@@ -14,6 +14,11 @@ const INITIAL_NEW_APP = { title: '', company: '', url: '' };
 /** Column keys in pipeline order (rendering metadata like colors lives in the component). */
 
 /**
+ * Maneja el panel "Kanban" de candidaturas: traerlas del servidor, moverlas
+ * de columna (arrastrando o con el teclado), crearlas y borrarlas —
+ * mostrando el cambio al instante en la pantalla y confirmándolo después
+ * con el servidor, sin que dos movimientos rápidos se desordenen entre sí.
+ *
  * Kanban pipeline state management and CRUD.
  * Handles applications fetch, drag-and-drop, card creation,
  * and keyboard-based column moves. Used by KanbanBoard.
@@ -53,6 +58,7 @@ const useKanban = () => {
     const flightsRef = useRef({});
 
     // Fetch all applications on mount
+    // Pide al servidor todas las candidaturas.
     const fetchApplications = useCallback(async () => {
         try {
             const response = await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/`);
@@ -69,6 +75,8 @@ const useKanban = () => {
     }, [fetchApplications]);
 
     // Listen for saves/applies from other windows (e.g. AIJobMatchWindow)
+    // Si se guarda una oferta desde otra ventana (como el buscador con IA),
+    // la añade aquí también sin tener que recargar todo.
     useEffect(() => {
         const handleExternalChange = (e) => {
             const app = e.detail;
@@ -142,16 +150,20 @@ const useKanban = () => {
         return flight.drained;
     }, [authenticatedFetch, revertStatus, t]);
 
+    // Se llama al empezar a arrastrar una tarjeta: anota cuál es.
     const handleDragStart = useCallback((e, id) => {
         setDraggedId(id);
         e.dataTransfer.effectAllowed = 'move';
     }, []);
 
+    // Se llama mientras se arrastra una tarjeta por encima de una columna,
+    // para permitir soltarla ahí.
     const handleDragOver = useCallback((e) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
     }, []);
 
+    // Se llama al soltar la tarjeta sobre una columna: cambia su estado a esa columna.
     const handleDrop = useCallback(async (e, targetStatus) => {
         e.preventDefault();
         if (!draggedId) return;
@@ -166,6 +178,7 @@ const useKanban = () => {
         await mutateStatus(draggedId, app.status, targetStatus);
     }, [draggedId, applications, mutateStatus]);
 
+    // Crea una candidatura nueva a mano en la columna indicada.
     const handleAdd = useCallback(async (status) => {
         if (!newApp.title.trim() || !newApp.company.trim()) return;
 
@@ -188,6 +201,7 @@ const useKanban = () => {
         }
     }, [authenticatedFetch, newApp, t]);
 
+    // Actualiza un campo del formulario de "añadir candidatura nueva".
     const handleNewAppChange = useCallback((field, value) => {
         setNewApp(prev => ({ ...prev, [field]: value }));
     }, []);
@@ -236,6 +250,7 @@ const useKanban = () => {
     }, [applications, mutateStatus]);
 
     // Group applications by status
+    // Agrupa las candidaturas por columna, para poder dibujar el tablero.
     const grouped = useMemo(() => {
         const groups = {};
         COLUMN_KEYS.forEach(key => { groups[key] = []; });

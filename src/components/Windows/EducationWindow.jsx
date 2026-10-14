@@ -1,7 +1,13 @@
+// Ventana del portfolio que muestra los estudios como una línea de tiempo:
+// cada uno se puede pulsar para ver su descripción, y si tiene documentos
+// adjuntos (como un título), se puede abrir o descargar desde aquí.
+
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
+// Decide qué tipo de estudio es (grado, bootcamp, certificado, curso) a
+// partir de su etiqueta explícita, o adivinándolo por palabras del título.
 const getEducationType = (edu) => {
     if (edu.type) return edu.type;
     const text = `${edu.title} ${edu.institution || ''}`.toLowerCase();
@@ -23,6 +29,7 @@ const EducationWindow = ({ data, initialPosition, onOpenDocument }) => {
     const [expandedIndex, setExpandedIndex] = useState(null);
     const documentLanguage = (i18n.language || 'en').split('-')[0] === 'es' ? 'es' : 'en';
 
+    // Abre o cierra la descripción completa de un estudio concreto.
     const toggleExpand = useCallback((index) => {
         setExpandedIndex(prev => prev === index ? null : index);
     }, []);

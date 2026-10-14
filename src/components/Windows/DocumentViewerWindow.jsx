@@ -1,3 +1,6 @@
+// Ventana flotante para ver un documento (como un PDF) dentro de la propia
+// página, con botones para abrirlo en otra pestaña, descargarlo o cerrarlo.
+
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 

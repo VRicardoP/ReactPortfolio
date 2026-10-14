@@ -1,3 +1,6 @@
+// Convierte los filtros de búsqueda de empleo (palabra, país, ciudad,
+// salario, remoto...) en los parámetros que hay que añadir a la URL para
+// pedirle al servidor esa búsqueda.
 /**
  * Build the query string for GET /api/v1/jobs/search from a normalized filter
  * object. Shared by useJobFilter and useSavedSearches, which each map their own

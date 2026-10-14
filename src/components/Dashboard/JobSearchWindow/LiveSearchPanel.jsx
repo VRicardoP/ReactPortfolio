@@ -1,3 +1,7 @@
+// Pestaña de "búsqueda en vivo": el formulario de filtros y la lista de
+// resultados que llegan directamente de JSearch. Solo dibuja la pantalla;
+// toda la lógica vive en el hook useJSearchLive (recibido como `live`).
+
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 

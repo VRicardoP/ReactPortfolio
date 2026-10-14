@@ -1,3 +1,7 @@
+// Ventana del panel que lista los colegios que hay que contactar a mano
+// (los que no se vigilan automáticamente): su correo, cada cuánto hay que
+// recordar escribirles, y un enlace a su web.
+
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -8,6 +12,7 @@ const SchoolManualContactsWindow = memo(({ initialPosition, schoolData }) => {
     const { t } = useTranslation();
     const { schools, loading, error } = schoolData;
 
+    // Se queda solo con los colegios marcados como "solo contacto manual".
     const manualSchools = useMemo(
         () => schools.filter((s) => s.monitoring_mode === 'manual_only'),
         [schools]

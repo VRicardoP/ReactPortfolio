@@ -1,3 +1,7 @@
+// El Terminal (easter egg) es como una consola de ordenador falsa: aquí
+// están todas las órdenes que entiende (help, about, skills, ls, cat...),
+// cada una como una función que recibe lo que escribió el usuario y
+// devuelve las líneas de texto que hay que mostrar.
 /**
  * Terminal command registry.
  *
@@ -29,6 +33,7 @@ const SKILL_NAME_PAD = 30;
 
 // --- Individual command handlers ---
 
+// Muestra la lista de órdenes disponibles con una breve descripción de cada una.
 function helpCommand(_args, { t }) {
   return [
     { text: t('terminal.helpHeader'), type: 'highlight' },
@@ -53,6 +58,7 @@ function helpCommand(_args, { t }) {
   ];
 }
 
+// Muestra un breve resumen de quién es el dueño del portfolio.
 function aboutCommand(_args, { portfolioData, name }) {
   return [
     { text: `> ${name}`, type: 'highlight' },
@@ -64,6 +70,7 @@ function aboutCommand(_args, { portfolioData, name }) {
   ];
 }
 
+// Dibuja las habilidades técnicas como barras de progreso de texto (#...).
 function skillsCommand(_args, { portfolioData, t }) {
   const skills = portfolioData?.techSkills;
   if (!skills) {
@@ -88,6 +95,7 @@ function skillsCommand(_args, { portfolioData, t }) {
   return output;
 }
 
+// Lista la experiencia laboral (puesto, empresa, fechas y descripción).
 function experienceCommand(_args, { portfolioData, t }) {
   const exp = portfolioData?.experience;
   if (!exp?.length) {
@@ -106,6 +114,7 @@ function experienceCommand(_args, { portfolioData, t }) {
   return output;
 }
 
+// Lista los estudios (título, centro y fechas).
 function educationCommand(_args, { portfolioData, t }) {
   const edu = portfolioData?.education;
   if (!edu?.length) {
@@ -127,6 +136,7 @@ function educationCommand(_args, { portfolioData, t }) {
   return output;
 }
 
+// Lista los "ficheros" falsos que se pueden abrir con el comando cat.
 function lsCommand() {
   const output = [{ text: '', type: 'info' }];
   for (const filename of Object.keys(FAKE_FILES)) {
@@ -136,6 +146,8 @@ function lsCommand() {
   return output;
 }
 
+// "Abre" uno de los ficheros falsos, ejecutando el comando real al que
+// equivale (p.ej. "about.txt" ejecuta el comando "about").
 function catCommand(args, { t, addLines, executeCommand }) {
   const filename = args[0];
   if (!filename) {
@@ -151,6 +163,7 @@ function catCommand(args, { t, addLines, executeCommand }) {
   return null;
 }
 
+// Dice quién es el usuario "conectado" a esta consola falsa (de broma).
 function whoamiCommand(_args, { t }) {
   return [
     { text: '', type: 'info' },
@@ -161,6 +174,7 @@ function whoamiCommand(_args, { t }) {
   ];
 }
 
+// Simula el comando "ping" de la vida real, con resultados inventados.
 function pingCommand(_args, { name, t }) {
   return [
     { text: `PING ${name.toLowerCase().replace(/\s+/g, '.')}.dev (127.0.0.1): 56 data bytes`, type: 'info' },
@@ -174,6 +188,8 @@ function pingCommand(_args, { name, t }) {
   ];
 }
 
+// Si se escribe "sudo hire_me" muestra un mensaje invitando a contactar;
+// cualquier otro uso de "sudo" da un error como en una consola real.
 function sudoCommand(args, { portfolioData, t }) {
   if (args.join('_').toLowerCase() === 'hire_me') {
     return [
@@ -188,6 +204,7 @@ function sudoCommand(args, { portfolioData, t }) {
   return [{ text: `sudo: ${args.join(' ')}: command not found`, type: 'error' }];
 }
 
+// Permite ver o cambiar el efecto de fondo animado escribiendo su nombre.
 function backgroundCommand(args, { backgroundEffect, setBackground, t }) {
   const sub = args[0]?.toLowerCase();
   if (!sub) {
@@ -218,6 +235,7 @@ function backgroundCommand(args, { backgroundEffect, setBackground, t }) {
   return [{ text: `  ${t('terminal.backgroundInvalid', { effect: sub })}`, type: 'error' }];
 }
 
+// Permite ver o cambiar el tema de color de la web escribiendo su nombre.
 function themeCommand(args, { themeName, availableThemes, setTheme, t }) {
   const sub = args[0]?.toLowerCase();
   if (!sub) {
@@ -248,6 +266,7 @@ function themeCommand(args, { themeName, availableThemes, setTheme, t }) {
   return [{ text: `  ${t('terminal.themeInvalid', { theme: sub })}`, type: 'error' }];
 }
 
+// Permite ver o cambiar el idioma de la web escribiendo su código.
 function langCommand(args, { i18n, t }) {
   const sub = args[0]?.toLowerCase();
   const currentLang = (i18n.language || 'en').split('-')[0];
@@ -279,6 +298,7 @@ function langCommand(args, { i18n, t }) {
   return [{ text: `  ${t('terminal.langInvalid', { lang: sub })}`, type: 'error' }];
 }
 
+// Muestra las órdenes escritas antes, numeradas.
 function historyCommand(_args, { history, t }) {
   if (history.length === 0) {
     return [{ text: t('terminal.noHistory'), type: 'info' }];
@@ -291,11 +311,13 @@ function historyCommand(_args, { history, t }) {
 
 const EXIT_DELAY_MS = 300;
 
+// Cierra la ventana del Terminal tras una breve pausa.
 function exitCommand(_args, { t, onClose }) {
   setTimeout(() => onClose?.(), EXIT_DELAY_MS);
   return [{ text: t('terminal.exiting'), type: 'info' }];
 }
 
+// Muestra un pequeño texto de presentación sobre este portfolio.
 function readmeCommand() {
   return [
     { text: '# README.md', type: 'highlight' },
@@ -310,6 +332,7 @@ function readmeCommand() {
   ];
 }
 
+// Borra toda la pantalla del Terminal.
 function clearCommand(_args, { setLines }) {
   setLines([]);
   return null;
@@ -318,6 +341,8 @@ function clearCommand(_args, { setLines }) {
 // --- Registry: maps command names to handlers ---
 // Aliases (bg, language) point to the same handler as the primary command.
 
+// Diccionario que relaciona lo que escribe el usuario con la función que
+// debe ejecutarse ("bg" y "language" son alias de "background" y "lang").
 const commandRegistry = {
   help: helpCommand,
   about: aboutCommand,
@@ -340,6 +365,8 @@ const commandRegistry = {
   clear: clearCommand,
 };
 
+// Dibujo del nombre "Vicente" hecho con caracteres de texto, que se
+// muestra al abrir el Terminal.
 export const ASCII_BANNER = [
   ' _    ___                  __       ',
   '| |  / (_)_______  ____  / /____   ',

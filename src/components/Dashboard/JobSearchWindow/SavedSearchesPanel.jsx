@@ -1,9 +1,15 @@
+// Pestaña de "búsquedas guardadas": la lista de búsquedas favoritas, un
+// formulario para crear una nueva, y los resultados de cada una se
+// despliegan debajo al pulsarla. Solo dibuja la pantalla; toda la lógica
+// vive en el hook useSavedSearches (recibido como `saved`).
+
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../context/ThemeContext';
 import { CompanyResearchName } from '../JobCardExtras';
 
 // Format filter summary for display (pure rendering helper)
+// Convierte los filtros de una búsqueda guardada en un texto corto y legible.
 const filterSummary = (filters) => {
     if (!filters) return '';
     const parts = [];

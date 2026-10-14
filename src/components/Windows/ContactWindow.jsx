@@ -1,3 +1,6 @@
+// Ventana del portfolio con los datos de contacto: correo (con botón para
+// copiarlo) y enlaces a redes sociales (LinkedIn, GitLab).
+
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
@@ -11,6 +14,7 @@ const ContactWindow = ({ data, initialPosition }) => {
     const [copied, setCopied] = useState(false);
     const { t } = useTranslation();
 
+    // Copia el correo al portapapeles y muestra "Copiado" un par de segundos.
     const handleCopyEmail = useCallback(() => {
         if (data?.email) {
             navigator.clipboard.writeText(data.email)

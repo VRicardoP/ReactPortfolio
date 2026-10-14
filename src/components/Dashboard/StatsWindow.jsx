@@ -1,3 +1,6 @@
+// Ventana del panel que muestra las estadísticas de visitantes: totales,
+// países y ciudades distintas, y el top 5 de países.
+
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';

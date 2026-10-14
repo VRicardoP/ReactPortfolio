@@ -1,3 +1,7 @@
+// Ventana de la "terminal" escondida (easter egg): dibuja la pantalla de
+// texto y la casilla donde escribir comandos; toda la lógica de los
+// comandos vive en el hook useTerminalCommands.
+
 import { memo, useRef, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
@@ -13,6 +17,7 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
   const inputRef = useRef(null);
 
   // Scroll to bottom when lines change
+  // Baja el scroll hasta el final cada vez que aparece una línea nueva.
   useEffect(() => {
     if (outputRef.current) {
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
@@ -20,10 +25,13 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
   }, [lines]);
 
   // Auto-focus input on mount
+  // Pone el cursor listo para escribir en cuanto se abre la terminal.
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
+  // Si se hace clic en cualquier parte de la terminal, vuelve a poner el
+  // foco en la casilla de escribir.
   const handleBodyClick = useCallback(() => {
     inputRef.current?.focus();
   }, []);

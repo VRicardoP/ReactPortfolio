@@ -1,3 +1,6 @@
+// Ventana del portfolio que muestra los logros destacados (como tarjetas
+// con un icono, un número y su descripción).
+
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 

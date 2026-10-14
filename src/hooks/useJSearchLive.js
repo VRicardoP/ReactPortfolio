@@ -19,6 +19,8 @@ const INITIAL_FORM_FIELDS = {
  * search execution, and salary formatting.
  * Used by JSearchLiveWindow.
  */
+// Maneja la ventana de búsqueda en vivo de JSearch: el formulario, el tiempo
+// de espera entre búsquedas (para no saturar la API), y cómo formatear el salario.
 const useJSearchLive = () => {
     const { t } = useTranslation();
     const { authenticatedFetch } = useAuth();
@@ -37,12 +39,14 @@ const useJSearchLive = () => {
     const searchGenerationRef = useRef(0);
 
     // Cleanup timer on unmount
+    // Al desmontar el componente, detiene el contador del tiempo de espera.
     useEffect(() => {
         return () => {
             if (timerRef.current) clearInterval(timerRef.current);
         };
     }, []);
 
+    // Pone en marcha la cuenta atrás que impide buscar de nuevo demasiado pronto.
     const startCooldown = useCallback(() => {
         setCooldown(true);
         setCooldownTimer(COOLDOWN_SECONDS);
@@ -62,10 +66,13 @@ const useJSearchLive = () => {
         }, 1000);
     }, []);
 
+    // Actualiza un campo del formulario de búsqueda.
     const handleFieldChange = useCallback((field, value) => {
         setFormFields(prev => ({ ...prev, [field]: value }));
     }, []);
 
+    // Lanza la búsqueda con los filtros actuales del formulario, y descarta
+    // el resultado si mientras tanto se ha lanzado una búsqueda más reciente.
     const handleSearch = useCallback(async () => {
         if (cooldown || !formFields.query.trim()) return;
 
@@ -101,6 +108,8 @@ const useJSearchLive = () => {
      * @param {Object} job — job object with optional salary fields
      * @returns {string|null} formatted salary string or null
      */
+    // Da el rango de salario de una oferta en un texto legible, o nada si no
+    // tiene datos de salario.
     const formatSalary = useCallback((job) => {
         const minSalary = job.job_min_salary || job.min_salary;
         const maxSalary = job.job_max_salary || job.max_salary;

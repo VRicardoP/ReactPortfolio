@@ -1,3 +1,6 @@
+// Efecto de fondo tipo "Matrix": columnas de caracteres que caen por la
+// pantalla, dibujadas a mano fotograma a fotograma en un canvas 2D.
+
 import { useEffect, useRef } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -12,6 +15,8 @@ const MatrixEffect = () => {
         themeRef.current = theme;
     }, [theme]);
 
+    // Prepara el canvas y arranca el bucle de dibujo, reiniciando las
+    // columnas cada vez que cambia el tamaño de la ventana.
     useEffect(() => {
         // Initialize themeRef before the animation loop starts
         themeRef.current = theme;
@@ -51,6 +56,8 @@ const MatrixEffect = () => {
         resize();
         window.addEventListener('resize', resize);
 
+        // Dibuja un fotograma: borra la pantalla y vuelve a pintar cada
+        // columna de caracteres un poco más abajo que en el fotograma anterior.
         const draw = () => {
             // completely clear the canvas
             ctx.fillStyle = '#000000';

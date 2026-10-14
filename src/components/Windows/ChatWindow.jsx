@@ -1,3 +1,6 @@
+// Ventana flotante del chatbot: solo pone el marco de la ventana alrededor
+// del contenido real del chat (que vive en ChatContent).
+
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 import ChatContent from './ChatContent';

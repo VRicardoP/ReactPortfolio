@@ -1,3 +1,7 @@
+// Ventana del panel que muestra el mapa de calor de clics (dibujado a
+// mano en un canvas), además de gráficos de tiempo de atención por
+// ventana, distribución de clics, y sesiones por día.
+
 import { memo, useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bar, Doughnut } from 'react-chartjs-2';
@@ -27,6 +31,8 @@ ChartJS.register(
 );
 
 /** Render heatmap dots on a canvas using radial gradients. */
+// Dibuja a mano, sobre un canvas, los puntos de calor: más clics en una
+// zona significa un punto más grande y más intenso (azul → verde → naranja).
 function renderHeatmap(canvas, points, theme) {
     const ctx = canvas.getContext('2d');
     const w = canvas.width;
@@ -88,6 +94,7 @@ function renderHeatmap(canvas, points, theme) {
 }
 
 /** Format milliseconds as human-readable duration. */
+// Convierte milisegundos a un texto legible (ms, segundos o minutos).
 function formatDuration(ms) {
     if (ms == null) return 'N/A';
     if (ms < 1000) return `${Math.round(ms)}ms`;
@@ -96,6 +103,7 @@ function formatDuration(ms) {
 }
 
 /** Clean window ID for display (e.g. "profile-window" → "Profile"). */
+// Convierte el identificador interno de una ventana en un nombre legible.
 function cleanWindowId(id) {
     return (id || 'unknown')
         .replace('-window', '')
@@ -112,6 +120,7 @@ const HeatmapWindow = memo(({ initialPosition }) => {
     const containerRef = useRef(null);
 
     // Draw heatmap when data or tab changes
+    // Ajusta el tamaño del canvas al del contenedor y vuelve a dibujar el mapa de calor.
     const drawHeatmap = useCallback(() => {
         if (canvasRef.current && containerRef.current) {
             const rect = containerRef.current.getBoundingClientRect();
@@ -125,6 +134,7 @@ const HeatmapWindow = memo(({ initialPosition }) => {
         }
     }, [heatmapData, theme]);
 
+    // Redibuja el mapa de calor al entrar en su pestaña o cuando cambian los datos.
     useEffect(() => {
         if (activeTab !== 'heatmap') return;
         // Small delay to let the container size settle
@@ -133,6 +143,7 @@ const HeatmapWindow = memo(({ initialPosition }) => {
     }, [activeTab, drawHeatmap]);
 
     // ResizeObserver for responsive canvas
+    // Vuelve a dibujar el mapa de calor si el contenedor cambia de tamaño.
     useEffect(() => {
         if (activeTab !== 'heatmap' || !containerRef.current) return;
         const observer = new ResizeObserver(drawHeatmap);
@@ -141,6 +152,7 @@ const HeatmapWindow = memo(({ initialPosition }) => {
     }, [activeTab, drawHeatmap]);
 
     // Chart.js configs
+    // Opciones del gráfico de barras horizontales (tiempo de atención por ventana).
     const barOptions = useMemo(() => ({
         indexAxis: 'y',
         responsive: true,
@@ -174,6 +186,7 @@ const HeatmapWindow = memo(({ initialPosition }) => {
         }
     }), [theme]);
 
+    // Opciones del gráfico de tarta (distribución de clics).
     const doughnutOptions = useMemo(() => ({
         responsive: true,
         maintainAspectRatio: false,
@@ -196,6 +209,7 @@ const HeatmapWindow = memo(({ initialPosition }) => {
         }
     }), [theme]);
 
+    // Opciones del gráfico de barras de sesiones por día.
     const timelineOptions = useMemo(() => ({
         responsive: true,
         maintainAspectRatio: false,
@@ -223,6 +237,7 @@ const HeatmapWindow = memo(({ initialPosition }) => {
     }), [theme]);
 
     // Chart data
+    // Prepara los datos del gráfico de tiempo de atención por ventana (top 10).
     const focusChartData = useMemo(() => {
         if (!engagementStats?.window_focus_times?.length) return null;
         const items = engagementStats.window_focus_times.slice(0, 10);
@@ -237,6 +252,7 @@ const HeatmapWindow = memo(({ initialPosition }) => {
         };
     }, [engagementStats, theme]);
 
+    // Prepara los datos del gráfico de distribución de clics (top 8 zonas).
     const clicksChartData = useMemo(() => {
         if (!engagementStats?.clicks_by_area?.length) return null;
         const items = engagementStats.clicks_by_area.slice(0, 8);
@@ -251,6 +267,7 @@ const HeatmapWindow = memo(({ initialPosition }) => {
         };
     }, [engagementStats, theme]);
 
+    // Prepara los datos del gráfico de sesiones por día (últimos 14 días).
     const timelineData = useMemo(() => {
         if (!engagementStats?.sessions_timeline?.length) return null;
         const items = engagementStats.sessions_timeline.slice(-14);

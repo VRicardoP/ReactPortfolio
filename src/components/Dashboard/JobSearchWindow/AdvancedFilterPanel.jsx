@@ -1,3 +1,8 @@
+// Pestaña de "filtro avanzado": un formulario con varios campos (texto,
+// país, ciudad, salario, remoto) y la lista de resultados con botón de
+// "cargar más". Solo dibuja la pantalla; toda la lógica vive en el hook
+// useJobFilter (recibido como `filter`).
+
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../context/ThemeContext';
@@ -22,6 +27,8 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
     // Single pagination contract (local offset engine AND core keyset feed):
     // `total` is null when the backend cannot count the corpus (cursor mode) —
     // show what we have, with a "+" while more pages exist.
+    // Calcula el texto de "cuántos resultados hay": el número exacto si se
+    // conoce, o "lo que hay cargado + un símbolo +" si no se puede contar el total.
     const resultCountLabel = total != null
         ? `${total}`
         : `${results.length}${hasMore ? '+' : ''}`;

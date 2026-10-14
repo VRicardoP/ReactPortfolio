@@ -1,3 +1,7 @@
+// Controla el aspecto visual de toda la aplicación: qué colores se usan
+// (cian, plata o ámbar), qué efecto de fondo se muestra, y recuerda la
+// elección del visitante para la próxima vez que visite la página.
+
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 // definition of available themes
@@ -80,11 +84,15 @@ const BACKGROUND_EFFECTS = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', '
 
 const CURSOR_SIZE = 26;
 
+// Construye el dibujo de un cursor del ratón a medida (como una imagen
+// pequeña), con el color del tema actual, para usarlo en CSS.
 const cursorValue = (body, color, hotspot, fallback) => {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${CURSOR_SIZE}" height="${CURSOR_SIZE}" viewBox="0 0 32 32"><g stroke-linecap="round" stroke-linejoin="round">${body.replaceAll('COLOR', color)}</g></svg>`;
     return `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${hotspot}, ${fallback}`;
 };
 
+// Genera todos los cursores personalizados (normal, mano, agarrar, cambiar
+// tamaño...) coloreados según el tema elegido.
 const themedCursors = (color) => ({
     '--cursor-default': cursorValue('<path d="M3 2v24l6-7 5 11 4-2-5-10h10z" fill="#050505" stroke="COLOR" stroke-width="1.5"/>', color, '2 2', 'auto'),
     '--cursor-pointer': cursorValue('<circle cx="16" cy="16" r="7" fill="#050505" stroke="COLOR" stroke-width="1.5"/><path d="M16 3v7M16 22v7M3 16h7M22 16h7" stroke="COLOR" stroke-width="1.5"/>', color, '13 13', 'pointer'),
@@ -96,6 +104,8 @@ const themedCursors = (color) => ({
     '--cursor-resize-nesw': cursorValue('<path d="M27 5L5 27M27 5h-9M27 5v9M5 27h9M5 27v-9" stroke="COLOR" stroke-width="1.5"/>', color, '13 13', 'nesw-resize'),
 });
 
+// Envuelve toda la aplicación y ofrece el tema de color y el efecto de fondo
+// actuales, además de las funciones para cambiarlos.
 export const ThemeProvider = ({ children }) => {
     const [themeName, setThemeName] = useState(() => {
         // retrieve saved theme from localStorage
@@ -111,6 +121,7 @@ export const ThemeProvider = ({ children }) => {
 
     const theme = useMemo(() => themes[themeName], [themeName]);
 
+    // Cambia el tema de color y lo recuerda para la próxima visita.
     const setTheme = useCallback((name) => {
         if (themes[name]) {
             setThemeName(name);
@@ -118,6 +129,7 @@ export const ThemeProvider = ({ children }) => {
         }
     }, []);
 
+    // Pasa al siguiente tema de color de la lista (para el botón de "cambiar tema").
     const cycleTheme = useCallback(() => {
         const themeNames = Object.keys(themes);
         const currentIndex = themeNames.indexOf(themeName);
@@ -125,6 +137,7 @@ export const ThemeProvider = ({ children }) => {
         setTheme(themeNames[nextIndex]);
     }, [themeName, setTheme]);
 
+    // Cambia el efecto de fondo y lo recuerda para la próxima visita.
     const setBackground = useCallback((effect) => {
         if (BACKGROUND_EFFECTS.includes(effect)) {
             setBackgroundEffect(effect);
@@ -132,6 +145,7 @@ export const ThemeProvider = ({ children }) => {
         }
     }, []);
 
+    // Pasa al siguiente efecto de fondo de la lista.
     const cycleBackground = useCallback(() => {
         const currentIndex = BACKGROUND_EFFECTS.indexOf(backgroundEffect);
         const nextIndex = (currentIndex + 1) % BACKGROUND_EFFECTS.length;
@@ -172,6 +186,8 @@ export const ThemeProvider = ({ children }) => {
     );
 };
 
+// Da acceso, desde cualquier componente, al tema de color y al efecto de
+// fondo actuales, y a las funciones para cambiarlos.
 // eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = () => {
     const context = useContext(ThemeContext);

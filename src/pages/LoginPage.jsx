@@ -1,3 +1,7 @@
+// Página de inicio de sesión del panel de administración: formulario de
+// usuario/contraseña, y un aviso si la sesión anterior caducó por
+// inactividad.
+
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +19,7 @@ const LoginPage = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
+    // Si la sesión anterior se cerró sola por estar inactivo, lo avisa aquí.
     // Show inactivity message if redirected after timeout
     useEffect(() => {
         const reason = sessionStorage.getItem('logoutReason');
@@ -24,6 +29,8 @@ const LoginPage = () => {
         }
     }, [t]);
 
+    // Valida que usuario y contraseña no estén vacíos, y si todo está bien
+    // intenta iniciar sesión; si funciona, va al panel; si no, muestra el error.
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');

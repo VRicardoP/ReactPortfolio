@@ -1,3 +1,7 @@
+// Ventana de bienvenida que aparece centrada al entrar en el portfolio,
+// explicando cómo mover, cambiar de tamaño, minimizar y maximizar las
+// ventanas. Se puede cerrar con un botón y no vuelve a aparecer hasta recargar.
+
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
@@ -7,6 +11,7 @@ const WelcomeWindow = ({ portfolioData }) => {
     const [isVisible, setIsVisible] = useState(true);
     const { t } = useTranslation();
 
+    // Calcula la posición para que la ventana salga centrada en la pantalla.
     const initialPosition = useMemo(() => ({
         x: (window.innerWidth - 750) / 2,
         y: (window.innerHeight - 550) / 2

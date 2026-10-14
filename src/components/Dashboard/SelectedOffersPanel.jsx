@@ -1,3 +1,7 @@
+// Ventana que junta el tablero Kanban de candidaturas con la biblioteca de
+// documentos generados y su vista previa: es el panel donde se gestionan
+// las ofertas guardadas y se generan/consultan sus currículums y cartas.
+
 import { memo, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
@@ -15,24 +19,32 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
     const [previewAppId, setPreviewAppId] = useState(null);
 
     // Pre-load document status for all applications so icon buttons render correctly
+    // Al abrir el panel, carga de antemano qué documentos tiene cada
+    // candidatura, para que los iconos de los botones salgan ya correctos.
     useEffect(() => {
         docGen.fetchAllDocuments();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+    // Abre la vista previa de los documentos de una candidatura.
     const handleViewDocs = useCallback((appId) => {
         docGen.fetchDocuments(appId);
         setPreviewAppId(appId);
     }, [docGen]);
 
+    // Lanza la generación de documentos, ignorando el error aquí (ya se
+    // muestra en el estado del hook).
     const handleGenerate = useCallback(
         (...args) => docGen.generate(...args).catch(() => null),
         [docGen],
     );
 
+    // Cierra la vista previa de documentos.
     const handleClosePreview = useCallback(() => {
         setPreviewAppId(null);
     }, []);
 
+    // Descarga en PDF el currículum y/o la carta de una candidatura,
+    // consultándolos primero si no se tenían ya en memoria.
     const handleDownloadPdf = useCallback(async (appId) => {
         let docs = docGen.getDocumentsFor(appId);
         if (!docs) {
@@ -46,6 +58,7 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
         }
     }, [docGen]);
 
+    // Si se borra la candidatura cuya vista previa está abierta, la cierra.
     const handleDeleteApp = useCallback((appId) => {
         if (previewAppId === appId) setPreviewAppId(null);
     }, [previewAppId]);

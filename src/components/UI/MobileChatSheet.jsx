@@ -1,3 +1,7 @@
+// En móvil, el chat no se muestra como ventana flotante: aquí es un botón
+// redondo fijo que, al tocarlo, abre el chat como una hoja que sube desde
+// abajo, ocupando toda la pantalla.
+
 import { useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../../styles/mobile.css';

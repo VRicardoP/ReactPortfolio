@@ -1,3 +1,7 @@
+// Ventana que junta las 20 fuentes de empleo en un solo tablero con
+// pestañas (una por fuente, más "todas"), con buscador, orden, paginación
+// y las tarjetas de oferta con botón de guardar.
+
 import { memo, useMemo, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
@@ -16,6 +20,7 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
     const { openedIds, handleSave, savedIds } = useJobApplication();
 
     // Use pre-normalized data from useDashboardData (normalized at fetch time)
+    // Reorganiza las ofertas ya normalizadas, agrupadas por fuente.
     const normalizedBySource = useMemo(() => {
         if (!jobData) return {};
         const result = {};
@@ -26,6 +31,7 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
     }, [jobData]);
 
     // Count per source for badges
+    // Cuenta cuántas ofertas hay por fuente (y el total), para las etiquetas de las pestañas.
     const sourceCounts = useMemo(() => {
         const counts = {};
         let total = 0;
@@ -38,6 +44,7 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
     }, [normalizedBySource]);
 
     // Jobs for current tab
+    // Las ofertas que corresponden a la pestaña seleccionada.
     const currentJobs = useMemo(() => {
         if (activeTab === 'all') {
             return Object.values(normalizedBySource).flat();
@@ -46,6 +53,8 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
     }, [activeTab, normalizedBySource]);
 
     // Filter by search
+    // Filtra las ofertas de la pestaña actual por el texto buscado (título,
+    // empresa o ubicación).
     const filteredJobs = useMemo(() => {
         if (!search) return currentJobs;
         const q = search.toLowerCase();
@@ -59,17 +68,21 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
     const { sortBy, handleSortChange, pagedJobs, page, totalPages, from, to, setPage } =
         useJobBoardControls(filteredJobs, { dateField: 'date', companyField: 'company', titleField: 'title' });
 
+    // Cambia de pestaña, volviendo a la primera página y borrando la búsqueda.
     const handleTabChange = useCallback((key) => {
         setActiveTab(key);
         setPage(0);
         setSearch('');
     }, [setPage]);
 
+    // Da el color asociado a una fuente de empleo.
     const sourceColor = useCallback((source) => {
         return SOURCE_COLOR_MAP[source] || theme.primary;
     }, [theme.primary]);
 
     // WAI-ARIA tab keyboard navigation (ArrowLeft/Right, Home/End)
+    // Permite cambiar de pestaña con las flechas del teclado, como pide la
+    // accesibilidad.
     const handleTabKeyDown = useCallback((e) => {
         const tabs = SOURCE_TAB_DATA;
         const currentIdx = tabs.findIndex(t => t.key === activeTab);

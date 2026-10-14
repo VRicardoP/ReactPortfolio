@@ -8,6 +8,8 @@ const SKILLS_TOGGLE_URL = `${BACKEND_URL}/api/v1/cv-profiles/skills`;
  * Extracts and manages the aggregated missing skills from AI match results.
  * Provides toggle functionality to add/remove skills from the CV in the database.
  */
+// Junta todas las habilidades que faltan en las ofertas analizadas, y
+// permite añadirlas o quitarlas del currículum guardado con un solo clic.
 const useSkillsGap = (results) => {
   const { authenticatedFetch } = useAuth();
   const [addedSkills, setAddedSkills] = useState(new Set());
@@ -15,6 +17,8 @@ const useSkillsGap = (results) => {
   const [lastError, setLastError] = useState(null);
 
   // Aggregate all unique missing skills, exclude already-added, sorted alphabetically
+  // Reúne todas las habilidades que faltan (sin repetir y sin las que ya se
+  // hayan añadido), ordenadas alfabéticamente.
   const missingSkills = useMemo(() => {
     const skillSet = new Set();
     for (const job of results) {
@@ -29,6 +33,7 @@ const useSkillsGap = (results) => {
     return [...skillSet].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
   }, [results, addedSkills]);
 
+  // Añade o quita una habilidad del currículum guardado en el servidor.
   const toggleSkill = useCallback(async (skillName) => {
     const isAdded = addedSkills.has(skillName);
     setTogglingSkill(skillName);

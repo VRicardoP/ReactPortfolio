@@ -1,3 +1,7 @@
+// Página pública del portfolio: carga los datos del CV, y muestra todas
+// las ventanas (perfil, experiencia, estudios, chat, etc.) en escritorio
+// como ventanas flotantes, o apiladas en secciones desplegables en móvil.
+
 import { lazy, Suspense, memo, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import BackgroundEffect from './components/Background/BackgroundEffect';
@@ -46,6 +50,8 @@ const WindowLoader = memo(() => (
 
 WindowLoader.displayName = 'WindowLoader';
 
+// Versión de escritorio: pinta todas las ventanas del portfolio como
+// ventanas flotantes que se pueden arrastrar, redimensionar y minimizar.
 // Desktop: floating windows with drag/resize/minimize
 const DesktopPortfolioContent = memo(({ portfolioData }) => {
   const [showTerminal, setShowTerminal] = useState(false);
@@ -66,6 +72,8 @@ const DesktopPortfolioContent = memo(({ portfolioData }) => {
 
   useWindowLayout(portfolioWindowIds, 500);
 
+  // Al pulsar Ctrl+` o Ctrl+ñ se abre o cierra la ventana del Terminal
+  // (el "huevo de pascua" escondido).
   // Ctrl+` or Ctrl+ñ toggles the terminal easter egg
   const handleKeyDown = useCallback((e) => {
     if (e.ctrlKey && (e.key === 'ñ' || e.key === '`')) {
@@ -162,6 +170,8 @@ const DesktopPortfolioContent = memo(({ portfolioData }) => {
 
 DesktopPortfolioContent.displayName = 'DesktopPortfolioContent';
 
+// Versión móvil: las mismas secciones del portfolio, pero como tarjetas
+// que se pueden desplegar en una página con scroll normal.
 // Mobile: scrollable sections with collapsible cards
 const MobilePortfolioLayout = memo(({ portfolioData }) => {
   const { t } = useTranslation();
@@ -229,6 +239,9 @@ const MobilePortfolioLayout = memo(({ portfolioData }) => {
 
 MobilePortfolioLayout.displayName = 'MobilePortfolioLayout';
 
+// Componente raíz de la página pública: decide si el visitante está en
+// móvil o escritorio, carga los datos del portfolio, y registra la
+// visita para las estadísticas.
 function App() {
   const { t, i18n } = useTranslation();
   const isMobile = useIsMobile();
@@ -237,11 +250,13 @@ function App() {
   useVisitorTracking();
   useInteractionTracking();
 
+  // Mantiene el atributo "lang" de la página sincronizado con el idioma elegido.
   // Sync html lang attribute with current i18n language
   useEffect(() => {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
 
+  // Pequeña pista en la consola del navegador sobre el Terminal escondido.
   // subtle console hint about the terminal easter egg
   useEffect(() => {
     if (import.meta.env.DEV) console.log('%c>_ Terminal access available. Try Ctrl+` or Ctrl+ñ', 'color: #00ffff; font-family: monospace; font-size: 12px;');

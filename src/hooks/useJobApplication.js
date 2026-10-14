@@ -53,6 +53,7 @@ export default function useJobApplication() {
         }
     }, [authenticatedFetch]);
 
+    // Marca una oferta como "me interesa".
     const handleInterested = useCallback(async (job) => {
         if (interestedIds.has(job.id)) return;
         if (await registrar(job, 'interested')) {
@@ -60,6 +61,7 @@ export default function useJobApplication() {
         }
     }, [registrar, interestedIds]);
 
+    // Guarda una oferta para revisarla más tarde.
     const handleSave = useCallback(async (job) => {
         if (savedIds.has(job.id)) return;
         if (await registrar(job, 'saved')) {
@@ -67,6 +69,7 @@ export default function useJobApplication() {
         }
     }, [registrar, savedIds]);
 
+    // Abre la oferta en una pestaña nueva, y la guarda para no perderla de vista.
     const handleOpenOffer = useCallback(async (job) => {
         if (job.url) {
             window.open(job.url, '_blank', 'noopener,noreferrer');

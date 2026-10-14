@@ -1,3 +1,7 @@
+// Al cargar la página, coloca todas las ventanas en una cuadrícula ordenada
+// y luego las va minimizando una a una con una pequeña animación, en vez de
+// dejarlas todas abiertas y amontonadas encima.
+
 import { useEffect, useRef, useCallback } from 'react';
 import { useWindowContext } from '../context/WindowContext';
 import { showToast } from '../components/UI/Toast';
@@ -43,6 +47,9 @@ const useWindowLayout = (windowIds, delay = 3000) => {
   const timerIdsRef = useRef([]);
 
   // the function that animates minimizing the windows
+  // Coloca primero todas las ventanas en una cuadrícula visible, y después
+  // las minimiza una a una (con una pequeña pausa entre cada una) hasta
+  // formar una fila de "pastillas" en la parte superior de la pantalla.
   const animateWindows = useCallback(() => {
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
@@ -104,6 +111,7 @@ const useWindowLayout = (windowIds, delay = 3000) => {
   }, [windowIds, toggleMinimize, updatePosition]);
 
   // Clean up all timers on unmount only
+  // Al desmontar el componente, cancela todos los temporizadores pendientes.
   useEffect(() => {
     return () => {
       timerIdsRef.current.forEach(clearTimeout);
@@ -114,6 +122,8 @@ const useWindowLayout = (windowIds, delay = 3000) => {
     };
   }, []);
 
+  // Cuando todas las ventanas ya existen, espera un momento y lanza la
+  // animación de colocarlas en orden y minimizarlas (solo una vez).
   useEffect(() => {
     // if animation already ran or is in progress, don't restart
     if (hasAnimated.current || animationStartedRef.current) return;
@@ -137,6 +147,8 @@ const useWindowLayout = (windowIds, delay = 3000) => {
   }, [windows, windowIds, delay, animateWindows]);
 
   // if the screen size changes reposition the windows
+  // Si se cambia el tamaño de la ventana del navegador, recoloca las
+  // "pastillas" minimizadas para que sigan encajando bien.
   useEffect(() => {
     if (!hasAnimated.current) return;
 

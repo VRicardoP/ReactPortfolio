@@ -1,3 +1,7 @@
+// Ventana principal del perfil: muestra el nombre, el título, unos datos
+// rápidos, un resumen (normal o "para reclutadores"), y un menú para
+// descargar el currículum en PDF o JSON.
+
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
@@ -17,6 +21,7 @@ const RECRUITER_SECTIONS = [
     { labelKey: 'profile.recruiterKeyMetrics', itemKeys: ['profile.recruiterKeyMetrics1', 'profile.recruiterKeyMetrics2', 'profile.recruiterKeyMetrics3'] },
 ];
 
+// Descarga un fichero desde una URL y lo guarda en el dispositivo del visitante.
 const downloadFile = async (url, filename) => {
     let objectUrl;
     let anchor;
@@ -47,6 +52,7 @@ const ProfileWindow = ({ data, initialPosition }) => {
     const cvMenuRef = useRef(null);
 
     // Close CV menu on outside click
+    // Cierra el menú de descarga del currículum si se hace clic fuera de él.
     useEffect(() => {
         if (!showCvMenu) return;
         const handleClickOutside = (e) => {
@@ -58,6 +64,7 @@ const ProfileWindow = ({ data, initialPosition }) => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [showCvMenu]);
 
+    // Descarga el currículum en el formato elegido (PDF o JSON).
     const handleDownload = useCallback(async (format) => {
         const lang = (i18n.language || 'en').split('-')[0];
         const isPdf = format === 'pdf';

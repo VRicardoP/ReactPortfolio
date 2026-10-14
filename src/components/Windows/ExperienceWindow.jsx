@@ -1,3 +1,7 @@
+// Ventana del portfolio que muestra la experiencia laboral como una línea
+// de tiempo: cada puesto se puede pulsar para ver u ocultar su descripción
+// completa, y arriba hay una barra que marca el rango de años.
+
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
@@ -6,6 +10,7 @@ const ExperienceWindow = ({ data, initialPosition }) => {
     const { t } = useTranslation();
     const [expandedIndex, setExpandedIndex] = useState(null);
 
+    // Abre o cierra la descripción completa de un puesto concreto.
     const toggleExpand = useCallback((index) => {
         setExpandedIndex(prev => prev === index ? null : index);
     }, []);
@@ -13,6 +18,8 @@ const ExperienceWindow = ({ data, initialPosition }) => {
     if (!data) return null;
 
     // Extract year range for career span bar
+    // Saca el primer y el último año de toda la experiencia, para dibujar
+    // la barra que muestra el rango total de la carrera.
     const dates = data.experience.map(exp => {
         const match = exp.date.match(/\d{4}/g);
         return match ? match.map(Number) : [];

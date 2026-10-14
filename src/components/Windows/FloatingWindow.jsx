@@ -1,3 +1,7 @@
+// Es el "marco" que usan todas las ventanas (del portfolio y del panel):
+// en el escritorio se puede arrastrar, cambiar de tamaño, minimizar y
+// maximizar; en el móvil se convierte en una sección plegable sencilla.
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useWindowContext } from '../../context/WindowContext';
 import useDraggable from '../../hooks/useDraggable';
@@ -7,6 +11,7 @@ import Tooltip from '../UI/Tooltip';
 import '../../styles/floating-window.css';
 
 // Desktop: the original floating window with drag, resize, minimize, maximize
+// Versión de escritorio: la ventana flotante de verdad, con todos sus controles.
 const FloatingWindowDesktop = ({
     id,
     title,
@@ -32,6 +37,7 @@ const FloatingWindowDesktop = ({
     const windowState = windows[id];
 
     // when the window is created register it in the system (runs once on mount)
+    // Da de alta esta ventana en el sistema al crearla, y la retira al desmontarse.
     useEffect(() => {
         registerWindow(id, {
             position: initialPosition,
@@ -78,6 +84,7 @@ const FloatingWindowDesktop = ({
     );
 
     // if I click on the window bring it to the front
+    // Al hacer clic en la ventana, la trae al frente (salvo que sea un botón de control).
     const handleWindowClick = (e) => {
         // if it's a minimize or maximize button don't do anything here
         if (e.target.classList.contains('control-btn')) {
@@ -87,6 +94,7 @@ const FloatingWindowDesktop = ({
     };
 
     // keyboard handler for accessibility
+    // Permite minimizar la ventana con la tecla Escape.
     const handleKeyDown = (e) => {
         if (e.key === 'Escape') {
             e.preventDefault();
@@ -95,6 +103,7 @@ const FloatingWindowDesktop = ({
     };
 
     // when I minimize or restore the window
+    // Minimiza o restaura la ventana; al restaurarla, la trae al frente.
     const handleToggleMinimize = (e) => {
         e.stopPropagation();
         toggleMinimize(id);
@@ -105,6 +114,8 @@ const FloatingWindowDesktop = ({
     };
 
     // when maximizing from minimized, fit to content
+    // Maximiza la ventana; si estaba minimizada, en vez de maximizar la
+    // ajusta al tamaño ideal para su contenido.
     const handleToggleMaximize = useCallback((e) => {
         e.stopPropagation();
 
@@ -225,11 +236,15 @@ const FloatingWindowDesktop = ({
 };
 
 // Mobile: a collapsible section that replaces the floating window
+// Versión móvil: en vez de una ventana flotante, una sección que se puede
+// abrir y cerrar tocándola (como un acordeón).
 const FloatingWindowMobile = ({ id, title, children, defaultExpanded = false }) => {
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
+    // Abre o cierra la sección.
     const handleToggle = () => setIsExpanded(prev => !prev);
 
+    // Permite abrir/cerrar la sección también con el teclado (Enter o espacio).
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -266,6 +281,7 @@ const FloatingWindowMobile = ({ id, title, children, defaultExpanded = false }) 
 };
 
 // Dispatcher: picks the right component based on screen size
+// Elige qué versión mostrar (escritorio o móvil) según el tamaño de pantalla.
 const FloatingWindow = (props) => {
     const isMobile = useIsMobile();
 

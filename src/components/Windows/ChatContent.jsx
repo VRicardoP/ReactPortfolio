@@ -1,3 +1,7 @@
+// El contenido real del chatbot: la lista de mensajes, la casilla de
+// escribir, y la lógica de enviar el mensaje y recibir la respuesta de la
+// IA palabra por palabra (streaming), con un botón para poder cancelarla.
+
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKEND_URL } from '../../config/api';
@@ -21,14 +25,18 @@ const ChatContent = ({ data }) => {
     const inputRef = useRef(null);
     const abortControllerRef = useRef(null);
 
+    // Baja el scroll hasta el último mensaje.
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
+    // Baja el scroll cada vez que hay un mensaje nuevo.
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
 
+    // Pone el foco en la casilla de escribir en cuanto termina de llegar
+    // una respuesta.
     useEffect(() => {
         if (!isStreaming && inputRef.current) {
             requestAnimationFrame(() => {
@@ -37,6 +45,7 @@ const ChatContent = ({ data }) => {
         }
     }, [isStreaming]);
 
+    // Cancela la respuesta que esté llegando en ese momento.
     const stopStreaming = useCallback(() => {
         if (abortControllerRef.current) {
             abortControllerRef.current.abort();
@@ -45,6 +54,8 @@ const ChatContent = ({ data }) => {
         setIsStreaming(false);
     }, []);
 
+    // Envía el mensaje del visitante y va mostrando la respuesta de la IA
+    // trozo a trozo, a medida que llega.
     const handleSend = async () => {
         if (!input.trim() || isStreaming) return;
 
@@ -145,6 +156,8 @@ const ChatContent = ({ data }) => {
         }
     };
 
+    // Al pulsar Enter (sin Mayúsculas) envía el mensaje, en vez de hacer un
+    // salto de línea.
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey && !isStreaming) {
             e.preventDefault();
@@ -154,6 +167,8 @@ const ChatContent = ({ data }) => {
         }
     };
 
+    // El botón hace una cosa u otra según si hay una respuesta en marcha:
+    // cancelarla, o enviar un mensaje nuevo.
     const handleButtonClick = (e) => {
         e.preventDefault();
         if (isStreaming) {

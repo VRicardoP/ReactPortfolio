@@ -1,3 +1,7 @@
+// Permite cambiar el tamaño de una ventana flotante arrastrando sus bordes
+// con el ratón, o con las flechas del teclado, en las 8 direcciones (arriba,
+// abajo, lados y esquinas).
+
 import { useCallback, useRef, useEffect } from 'react';
 
 const KEYBOARD_RESIZE_STEP = 10;
@@ -17,6 +21,8 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
     startPosY: 0
   });
 
+  // Mientras se arrastra un borde, va calculando el nuevo tamaño (y posición,
+  // si se arrastra desde arriba o desde la izquierda) y lo aplica al momento.
   const handleResizeMove = useCallback((e) => {
     const resizeState = resizeStateRef.current;
     if (!resizeState.isResizing) return;
@@ -71,6 +77,8 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
     resizeState.finalY = newY;
   }, [windowRef]);
 
+  // Al soltar el ratón, guarda el tamaño y la posición finales en el estado
+  // de la ventana (hasta ahora solo se habían cambiado visualmente).
   const handleResizeEnd = useCallback(() => {
     const resizeState = resizeStateRef.current;
     if (!resizeState.isResizing) return;
@@ -104,6 +112,8 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
     document.removeEventListener('mouseup', handleResizeEnd);
   }, [handleResizeMove, onSizeChange, onPositionChange, windowRef]);
 
+  // Se llama al pulsar sobre uno de los bordes/esquinas: anota desde dónde
+  // se empieza a arrastrar y se pone a escuchar el movimiento del ratón.
   const handleResizeStart = useCallback((e, direction) => {
     if (isMinimized || isMaximized) return;
 
@@ -131,6 +141,8 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
     document.addEventListener('mouseup', handleResizeEnd);
   }, [isMinimized, isMaximized, windowRef, handleResizeMove, handleResizeEnd]);
 
+  // Al desmontar el componente, se asegura de quitar los escuchadores de
+  // ratón que pudieran haber quedado activos.
   useEffect(() => {
     const resizeState = resizeStateRef.current;
     return () => {
@@ -140,6 +152,8 @@ const useResizable = (windowRef, isMinimized, isMaximized, onSizeChange, onPosit
     };
   }, [handleResizeMove, handleResizeEnd]);
 
+  // Permite cambiar el tamaño con las flechas del teclado (con Shift para
+  // pasos más grandes), como alternativa accesible a arrastrar con el ratón.
   const handleKeyboardResize = useCallback((e, direction) => {
     if (isMinimized || isMaximized) return;
     if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;

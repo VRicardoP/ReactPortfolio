@@ -1,3 +1,7 @@
+// Ventana del panel que lista las ofertas de empleo detectadas en los
+// colegios suizos vigilados: su urgencia, su relevancia para informática,
+// y botones para verla, abrir el portal, escribir por correo o descartarla.
+
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -13,25 +17,30 @@ const ROLE_PARTIAL = 0.5;
 const ROLE_IRRELEVANT = 0.0;
 const ROLE_EXCLUDED = -1.0;
 
+// Da el color del distintivo de urgencia según la puntuación.
 const urgencyColor = (score) => {
     if (score >= PUSH_THRESHOLD) return '#ff5252'; // red — act now
     if (score >= DIGEST_THRESHOLD) return '#ffb74d'; // amber — digest
     return '#9e9e9e'; // silent
 };
 
+// Da el texto del distintivo de urgencia según la puntuación.
 const urgencyLabel = (t, score) => {
     if (score >= PUSH_THRESHOLD) return t('dashboard.schoolJobs.urgency.push');
     if (score >= DIGEST_THRESHOLD) return t('dashboard.schoolJobs.urgency.digest');
     return t('dashboard.schoolJobs.urgency.silent');
 };
 
+// Convierte la puntuación de relevancia (puede venir como texto) a número.
 const roleScoreNum = (v) => (v == null ? 0 : Number(v));
+// Da el color del distintivo de relevancia para informática.
 const roleColor = (score) => {
     if (score >= ROLE_MATCH) return '#4caf50'; // verde — IT match
     if (score >= ROLE_PARTIAL) return '#26a69a'; // teal — partial
     if (score <= ROLE_EXCLUDED) return '#9e9e9e'; // gris — docente excluido
     return '#bdbdbd'; // gris claro — irrelevante
 };
+// Da el texto del distintivo de relevancia para informática.
 const roleLabel = (t, score) => {
     if (score >= ROLE_MATCH) return t('dashboard.schoolJobs.relevance.match');
     if (score >= ROLE_PARTIAL) return t('dashboard.schoolJobs.relevance.partial');
@@ -39,10 +48,13 @@ const roleLabel = (t, score) => {
     return t('dashboard.schoolJobs.relevance.irrelevant');
 };
 
+// Construye un enlace "mailto:" con el asunto ya rellenado, o nada si no
+// hay correo de contacto.
 const buildEmailLink = (email) => email
     ? `mailto:${email}?subject=${encodeURIComponent('Spontaneous application — IT role')}`
     : null;
 
+// Da la URL de la página de ofertas de un colegio (o de su portal general).
 const getJobsPage = (school) => school?.jobs_page_url || school?.portal_url || null;
 
 const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
@@ -62,6 +74,7 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
         dismissingJobIds,
     } = schoolData;
 
+    // Indexa los colegios por su id, para buscarlos rápido al dibujar cada oferta.
     const schoolsById = useMemo(() => {
         const map = {};
         for (const s of schools) map[s.id] = s;

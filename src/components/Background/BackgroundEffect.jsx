@@ -1,3 +1,7 @@
+// Elige y muestra el fondo animado activo (lluvia, matrix, cubo, etc.),
+// descargando solo el código del efecto elegido, y lo desactiva en móvil
+// para no gastar batería/rendimiento con gráficos 3D pesados.
+
 import { lazy, Suspense } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import useIsMobile from '../../hooks/useIsMobile';
@@ -10,6 +14,7 @@ const LensflareEffect = lazy(() => import('./LensflareEffect'));
 const CubeEffect = lazy(() => import('./CubeEffect'));
 const SmokeEffect = lazy(() => import('./SmokeEffect'));
 
+// Relaciona el nombre del efecto (guardado en el tema) con su componente.
 const EFFECTS = {
     parallax: ParallaxEffect,
     matrix: MatrixEffect,

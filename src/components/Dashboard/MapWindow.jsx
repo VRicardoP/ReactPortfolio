@@ -1,3 +1,6 @@
+// Ventana del panel que dibuja un mapa mundial con un marcador por cada
+// visitante, mostrando su ciudad, país e IP (parcialmente oculta) al pulsarlo.
+
 import { memo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
@@ -5,6 +8,7 @@ import FloatingWindow from '../Windows/FloatingWindow';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
+// Oculta la última parte de una IP (v4 o v6), para no mostrarla completa.
 const maskIp = (ip) => {
     if (!ip) return 'N/A';
     const parts = ip.split('.');
@@ -27,6 +31,8 @@ L.Icon.Default.mergeOptions({
 });
 
 // this component makes the map look good when the window is resized
+// Se asegura de que el mapa se redibuje bien cuando la ventana (o la
+// pantalla) cambia de tamaño, porque Leaflet no lo hace solo.
 const MapResizeHandler = () => {
     const map = useMap();
 

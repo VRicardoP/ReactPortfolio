@@ -1,3 +1,6 @@
+// Dice si la pantalla actual es de tamaño móvil o no, y se actualiza solo
+// si el usuario gira el dispositivo o cambia el tamaño de la ventana.
+
 import { useState, useEffect } from 'react';
 
 const MOBILE_BREAKPOINT_PX = 768;

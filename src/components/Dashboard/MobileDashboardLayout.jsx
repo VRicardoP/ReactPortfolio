@@ -1,3 +1,7 @@
+// Versión móvil del panel de administración: en vez de ventanas flotantes,
+// una barra de pestañas abajo (resumen, mapa, chat, ofertas, ajustes) que
+// muestra una sección a la vez.
+
 import { lazy, Suspense, memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';

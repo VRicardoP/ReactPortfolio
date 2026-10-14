@@ -1,7 +1,12 @@
+// Ventana del portfolio que muestra las habilidades técnicas agrupadas por
+// categoría (frontend, backend, bases de datos...) como barras de progreso
+// que se rellenan con una pequeña animación al abrir la ventana.
+
 import { useRef, useEffect, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 
+// Dibuja una categoría de habilidades como una lista de barras de nivel.
 const BarsView = memo(({ data, animated, t }) => {
     const renderCategory = (title, skills) => (
         <div className="skill-category" key={title}>
@@ -39,6 +44,8 @@ const TechSkillsWindow = memo(({ data, initialPosition }) => {
     const [animated, setAnimated] = useState(false);
     const contentRef = useRef(null);
 
+    // Espera a que la ventana esté dibujada para empezar la animación de
+    // las barras, así se ve cómo se rellenan en vez de aparecer ya llenas.
     useEffect(() => {
         const timer = requestAnimationFrame(() => setAnimated(true));
         return () => cancelAnimationFrame(timer);

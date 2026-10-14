@@ -1,3 +1,6 @@
+// Avisa al servidor de que alguien ha visitado la página, una sola vez por
+// cada sesión del navegador (no en cada recarga de la ventana).
+
 import { useEffect } from 'react';
 import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
 

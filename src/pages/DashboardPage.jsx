@@ -16,6 +16,11 @@ import '../styles/dashboard-job-extras.css';
 import '../styles/mobile.css';
 import '../styles/cv-generation.css';
 
+// Orquestador del panel de control: pide todos los datos del dashboard,
+// muestra una pantalla de carga o de error si hace falta, y luego decide
+// si mostrar la versión de escritorio (ventanas flotantes) o la de móvil
+// (pestañas).
+
 const BACKGROUND_LABELS = {
     rain: 'bgRain',
     parallax: 'bgParallax',
@@ -44,6 +49,7 @@ const DashboardPage = () => {
         navigate('/');
     }, [navigate]);
 
+    // Mientras llegan los datos del servidor, se muestra esta pantalla de carga.
     // While loading data show this
     if (loading) {
         return (
@@ -71,6 +77,8 @@ const DashboardPage = () => {
         );
     }
 
+    // Si algo falla al cargar los datos, se muestra este aviso de error
+    // con consejos de a qué puede deberse y un botón para reintentar.
     // If there's a problem show this error
     if (error) {
         return (
@@ -144,6 +152,7 @@ const DashboardPage = () => {
         );
     }
 
+    // En móvil se usa el diseño de pestañas en vez de ventanas flotantes.
     // Mobile dashboard: tabbed layout
     if (isMobile) {
         return (
@@ -159,6 +168,8 @@ const DashboardPage = () => {
     }
 
     const bgKey = BACKGROUND_LABELS[backgroundEffect] || 'bgRain';
+    // En escritorio, cada sección del panel es una ventana flotante que se
+    // puede mover, redimensionar y minimizar.
     // Desktop: floating windows dashboard
     return (
         <>

@@ -1,7 +1,11 @@
+// Ventana del panel que lista los últimos visitantes en una tabla: fecha,
+// país, ciudad, IP (parcialmente oculta) y navegador.
+
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
 
+// Oculta la última parte de una IP (v4 o v6), para no mostrarla completa.
 const maskIp = (ip) => {
     if (!ip) return 'N/A';
     const parts = ip.split('.');
