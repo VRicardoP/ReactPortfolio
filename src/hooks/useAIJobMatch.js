@@ -87,7 +87,6 @@ const useAIJobMatch = () => {
         const response = await authenticatedFetch(
             `${BACKEND_URL}/api/v1/ai-match/analyze/result`
         );
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const payload = await response.json();
         if (!payload.available || !payload.data || !mountedRef.current) return false;
         installResult(payload.data, payload.source);
@@ -102,7 +101,6 @@ const useAIJobMatch = () => {
             const response = await authenticatedFetch(
                 `${BACKEND_URL}/api/v1/ai-match/analyze/progress`
             );
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const state = await response.json();
             if (!mountedRef.current) return;
             setProgress(state);
@@ -129,7 +127,6 @@ const useAIJobMatch = () => {
                 `${BACKEND_URL}/api/v1/ai-match/analyze/start?force=true`,
                 { method: 'POST' }
             );
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const payload = await response.json();
             if (payload.source === 'core' && payload.data) {
                 installResult(payload.data, 'core');
@@ -160,7 +157,11 @@ const useAIJobMatch = () => {
                 const response = await authenticatedFetch(
                     `${BACKEND_URL}/api/v1/ai-match/analyze/progress`
                 );
-                if (!response.ok || cancelled) return;
+                // DT-187: antes `if (!response.ok || cancelled)`. La mitad de
+                // `response.ok` era inalcanzable (`authenticatedFetch` lanza);
+                // la de `cancelled` es la que de verdad protege, porque el
+                // efecto puede haberse desmontado mientras volvía la respuesta.
+                if (cancelled) return;
                 const state = await response.json();
                 if (state.state === 'running' && !cancelled) {
                     setLoading(true);
@@ -253,7 +254,6 @@ const useAIJobMatch = () => {
                     body: JSON.stringify({ titles: titlesToTranslate }),
                 }
             );
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
             setTranslatedTitles(prev => ({ ...prev, ...data.translations }));
         } catch (err) {

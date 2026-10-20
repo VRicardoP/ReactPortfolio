@@ -3,6 +3,7 @@
 // elección del visitante para la próxima vez que visite la página.
 
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { safeLocal } from '../utils/safeStorage';
 
 // definition of available themes
 const themes = {
@@ -109,13 +110,13 @@ const themedCursors = (color) => ({
 export const ThemeProvider = ({ children }) => {
     const [themeName, setThemeName] = useState(() => {
         // retrieve saved theme from localStorage
-        const saved = localStorage.getItem('portfolio-theme');
+        const saved = safeLocal.get('portfolio-theme');
         return saved && themes[saved] ? saved : 'cyan';
     });
 
     const [backgroundEffect, setBackgroundEffect] = useState(() => {
         // retrieve saved background effect from localStorage
-        const saved = localStorage.getItem('portfolio-background');
+        const saved = safeLocal.get('portfolio-background');
         return BACKGROUND_EFFECTS.includes(saved) ? saved : BACKGROUND_EFFECTS[0];
     });
 
@@ -125,7 +126,7 @@ export const ThemeProvider = ({ children }) => {
     const setTheme = useCallback((name) => {
         if (themes[name]) {
             setThemeName(name);
-            localStorage.setItem('portfolio-theme', name);
+            safeLocal.set('portfolio-theme', name);
         }
     }, []);
 
@@ -141,7 +142,7 @@ export const ThemeProvider = ({ children }) => {
     const setBackground = useCallback((effect) => {
         if (BACKGROUND_EFFECTS.includes(effect)) {
             setBackgroundEffect(effect);
-            localStorage.setItem('portfolio-background', effect);
+            safeLocal.set('portfolio-background', effect);
         }
     }, []);
 

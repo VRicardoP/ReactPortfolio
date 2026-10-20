@@ -15,6 +15,11 @@ import {
 
 const SSE_REFETCH_DEBOUNCE_MS = 3000;
 
+// DT-187: las fuentes "esenciales" son las que pide `fetchCritical`. Al
+// recargarlas se reemplazan SOLO sus avisos; los de las fuentes de empleo, que
+// anota el bucle de fondo, se conservan.
+const CRITICAL_KEYS = ['stats', 'map', 'chat-analytics'];
+
 export const useDashboardData = () => {
   const { authenticatedFetch } = useAuth();
   const [stats, setStats] = useState(null);
@@ -44,10 +49,12 @@ export const useDashboardData = () => {
         .then(res => res.json())
         .catch(() => { failedSources.push('map'); return []; }),
 
+      // DT-187: aquí había un `res.ok ? … : …` inalcanzable.
+      // `authenticatedFetch` LANZA ante cualquier respuesta que no sea 2xx, así
+      // que a este `.then` solo llegan respuestas correctas y el caso de un 403
+      // (usuario sin permisos de administrador) cae en el `.catch`.
       authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/chat/full-stats`)
-        .then(res => res.ok
-          ? res.json()
-          : { general: null, top_questions: [], timeline_daily: [], by_country: [] })
+        .then(res => res.json())
         .catch(() => {
           failedSources.push('chat-analytics');
           return { general: null, top_questions: [], timeline_daily: [], by_country: [] };
@@ -59,7 +66,22 @@ export const useDashboardData = () => {
       setStats(statsData);
       setMapData(mapDataPoints);
       setChatAnalytics(chatAnalyticsJson);
-      setWarnings(failedSources);
+      // DT-187: `warnings` se ACUMULA. Antes se sobrescribía, así que cada
+      // refetch silencioso (los que dispara el canal de avisos en directo)
+      // borraba las fuentes de empleo que había anotado el bucle de fondo,
+      // aunque siguieran sin datos.
+      setWarnings(prev => [
+        ...prev.filter(k => !CRITICAL_KEYS.includes(k)),
+        ...failedSources,
+      ]);
+      // DT-187: si falla lo esencial, se enciende el error. Antes era
+      // IMPOSIBLE: cada promesa tenía su propio `.catch` devolviendo un valor
+      // de reserva, así que `Promise.all` no podía rechazar y este `catch`
+      // nunca se ejecutaba. Con el servidor caído, el panel se pintaba vacío
+      // en vez de mostrar la pantalla de error que ya existía.
+      if (failedSources.includes('stats')) {
+        setError('Failed to load dashboard data');
+      }
     } catch (err) {
       setError(err.message || 'Failed to load dashboard data');
     } finally {

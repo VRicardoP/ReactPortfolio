@@ -518,7 +518,8 @@
       "tabLive": "JSearchライブ",
       "tabFilter": "詳細フィルター",
       "tabSaved": "保存済み検索"
-    }
+    },
+    "sourcesUnavailable": "{{count}} 件のデータソースが利用できません"
   },
   "mobile": {
     "menu": "メニュー",

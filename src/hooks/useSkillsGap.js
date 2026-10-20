@@ -39,7 +39,11 @@ const useSkillsGap = (results) => {
     setTogglingSkill(skillName);
     setLastError(null);
     try {
-      const response = await authenticatedFetch(SKILLS_TOGGLE_URL, {
+      // DT-187: ya no se guarda la respuesta. Aquí había un
+      // `if (!response.ok) throw …` inalcanzable, porque `authenticatedFetch`
+      // lanza antes y con el detalle del cuerpo; sin esa rama, la respuesta no
+      // se usa para nada.
+      await authenticatedFetch(SKILLS_TOGGLE_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -47,10 +51,6 @@ const useSkillsGap = (results) => {
           add: !isAdded,
         }),
       });
-      if (!response.ok) {
-        const detail = await response.text().catch(() => '');
-        throw new Error(`HTTP ${response.status}: ${detail}`);
-      }
       setAddedSkills(prev => {
         const next = new Set(prev);
         if (isAdded) {

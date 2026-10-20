@@ -42,7 +42,9 @@ export default function useJobApplication() {
                     description: job.description || null,
                 }),
             });
-            if (!response.ok) return false;
+            // DT-187: aquí había un `if (!response.ok) return false` muerto.
+            // `authenticatedFetch` ya lanza ante cualquier respuesta que no sea
+            // 2xx, y el `catch` de abajo devuelve false.
             const created = await response.json();
             window.dispatchEvent(new CustomEvent('application-changed', { detail: created }));
             return true;

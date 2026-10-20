@@ -20,6 +20,13 @@ const makeJobs = (n, extra = {}) =>
 
 const okJson = (body) => ({ ok: true, json: () => Promise.resolve(body) })
 
+// DT-187: `authenticatedFetch` LANZA ante cualquier respuesta que no sea 2xx,
+// con `status` en el error. Antes estos tests devolvian `{ ok: false }`, un
+// escenario que en produccion no ocurre, y por eso los hooks arrastraban ramas
+// `!response.ok` inalcanzables. El fallo se simula ahora como el real.
+const httpError = (status) =>
+    Object.assign(new Error(`HTTP ${status}`), { status })
+
 const storedResult = (jobs, metadata = null) =>
   okJson({ available: true, data: { results: jobs, metadata } })
 
@@ -33,12 +40,11 @@ const routeFetch = (routes) => {
   mockAuthenticatedFetch.mockImplementation((url, opts) => {
     for (const [pattern, responder] of routes) {
       if (url.includes(pattern)) {
-        return Promise.resolve(
-          typeof responder === 'function' ? responder(url, opts) : responder
-        )
+        const valor = typeof responder === 'function' ? responder(url, opts) : responder
+        return valor instanceof Error ? Promise.reject(valor) : Promise.resolve(valor)
       }
     }
-    return Promise.resolve({ ok: false, status: 404 })
+    return Promise.reject(httpError(404))
   })
 }
 
@@ -135,7 +141,7 @@ describe('useAIJobMatch', () => {
     expect(result.current.page).toBe(1)
 
     routeFetch([
-      ['/analyze/start', { ok: false, status: 500 }],
+      ['/analyze/start', httpError(500)],
     ])
     await act(async () => {
       await result.current.runAnalysis()
@@ -360,7 +366,7 @@ describe('core background feed', () => {
   })
 
   it('an unavailable core is not represented as a successful empty feed', async () => {
-    routeFetch([['/analyze/result', { ok: false, status: 503 }]])
+    routeFetch([['/analyze/result', httpError(503)]])
     const { result } = renderHook(() => useAIJobMatch())
     await waitFor(() => expect(result.current.error).toBe('HTTP 503'))
   })

@@ -466,3 +466,14 @@
     padding: 14px 10px;
   }
 }
+
+/* DT-187: aviso de fuentes de datos que no han respondido. Vive en la cabecera
+   del panel, discreto: informa sin tapar nada. */
+.dashboard-warnings {
+  font-size: var(--fs-small, 12px);
+  padding: 2px 10px;
+  border: 1px solid currentColor;
+  border-radius: 10px;
+  white-space: nowrap;
+  cursor: var(--cursor-help, help);
+}

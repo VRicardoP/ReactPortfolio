@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { BACKEND_URL } from '../../config/api';
+import { safeSession } from '../../utils/safeStorage';
 
 /** Delivery only: no regeneration path, even after the application was deleted. */
 export default function DocumentDeliveryRecovery({ onDelivered }) {
@@ -41,9 +42,9 @@ export default function DocumentDeliveryRecovery({ onDelivered }) {
             if (result.status !== 'delivered') throw new Error('Still pending');
             // Clear only this acknowledged operation. An explicit future Generate
             // must be new work, not a replay of the recovered delivery.
-            for (const key of Object.keys(sessionStorage)) {
+            for (const key of safeSession.keys()) {
                 if (key.startsWith('document-operation:') &&
-                    sessionStorage.getItem(key) === item.operation_id) sessionStorage.removeItem(key);
+                    safeSession.get(key) === item.operation_id) safeSession.remove(key);
             }
             await load();
             onDelivered?.(item.application_id);

@@ -3,6 +3,7 @@
 
 import { useEffect } from 'react';
 import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
+import { safeSession } from '../utils/safeStorage';
 
 // this hook tracks the user's visit in the backend
 const useVisitorTracking = () => {
@@ -10,7 +11,7 @@ const useVisitorTracking = () => {
         const trackVisit = async () => {
             try {
                 // only track once per session
-                const alreadyTracked = sessionStorage.getItem('visit_tracked');
+                const alreadyTracked = safeSession.get('visit_tracked');
                 if (alreadyTracked) {
                     return;
                 }
@@ -30,11 +31,11 @@ const useVisitorTracking = () => {
 
                 if (response.ok) {
                     // mark that this session has already been tracked
-                    sessionStorage.setItem('visit_tracked', 'true');
+                    safeSession.set('visit_tracked', 'true');
                 }
             } catch (error) {
                 // prevent retry loops on failure — mark as tracked even on error
-                sessionStorage.setItem('visit_tracked', 'true');
+                safeSession.set('visit_tracked', 'true');
                 console.warn('Failed to track visit:', error.message);
             }
         };

@@ -88,11 +88,12 @@ describe('useSkillsGap', () => {
   })
 
   it('a non-ok response returns null, records lastError, and does not add the skill', async () => {
-    mockAuthenticatedFetch.mockResolvedValue({
-      ok: false,
-      status: 500,
-      text: () => Promise.resolve('boom'),
-    })
+    // DT-187: `authenticatedFetch` LANZA ante un 500 (con el detalle del
+    // cuerpo en el mensaje); devolver `{ ok: false }` simulaba un escenario
+    // que en produccion no ocurre, y mantenia viva una rama inalcanzable.
+    mockAuthenticatedFetch.mockRejectedValue(
+      Object.assign(new Error('HTTP 500: boom'), { status: 500 })
+    )
     const { result } = renderHook(() => useSkillsGap([{ missing_skills: ['React'] }]))
 
     let returned

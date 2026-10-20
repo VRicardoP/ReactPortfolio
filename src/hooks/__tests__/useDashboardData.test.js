@@ -183,4 +183,47 @@ describe('useDashboardData', () => {
       },
     ])
   })
+  it('DT-187: enciende el error cuando falla la fuente esencial', async () => {
+    // Antes era IMPOSIBLE: cada promesa tenia su propio .catch devolviendo un
+    // valor de reserva, asi que Promise.all no podia rechazar y el catch que
+    // ponia el error no se ejecutaba nunca. Con el servidor caido el panel se
+    // pintaba vacio en vez de mostrar su pantalla de error.
+    mockAuthenticatedFetch.mockRejectedValue(new Error('Network down'))
+
+    const { result } = renderHook(() => useDashboardData())
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false)
+    })
+    expect(result.current.error).toBeTruthy()
+    expect(result.current.warnings).toContain('stats')
+  })
+
+  it('DT-187: un refetch no borra los avisos de las fuentes de empleo', async () => {
+    // Las fuentes de empleo las anota el bucle de fondo; setWarnings las
+    // SOBRESCRIBIA en cada recarga de lo esencial (que dispara el canal de
+    // avisos en directo), aunque siguieran sin datos.
+    mockAuthenticatedFetch.mockImplementation((url) => {
+      if (String(url).includes('/test-jobs/')) return Promise.reject(new Error('source down'))
+      return Promise.resolve({ ok: true, json: async () => ({}) })
+    })
+
+    const { result } = renderHook(() => useDashboardData())
+
+    await waitFor(() => {
+      expect(result.current.warnings).toContain('testjobs')
+    })
+
+    // Ahora falla TAMBIEN lo esencial y se dispara la recarga silenciosa por el
+    // mismo evento que usa el canal de avisos en directo.
+    mockAuthenticatedFetch.mockRejectedValue(new Error('todo caido'))
+    window.dispatchEvent(new Event('dashboard-data-stale'))
+
+    // Los avisos nuevos se suman a los que ya habia: con el codigo anterior,
+    // 'testjobs' desaparecia al reemplazarse la lista entera.
+    await waitFor(() => {
+      expect(result.current.warnings).toContain('stats')
+    }, { timeout: 5000 })
+    expect(result.current.warnings).toContain('testjobs')
+  })
 })

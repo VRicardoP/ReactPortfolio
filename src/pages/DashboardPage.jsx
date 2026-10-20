@@ -37,7 +37,7 @@ const DashboardPage = () => {
     const navigate = useNavigate();
     const isMobile = useIsMobile();
     const typedText = useTypewriter(t('dashboard.title'), 100);
-    const { stats, mapData, chatAnalytics, jobData, loading, error } = useDashboardData();
+    const { stats, mapData, chatAnalytics, jobData, loading, error, warnings } = useDashboardData();
 
     // Functions for the buttons
     const handleLogout = useCallback(() => {
@@ -180,6 +180,20 @@ const DashboardPage = () => {
                     <span className="typewriter-container">{typedText}</span>
                     <span className="terminal-cursor"></span>
                 </h1>
+
+                {/* DT-187: las fuentes que no han respondido se MUESTRAN. El hook
+                    ya las anotaba y nadie las leía, así que una fuente caída era
+                    indistinguible de una fuente sin ofertas. */}
+                {warnings.length > 0 && (
+                    <div
+                        className="dashboard-warnings"
+                        role="status"
+                        title={warnings.join(', ')}
+                        style={{ color: theme.warning }}
+                    >
+                        {t('dashboard.sourcesUnavailable', { count: warnings.length })}
+                    </div>
+                )}
 
                 <div className="dashboard-nav">
                     <button

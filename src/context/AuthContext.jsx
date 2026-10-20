@@ -5,6 +5,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
+import { safeSession } from '../utils/safeStorage';
 
 const AuthContext = createContext();
 
@@ -14,9 +15,9 @@ const SETTLED = Object.freeze({ COMMITTED: 'committed', FAILED: 'failed', STALE:
 // Borra tokens de una versión antigua de la app que guardaba la sesión en el
 // navegador en vez de en una cookie segura.
 const clearLegacyTokens = () => {
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('refreshToken');
-    sessionStorage.removeItem('tokenType');
+    safeSession.remove('accessToken');
+    safeSession.remove('refreshToken');
+    safeSession.remove('tokenType');
 };
 
 // Da acceso, desde cualquier componente, a si el usuario ha iniciado sesión
@@ -181,7 +182,7 @@ export const AuthProvider = ({ children }) => {
         const resetTimer = () => {
             clearTimeout(inactivityTimerRef.current);
             inactivityTimerRef.current = setTimeout(() => {
-                sessionStorage.setItem('logoutReason', 'inactivity');
+                safeSession.set('logoutReason', 'inactivity');
                 void logout();
             }, INACTIVITY_TIMEOUT_MS);
         };

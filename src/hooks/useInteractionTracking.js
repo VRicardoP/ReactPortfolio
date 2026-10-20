@@ -13,6 +13,7 @@
  */
 import { useEffect, useRef } from 'react';
 import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
+import { safeSession } from '../utils/safeStorage';
 
 const FLUSH_INTERVAL_MS = 10000;
 const MAX_BATCH_SIZE = 50;
@@ -25,16 +26,16 @@ const useInteractionTracking = () => {
 
     useEffect(() => {
         // Generate or retrieve session ID
-        let sid = sessionStorage.getItem('interaction_session_id');
+        let sid = safeSession.get('interaction_session_id');
         if (!sid) {
             sid = crypto.randomUUID();
-            sessionStorage.setItem('interaction_session_id', sid);
+            safeSession.set('interaction_session_id', sid);
         }
         sessionIdRef.current = sid;
 
         // Set session start time
-        if (!sessionStorage.getItem('interaction_session_start')) {
-            sessionStorage.setItem('interaction_session_start', String(Date.now()));
+        if (!safeSession.get('interaction_session_start')) {
+            safeSession.set('interaction_session_start', String(Date.now()));
         }
 
         // --- Flush batched events to backend ---
@@ -120,7 +121,7 @@ const useInteractionTracking = () => {
             focusTimersRef.current = {};
 
             // Add session_end event
-            const sessionStart = sessionStorage.getItem('interaction_session_start');
+            const sessionStart = safeSession.get('interaction_session_start');
             if (sessionStart) {
                 bufferRef.current.push({
                     event_type: 'session_end',

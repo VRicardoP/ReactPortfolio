@@ -21,11 +21,13 @@ export const useHeatmapData = () => {
         const load = async () => {
             try {
                 const [heatmap, engagement] = await Promise.all([
+                    // DT-187: antes `r.ok ? r.json() : null`; la rama null era
+                    // inalcanzable porque `authenticatedFetch` ya lanza.
                     authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/heatmap-data?days=30`)
-                        .then(r => r.ok ? r.json() : null)
+                        .then(r => r.json())
                         .catch(() => null),
                     authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/engagement-stats?days=30`)
-                        .then(r => r.ok ? r.json() : null)
+                        .then(r => r.json())
                         .catch(() => null),
                 ]);
                 if (!aborted) {

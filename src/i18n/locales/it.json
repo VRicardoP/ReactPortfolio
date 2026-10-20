@@ -518,7 +518,9 @@
       "tabLive": "JSearch Live",
       "tabFilter": "Filtro avanzato",
       "tabSaved": "Ricerche salvate"
-    }
+    },
+    "sourcesUnavailable": "{{count}} fonte dati non disponibile",
+    "sourcesUnavailable_plural": "{{count}} fonti dati non disponibili"
   },
   "mobile": {
     "menu": "Menu",

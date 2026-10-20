@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import BackgroundEffect from '../components/Background/BackgroundEffect';
 import '../styles/login.css';
+import { safeSession } from '../utils/safeStorage';
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
@@ -22,10 +23,10 @@ const LoginPage = () => {
     // Si la sesión anterior se cerró sola por estar inactivo, lo avisa aquí.
     // Show inactivity message if redirected after timeout
     useEffect(() => {
-        const reason = sessionStorage.getItem('logoutReason');
+        const reason = safeSession.get('logoutReason');
         if (reason === 'inactivity') {
             setInactivityMessage(t('login.sessionExpiredInactivity'));
-            sessionStorage.removeItem('logoutReason');
+            safeSession.remove('logoutReason');
         }
     }, [t]);
 

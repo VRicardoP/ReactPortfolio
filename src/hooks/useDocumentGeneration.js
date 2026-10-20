@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKEND_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
+import { safeSession } from '../utils/safeStorage';
 
 const logger = {
     warn: (...args) => { if (import.meta.env.DEV) console.warn('[useDocumentGeneration]', ...args); },
@@ -77,8 +78,8 @@ export default function useDocumentGeneration() {
             };
             const key = 'document-operation:' + JSON.stringify(intent);
             operationKey = key;
-            const operationId = sessionStorage.getItem(key) || crypto.randomUUID();
-            sessionStorage.setItem(key, operationId); // unavailable storage => no HTTP
+            const operationId = safeSession.get(key) || crypto.randomUUID();
+            safeSession.set(key, operationId); // unavailable storage => no HTTP
             const resp = await authenticatedFetch(`${BACKEND_URL}/api/v1/cv-generation/generate`, {
                 method: 'POST',
                 body: JSON.stringify({ ...intent, operation_id: operationId }),
@@ -87,7 +88,7 @@ export default function useDocumentGeneration() {
             if (resp.status === 202 || data.status === 'pending') {
                 throw new Error(t('dashboard.cvGeneration.deliveryPending'));
             }
-            sessionStorage.removeItem(key); // explicit success only; next click is a new generation
+            safeSession.remove(key); // explicit success only; next click is a new generation
             markLocalWrite(applicationId);
             setDocuments(prev => {
                 // Reemplazar la entrada ENTERA borraba el documento que esta
@@ -101,7 +102,7 @@ export default function useDocumentGeneration() {
         } catch (err) {
             // 410 is a CONFIRMED deleted generation, not an ambiguous timeout.
             // Report it; only the user's next explicit click starts a new operation.
-            if (err.status === 410 && operationKey) sessionStorage.removeItem(operationKey);
+            if (err.status === 410 && operationKey) safeSession.remove(operationKey);
             setError(err.message || 'Generation failed');
             throw err;
         } finally {
