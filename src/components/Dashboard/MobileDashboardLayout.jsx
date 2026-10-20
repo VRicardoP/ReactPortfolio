@@ -9,7 +9,6 @@ import { useSSENotifications } from '../../hooks/useSSENotifications';
 import { DashboardLoader } from './DesktopDashboardContent';
 import { DASHBOARD_TABS } from './dashboardConstants';
 import ErrorBoundary from '../ErrorBoundary';
-import Toast from '../UI/Toast';
 
 // Lazy load dashboard window components
 const StatsWindow = lazy(() => import('./StatsWindow'));
@@ -122,8 +121,6 @@ const MobileDashboardLayout = memo(({
                     )}
                 </div>
             </div>
-
-            <Toast />
 
             <div className="mobile-dashboard-tabs">
                 {DASHBOARD_TABS.map(tab => (

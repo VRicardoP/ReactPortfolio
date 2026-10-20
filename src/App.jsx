@@ -6,7 +6,6 @@ import { lazy, Suspense, memo, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import BackgroundEffect from './components/Background/BackgroundEffect';
 import ErrorBoundary from './components/ErrorBoundary';
-import Toast from './components/UI/Toast';
 import { WindowProvider } from './context/WindowContext';
 import useTypewriter from './hooks/useTypewriter';
 import usePortfolioData from './hooks/usePortfolioData';
@@ -209,7 +208,6 @@ const MobilePortfolioLayout = memo(({ portfolioData }) => {
       </div>
 
       <MobileChatSheet data={portfolioData} />
-      <Toast />
 
       {showTerminal && (
         <Suspense fallback={<WindowLoader />}>
@@ -324,8 +322,6 @@ function App() {
         <span className="typewriter-container">{typedText}</span>
         <span className="terminal-cursor" aria-hidden="true"></span>
       </h1>
-
-      <Toast />
 
       <WindowProvider>
         <DesktopPortfolioContent portfolioData={portfolioData} />

@@ -380,7 +380,11 @@
       "openUrl": "Open job posting",
       "markApplied": "Mark as applied",
       "deleteApp": "Delete application",
-      "interested": "Interested"
+      "interested": "Interested",
+      "titlePlaceholder": "Job title",
+      "companyPlaceholder": "Company",
+      "urlPlaceholder": "Job URL (optional)",
+      "addCard": "Add"
     },
     "jsearchLive": {
       "title": "JSearch Live Search",
@@ -407,7 +411,10 @@
       "tabRanges": "Salary Ranges",
       "tabByType": "By Employment Type",
       "tabBySource": "By Source",
-      "noData": "No salary data available. JSearch jobs with salary info will appear here."
+      "noData": "No salary data available. JSearch jobs with salary info will appear here.",
+      "jobCount": "Jobs",
+      "avgSalary": "Average salary",
+      "jobsWithSalary": "jobs with salary data"
     },
     "savedSearches": {
       "title": "Saved Searches",
@@ -432,7 +439,12 @@
       "errorCreate": "Failed to create search",
       "errorRun": "Failed to run search",
       "errorDelete": "Failed to delete search",
-      "errorLoad": "Failed to load saved searches"
+      "errorLoad": "Failed to load saved searches",
+      "add": "New search",
+      "count": "saved",
+      "loading": "Loading saved searches…",
+      "namePlaceholder": "Search name",
+      "confirmDelete": "Delete this saved search?"
     },
     "jobFilter": {
       "title": "Advanced Filter",

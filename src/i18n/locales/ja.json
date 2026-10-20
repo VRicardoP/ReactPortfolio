@@ -333,7 +333,11 @@
       "openUrl": "求人を開く",
       "markApplied": "応募済みにする",
       "deleteApp": "応募を削除",
-      "interested": "興味あり"
+      "interested": "興味あり",
+      "titlePlaceholder": "職種",
+      "companyPlaceholder": "会社名",
+      "urlPlaceholder": "求人のURL（任意）",
+      "addCard": "追加"
     },
     "jsearchLive": {
       "title": "JSearchライブ検索",
@@ -360,7 +364,10 @@
       "tabRanges": "給与レンジ",
       "tabByType": "雇用タイプ別",
       "tabBySource": "ソース別",
-      "noData": "給与データなし。給与情報のあるJSearch求人がここに表示されます。"
+      "noData": "給与データなし。給与情報のあるJSearch求人がここに表示されます。",
+      "jobCount": "求人数",
+      "avgSalary": "平均給与",
+      "jobsWithSalary": "件（給与情報あり）"
     },
     "savedSearches": {
       "title": "保存済み検索",
@@ -385,7 +392,12 @@
       "errorCreate": "作成に失敗しました",
       "errorRun": "実行に失敗しました",
       "errorDelete": "削除に失敗しました",
-      "errorLoad": "保存された検索の読み込みに失敗"
+      "errorLoad": "保存された検索の読み込みに失敗",
+      "add": "新しい検索",
+      "count": "件保存済み",
+      "loading": "保存した検索を読み込み中…",
+      "namePlaceholder": "検索の名前",
+      "confirmDelete": "この保存した検索を削除しますか？"
     },
     "jobFilter": {
       "title": "詳細フィルター",

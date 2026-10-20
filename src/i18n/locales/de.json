@@ -333,7 +333,11 @@
       "openUrl": "Stellenanzeige öffnen",
       "markApplied": "Als beworben markieren",
       "deleteApp": "Bewerbung löschen",
-      "interested": "Interessiert"
+      "interested": "Interessiert",
+      "titlePlaceholder": "Position",
+      "companyPlaceholder": "Unternehmen",
+      "urlPlaceholder": "Link zur Stelle (optional)",
+      "addCard": "Hinzufügen"
     },
     "jsearchLive": {
       "title": "JSearch Live-Suche",
@@ -360,7 +364,10 @@
       "tabRanges": "Gehaltsspannen",
       "tabByType": "Nach Beschäftigungsart",
       "tabBySource": "Nach Quelle",
-      "noData": "Keine Gehaltsdaten verfügbar. JSearch-Stellen mit Gehaltsinformationen werden hier angezeigt."
+      "noData": "Keine Gehaltsdaten verfügbar. JSearch-Stellen mit Gehaltsinformationen werden hier angezeigt.",
+      "jobCount": "Stellen",
+      "avgSalary": "Durchschnittsgehalt",
+      "jobsWithSalary": "Stellen mit Gehaltsangabe"
     },
     "savedSearches": {
       "title": "Gespeicherte Suchen",
@@ -385,7 +392,12 @@
       "errorCreate": "Erstellen fehlgeschlagen",
       "errorRun": "Ausführung fehlgeschlagen",
       "errorDelete": "Löschen fehlgeschlagen",
-      "errorLoad": "Fehler beim Laden der Suchen"
+      "errorLoad": "Fehler beim Laden der Suchen",
+      "add": "Neue Suche",
+      "count": "gespeichert",
+      "loading": "Gespeicherte Suchen werden geladen…",
+      "namePlaceholder": "Name der Suche",
+      "confirmDelete": "Diese gespeicherte Suche löschen?"
     },
     "jobFilter": {
       "title": "Erweiterter Filter",

@@ -333,7 +333,11 @@
       "openUrl": "Apri offerta di lavoro",
       "markApplied": "Segna come candidato",
       "deleteApp": "Elimina candidatura",
-      "interested": "Mi interessa"
+      "interested": "Mi interessa",
+      "titlePlaceholder": "Posizione",
+      "companyPlaceholder": "Azienda",
+      "urlPlaceholder": "Link dell'offerta (opzionale)",
+      "addCard": "Aggiungi"
     },
     "jsearchLive": {
       "title": "JSearch Ricerca Live",
@@ -360,7 +364,10 @@
       "tabRanges": "Fasce Salariali",
       "tabByType": "Per Tipo di Impiego",
       "tabBySource": "Per Fonte",
-      "noData": "Nessun dato salariale. I lavori JSearch con info salariali appariranno qui."
+      "noData": "Nessun dato salariale. I lavori JSearch con info salariali appariranno qui.",
+      "jobCount": "Offerte",
+      "avgSalary": "Stipendio medio",
+      "jobsWithSalary": "offerte con dati salariali"
     },
     "savedSearches": {
       "title": "Ricerche Salvate",
@@ -385,7 +392,12 @@
       "errorCreate": "Creazione fallita",
       "errorRun": "Esecuzione fallita",
       "errorDelete": "Eliminazione fallita",
-      "errorLoad": "Impossibile caricare le ricerche salvate"
+      "errorLoad": "Impossibile caricare le ricerche salvate",
+      "add": "Nuova ricerca",
+      "count": "salvate",
+      "loading": "Caricamento ricerche salvate…",
+      "namePlaceholder": "Nome della ricerca",
+      "confirmDelete": "Eliminare questa ricerca salvata?"
     },
     "jobFilter": {
       "title": "Filtro Avanzato",

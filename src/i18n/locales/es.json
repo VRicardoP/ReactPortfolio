@@ -380,7 +380,11 @@
       "openUrl": "Abrir oferta de empleo",
       "markApplied": "Marcar como aplicado",
       "deleteApp": "Eliminar aplicación",
-      "interested": "Me interesa"
+      "interested": "Me interesa",
+      "titlePlaceholder": "Puesto",
+      "companyPlaceholder": "Empresa",
+      "urlPlaceholder": "Enlace de la oferta (opcional)",
+      "addCard": "Añadir"
     },
     "jsearchLive": {
       "title": "JSearch Búsqueda en Vivo",
@@ -407,7 +411,10 @@
       "tabRanges": "Rangos Salariales",
       "tabByType": "Por Tipo de Empleo",
       "tabBySource": "Por Fuente",
-      "noData": "Sin datos salariales. Los empleos de JSearch con info salarial aparecerán aquí."
+      "noData": "Sin datos salariales. Los empleos de JSearch con info salarial aparecerán aquí.",
+      "jobCount": "Ofertas",
+      "avgSalary": "Salario medio",
+      "jobsWithSalary": "ofertas con datos de salario"
     },
     "savedSearches": {
       "title": "Búsquedas Guardadas",
@@ -432,7 +439,12 @@
       "errorCreate": "Error al crear búsqueda",
       "errorRun": "Error al ejecutar búsqueda",
       "errorDelete": "Error al eliminar búsqueda",
-      "errorLoad": "Error al cargar búsquedas guardadas"
+      "errorLoad": "Error al cargar búsquedas guardadas",
+      "add": "Nueva búsqueda",
+      "count": "guardadas",
+      "loading": "Cargando búsquedas guardadas…",
+      "namePlaceholder": "Nombre de la búsqueda",
+      "confirmDelete": "¿Borrar esta búsqueda guardada?"
     },
     "jobFilter": {
       "title": "Filtro Avanzado",

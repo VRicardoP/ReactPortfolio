@@ -333,7 +333,11 @@
       "openUrl": "Ouvrir l'offre d'emploi",
       "markApplied": "Marquer comme postulé",
       "deleteApp": "Supprimer la candidature",
-      "interested": "Intéressé"
+      "interested": "Intéressé",
+      "titlePlaceholder": "Poste",
+      "companyPlaceholder": "Entreprise",
+      "urlPlaceholder": "Lien de l'offre (facultatif)",
+      "addCard": "Ajouter"
     },
     "jsearchLive": {
       "title": "JSearch Recherche en Direct",
@@ -360,7 +364,10 @@
       "tabRanges": "Fourchettes Salariales",
       "tabByType": "Par Type d'Emploi",
       "tabBySource": "Par Source",
-      "noData": "Aucune donnée salariale disponible. Les emplois JSearch avec des informations salariales apparaîtront ici."
+      "noData": "Aucune donnée salariale disponible. Les emplois JSearch avec des informations salariales apparaîtront ici.",
+      "jobCount": "Offres",
+      "avgSalary": "Salaire moyen",
+      "jobsWithSalary": "offres avec données salariales"
     },
     "savedSearches": {
       "title": "Recherches Enregistrées",
@@ -385,7 +392,12 @@
       "errorCreate": "Échec de la création",
       "errorRun": "Échec de l'exécution",
       "errorDelete": "Échec de la suppression",
-      "errorLoad": "Échec du chargement des recherches"
+      "errorLoad": "Échec du chargement des recherches",
+      "add": "Nouvelle recherche",
+      "count": "enregistrées",
+      "loading": "Chargement des recherches enregistrées…",
+      "namePlaceholder": "Nom de la recherche",
+      "confirmDelete": "Supprimer cette recherche enregistrée ?"
     },
     "jobFilter": {
       "title": "Filtre Avancé",
