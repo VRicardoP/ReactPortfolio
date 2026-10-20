@@ -120,7 +120,9 @@ describe('useAIJobMatch', () => {
     })
 
     expect(mockAuthenticatedFetch).toHaveBeenCalledWith(
-      expect.stringContaining('/api/v1/ai-match/analyze/start?force=true'),
+      // DT-161: se enviaba `?force=true` y el backend lo IGNORABA; el nucleo
+      // central mantiene el feed al dia por su cuenta.
+      expect.stringContaining('/api/v1/ai-match/analyze/start'),
       expect.objectContaining({ method: 'POST' })
     )
     expect(result.current.results).toHaveLength(3)

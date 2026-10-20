@@ -102,7 +102,7 @@ export const useDashboardData = () => {
       JOB_SOURCES.forEach(({ key, urlPath }) => {
         const coreSource = CORE_SOURCE_BY_KEY[key];
         const path = coreSource
-          ? `/api/v1/jobs/search?source=${encodeURIComponent(coreSource)}&limit=100&oneshot=true`
+          ? `/api/v1/jobs/search?source=${encodeURIComponent(coreSource)}&limit=100`
           : urlPath;
         authenticatedFetch(`${BACKEND_URL}${path}`)
           .then(res => {

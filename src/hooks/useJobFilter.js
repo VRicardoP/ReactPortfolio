@@ -24,21 +24,15 @@ const INITIAL_FILTERS = {
  * query building, cursor/offset pagination ("load more"), and
  * save-to-saved-searches integration. Used by AdvancedFilterPanel.
  *
- * Pagination contract (single envelope for local AND core routing, see
- * backend/services/catalog): metadata carries `total` (number under the local
- * offset engine, null under the core keyset feed), `has_more` and
- * `next_cursor`. The hook never depends on `total` to paginate: "load more"
- * follows `next_cursor` when present (core) and an accumulated offset when not
- * (local), guided by `has_more`.
+ * Pagination contract: metadata carries `total` (null bajo el feed keyset del
+ * nucleo central), `has_more` y `next_cursor`. El hook nunca depende de `total`
+ * para paginar: "cargar mas" sigue `next_cursor` cuando viene y un desplazamiento
+ * acumulado cuando no, guiado por `has_more`.
  *
- * Identidad de secuencia (P2-1 auditoria G8): la pagina 1 devuelve ademas
- * `metadata.sequence`, un token opaco que el backend acuña por secuencia. El
- * hook lo guarda y lo REENVIA en cada "cargar mas" — sin eso el backend cae a
- * su respaldo por IP, y dos pestañas del mismo host (o la peticion duplicada de
- * React StrictMode en desarrollo) comparten la anotacion de que motor sirvio la
- * pagina 1: la pagina 2 puede llegar del otro corpus, con otras identidades y
- * otro orden. El token existia en el servidor desde G7 y ningun cliente lo
- * reenviaba, asi que el 100 % del trafico real caia en el respaldo.
+ * DT-161: aqui se guardaba y reenviaba `metadata.sequence`, un token que el
+ * backend acuñaba al servir la pagina 1 para que las paginas siguientes salieran
+ * del MISMO motor de catalogo. Con un solo motor desde el traspaso no hay dos
+ * corpus entre los que mezclar, asi que el token y su hilo se han retirado.
  *
  * @param {Function} [onSaveSearch] — optional callback to save current filters
  */
@@ -51,7 +45,6 @@ const useJobFilter = (onSaveSearch) => {
     const [total, setTotal] = useState(null); // null = unknown (core keyset feed)
     const [hasMore, setHasMore] = useState(false);
     const [nextCursor, setNextCursor] = useState(null);
-    const [sequence, setSequence] = useState(null);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState(false);
 
@@ -67,7 +60,7 @@ const useJobFilter = (onSaveSearch) => {
     }, []);
 
     // Construye los parámetros de la URL de búsqueda a partir de los filtros actuales.
-    const buildQueryParams = useCallback(({ offset = 0, cursor = null, seq = null } = {}) => {
+    const buildQueryParams = useCallback(({ offset = 0, cursor = null } = {}) => {
         return buildJobSearchParams({
             q: filters.q,
             country: filters.country,
@@ -80,13 +73,12 @@ const useJobFilter = (onSaveSearch) => {
             // both cursor and a non-zero offset.
             offset: cursor ? undefined : offset,
             cursor,
-            sequence: seq,
         }).toString();
     }, [filters]);
 
     // Pide una página de resultados con los filtros actuales, bien como
     // búsqueda nueva o como continuación ("cargar más") de la anterior.
-    const fetchPage = useCallback(async ({ offset = 0, cursor = null, seq = null, append = false }) => {
+    const fetchPage = useCallback(async ({ offset = 0, cursor = null, append = false }) => {
         // Una busqueda abre generacion nueva; un "cargar mas" continua la vigente.
         const generation = append
             ? requestGenerationRef.current
@@ -96,7 +88,7 @@ const useJobFilter = (onSaveSearch) => {
         setLoading(true);
         setSearched(true);
         try {
-            const qs = buildQueryParams({ offset, cursor, seq });
+            const qs = buildQueryParams({ offset, cursor });
             const response = await authenticatedFetch(
                 `${BACKEND_URL}/api/v1/jobs/search?${qs}`
             );
@@ -107,9 +99,6 @@ const useJobFilter = (onSaveSearch) => {
             setResults(prev => (append ? [...prev, ...items] : items));
             setTotal(meta.total ?? null);
             setNextCursor(meta.next_cursor ?? null);
-            // Solo la pagina 1 acuña token; en un "cargar mas" no viene y hay
-            // que CONSERVAR el que abrio la secuencia.
-            if (!append) setSequence(meta.sequence ?? null);
             // `has_more` drives the "load more" button; a full page is the
             // conservative fallback if the envelope ever omits it.
             setHasMore(meta.has_more ?? items.length === JOBS_PAGE_SIZE);
@@ -120,15 +109,13 @@ const useJobFilter = (onSaveSearch) => {
             // posicion: que este intento fallara no prueba que no haya mas
             // paginas. Apagar `hasMore`/`nextCursor` dejaba al usuario con la
             // primera pagina de un corpus de cientos y sin camino de reintento
-            // salvo relanzar la busqueda entera — y el 501 del fallo cerrado
-            // (token de secuencia caducado, backend redesplegado, cambio de IP
-            // al pasar de wifi a 4G) es alcanzable en produccion.
+            // salvo relanzar la busqueda entera, y un corte del nucleo central
+            // es alcanzable en produccion.
             if (append) return;
             setResults([]);
             setTotal(null);
             setHasMore(false);
             setNextCursor(null);
-            setSequence(null);
         } finally {
             // Apagar el indicador solo si nadie ha tomado el relevo: si una
             // busqueda mas nueva sigue en vuelo, manda la suya.
@@ -143,14 +130,14 @@ const useJobFilter = (onSaveSearch) => {
     // estaban mostrando (en vez de sustituirlos).
     const handleLoadMore = useCallback(() => {
         if (loading) return Promise.resolve();
-        // Cursor when the backend gave one (core keyset); accumulated offset
-        // otherwise (local engine). Same code path in both routing modes.
+        // Cursor cuando el backend lo dio (keyset del nucleo central);
+        // desplazamiento acumulado cuando no.
         return fetchPage(
             nextCursor
-                ? { cursor: nextCursor, seq: sequence, append: true }
-                : { offset: results.length, seq: sequence, append: true }
+                ? { cursor: nextCursor, append: true }
+                : { offset: results.length, append: true }
         );
-    }, [fetchPage, nextCursor, sequence, results.length, loading]);
+    }, [fetchPage, nextCursor, results.length, loading]);
 
     // Borra todos los filtros y resultados, volviendo al estado inicial.
     const handleClear = useCallback(() => {
@@ -163,7 +150,6 @@ const useJobFilter = (onSaveSearch) => {
         setTotal(null);
         setHasMore(false);
         setNextCursor(null);
-        setSequence(null);
         setSearched(false);
     }, []);
 
@@ -199,7 +185,6 @@ const useJobFilter = (onSaveSearch) => {
         total,
         hasMore,
         nextCursor,
-        sequence,
         loading,
         searched,
         hasFilters,

@@ -141,12 +141,10 @@ const useSavedSearches = () => {
                 salaryMax: filters.salary_max,
                 remoteOnly: filters.remote_only,
                 limit: JOBS_PAGE_SIZE,
-                // Vista previa: se pide la pagina 1 y no se continua. El
-                // servidor no puede distinguirlo de una paginacion que si
-                // sigue, asi que sin declararlo esta peticion acuñaba un token
-                // que nadie lee y SOBRESCRIBIA la anotacion compartida de la
-                // consulta, rompiendo el "cargar mas" del filtro avanzado.
-                oneshot: true,
+                // DT-161: esta vista previa declaraba `oneshot: true` ("pido la
+                // pagina 1 y no continuo") para no sobrescribir la anotacion de
+                // que motor servia la busqueda del filtro avanzado y romperle su
+                // "cargar mas". Con un solo motor no hay anotacion que pisar.
             });
 
             const response = await authenticatedFetch(

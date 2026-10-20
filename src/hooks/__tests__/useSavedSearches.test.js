@@ -710,14 +710,14 @@ describe('useSavedSearches — la vista previa no abre secuencia', () => {
 
   const guardada = { id: 1, name: 'React CH', filters: { q: 'react', country: 'CH' } }
 
-  // La vista previa pide la página 1 y NO continúa. El servidor no puede
-  // distinguirla de una página 1 que sí paginará —está medido—, así que sin
-  // declararlo la trataba como el arranque de una secuencia: acuñaba un token
-  // que nadie lee, SOBRESCRIBÍA la anotación compartida de esa consulta
-  // (rompiendo el "cargar más" de la pestaña de al lado) y consumía dos huecos
-  // del registro LRU. Quien lo sabe es el cliente, y es el único que puede
-  // decirlo.
-  it('G10-9 · handleRun declara `oneshot` en su petición de búsqueda', async () => {
+  // DT-161: este test fijaba lo CONTRARIO — que la vista previa declarara
+  // `oneshot=true`. Esa marca decía "pido la página 1 y no continúo", y hacía
+  // falta porque el servidor no podía distinguirla de una página 1 que sí
+  // paginaría: sin ella sobrescribía la anotación de qué motor servía esa
+  // consulta y rompía el "cargar más" del filtro avanzado de al lado. Con un
+  // solo motor de catálogo no hay anotación que pisar, el backend ya no acepta
+  // el parámetro, y lo que queda por fijar es que el cliente no lo envíe.
+  it('DT-161 · handleRun ya no declara `oneshot`', async () => {
     mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse([guardada]))
     const { result } = renderHook(() => useSavedSearches())
     await waitFor(() => expect(result.current.loading).toBe(false))
@@ -729,6 +729,9 @@ describe('useSavedSearches — la vista previa no abre secuencia', () => {
 
     const url = mockAuthenticatedFetch.mock.calls[1][0]
     expect(url).toContain('/api/v1/jobs/search?')
-    expect(url).toContain('oneshot=true')
+    expect(url).not.toContain('oneshot')
+    expect(url).not.toContain('seq=')
+    // Los filtros de la búsqueda guardada sí viajan.
+    expect(url).toContain('q=react')
   })
 })

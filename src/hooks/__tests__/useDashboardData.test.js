@@ -138,7 +138,8 @@ describe('useDashboardData', () => {
     await waitFor(() => expect(result.current.jobData.testjobs).toBeDefined())
     expect(mockAuthenticatedFetch).toHaveBeenNthCalledWith(
       4,
-      expect.stringContaining('/api/v1/jobs/search?source=core-testjobs&limit=100&oneshot=true'),
+      // DT-161: la marca `oneshot=true` se retiro con el mecanismo de secuencia.
+      expect.stringContaining('/api/v1/jobs/search?source=core-testjobs&limit=100'),
     )
     expect(result.current.jobData.testjobs._normalized[0]).toMatchObject({
       id: 'core-vacancy',

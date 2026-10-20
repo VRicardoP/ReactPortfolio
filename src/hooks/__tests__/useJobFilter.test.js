@@ -465,92 +465,57 @@ describe('useJobFilter', () => {
 })
 
 // ---------------------------------------------------------------------------
-// P2-1 auditoria G8 — el token de secuencia, la mitad del CLIENTE
+// DT-161 — el token de secuencia se retiro de los dos lados
 // ---------------------------------------------------------------------------
 
-describe('useJobFilter — token de secuencia (P2-1 G8)', () => {
+describe('useJobFilter — DT-161: ni secuencia ni oneshot', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.restoreAllMocks()
   })
 
-  const paginaConToken = (items, { hasMore, sequence }) => ({
-    data: items,
-    metadata: { total: null, has_more: hasMore, next_cursor: null, sequence },
-  })
-
-  // MUERDE sin el fix: el backend acuña el token desde G7 y lo publica en
-  // `metadata.sequence`, pero NINGUN cliente lo leia ni lo reenviaba, asi que
-  // el 100 % del trafico caia en el respaldo por IP — el codigo de ANTES del
-  // fix — y dos pestañas del mismo host podian mezclar corpus e identidades
-  // entre el motor core y el local.
-  it('reenvia metadata.sequence como ?seq= en el "cargar mas"', async () => {
+  // Sustituye a cuatro tests del token de secuencia (P2-1 auditoria G8).
+  //
+  // Aquellos fijaban la mitad del CLIENTE de un mecanismo con dos motores de
+  // catalogo: el backend acuñaba un token al servir la pagina 1 y lo publicaba
+  // en `metadata.sequence`, el hook lo guardaba, lo reenviaba como `?seq=` en
+  // cada "cargar mas", lo renovaba en cada busqueda nueva y lo olvidaba al
+  // limpiar. Sin eso el servidor caia a un respaldo por IP y dos pestañas del
+  // mismo host podian recibir la pagina 2 del OTRO corpus, con otras
+  // identidades y otro orden.
+  //
+  // Desde el traspaso hay UN SOLO motor: ni hay dos corpus que mezclar ni
+  // backend que acuñe nada. Lo que queda por fijar es que el cliente no vuelva
+  // a enviar esos parametros por costumbre, porque ya no significan nada.
+  it('ninguna peticion lleva seq ni oneshot', async () => {
+    const pagina = (items, next) => ({
+      data: items,
+      metadata: { total: null, has_more: true, next_cursor: next },
+    })
     mockAuthenticatedFetch
-      .mockResolvedValueOnce(
-        makeMockResponse(paginaConToken([{ id: 1 }], { hasMore: true, sequence: 'tok-1' }))
-      )
-      .mockResolvedValueOnce(
-        makeMockResponse(paginaConToken([{ id: 2 }], { hasMore: false, sequence: undefined }))
-      )
-
-    const { result } = renderHook(() => useJobFilter())
-
-    await act(async () => { await result.current.handleSearch() })
-    expect(result.current.sequence).toBe('tok-1')
-    // La pagina 1 ABRE la secuencia: no puede reenviar token (el servidor
-    // estrena uno igualmente, y mandarlo solo confundiria la lectura).
-    expect(mockAuthenticatedFetch.mock.calls[0][0]).not.toContain('seq=')
-
-    await act(async () => { await result.current.handleLoadMore() })
-    expect(mockAuthenticatedFetch.mock.calls[1][0]).toContain('seq=tok-1')
-  })
-
-  it('conserva el token de la pagina 1 aunque el "cargar mas" no lo republique', async () => {
-    mockAuthenticatedFetch
-      .mockResolvedValueOnce(
-        makeMockResponse(paginaConToken([{ id: 1 }], { hasMore: true, sequence: 'tok-2' }))
-      )
-      .mockResolvedValueOnce(
-        makeMockResponse(paginaConToken([{ id: 2 }], { hasMore: true, sequence: undefined }))
-      )
-      .mockResolvedValueOnce(
-        makeMockResponse(paginaConToken([{ id: 3 }], { hasMore: false, sequence: undefined }))
-      )
+      .mockResolvedValueOnce(makeMockResponse(pagina([{ id: 1 }], 'cur-1')))
+      .mockResolvedValueOnce(makeMockResponse(pagina([{ id: 2 }], 'cur-2')))
 
     const { result } = renderHook(() => useJobFilter())
     await act(async () => { await result.current.handleSearch() })
     await act(async () => { await result.current.handleLoadMore() })
-    await act(async () => { await result.current.handleLoadMore() })
 
-    expect(result.current.sequence).toBe('tok-2')
-    expect(mockAuthenticatedFetch.mock.calls[2][0]).toContain('seq=tok-2')
+    expect(mockAuthenticatedFetch).toHaveBeenCalledTimes(2)
+    for (const [url] of mockAuthenticatedFetch.mock.calls) {
+      expect(url).not.toContain('seq=')
+      expect(url).not.toContain('oneshot')
+    }
+    // El cursor SI sigue: es la paginacion real del feed del core.
+    expect(mockAuthenticatedFetch.mock.calls[1][0]).toContain('cursor=cur-1')
   })
 
-  it('una busqueda nueva descarta el token de la secuencia anterior', async () => {
-    mockAuthenticatedFetch
-      .mockResolvedValueOnce(
-        makeMockResponse(paginaConToken([{ id: 1 }], { hasMore: true, sequence: 'tok-3' }))
-      )
-      .mockResolvedValueOnce(
-        makeMockResponse(paginaConToken([{ id: 9 }], { hasMore: false, sequence: 'tok-4' }))
-      )
-
-    const { result } = renderHook(() => useJobFilter())
-    await act(async () => { await result.current.handleSearch() })
-    await act(async () => { await result.current.handleSearch() })
-
-    expect(result.current.sequence).toBe('tok-4')
-    expect(mockAuthenticatedFetch.mock.calls[1][0]).not.toContain('seq=')
-  })
-
-  it('handleClear olvida el token', async () => {
+  it('el hook ya no expone un token de secuencia', async () => {
     mockAuthenticatedFetch.mockResolvedValueOnce(
-      makeMockResponse(paginaConToken([{ id: 1 }], { hasMore: true, sequence: 'tok-5' }))
+      makeMockResponse({ data: [{ id: 1 }], metadata: { has_more: false } })
     )
     const { result } = renderHook(() => useJobFilter())
     await act(async () => { await result.current.handleSearch() })
-    act(() => { result.current.handleClear() })
-    expect(result.current.sequence).toBeNull()
+    expect(result.current.sequence).toBeUndefined()
   })
 })
 
@@ -564,13 +529,15 @@ describe('useJobFilter — respuestas fuera de orden (P2-1 externa)', () => {
     vi.restoreAllMocks()
   })
 
-  const paginaSecuencia = (items, sequence) => ({
+  // DT-161: este helper publicaba tambien `metadata.sequence`. Lo que
+  // identifica a cada respuesta ahora es su cursor, que es lo que el hook
+  // tiene que no contaminar entre busquedas.
+  const paginaSecuencia = (items, marca) => ({
     data: items,
     metadata: {
       total: null,
       has_more: true,
-      next_cursor: `cur-${sequence}`,
-      sequence,
+      next_cursor: `cur-${marca}`,
     },
   })
 
@@ -614,12 +581,11 @@ describe('useJobFilter — respuestas fuera de orden (P2-1 externa)', () => {
 
     expect(result.current.filters.q).toBe('new')
     expect(result.current.results).toEqual([{ id: 'NEW' }])
-    expect(result.current.sequence).toBe('seq-new')
     expect(result.current.nextCursor).toBe('cur-seq-new')
     expect(result.current.loading).toBe(false)
   })
 
-  // MUERDE sin el fix: con `sequence` contaminado por la respuesta vieja, el
+  // MUERDE sin el fix: con el cursor contaminado por la respuesta vieja, el
   // "cargar mas" pide la pagina 2 con los filtros nuevos y el token viejo —
   // justo la mezcla de corpus que el token vino a evitar.
   it('el "cargar mas" siguiente usa el cursor y la secuencia de la busqueda vigente', async () => {
@@ -651,7 +617,6 @@ describe('useJobFilter — respuestas fuera de orden (P2-1 externa)', () => {
     await act(async () => { await result.current.handleLoadMore() })
 
     const urlPagina2 = mockAuthenticatedFetch.mock.calls[2][0]
-    expect(urlPagina2).toContain('seq=seq-new')
     expect(urlPagina2).toContain('cur-seq-new')
     expect(urlPagina2).not.toContain('seq-old')
   })
@@ -675,22 +640,21 @@ describe('useJobFilter — respuestas fuera de orden (P2-1 externa)', () => {
     })
 
     expect(result.current.results).toEqual([])
-    expect(result.current.sequence).toBeNull()
     expect(result.current.nextCursor).toBeNull()
     expect(result.current.searched).toBe(false)
     expect(result.current.loading).toBe(false)
   })
 
   // --- Regresión P3-2 (auditoría G9 2026-08-27) ---
-  // El fallo cerrado del token de secuencia (501) llega al hook como una
-  // excepción de `authenticatedFetch`. Apagar `hasMore` ahí dejaba al usuario
-  // con la primera página de un corpus de cientos y sin ningún camino de
-  // reintento: un "cargar más" que falla no prueba que no haya más páginas.
+  // Un fallo del nucleo central llega al hook como una excepción de
+  // `authenticatedFetch`. Apagar `hasMore` ahí dejaba al usuario con la primera
+  // página de un corpus de cientos y sin ningún camino de reintento: un
+  // "cargar más" que falla no prueba que no haya más páginas.
   it('F1 · un "cargar más" que falla conserva el botón y la posición para reintentar', async () => {
     mockAuthenticatedFetch.mockImplementationOnce(() =>
       Promise.resolve(makeMockResponse({
         data: [{ id: 'p1' }],
-        metadata: { next_cursor: 'c1', sequence: 's1', has_more: true },
+        metadata: { next_cursor: 'c1', has_more: true },
       }))
     )
     mockAuthenticatedFetch.mockImplementationOnce(() =>
@@ -706,7 +670,6 @@ describe('useJobFilter — respuestas fuera de orden (P2-1 externa)', () => {
     expect(result.current.results.map(r => r.id)).toEqual(['p1'])
     expect(result.current.hasMore).toBe(true)
     expect(result.current.nextCursor).toBe('c1')
-    expect(result.current.sequence).toBe('s1')
     expect(result.current.loading).toBe(false)
 
     // Y el reintento vuelve a pedir exactamente la misma página.
@@ -718,7 +681,6 @@ describe('useJobFilter — respuestas fuera de orden (P2-1 externa)', () => {
     )
     await act(async () => { await result.current.handleLoadMore() })
     expect(result.current.results.map(r => r.id)).toEqual(['p1', 'p2'])
-    expect(result.current.sequence).toBe('s1')
   })
 })
 

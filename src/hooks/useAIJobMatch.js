@@ -116,15 +116,22 @@ const useAIJobMatch = () => {
         }
     }, [authenticatedFetch, fetchResult]);
 
-    // Pide que se lance (o se vuelva a lanzar) el análisis completo, y
-    // sigue su progreso hasta tener el resultado.
+    // Vuelve a pedir al núcleo central la lista de ofertas puntuadas, por si
+    // ha aparecido algo nuevo desde la última vez.
+    //
+    // DT-161: esta llamada enviaba `force=true` ("recalcula aunque haya
+    // resultado guardado") y el backend lo IGNORABA, porque el nucleo central
+    // mantiene el feed al dia por su cuenta: una tarea de recuperacion
+    // periodica mas una materializacion diaria. El parametro se ha retirado de
+    // los dos lados, y el boton ya no dice "Analizar" sino "Actualizar", que es
+    // lo que de verdad hace.
     const runAnalysis = useCallback(async () => {
         setLoading(true);
         setError(null);
         setProgress(null);
         try {
             const response = await authenticatedFetch(
-                `${BACKEND_URL}/api/v1/ai-match/analyze/start?force=true`,
+                `${BACKEND_URL}/api/v1/ai-match/analyze/start`,
                 { method: 'POST' }
             );
             const payload = await response.json();
