@@ -33,10 +33,14 @@ ChartJS.register(
 /** Render heatmap dots on a canvas using radial gradients. */
 // Dibuja a mano, sobre un canvas, los puntos de calor: más clics en una
 // zona significa un punto más grande y más intenso (azul → verde → naranja).
-function renderHeatmap(canvas, points, theme) {
+//
+// DT-186: `w` y `h` se reciben en píxeles CSS y los aporta quien llama. Antes
+// se leían de `canvas.width`/`canvas.height`, que están en píxeles FÍSICOS,
+// sobre un contexto al que ya se le había aplicado `scale(dpr, dpr)`: en una
+// pantalla con dpr=2 todo se dibujaba al doble de tamaño y solo se veía el
+// cuarto superior izquierdo.
+function renderHeatmap(canvas, points, theme, w, h) {
     const ctx = canvas.getContext('2d');
-    const w = canvas.width;
-    const h = canvas.height;
     ctx.clearRect(0, 0, w, h);
 
     // Dark background
@@ -124,13 +128,20 @@ const HeatmapWindow = memo(({ initialPosition }) => {
     const drawHeatmap = useCallback(() => {
         if (canvasRef.current && containerRef.current) {
             const rect = containerRef.current.getBoundingClientRect();
+            // DT-185: con la ventana minimizada el contenido sigue montado pero
+            // oculto, así que el contenedor mide 0x0 y el observador de tamaño
+            // dispara igual. Dibujar entonces dejaría el lienzo a cero y se
+            // vería en blanco al restaurar, hasta el siguiente redibujado.
+            if (rect.width === 0 || rect.height === 0) return;
             const dpr = window.devicePixelRatio || 1;
             canvasRef.current.width = rect.width * dpr;
             canvasRef.current.height = rect.height * dpr;
             canvasRef.current.style.width = `${rect.width}px`;
             canvasRef.current.style.height = `${rect.height}px`;
             canvasRef.current.getContext('2d').scale(dpr, dpr);
-            renderHeatmap(canvasRef.current, heatmapData, theme);
+            // Se pasan las medidas en píxeles CSS, que son las que entiende el
+            // contexto ya escalado (DT-186).
+            renderHeatmap(canvasRef.current, heatmapData, theme, rect.width, rect.height);
         }
     }, [heatmapData, theme]);
 

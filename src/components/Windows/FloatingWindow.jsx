@@ -198,12 +198,19 @@ const FloatingWindowDesktop = ({
                 <span className="window-title" id={`${id}-title`} role="heading" aria-level="2">{title}</span>
             </div>
 
+            {/* DT-185: el contenido se queda MONTADO al minimizar y lo oculta
+                la regla que ya existía, `.window-collapsed .window-content
+                { display: none }`. Antes se desmontaba, así que minimizar
+                destruía el estado de dentro: se perdía la conversación del
+                chat, el Kanban volvía a pedir sus datos y el mapa se
+                reconstruía. Leaflet y el mapa de calor recuperan su tamaño al
+                volver a mostrarse porque ambos observan su contenedor. */}
+            <div className="window-content" ref={contentRef}>
+                {children}
+            </div>
+
             {!isMinimized && (
                 <>
-                    <div className="window-content" ref={contentRef}>
-                        {children}
-                    </div>
-
                     {/* borders for resizing */}
                     {!isMaximized && (
                         <>
