@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
+import useAuthenticatedQuery from './useAuthenticatedQuery';
 
 const SCHOOLS_URL = `${BACKEND_URL}/api/v1/schools/`;
 const SCHOOL_JOBS_URL = `${BACKEND_URL}/api/v1/schools/jobs/all`;
@@ -19,13 +20,29 @@ const SCRAPE_POLL_DELAY_MS = 8000;
 // en ellos, y permite forzar una revisión manual o descartar una oferta.
 const useSchoolJobs = () => {
   const { authenticatedFetch, isAuthenticated } = useAuth();
-  const [schools, setSchools] = useState([]);
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data: schoolsData,
+    loading: schoolsLoading,
+    error: schoolsError,
+    refetch: refetchSchools,
+  } = useAuthenticatedQuery(SCHOOLS_URL, { enabled: isAuthenticated });
+  const {
+    data: jobsData,
+    loading: jobsLoading,
+    error: jobsError,
+    refetch: refetchJobs,
+  } = useAuthenticatedQuery(SCHOOL_JOBS_URL, { enabled: isAuthenticated });
+  const [actionError, setActionError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [dismissError, setDismissError] = useState(null);
   const [dismissingJobIds, setDismissingJobIds] = useState(() => new Set());
+  const [dismissedJobIds, setDismissedJobIds] = useState(() => new Set());
+
+  const schools = Array.isArray(schoolsData) ? schoolsData : [];
+  const jobs = (Array.isArray(jobsData) ? jobsData : [])
+    .filter((job) => !dismissedJobIds.has(job.id));
+  const loading = isAuthenticated && (schoolsLoading || jobsLoading);
+  const error = actionError || schoolsError?.message || jobsError?.message || null;
 
   // DT-93: timers + mounted flag para evitar setState tras unmount
   const scrapePollTimerRef = useRef(null);
@@ -44,38 +61,13 @@ const useSchoolJobs = () => {
 
   // Vuelve a pedir la lista de colegios y sus ofertas detectadas.
   const refresh = useCallback(async () => {
-    if (!isAuthenticated) {
-      if (mountedRef.current) setLoading(false);
-      return;
-    }
+    if (!isAuthenticated) return;
     if (mountedRef.current) {
-      setLoading(true);
-      setError(null);
+      setActionError(null);
       setDismissError(null);
     }
-    try {
-      const [schoolsRes, jobsRes] = await Promise.all([
-        authenticatedFetch(SCHOOLS_URL),
-        authenticatedFetch(SCHOOL_JOBS_URL),
-      ]);
-      const [schoolsJson, jobsJson] = await Promise.all([
-        schoolsRes.json(),
-        jobsRes.json(),
-      ]);
-      if (!mountedRef.current) return;
-      setSchools(Array.isArray(schoolsJson) ? schoolsJson : []);
-      setJobs(Array.isArray(jobsJson) ? jobsJson : []);
-    } catch (err) {
-      if (mountedRef.current) setError(err.message || 'Failed to load school data');
-    } finally {
-      if (mountedRef.current) setLoading(false);
-    }
-  }, [authenticatedFetch, isAuthenticated]);
-
-  // Carga los datos la primera vez que se usa el hook.
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
+    await Promise.all([refetchSchools(), refetchJobs()]);
+  }, [isAuthenticated, refetchJobs, refetchSchools]);
 
   // Pide al servidor que revise ahora mismo todos los colegios, y vuelve a
   // consultar los resultados pasado un tiempo (la revisión tarda en segundo plano).
@@ -97,7 +89,7 @@ const useSchoolJobs = () => {
       }, SCRAPE_POLL_DELAY_MS);
     } catch (err) {
       if (mountedRef.current) {
-        setError(err.message || 'Failed to trigger scrape');
+        setActionError(err.message || 'Failed to trigger scrape');
         setRefreshing(false);
       }
     }
@@ -113,7 +105,7 @@ const useSchoolJobs = () => {
       // await authenticatedFetch(`${SCHOOL_JOBS_URL}/${jobId}/dismiss`, { method: 'POST' });
       await authenticatedFetch(`${SCHOOL_JOB_ACTIONS_URL}/${jobId}/dismiss`, { method: 'POST' });
       if (mountedRef.current) {
-        setJobs((current) => current.filter((job) => job.id !== jobId));
+        setDismissedJobIds((current) => new Set(current).add(jobId));
       }
     } catch (err) {
       if (mountedRef.current) setDismissError(err.message || 'Failed to dismiss school job');
