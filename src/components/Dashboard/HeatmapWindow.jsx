@@ -2,102 +2,18 @@
 // mano en un canvas), además de gráficos de tiempo de atención por
 // ventana, distribución de clics, y sesiones por día.
 
-import { memo, useMemo, useState, useRef, useEffect, useCallback } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import '../../charts/register';
 import useChartTheme from '../../hooks/useChartTheme';
+import useEngagementCharts, { formatDuration } from '../../hooks/useEngagementCharts';
+import useHeatmapCanvas from '../../hooks/useHeatmapCanvas';
 import TabBar from '../UI/TabBar';
 import FloatingWindow from '../Windows/FloatingWindow';
 import { useTheme } from '../../context/ThemeContext';
 import { useHeatmapData } from '../../hooks/useHeatmapData';
 import '../../styles/dashboard-forms.css';
-
-
-/** Render heatmap dots on a canvas using radial gradients. */
-// Dibuja a mano, sobre un canvas, los puntos de calor: más clics en una
-// zona significa un punto más grande y más intenso (azul → verde → naranja).
-//
-// DT-186: `w` y `h` se reciben en píxeles CSS y los aporta quien llama. Antes
-// se leían de `canvas.width`/`canvas.height`, que están en píxeles FÍSICOS,
-// sobre un contexto al que ya se le había aplicado `scale(dpr, dpr)`: en una
-// pantalla con dpr=2 todo se dibujaba al doble de tamaño y solo se veía el
-// cuarto superior izquierdo.
-function renderHeatmap(canvas, points, theme, w, h) {
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, w, h);
-
-    // Dark background
-    ctx.fillStyle = 'rgba(10, 10, 30, 0.92)';
-    ctx.fillRect(0, 0, w, h);
-
-    // Grid lines for reference
-    ctx.strokeStyle = `rgba(${theme.primaryRgb}, 0.08)`;
-    ctx.lineWidth = 1;
-    for (let i = 1; i < 10; i++) {
-        ctx.beginPath();
-        ctx.moveTo((w / 10) * i, 0);
-        ctx.lineTo((w / 10) * i, h);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(0, (h / 10) * i);
-        ctx.lineTo(w, (h / 10) * i);
-        ctx.stroke();
-    }
-
-    if (!points || points.length === 0) {
-        ctx.fillStyle = `rgba(${theme.primaryRgb}, 0.3)`;
-        ctx.font = '12px Courier New';
-        ctx.textAlign = 'center';
-        ctx.fillText('No data', w / 2, h / 2);
-        return;
-    }
-
-    const maxCount = Math.max(...points.map(p => p.count), 1);
-
-    // Draw heat points
-    ctx.globalCompositeOperation = 'lighter';
-    points.forEach(({ x, y, count }) => {
-        const px = x * w;
-        const py = y * h;
-        const intensity = count / maxCount;
-        const radius = 12 + intensity * 28;
-
-        const gradient = ctx.createRadialGradient(px, py, 0, px, py, radius);
-        if (intensity < 0.33) {
-            gradient.addColorStop(0, `rgba(0, 100, 255, ${0.25 + intensity * 0.6})`);
-        } else if (intensity < 0.66) {
-            gradient.addColorStop(0, `rgba(0, 255, 200, ${0.3 + intensity * 0.5})`);
-        } else {
-            gradient.addColorStop(0, `rgba(255, 80, 0, ${0.4 + intensity * 0.4})`);
-        }
-        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(px, py, radius, 0, Math.PI * 2);
-        ctx.fill();
-    });
-    ctx.globalCompositeOperation = 'source-over';
-}
-
-/** Format milliseconds as human-readable duration. */
-// Convierte milisegundos a un texto legible (ms, segundos o minutos).
-function formatDuration(ms) {
-    if (ms == null) return 'N/A';
-    if (ms < 1000) return `${Math.round(ms)}ms`;
-    if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
-    return `${(ms / 60000).toFixed(1)}m`;
-}
-
-/** Clean window ID for display (e.g. "profile-window" → "Profile"). */
-// Convierte el identificador interno de una ventana en un nombre legible.
-function cleanWindowId(id) {
-    return (id || 'unknown')
-        .replace('-window', '')
-        .replace(/-/g, ' ')
-        .replace(/\b\w/g, c => c.toUpperCase());
-}
 
 const HeatmapWindow = memo(({ initialPosition }) => {
     const [activeTab, setActiveTab] = useState('heatmap');
@@ -105,122 +21,15 @@ const HeatmapWindow = memo(({ initialPosition }) => {
     const { barOptions: timelineOptions, hBarOptions, doughnutOptions } = useChartTheme();
     const { t } = useTranslation();
     const { heatmapData, engagementStats, loading } = useHeatmapData();
-    const canvasRef = useRef(null);
-    const containerRef = useRef(null);
-
-    // Draw heatmap when data or tab changes
-    // Ajusta el tamaño del canvas al del contenedor y vuelve a dibujar el mapa de calor.
-    const drawHeatmap = useCallback(() => {
-        if (canvasRef.current && containerRef.current) {
-            const rect = containerRef.current.getBoundingClientRect();
-            // DT-185: con la ventana minimizada el contenido sigue montado pero
-            // oculto, así que el contenedor mide 0x0 y el observador de tamaño
-            // dispara igual. Dibujar entonces dejaría el lienzo a cero y se
-            // vería en blanco al restaurar, hasta el siguiente redibujado.
-            if (rect.width === 0 || rect.height === 0) return;
-            const dpr = window.devicePixelRatio || 1;
-            canvasRef.current.width = rect.width * dpr;
-            canvasRef.current.height = rect.height * dpr;
-            canvasRef.current.style.width = `${rect.width}px`;
-            canvasRef.current.style.height = `${rect.height}px`;
-            canvasRef.current.getContext('2d').scale(dpr, dpr);
-            // Se pasan las medidas en píxeles CSS, que son las que entiende el
-            // contexto ya escalado (DT-186).
-            renderHeatmap(canvasRef.current, heatmapData, theme, rect.width, rect.height);
-        }
-    }, [heatmapData, theme]);
-
-    // Redibuja el mapa de calor al entrar en su pestaña o cuando cambian los datos.
-    useEffect(() => {
-        if (activeTab !== 'heatmap') return;
-        // Small delay to let the container size settle
-        const timer = setTimeout(drawHeatmap, 50);
-        return () => clearTimeout(timer);
-    }, [activeTab, drawHeatmap]);
-
-    // ResizeObserver for responsive canvas
-    // Vuelve a dibujar el mapa de calor si el contenedor cambia de tamaño.
-    useEffect(() => {
-        if (activeTab !== 'heatmap' || !containerRef.current) return;
-        const observer = new ResizeObserver(drawHeatmap);
-        observer.observe(containerRef.current);
-        return () => observer.disconnect();
-    }, [activeTab, drawHeatmap]);
-
-    // El gráfico horizontal conserva los formateadores de duración sobre la
-    // base visual compartida por todos los gráficos del panel.
-    const barOptions = useMemo(() => ({
-        ...hBarOptions,
-        plugins: {
-            ...hBarOptions.plugins,
-            tooltip: {
-                ...hBarOptions.plugins.tooltip,
-                callbacks: { label: ctx => formatDuration(ctx.raw) },
-            },
-        },
-        scales: {
-            ...hBarOptions.scales,
-            x: {
-                ...hBarOptions.scales.x,
-                ticks: {
-                    ...hBarOptions.scales.x.ticks,
-                    callback: value => formatDuration(value),
-                },
-            },
-        },
-    }), [hBarOptions]);
-
-
-
-    // Chart data
-    // Prepara los datos del gráfico de tiempo de atención por ventana (top 10).
-    const focusChartData = useMemo(() => {
-        if (!engagementStats?.window_focus_times?.length) return null;
-        const items = engagementStats.window_focus_times.slice(0, 10);
-        return {
-            labels: items.map(w => cleanWindowId(w.window_id)),
-            datasets: [{
-                data: items.map(w => w.total_ms),
-                backgroundColor: `rgba(${theme.primaryRgb}, 0.6)`,
-                borderColor: theme.primary,
-                borderWidth: 1,
-            }],
-        };
-    }, [engagementStats, theme]);
-
-    // Prepara los datos del gráfico de distribución de clics (top 8 zonas).
-    const clicksChartData = useMemo(() => {
-        if (!engagementStats?.clicks_by_area?.length) return null;
-        const items = engagementStats.clicks_by_area.slice(0, 8);
-        return {
-            labels: items.map(c => cleanWindowId(c.area)),
-            datasets: [{
-                data: items.map(c => c.count),
-                backgroundColor: theme.chartColors,
-                borderColor: theme.primary,
-                borderWidth: 1,
-            }],
-        };
-    }, [engagementStats, theme]);
-
-    // Prepara los datos del gráfico de sesiones por día (últimos 14 días).
-    const timelineData = useMemo(() => {
-        if (!engagementStats?.sessions_timeline?.length) return null;
-        const items = engagementStats.sessions_timeline.slice(-14);
-        return {
-            labels: items.map(d => {
-                const date = new Date(d.date);
-                return date.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
-            }),
-            datasets: [{
-                label: t('dashboard.heatmap.sessionsPerDay'),
-                data: items.map(d => d.count),
-                backgroundColor: `rgba(${theme.primaryRgb}, 0.6)`,
-                borderColor: theme.primary,
-                borderWidth: 1,
-            }],
-        };
-    }, [engagementStats, theme, t]);
+    const { canvasRef, containerRef } = useHeatmapCanvas(
+        activeTab === 'heatmap', heatmapData, theme
+    );
+    const {
+        focusOptions: barOptions,
+        focusData: focusChartData,
+        clicksData: clicksChartData,
+        timelineData,
+    } = useEngagementCharts(engagementStats, theme, t, hBarOptions);
 
     const hasData = heatmapData?.length > 0 || (engagementStats && engagementStats.total_sessions > 0);
 
