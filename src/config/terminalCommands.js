@@ -203,100 +203,72 @@ function sudoCommand(args, { portfolioData, t }) {
   return [{ text: `sudo: ${args.join(' ')}: command not found`, type: 'error' }];
 }
 
-// Permite ver o cambiar el efecto de fondo animado escribiendo su nombre.
-function backgroundCommand(args, { backgroundEffect, setBackground, t }) {
+// Construye los selectores del terminal (consultar, listar, validar y aplicar).
+const makeSelectorCommand = ({ prefix, current, options, apply }) => (args, ctx) => {
   const sub = args[0]?.toLowerCase();
-  if (!sub) {
-    return [
-      { text: `  ${t('terminal.backgroundCurrent', { effect: backgroundEffect })}`, type: 'info' },
-      { text: `  ${t('terminal.backgroundUsage')}`, type: 'info' },
-      { text: '', type: 'info' },
-    ];
-  }
-  if (sub === 'list') {
-    return [
-      { text: `  ${t('terminal.backgroundCurrent', { effect: backgroundEffect })}`, type: 'info' },
-      { text: `  ${t('terminal.backgroundAvailable')}`, type: 'highlight' },
-      ...BACKGROUND_EFFECTS.map(e => ({
-        text: `    ${e === backgroundEffect ? '> ' : '  '}${e}${e === backgroundEffect ? ' (active)' : ''}`,
-        type: e === backgroundEffect ? 'highlight' : 'success',
-      })),
-      { text: '', type: 'info' },
-    ];
-  }
-  if (BACKGROUND_EFFECTS.includes(sub)) {
-    setBackground(sub);
-    return [
-      { text: `  ${t('terminal.backgroundChanged', { effect: sub })}`, type: 'success' },
-      { text: '', type: 'info' },
-    ];
-  }
-  return [{ text: `  ${t('terminal.backgroundInvalid', { effect: sub })}`, type: 'error' }];
-}
+  const active = current(ctx);
+  const available = options(ctx);
+  const valueOf = option => (typeof option === 'string' ? option : option.key);
+  const labelOf = option => (
+    typeof option === 'string' ? option : `${option.key} (${option.name})`
+  );
+  const values = value => ({ effect: value, theme: value, lang: value });
 
-// Permite ver o cambiar el tema de color de la web escribiendo su nombre.
-function themeCommand(args, { themeName, availableThemes, setTheme, t }) {
-  const sub = args[0]?.toLowerCase();
   if (!sub) {
     return [
-      { text: `  ${t('terminal.themeCurrent', { theme: themeName })}`, type: 'info' },
-      { text: `  ${t('terminal.themeUsage')}`, type: 'info' },
+      { text: `  ${ctx.t(`terminal.${prefix}Current`, values(active))}`, type: 'info' },
+      { text: `  ${ctx.t(`terminal.${prefix}Usage`)}`, type: 'info' },
       { text: '', type: 'info' },
     ];
   }
   if (sub === 'list') {
     return [
-      { text: `  ${t('terminal.themeCurrent', { theme: themeName })}`, type: 'info' },
-      { text: `  ${t('terminal.themeAvailable')}`, type: 'highlight' },
-      ...availableThemes.map(({ key, name: label }) => ({
-        text: `    ${key === themeName ? '> ' : '  '}${key} (${label})${key === themeName ? ' (active)' : ''}`,
-        type: key === themeName ? 'highlight' : 'success',
-      })),
+      { text: `  ${ctx.t(`terminal.${prefix}Current`, values(active))}`, type: 'info' },
+      { text: `  ${ctx.t(`terminal.${prefix}Available`)}`, type: 'highlight' },
+      ...available.map(option => {
+        const value = valueOf(option);
+        const isActive = value === active;
+        return {
+          text: `    ${isActive ? '> ' : '  '}${labelOf(option)}${isActive ? ' (active)' : ''}`,
+          type: isActive ? 'highlight' : 'success',
+        };
+      }),
       { text: '', type: 'info' },
     ];
   }
-  if (availableThemes.some(({ key }) => key === sub)) {
-    setTheme(sub);
+  if (available.some(option => valueOf(option) === sub)) {
+    apply(ctx, sub);
     return [
-      { text: `  ${t('terminal.themeChanged', { theme: sub })}`, type: 'success' },
+      { text: `  ${ctx.t(`terminal.${prefix}Changed`, values(sub))}`, type: 'success' },
       { text: '', type: 'info' },
     ];
   }
-  return [{ text: `  ${t('terminal.themeInvalid', { theme: sub })}`, type: 'error' }];
-}
+  return [{
+    text: `  ${ctx.t(`terminal.${prefix}Invalid`, values(sub))}`,
+    type: 'error',
+  }];
+};
 
-// Permite ver o cambiar el idioma de la web escribiendo su código.
-function langCommand(args, { i18n, t }) {
-  const sub = args[0]?.toLowerCase();
-  const currentLang = (i18n.language || 'en').split('-')[0];
-  const supportedLanguages = i18n.options.supportedLngs.filter(lng => lng !== 'cimode');
-  if (!sub) {
-    return [
-      { text: `  ${t('terminal.langCurrent', { lang: currentLang })}`, type: 'info' },
-      { text: `  ${t('terminal.langUsage')}`, type: 'info' },
-      { text: '', type: 'info' },
-    ];
-  }
-  if (sub === 'list') {
-    return [
-      { text: `  ${t('terminal.langCurrent', { lang: currentLang })}`, type: 'info' },
-      { text: `  ${t('terminal.langAvailable')}`, type: 'highlight' },
-      ...supportedLanguages.map(l => ({
-        text: `    ${l === currentLang ? '> ' : '  '}${l}${l === currentLang ? ' (active)' : ''}`,
-        type: l === currentLang ? 'highlight' : 'success',
-      })),
-      { text: '', type: 'info' },
-    ];
-  }
-  if (supportedLanguages.includes(sub)) {
-    i18n.changeLanguage(sub);
-    return [
-      { text: `  ${t('terminal.langChanged', { lang: sub })}`, type: 'success' },
-      { text: '', type: 'info' },
-    ];
-  }
-  return [{ text: `  ${t('terminal.langInvalid', { lang: sub })}`, type: 'error' }];
-}
+const backgroundCommand = makeSelectorCommand({
+  prefix: 'background',
+  current: ({ backgroundEffect }) => backgroundEffect,
+  options: () => BACKGROUND_EFFECTS,
+  apply: ({ setBackground }, value) => setBackground(value),
+});
+
+const themeCommand = makeSelectorCommand({
+  prefix: 'theme',
+  current: ({ themeName }) => themeName,
+  options: ({ availableThemes }) => availableThemes,
+  apply: ({ setTheme }, value) => setTheme(value),
+});
+
+const langCommand = makeSelectorCommand({
+  prefix: 'lang',
+  current: ({ i18n }) => (i18n.language || 'en').split('-')[0],
+  options: ({ i18n }) => i18n.options.supportedLngs.filter(lng => lng !== 'cimode'),
+  apply: ({ i18n }, value) => i18n.changeLanguage(value),
+});
 
 // Muestra las órdenes escritas antes, numeradas.
 function historyCommand(_args, { history, t }) {
