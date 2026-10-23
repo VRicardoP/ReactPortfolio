@@ -11,7 +11,7 @@ import JobBoardControls from './JobBoardControls';
 import TabBar from '../UI/TabBar';
 import useJobBoardControls from '../../hooks/useJobBoardControls';
 import useJobApplication from '../../hooks/useJobApplication';
-import { CompanyResearchName, JobBadges, JobDate, JobSummary } from './JobCardExtras';
+import JobCard from './JobCard';
 
 const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
     const { t } = useTranslation();
@@ -155,83 +155,20 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
                         </div>
                     ) : (
                         pagedJobs.map(job => (
-                            <div key={job.id} className="jobboard-card">
-                                <div className="jobboard-card-header">
-                                    {/* El titulo enlaza a la oferta: antes el unico
-                                        camino para abrirla era el boton «apply», que
-                                        sugiere postular. `title_en` lo resuelve el
-                                        backend en segundo plano (job_enrichments). */}
-                                    <h3 className="jobboard-title">
-                                        {job.url ? (
-                                            <a
-                                                href={job.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="jobboard-title-link"
-                                                title={job.title_en ? job.title : undefined}
-                                            >
-                                                {job.title_en || job.title}
-                                            </a>
-                                        ) : (
-                                            job.title_en || job.title
-                                        )}
-                                        {job.title_en && (
-                                            <span className="jobboard-translated-badge">
-                                                {t('dashboard.aiMatch.translated')}
-                                            </span>
-                                        )}
-                                    </h3>
-                                    <div style={{ display: 'flex', gap: '5px', alignItems: 'center', flexShrink: 0 }}>
-                                        <JobBadges
-                                            remote={job.remote}
-                                            source={activeTab === 'all' ? job.source : null}
-                                            employmentType={job.employmentType}
-                                            sourceStyle={{
-                                                backgroundColor: `${sourceColor(job.source)}22`,
-                                                color: sourceColor(job.source),
-                                                borderColor: `${sourceColor(job.source)}55`,
-                                            }}
-                                            employmentClassName="jobboard-type"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="jobboard-company">
-                                    <CompanyResearchName company={job.company}>{job.company}</CompanyResearchName>
-                                </div>
-
-                                {job.location && (
-                                    <div className="jobboard-meta">
-                                        <span className="jobboard-country">{job.location}</span>
-                                    </div>
-                                )}
-
-                                <JobSummary job={job} className="jobboard-summary" />
-                                {job.tags && job.tags.length > 0 && (
-                                    <div className="jobboard-skills">
-                                        {job.tags.slice(0, 5).map(tag => (
-                                            <span key={tag} className="jobboard-skill-tag">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                        {job.tags.length > 5 && (
-                                            <span className="jobboard-skill-more">
-                                                +{job.tags.length - 5}
-                                            </span>
-                                        )}
-                                    </div>
-                                )}
-
-                                <div className="jobboard-card-footer">
-                                    <JobDate date={job.date} className="jobboard-date" />
-                                    <div className="jobboard-card-btns">
+                            <JobCard
+                                key={job.id}
+                                job={job}
+                                showSource={activeTab === 'all'}
+                                sourceStyle={{
+                                    backgroundColor: `${sourceColor(job.source)}22`,
+                                    color: sourceColor(job.source),
+                                    borderColor: `${sourceColor(job.source)}55`,
+                                }}
+                                actions={(
+                                    <>
                                         {job.url && (
-                                            <a
-                                                href={job.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="jobboard-apply-btn"
-                                            >
+                                            <a href={job.url} target="_blank" rel="noopener noreferrer"
+                                                className="jobboard-apply-btn">
                                                 {t('dashboard.jobBoard.viewOffer')}
                                             </a>
                                         )}
@@ -242,12 +179,11 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
                                         >
                                             {savedIds.has(job.id) || openedIds.has(job.id)
                                                 ? t('dashboard.jobBoard.saved')
-                                                : t('dashboard.jobBoard.save')
-                                            }
+                                                : t('dashboard.jobBoard.save')}
                                         </button>
-                                    </div>
-                                </div>
-                            </div>
+                                    </>
+                                )}
+                            />
                         ))
                     )}
                 </div>

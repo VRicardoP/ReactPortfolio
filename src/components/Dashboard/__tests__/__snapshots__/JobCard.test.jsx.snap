@@ -1,0 +1,75 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`JobCard > preserva la estructura de la variante board 1`] = `
+<article
+  class="jobboard-card"
+>
+  <div
+    class="jobboard-card-header"
+  >
+    <h3
+      class="jobboard-title"
+    >
+      <a
+        class="jobboard-title-link"
+        href="https://example.test/job"
+        rel="noopener noreferrer"
+        target="_blank"
+        title="Original"
+      >
+        English
+      </a>
+      <span
+        class="jobboard-translated-badge"
+      >
+        dashboard.aiMatch.translated
+      </span>
+    </h3>
+    <span>
+      badges
+    </span>
+  </div>
+  <div
+    class="jobboard-company"
+  >
+    <span>
+      Example
+    </span>
+  </div>
+  <div
+    class="jobboard-meta"
+  >
+    <span
+      class="jobboard-country"
+    >
+      Bern
+    </span>
+  </div>
+  <p>
+    summary
+  </p>
+  <div
+    class="jobboard-skills"
+  >
+    <span
+      class="jobboard-skill-tag"
+    >
+      React
+    </span>
+  </div>
+  <div
+    class="jobboard-card-footer"
+  >
+    <time>
+      2026-10-23
+    </time>
+    <div
+      class="jobboard-card-btns"
+    >
+      <button>
+        Save
+      </button>
+    </div>
+  </div>
+</article>
+`;
