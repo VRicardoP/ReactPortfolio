@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
+import useAuthenticatedQuery from './useAuthenticatedQuery';
 // DT-127: las columnas del pipeline son UNA sola lista (config/kanbanColumns).
 // Se re-exporta para no cambiar la API pública de este hook.
 import { COLUMN_KEYS } from '../config/kanbanColumns';
@@ -26,6 +27,10 @@ const INITIAL_NEW_APP = { title: '', company: '', url: '' };
 const useKanban = () => {
     const { t } = useTranslation();
     const { authenticatedFetch } = useAuth();
+    const { refetch: refetchApplications } = useAuthenticatedQuery(
+        `${BACKEND_URL}/api/v1/applications/`,
+        { enabled: false },
+    );
 
     const [applications, setApplications] = useState([]);
     const [draggedId, setDraggedId] = useState(null);
@@ -60,15 +65,14 @@ const useKanban = () => {
     // Fetch all applications on mount
     // Pide al servidor todas las candidaturas.
     const fetchApplications = useCallback(async () => {
-        try {
-            const response = await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/`);
-            const data = await response.json();
-            setApplications(Array.isArray(data) ? data : data.results || data.data || []);
-        } catch {
+        const data = await refetchApplications();
+        if (data === null) {
             setApplications([]);
             showToast(t('dashboard.kanban.errorLoad'));
+            return;
         }
-    }, [authenticatedFetch, t]);
+        setApplications(Array.isArray(data) ? data : data.results || data.data || []);
+    }, [refetchApplications, t]);
 
     useEffect(() => {
         fetchApplications();
