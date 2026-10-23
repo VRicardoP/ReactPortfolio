@@ -6,6 +6,7 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
+import TabBar from '../UI/TabBar';
 import { useTheme } from '../../context/ThemeContext';
 import useJobApplication from '../../hooks/useJobApplication';
 import useSkillsGap from '../../hooks/useSkillsGap';
@@ -143,59 +144,62 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                 {/* Pestañas para cambiar entre "Resultados" y "Habilidades que faltan". */}
                 {/* Tabs */}
                 {results.length > 0 && (
-                    <div className="ai-match-tabs">
-                        <button
-                            className={`ai-match-tab ${activeTab === TAB_RESULTS ? 'active' : ''}`}
-                            onClick={() => selectTab(TAB_RESULTS)}
-                            style={activeTab === TAB_RESULTS ? { color: theme.primary, borderColor: theme.primary } : {}}
-                        >
-                            {t('dashboard.aiMatch.resultsTab')} ({results.length})
-                        </button>
-                        <button
-                            className={`ai-match-tab ${activeTab === TAB_SKILLS_GAP ? 'active' : ''} ${llmUnavailable ? 'disabled' : ''}`}
-                            onClick={() => selectTab(TAB_SKILLS_GAP)}
-                            disabled={llmUnavailable}
-                            title={llmUnavailable ? t('dashboard.aiMatch.skillsGapUnavailable') : undefined}
-                            style={activeTab === TAB_SKILLS_GAP ? { color: theme.primary, borderColor: theme.primary } : {}}
-                        >
-                            {t('dashboard.aiMatch.skillsGapTab')} ({missingSkills.length})
-                        </button>
-                    </div>
+                    <TabBar
+                        className="ai-match-tabs"
+                        tabClassName="ai-match-tab"
+                        ariaLabel={t('dashboard.aiMatch.title')}
+                        active={activeTab}
+                        onChange={selectTab}
+                        tabs={[
+                            {
+                                key: TAB_RESULTS,
+                                label: `${t('dashboard.aiMatch.resultsTab')} (${results.length})`,
+                                style: activeTab === TAB_RESULTS
+                                    ? { color: theme.primary, borderColor: theme.primary }
+                                    : {},
+                            },
+                            {
+                                key: TAB_SKILLS_GAP,
+                                label: `${t('dashboard.aiMatch.skillsGapTab')} (${missingSkills.length})`,
+                                disabled: llmUnavailable,
+                                title: llmUnavailable ? t('dashboard.aiMatch.skillsGapUnavailable') : undefined,
+                                style: activeTab === TAB_SKILLS_GAP
+                                    ? { color: theme.primary, borderColor: theme.primary }
+                                    : {},
+                            },
+                        ]}
+                    />
                 )}
 
                 {/* Barra de filtros: pestañas por fuente de empleo (todas/Jobicy/...)
                     y una casilla para ver solo ofertas remotas. */}
                 {results.length > 0 && activeTab === TAB_RESULTS && (
                     <div className="ai-match-filter-bar">
-                        <div
+                        <TabBar
                             className="ai-match-source-tabs"
-                            role="group"
-                            aria-label={t('dashboard.jobBoard.windowTitle', { defaultValue: 'Job portals' })}
-                        >
-                            {[ALL_MATCH_SOURCES, ...availableSources].map(source => {
+                            tabClassName="ai-match-source-tab"
+                            ariaLabel={t('dashboard.jobBoard.windowTitle', { defaultValue: 'Job portals' })}
+                            active={sourceFilter}
+                            onChange={selectSource}
+                            tabs={[ALL_MATCH_SOURCES, ...availableSources].map(source => {
                                 const color = SOURCE_COLOR_MAP[source] || theme.primary;
                                 const labelKey = source === ALL_MATCH_SOURCES
                                     ? 'dashboard.jobBoard.tabAll'
                                     : 'dashboard.jobBoard.tab'
                                         + source.charAt(0).toUpperCase() + source.slice(1);
-                                return (
-                                    <button
-                                        key={source}
-                                        type="button"
-                                        aria-pressed={sourceFilter === source}
-                                        className={'ai-match-source-tab ' + (sourceFilter === source ? 'active' : '')}
-                                        onClick={() => selectSource(source)}
-                                        style={{
-                                            '--source-color': color,
-                                            color: sourceFilter === source ? color : undefined,
-                                        }}
-                                    >
-                                        {t(labelKey, { defaultValue: source })}
-                                        <span className="ai-match-source-count">{sourceCounts[source] || 0}</span>
-                                    </button>
-                                );
+                                return {
+                                    key: source,
+                                    color,
+                                    style: { color: sourceFilter === source ? color : undefined },
+                                    label: (
+                                        <>
+                                            {t(labelKey, { defaultValue: source })}
+                                            <span className="ai-match-source-count">{sourceCounts[source] || 0}</span>
+                                        </>
+                                    ),
+                                };
                             })}
-                        </div>
+                        />
                         <label className="ai-match-remote-filter">
                             <input
                                 type="checkbox"

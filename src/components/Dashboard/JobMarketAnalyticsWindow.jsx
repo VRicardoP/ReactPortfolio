@@ -18,6 +18,7 @@ import {
 } from 'chart.js';
 import { useTheme } from '../../context/ThemeContext';
 import { JOB_SOURCES } from '../../config/jobSources';
+import TabBar from '../UI/TabBar';
 import FloatingWindow from '../Windows/FloatingWindow';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
@@ -291,18 +292,18 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '10px', gap: '8px' }}>
                 {/* Section selector */}
                 <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                    <button
-                        className={`dash-tab${section === 'market' ? ' dash-tab--active' : ''}`}
-                        onClick={() => setSection('market')}
-                    >
-                        {t('dashboard.jobAnalytics.sectionMarket')}
-                    </button>
-                    <button
-                        className={`dash-tab${section === 'salary' ? ' dash-tab--active' : ''}`}
-                        onClick={() => setSection('salary')}
-                    >
-                        {t('dashboard.jobAnalytics.sectionSalary')}
-                    </button>
+                    <TabBar
+                        style={{ display: 'flex', gap: '6px' }}
+                        tabClassName="dash-tab"
+                        activeClassName="dash-tab--active"
+                        ariaLabel={t('dashboard.jobAnalytics.title')}
+                        active={section}
+                        onChange={setSection}
+                        tabs={[
+                            { key: 'market', label: t('dashboard.jobAnalytics.sectionMarket') },
+                            { key: 'salary', label: t('dashboard.jobAnalytics.sectionSalary') },
+                        ]}
+                    />
                     <span style={{ marginLeft: 'auto', fontSize: '11px', color: theme.text, opacity: 0.6, fontFamily: 'Courier New' }}>
                         {section === 'market'
                             ? `${allJobs.length} jobs`
@@ -312,20 +313,15 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
                 </div>
 
                 {/* Sub-tabs */}
-                <div style={{ display: 'flex', gap: '6px' }} role="tablist" aria-label={t('dashboard.jobAnalytics.title')}>
-                    {tabs.map(tab => (
-                        <button
-                            key={tab}
-                            role="tab"
-                            aria-selected={activeTab === tab}
-                            className={`dash-tab${activeTab === tab ? ' dash-tab--active' : ''}`}
-                            onClick={() => setActiveTab(tab)}
-                        >
-                            {t(TAB_I18N_KEY[tab])}
-                        </button>
-                    ))}
-                </div>
-
+                <TabBar
+                    style={{ display: 'flex', gap: '6px' }}
+                    tabClassName="dash-tab"
+                    activeClassName="dash-tab--active"
+                    ariaLabel={t('dashboard.jobAnalytics.title')}
+                    active={activeTab}
+                    onChange={setActiveTab}
+                    tabs={tabs.map(tab => ({ key: tab, label: t(TAB_I18N_KEY[tab]) }))}
+                />
                 {/* Chart */}
                 <div style={{ flex: 1, minHeight: 0 }}>
                     {renderChart()}

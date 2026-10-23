@@ -2,9 +2,10 @@
 // filtro avanzado, búsquedas guardadas), que antes eran tres ventanas
 // separadas. Cada pestaña guarda su propio estado aunque se cambie de pestaña.
 
-import { memo, useState, useCallback } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../../Windows/FloatingWindow';
+import TabBar from '../../UI/TabBar';
 import useJSearchLive from '../../../hooks/useJSearchLive';
 import useJobFilter from '../../../hooks/useJobFilter';
 import useSavedSearches from '../../../hooks/useSavedSearches';
@@ -39,32 +40,6 @@ const JobSearchWindow = memo(({ initialPosition }) => {
 
     const [activeTab, setActiveTab] = useState('live');
 
-    // WAI-ARIA tab keyboard navigation (ArrowLeft/Right, Home/End)
-    // Permite cambiar de pestaña con las flechas del teclado (izquierda,
-    // derecha, Inicio, Fin), como pide la accesibilidad.
-    const handleTabKeyDown = useCallback((e) => {
-        const currentIdx = TABS.findIndex(tab => tab.key === activeTab);
-        let nextIdx;
-
-        if (e.key === 'ArrowRight') {
-            nextIdx = currentIdx >= TABS.length - 1 ? 0 : currentIdx + 1;
-        } else if (e.key === 'ArrowLeft') {
-            nextIdx = currentIdx <= 0 ? TABS.length - 1 : currentIdx - 1;
-        } else if (e.key === 'Home') {
-            nextIdx = 0;
-        } else if (e.key === 'End') {
-            nextIdx = TABS.length - 1;
-        } else {
-            return;
-        }
-
-        e.preventDefault();
-        setActiveTab(TABS[nextIdx].key);
-        // Move focus to the newly active tab button
-        const buttons = e.currentTarget.querySelectorAll('[role="tab"]');
-        buttons[nextIdx]?.focus();
-    }, [activeTab]);
-
     return (
         <FloatingWindow
             id="job-search-window"
@@ -74,27 +49,21 @@ const JobSearchWindow = memo(({ initialPosition }) => {
         >
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '10px', gap: '10px' }}>
                 {/* Tab bar */}
-                <div
-                    role="tablist"
-                    aria-label={t('dashboard.jobSearch.title')}
-                    onKeyDown={handleTabKeyDown}
+                <TabBar
+                    ariaLabel={t('dashboard.jobSearch.title')}
+                    className="job-search-tabs"
+                    tabClassName="dash-tab"
                     style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}
-                >
-                    {TABS.map(tab => (
-                        <button
-                            key={tab.key}
-                            id={`jobsearch-tab-${tab.key}`}
-                            role="tab"
-                            aria-selected={activeTab === tab.key}
-                            aria-controls={`jobsearch-panel-${tab.key}`}
-                            tabIndex={activeTab === tab.key ? 0 : -1}
-                            className={`dash-tab${activeTab === tab.key ? ' dash-tab--active' : ''}`}
-                            onClick={() => setActiveTab(tab.key)}
-                        >
-                            {t(tab.labelKey)}
-                        </button>
-                    ))}
-                </div>
+                    activeClassName="dash-tab--active"
+                    active={activeTab}
+                    onChange={setActiveTab}
+                    tabs={TABS.map(tab => ({
+                        key: tab.key,
+                        label: t(tab.labelKey),
+                        id: `jobsearch-tab-${tab.key}`,
+                        controls: `jobsearch-panel-${tab.key}`,
+                    }))}
+                />
 
                 {/* Active panel (only the selected tab's panel is mounted) */}
                 <div

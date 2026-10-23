@@ -4,6 +4,7 @@
 
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import TabBar from '../UI/TabBar';
 import '../../styles/document-preview.css';
 
 // Dibuja el contenido de un currículum: resumen, habilidades destacadas,
@@ -115,20 +116,18 @@ const DocumentPreview = memo(({
     return (
         <div className="cv-gen-doc-panel">
             <div className="cv-gen-doc-panel-header">
-                <div className="cv-gen-tabs" style={{ marginBottom: 0, borderBottom: 'none' }}>
-                    <button
-                        className={`cv-gen-tab${activeDocTab === 'cv' ? ' active' : ''}`}
-                        onClick={() => setActiveDocTab('cv')}
-                    >
-                        {t('dashboard.cvGeneration.tabCv')}
-                    </button>
-                    <button
-                        className={`cv-gen-tab${activeDocTab === 'coverLetter' ? ' active' : ''}`}
-                        onClick={() => setActiveDocTab('coverLetter')}
-                    >
-                        {t('dashboard.cvGeneration.tabCoverLetter')}
-                    </button>
-                </div>
+                <TabBar
+                    className="cv-gen-tabs"
+                    style={{ marginBottom: 0, borderBottom: 'none' }}
+                    tabClassName="cv-gen-tab"
+                    ariaLabel={t('dashboard.cvGeneration.title')}
+                    active={activeDocTab}
+                    onChange={setActiveDocTab}
+                    tabs={[
+                        { key: 'cv', label: t('dashboard.cvGeneration.tabCv') },
+                        { key: 'coverLetter', label: t('dashboard.cvGeneration.tabCoverLetter') },
+                    ]}
+                />
                 <button className="cv-gen-btn-small cv-gen-btn-cancel" onClick={onClose}>X</button>
             </div>
 

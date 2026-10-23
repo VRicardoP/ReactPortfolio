@@ -8,6 +8,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { SOURCE_TAB_DATA, SOURCE_KEYS, SOURCE_COLOR_MAP } from '../../config/jobSources';
 import FloatingWindow from '../Windows/FloatingWindow';
 import JobBoardControls from './JobBoardControls';
+import TabBar from '../UI/TabBar';
 import useJobBoardControls from '../../hooks/useJobBoardControls';
 import useJobApplication from '../../hooks/useJobApplication';
 import { CompanyResearchName, JobBadges, JobDate, JobSummary } from './JobCardExtras';
@@ -80,34 +81,6 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
         return SOURCE_COLOR_MAP[source] || theme.primary;
     }, [theme.primary]);
 
-    // WAI-ARIA tab keyboard navigation (ArrowLeft/Right, Home/End)
-    // Permite cambiar de pestaña con las flechas del teclado, como pide la
-    // accesibilidad.
-    const handleTabKeyDown = useCallback((e) => {
-        const tabs = SOURCE_TAB_DATA;
-        const currentIdx = tabs.findIndex(t => t.key === activeTab);
-        let nextIdx;
-
-        if (e.key === 'ArrowRight') {
-            nextIdx = currentIdx >= tabs.length - 1 ? 0 : currentIdx + 1;
-        } else if (e.key === 'ArrowLeft') {
-            nextIdx = currentIdx <= 0 ? tabs.length - 1 : currentIdx - 1;
-        } else if (e.key === 'Home') {
-            nextIdx = 0;
-        } else if (e.key === 'End') {
-            nextIdx = tabs.length - 1;
-        } else {
-            return;
-        }
-
-        e.preventDefault();
-        handleTabChange(tabs[nextIdx].key);
-        // Focus the newly active tab button
-        const tabList = e.currentTarget;
-        const buttons = tabList.querySelectorAll('[role="tab"]');
-        buttons[nextIdx]?.focus();
-    }, [activeTab, handleTabChange]);
-
     return (
         <FloatingWindow
             id="job-board-window"
@@ -116,37 +89,31 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
             initialSize={{ width: 750, height: 600 }}
         >
             <div className="jobboard-container">
-                {/* Tab bar */}
-                <div className="job-tabs" role="tablist" aria-label={t('dashboard.jobBoard.windowTitle', { defaultValue: 'Job Board' })} onKeyDown={handleTabKeyDown}>
-                    {SOURCE_TAB_DATA.map(tab => (
-                        <button
-                            key={tab.key}
-                            role="tab"
-                            aria-selected={activeTab === tab.key}
-                            tabIndex={activeTab === tab.key ? 0 : -1}
-                            className={`job-tab ${activeTab === tab.key ? 'active' : ''}`}
-                            onClick={() => handleTabChange(tab.key)}
-                            style={{
-                                '--tab-color': tab.color,
-                            }}
-                        >
-                            <span className="job-tab-label">
-                                {t(`dashboard.jobBoard.tab${tab.key.charAt(0).toUpperCase() + tab.key.slice(1)}`)}
-                            </span>
-                            {sourceCounts[tab.key] > 0 && (
-                                <span
-                                    className="job-tab-badge"
-                                    style={{
+                <TabBar
+                    className="job-tabs"
+                    tabClassName="job-tab"
+                    ariaLabel={t('dashboard.jobBoard.windowTitle', { defaultValue: 'Job Board' })}
+                    active={activeTab}
+                    onChange={handleTabChange}
+                    tabs={SOURCE_TAB_DATA.map(tab => ({
+                        ...tab,
+                        label: (
+                            <>
+                                <span className="job-tab-label">
+                                    {t(`dashboard.jobBoard.tab${tab.key.charAt(0).toUpperCase() + tab.key.slice(1)}`)}
+                                </span>
+                                {sourceCounts[tab.key] > 0 && (
+                                    <span className="job-tab-badge" style={{
                                         backgroundColor: `${tab.color}22`,
                                         color: tab.color,
-                                    }}
-                                >
-                                    {sourceCounts[tab.key]}
-                                </span>
-                            )}
-                        </button>
-                    ))}
-                </div>
+                                    }}>
+                                        {sourceCounts[tab.key]}
+                                    </span>
+                                )}
+                            </>
+                        ),
+                    }))}
+                />
 
                 {/* Search */}
                 <div className="jobboard-filters">

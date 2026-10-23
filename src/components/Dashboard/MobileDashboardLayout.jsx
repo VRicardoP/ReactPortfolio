@@ -3,6 +3,7 @@
 // muestra una sección a la vez.
 
 import { lazy, Suspense, memo, useState } from 'react';
+import TabBar from '../UI/TabBar';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import { useSSEEvents } from '../../hooks/useSSEEvents';
@@ -122,18 +123,22 @@ const MobileDashboardLayout = memo(({
                 </div>
             </div>
 
-            <div className="mobile-dashboard-tabs">
-                {DASHBOARD_TABS.map(tab => (
-                    <button
-                        key={tab.key}
-                        className={`mobile-dashboard-tab${activeTab === tab.key ? ' active' : ''}`}
-                        onClick={() => setActiveTab(tab.key)}
-                    >
-                        <span className="mobile-dashboard-tab-icon" aria-hidden="true">{tab.icon}</span>
-                        <span>{t(`dashboard.tab.${tab.key}`)}</span>
-                    </button>
-                ))}
-            </div>
+            <TabBar
+                className="mobile-dashboard-tabs"
+                tabClassName="mobile-dashboard-tab"
+                ariaLabel={t('dashboard.mobileSections')}
+                active={activeTab}
+                onChange={setActiveTab}
+                tabs={DASHBOARD_TABS.map(tab => ({
+                    key: tab.key,
+                    label: (
+                        <>
+                            <span className="mobile-dashboard-tab-icon" aria-hidden="true">{tab.icon}</span>
+                            <span>{t(`dashboard.tab.${tab.key}`)}</span>
+                        </>
+                    ),
+                }))}
+            />
         </>
     );
 });
