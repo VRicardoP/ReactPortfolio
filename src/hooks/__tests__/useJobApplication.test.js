@@ -1,6 +1,7 @@
 import { renderHook, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import useJobApplication from '../useJobApplication'
+import { ApplicationsProvider } from '../../context/ApplicationsContext'
 
 // Mock authenticatedFetch from AuthContext
 const mockAuthenticatedFetch = vi.fn()
@@ -46,7 +47,7 @@ describe('useJobApplication — cada acción dice la verdad', () => {
     window.open = vi.fn()
   })
 
-  const estado = () => renderHook(() => useJobApplication())
+  const estado = () => renderHook(() => useJobApplication(), { wrapper: ApplicationsProvider })
 
   const cuerpoEnviado = () => JSON.parse(mockAuthenticatedFetch.mock.calls[0][1].body)
 
@@ -122,5 +123,22 @@ describe('useJobApplication — cada acción dice la verdad', () => {
     const { result } = estado()
     await act(async () => { await result.current.handleOpenOffer(makeJob()) })
     expect(window.open).toHaveBeenCalled()
+  })
+  it('dos instancias comparten la deduplicación de un guardado simultáneo', async () => {
+    const { result } = renderHook(() => ({
+      first: useJobApplication(),
+      second: useJobApplication(),
+    }), { wrapper: ApplicationsProvider })
+
+    await act(async () => {
+      await Promise.all([
+        result.current.first.handleSave(makeJob()),
+        result.current.second.handleSave(makeJob()),
+      ])
+    })
+
+    expect(mockAuthenticatedFetch).toHaveBeenCalledTimes(1)
+    expect(result.current.first.savedIds.has('job-1')).toBe(true)
+    expect(result.current.second.savedIds.has('job-1')).toBe(true)
   })
 })

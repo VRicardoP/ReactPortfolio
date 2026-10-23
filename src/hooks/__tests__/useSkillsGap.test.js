@@ -27,7 +27,7 @@ describe('useSkillsGap', () => {
     const { result } = renderHook(() => useSkillsGap([]))
     expect(result.current.missingSkills).toEqual([])
     expect(result.current.addedSkills.size).toBe(0)
-    expect(result.current.togglingSkill).toBeNull()
+    expect(result.current.togglingSkills.size).toBe(0)
     expect(result.current.lastError).toBeNull()
   })
 
@@ -65,7 +65,7 @@ describe('useSkillsGap', () => {
     )
     expect(result.current.addedSkills.has('React')).toBe(true)
     expect(result.current.missingSkills).toEqual(['Vue']) // React now excluded
-    expect(result.current.togglingSkill).toBeNull()
+    expect(result.current.togglingSkills.size).toBe(0)
   })
 
   it('toggling an already-added skill OFF posts add:false and removes it', async () => {
@@ -104,7 +104,7 @@ describe('useSkillsGap', () => {
     expect(returned).toBeNull()
     expect(result.current.addedSkills.has('React')).toBe(false)
     expect(result.current.lastError).toContain('500')
-    expect(result.current.togglingSkill).toBeNull()
+    expect(result.current.togglingSkills.size).toBe(0)
   })
 
   it('a network error returns null and records lastError', async () => {
@@ -118,5 +118,33 @@ describe('useSkillsGap', () => {
 
     expect(returned).toBeNull()
     expect(result.current.lastError).toBe('Network down')
+  })
+  it('mantiene ocupadas por separado dos habilidades concurrentes', async () => {
+    const resolveBySkill = {}
+    mockAuthenticatedFetch.mockImplementation((_url, options) => new Promise(resolve => {
+      resolveBySkill[JSON.parse(options.body).skill_name] = resolve
+    }))
+    const { result } = renderHook(() => useSkillsGap([{ missing_skills: ['React', 'Vue'] }]))
+    let reactRequest
+    let vueRequest
+
+    act(() => {
+      reactRequest = result.current.toggleSkill('React')
+      vueRequest = result.current.toggleSkill('Vue')
+    })
+    expect([...result.current.togglingSkills]).toEqual(['React', 'Vue'])
+
+    await act(async () => {
+      resolveBySkill.React(okResponse())
+      await reactRequest
+    })
+    expect(result.current.togglingSkills.has('React')).toBe(false)
+    expect(result.current.togglingSkills.has('Vue')).toBe(true)
+
+    await act(async () => {
+      resolveBySkill.Vue(okResponse())
+      await vueRequest
+    })
+    expect(result.current.togglingSkills.size).toBe(0)
   })
 })

@@ -83,7 +83,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
     } = useAIJobMatch();
     const { handleInterested, interestedIds, handleSave, savedIds, handleOpenOffer, openedIds } =
         useJobApplication();
-    const { missingSkills, addedSkills, togglingSkill, toggleSkill, lastError: skillError } = useSkillsGap(results);
+    const { missingSkills, addedSkills, togglingSkills, toggleSkill, lastError: skillError } = useSkillsGap(results);
 
     return (
         <FloatingWindow
@@ -455,7 +455,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                             <div className="ai-match-skills-gap-list">
                                 {missingSkills.map(skill => {
                                     const isAdded = addedSkills.has(skill);
-                                    const isToggling = togglingSkill === skill;
+                                    const isToggling = togglingSkills.has(skill);
                                     /* DT-135: commented because ai-match.css
                                        `.ai-match-skill-toggle-btn.added` already defines these values;
                                        the inline background also prevented `.added:hover` from winning.

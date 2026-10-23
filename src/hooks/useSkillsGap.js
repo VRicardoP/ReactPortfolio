@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
 
@@ -13,7 +13,8 @@ const SKILLS_TOGGLE_URL = `${BACKEND_URL}/api/v1/cv-profiles/skills`;
 const useSkillsGap = (results) => {
   const { authenticatedFetch } = useAuth();
   const [addedSkills, setAddedSkills] = useState(new Set());
-  const [togglingSkill, setTogglingSkill] = useState(null);
+  const [togglingSkills, setTogglingSkills] = useState(new Set());
+  const togglingSkillsRef = useRef(new Set());
   const [lastError, setLastError] = useState(null);
 
   // Aggregate all unique missing skills, exclude already-added, sorted alphabetically
@@ -35,8 +36,10 @@ const useSkillsGap = (results) => {
 
   // Añade o quita una habilidad del currículum guardado en el servidor.
   const toggleSkill = useCallback(async (skillName) => {
+    if (togglingSkillsRef.current.has(skillName)) return null;
+    togglingSkillsRef.current.add(skillName);
+    setTogglingSkills(new Set(togglingSkillsRef.current));
     const isAdded = addedSkills.has(skillName);
-    setTogglingSkill(skillName);
     setLastError(null);
     try {
       // DT-187: ya no se guarda la respuesta. Aquí había un
@@ -68,11 +71,12 @@ const useSkillsGap = (results) => {
       }
       return null;
     } finally {
-      setTogglingSkill(null);
+      togglingSkillsRef.current.delete(skillName);
+      setTogglingSkills(new Set(togglingSkillsRef.current));
     }
   }, [addedSkills, authenticatedFetch]);
 
-  return { missingSkills, addedSkills, togglingSkill, toggleSkill, lastError };
+  return { missingSkills, addedSkills, togglingSkills, toggleSkill, lastError };
 };
 
 export default useSkillsGap;

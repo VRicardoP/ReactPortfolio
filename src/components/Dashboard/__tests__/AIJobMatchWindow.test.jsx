@@ -14,7 +14,7 @@ vi.mock('../../../hooks/useJobApplication', () => ({
     default: () => ({ handleOpenOffer: vi.fn(), openedIds: new Set(), handleInterested: vi.fn(), interestedIds: new Set(), handleSave: vi.fn(), savedIds: new Set() }),
 }));
 vi.mock('../../../hooks/useSkillsGap', () => ({
-    default: () => ({ missingSkills: [], addedSkills: new Set(), togglingSkill: null, toggleSkill: vi.fn(), lastError: null }),
+    default: () => ({ missingSkills: [], addedSkills: new Set(), togglingSkills: new Set(), toggleSkill: vi.fn(), lastError: null }),
 }));
 
 const RESULTS = [

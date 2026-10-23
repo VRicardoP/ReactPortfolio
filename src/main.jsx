@@ -6,6 +6,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ApplicationsProvider } from './context/ApplicationsContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -29,7 +30,9 @@ createRoot(document.getElementById('root')).render(
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <DashboardPage />
+                <ApplicationsProvider>
+                  <DashboardPage />
+                </ApplicationsProvider>
               </ProtectedRoute>
             }
           />
