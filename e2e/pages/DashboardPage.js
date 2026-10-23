@@ -3,7 +3,7 @@ export class DashboardPage {
     this.page = page;
     this.header = page.locator('.dashboard-header');
     this.logoutButton = page.locator('.nav-button.logout');
-    this.backToPortfolioButton = page.locator('.dashboard-nav .nav-button:not(.theme-button):not(.logout)');
+    this.backToPortfolioButton = page.getByRole('button', { name: /portfolio/i });
     this.mainTitle = page.locator('.main-title');
     this.floatingWindows = page.locator('.floating-window');
   }
