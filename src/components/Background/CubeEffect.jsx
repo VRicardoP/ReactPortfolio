@@ -1,172 +1,92 @@
-// Efecto de fondo en 3D: un cubo con bordes redondeados y textura
-// metálica, rodeado de barras de luz, que gira solo y se puede orbitar
-// con el ratón en pantallas que lo permiten.
+// Efecto de fondo en 3D: un cubo metálico rodeado de barras de luz.
+// La construcción es propia; el ciclo renderer/resize/cleanup vive en useThreeScene.
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import useThreeScene from '../../hooks/useThreeScene';
 
 const CubeEffect = () => {
     const mountRef = useRef(null);
-    const animationIdRef = useRef(null);
 
-    // Monta la escena 3D una sola vez: el cubo, las barras de luz, la
-    // cámara orbitable y el bucle de animación, con su limpieza al salir.
-    useEffect(() => {
-        if (!mountRef.current) return;
-
-        const { innerWidth, innerHeight } = window;
-
-        // renderer
-        const renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            alpha: true
-        });
+    // Construye los objetos exclusivos del cubo y devuelve su animación y limpieza.
+    // Shared renderer lifecycle stays in useThreeScene.
+    const build = useCallback(({ width, height }) => {
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(innerWidth, innerHeight);
+        renderer.setSize(width, height);
+        Object.assign(renderer.domElement.style, {
+            position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', zIndex: '-1',
+        });
+        const supportsOrbit = window.matchMedia('(pointer: fine)').matches;
+        renderer.domElement.style.pointerEvents = supportsOrbit ? 'auto' : 'none';
 
-        renderer.domElement.style.position = 'fixed';
-        renderer.domElement.style.top = '0';
-        renderer.domElement.style.left = '0';
-        renderer.domElement.style.width = '100%';
-        renderer.domElement.style.height = '100%';
-        renderer.domElement.style.zIndex = '-1';
-
-        // DT-140: the full-screen wrapper stays transparent to pointer events,
-        // while the canvas opts back in only for mouse/trackpad interaction.
-        // Foreground windows remain the topmost hit target and touch scrolling
-        // keeps the non-interactive background behavior.
-        const supportsOrbitInteraction = window.matchMedia('(pointer: fine)').matches;
-        renderer.domElement.style.pointerEvents = supportsOrbitInteraction ? 'auto' : 'none';
-
-        mountRef.current.appendChild(renderer.domElement);
-
-        // scene and camera
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000a0b);
-
-        const camera = new THREE.PerspectiveCamera(35, innerWidth / innerHeight, 0.1, 100);
+        const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 100);
         camera.position.set(0, -1.7, 8);
-
-        // clock for animations
         const clock = new THREE.Clock();
-
-        // load textures from the original URLs
         const textureLoader = new THREE.TextureLoader();
-        const matcapTexture = textureLoader.load(
-            '/textures/cube-matcap.webp'
-        );
-        const envTexture = textureLoader.load(
-            '/textures/cube-env.webp'
-        );
-
-        // cube with rounded edges - material same as the original
+        const matcapTexture = textureLoader.load('/textures/cube-matcap.webp');
+        const envTexture = textureLoader.load('/textures/cube-env.webp');
         const cubeGeometry = new RoundedBoxGeometry(1, 1, 1, 5, 0.05);
         const cubeMaterial = new THREE.MeshMatcapMaterial({
             color: 0xffffff,
             matcap: matcapTexture,
-            map: envTexture
+            map: envTexture,
         });
         const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
         scene.add(cube);
 
-        // light bars around the cube - vertical in a circle
         const lightBars = [];
         const barMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-
         for (let i = 0; i <= 20; i++) {
-            const barLength = 0.5 + Math.random();
-            const barGeometry = new THREE.CapsuleGeometry(0.02, barLength, 5, 16);
-            const bar = new THREE.Mesh(barGeometry, barMaterial);
-
-            // position in circle like the original
-            const amp = 1;
-            bar.position.y = -Math.random() * (amp / 2) + Math.random() * (amp / 2);
+            const geometry = new THREE.CapsuleGeometry(0.02, 0.5 + Math.random(), 5, 16);
+            const bar = new THREE.Mesh(geometry, barMaterial);
+            bar.position.y = -Math.random() * 0.5 + Math.random() * 0.5;
             bar.position.x = -Math.sin(i * 0.3) * Math.PI;
             bar.position.z = -Math.cos(i * 0.3) * Math.PI;
-
             scene.add(bar);
-            lightBars.push({ mesh: bar, geometry: barGeometry });
+            lightBars.push(geometry);
         }
 
-        // speeds like in the original
-        const sceneSpeed = 0.2;
-        const objectSpeed = 0; // in the original it's 0 by default
-
-        // OrbitControls like in the original
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.target.set(0, 0, 0);
         controls.rotateSpeed = 0.9;
         controls.enableZoom = false;
         controls.enablePan = false;
-        controls.enabled = supportsOrbitInteraction;
+        controls.enabled = supportsOrbit;
         controls.enableDamping = true;
         controls.dampingFactor = 0.02;
         controls.update();
 
-        // animation loop
-        const animate = () => {
-            animationIdRef.current = requestAnimationFrame(animate);
-
-            const elapsed = clock.getElapsedTime();
-
-            // rotate the scene automatically
-            scene.rotation.y = elapsed * sceneSpeed;
-
-            // rotate and move the cube (objectSpeed is 0 by default)
-            cube.rotation.y = -elapsed * objectSpeed;
-            cube.rotation.z = elapsed * objectSpeed;
-            cube.rotation.x = elapsed * objectSpeed;
-            cube.position.y = Math.sin(elapsed * objectSpeed) * 0.2;
-
-            camera.lookAt(scene.position);
-            camera.updateMatrixWorld();
-
-            controls.update();
-            renderer.render(scene, camera);
-        };
-
-        // when the window size changes
-        const onWindowResize = () => {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-            renderer.setSize(width, height);
-        };
-        window.addEventListener('resize', onWindowResize);
-
-        animate();
-
-        const mountNode = mountRef.current;
-
-        // cleanup when the component unmounts
-        return () => {
-            window.removeEventListener('resize', onWindowResize);
-
-            if (animationIdRef.current) {
-                cancelAnimationFrame(animationIdRef.current);
-            }
-
-            if (mountNode && renderer.domElement) {
-                mountNode.removeChild(renderer.domElement);
-            }
-
-            controls.dispose();
-            renderer.dispose();
-            cubeGeometry.dispose();
-            cubeMaterial.dispose();
-            matcapTexture.dispose();
-            envTexture.dispose();
-            barMaterial.dispose();
-            lightBars.forEach(bar => bar.geometry.dispose());
+        return {
+            scene,
+            camera,
+            renderer,
+            animate: () => {
+                const elapsed = clock.getElapsedTime();
+                scene.rotation.y = elapsed * 0.2;
+                camera.lookAt(scene.position);
+                camera.updateMatrixWorld();
+                controls.update();
+            },
+            dispose: () => {
+                controls.dispose();
+                cubeGeometry.dispose();
+                cubeMaterial.dispose();
+                matcapTexture.dispose();
+                envTexture.dispose();
+                barMaterial.dispose();
+                lightBars.forEach(geometry => geometry.dispose());
+            },
         };
     }, []);
 
-    // DT-140: keep the wrapper passive; the canvas explicitly opts into fine
-    // pointer events above so OrbitControls cannot block foreground controls.
-    return <div ref={mountRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />;
+    useThreeScene(mountRef, build);
+
+    return <div ref={mountRef} style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }} />;
 };
 
 export default CubeEffect;
