@@ -10,7 +10,7 @@ const EMPTY_DEPS = [];
  */
 const useAuthenticatedQuery = (
     url,
-    { enabled = true, deps = EMPTY_DEPS } = {},
+    { enabled = true, deps = EMPTY_DEPS, throwOnError = false } = {},
 ) => {
     const { authenticatedFetch } = useAuth();
     const [data, setData] = useState(null);
@@ -55,12 +55,15 @@ const useAuthenticatedQuery = (
             setData(result);
             return result;
         } catch (queryError) {
-            if (isCurrent()) setError(queryError);
+            if (isCurrent()) {
+                setError(queryError);
+                if (throwOnError) throw queryError;
+            }
             return null;
         } finally {
             if (isCurrent()) setLoading(false);
         }
-    }, [authenticatedFetch, url]);
+    }, [authenticatedFetch, throwOnError, url]);
 
     const depsVersion = depsVersionRef.current;
     useEffect(() => {

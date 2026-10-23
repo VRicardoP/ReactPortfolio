@@ -63,7 +63,18 @@ describe('useAuthenticatedQuery', () => {
 
         await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(result.current.error).toBe(failure);
+        await waitFor(() => expect(result.current.error).toBe(failure));
         expect(result.current.data).toBeNull();
+    });
+
+    it('puede propagar el error al consumidor que lo necesita', async () => {
+        const failure = new Error('critical');
+        mockAuthenticatedFetch.mockRejectedValue(failure);
+        const { result } = renderHook(() => useAuthenticatedQuery(
+            '/items',
+            { enabled: false, throwOnError: true },
+        ));
+
+        await expect(act(async () => result.current.refetch())).rejects.toThrow('critical');
     });
 });

@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
 import { AI_MATCH_PAGE_SIZE } from '../components/Dashboard/dashboardConstants';
+import useAuthenticatedQuery from './useAuthenticatedQuery';
 
 export const TAB_RESULTS = 'results';
 export const TAB_SKILLS_GAP = 'skills-gap';
@@ -37,6 +38,10 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  */
 const useAIJobMatch = () => {
     const { authenticatedFetch } = useAuth();
+    const { refetch: refetchResult } = useAuthenticatedQuery(
+        `${BACKEND_URL}/api/v1/ai-match/analyze/result`,
+        { enabled: false, throwOnError: true },
+    );
 
     const [results, setResults] = useState([]);
     const [metadata, setMetadata] = useState(null);
@@ -84,14 +89,11 @@ const useAIJobMatch = () => {
     // Carga el último resultado ya calculado y guardado.
     /** Load the latest persisted result. Returns true when one was available. */
     const fetchResult = useCallback(async () => {
-        const response = await authenticatedFetch(
-            `${BACKEND_URL}/api/v1/ai-match/analyze/result`
-        );
-        const payload = await response.json();
-        if (!payload.available || !payload.data || !mountedRef.current) return false;
+        const payload = await refetchResult();
+        if (!payload?.available || !payload.data || !mountedRef.current) return false;
         installResult(payload.data, payload.source);
         return true;
-    }, [authenticatedFetch, installResult]);
+    }, [installResult, refetchResult]);
 
     // Consulta el progreso una y otra vez hasta que el análisis termine, y
     // entonces carga el resultado.
