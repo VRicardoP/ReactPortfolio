@@ -5,6 +5,7 @@
 import { memo, useRef, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 import useTerminalCommands from '../../hooks/useTerminalCommands';
 import '../../styles/terminal.css';
 
@@ -41,7 +42,7 @@ const TerminalWindow = memo(({ portfolioData, initialPosition, onClose }) => {
       id="terminal-window"
       title={t('terminal.title')}
       initialPosition={initialPosition}
-      initialSize={{ width: 900, height: 600 }}
+      initialSize={WINDOW_SIZES.terminal}
     >
       <div className="terminal-body" onClick={handleBodyClick}>
         <div className="terminal-output" ref={outputRef} role="log" aria-live="polite" aria-label="Terminal output">

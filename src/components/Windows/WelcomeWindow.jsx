@@ -5,6 +5,7 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 import '../../styles/welcome-window.css';
 
 const WelcomeWindow = ({ portfolioData }) => {
@@ -24,7 +25,7 @@ const WelcomeWindow = ({ portfolioData }) => {
             id="welcome-window"
             title={t('welcome.title', { name: portfolioData?.name || 'Portfolio' })}
             initialPosition={{ x: Math.max(0, initialPosition.x), y: Math.max(0, initialPosition.y) }}
-            initialSize={{ width: 750, height: 550 }}
+            initialSize={WINDOW_SIZES.welcome}
         >
             <div className="welcome-content">
                 <div className="welcome-header">

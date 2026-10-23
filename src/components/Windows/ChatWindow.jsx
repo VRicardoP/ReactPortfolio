@@ -3,6 +3,7 @@
 
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 import ChatContent from './ChatContent';
 
 const ChatWindow = ({ data, initialPosition }) => {
@@ -13,7 +14,7 @@ const ChatWindow = ({ data, initialPosition }) => {
             id="chat-window"
             title={t('windows.chat')}
             initialPosition={initialPosition}
-            initialSize={{ width: 400, height: 500 }}
+            initialSize={WINDOW_SIZES.chat}
         >
             <ChatContent data={data} />
         </FloatingWindow>

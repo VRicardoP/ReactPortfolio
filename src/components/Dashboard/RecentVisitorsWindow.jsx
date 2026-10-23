@@ -5,6 +5,7 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
 import maskIp from '../../utils/maskIp';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 
 const RecentVisitorsWindow = memo(({ data, initialPosition }) => {
     const { t } = useTranslation();
@@ -15,7 +16,7 @@ const RecentVisitorsWindow = memo(({ data, initialPosition }) => {
                 id="recent-visitors-window"
                 title={t('dashboard.recentVisitors.title')}
                 initialPosition={initialPosition}
-                initialSize={{ width: 700, height: 400 }}
+                initialSize={WINDOW_SIZES.recentVisitorsEmpty}
             >
                 <div style={{
                     display: 'flex',
@@ -34,7 +35,7 @@ const RecentVisitorsWindow = memo(({ data, initialPosition }) => {
             id="recent-visitors-window"
             title={t('dashboard.recentVisitors.title')}
             initialPosition={initialPosition}
-            initialSize={{ width: 800, height: 450 }}
+            initialSize={WINDOW_SIZES.recentVisitors}
         >
             <div style={{ height: '100%', overflowY: 'auto' }}>
                 <table className="visitors-table">

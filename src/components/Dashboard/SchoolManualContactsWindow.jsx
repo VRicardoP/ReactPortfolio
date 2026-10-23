@@ -6,6 +6,7 @@ import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import FloatingWindow from '../Windows/FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 import '../../styles/dashboard-schools.css';
 
 const SchoolManualContactsWindow = memo(({ initialPosition, schoolData }) => {
@@ -23,7 +24,7 @@ const SchoolManualContactsWindow = memo(({ initialPosition, schoolData }) => {
             id="school-manual-contacts-window"
             title={t('dashboard.schoolContacts.title')}
             initialPosition={initialPosition}
-            initialSize={{ width: 640, height: 400 }}
+            initialSize={WINDOW_SIZES.schoolContacts}
         >
             <div className="school-contacts-help">
                 {t('dashboard.schoolContacts.help')}

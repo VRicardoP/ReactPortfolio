@@ -5,6 +5,7 @@
 import { memo, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 import KanbanBoard from './KanbanBoard';
 import DocumentLibrary from './DocumentLibrary';
 import DocumentDeliveryRecovery from './DocumentDeliveryRecovery';
@@ -69,7 +70,7 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
             id="selected-offers-panel"
             title={t('dashboard.selectedOffers.title')}
             initialPosition={initialPosition}
-            initialSize={{ width: 900, height: 550 }}
+            initialSize={WINDOW_SIZES.selectedOffers}
         >
             <div className="selected-offers-panel">
                 <div className={`selected-offers-kanban${previewAppId ? ' with-preview' : ''}`}>

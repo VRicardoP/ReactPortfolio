@@ -15,6 +15,7 @@ import useAIJobMatch, { ALL_MATCH_SOURCES, TAB_RESULTS, TAB_SKILLS_GAP } from '.
 import JobCard from './JobCard';
 import { AI_MATCH_PAGE_SIZE } from './dashboardConstants';
 import { SOURCE_COLOR_MAP } from '../../config/jobSources';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 import '../../styles/ai-match.css';
 
 // Da el texto que se muestra mientras el análisis corre en el servidor,
@@ -82,7 +83,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
             id="ai-match-window"
             title={t('dashboard.aiMatch.title')}
             initialPosition={initialPosition}
-            initialSize={{ width: 700, height: 600 }}
+            initialSize={WINDOW_SIZES.aiJobMatch}
         >
             <div className="ai-match-content">
                 {/* Cabecera: botón para lanzar el análisis, botón de traducir

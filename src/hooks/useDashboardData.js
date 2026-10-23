@@ -12,6 +12,7 @@ import {
   normalizeCoreJob,
   normalizeJob,
 } from '../config/jobSources';
+import { STATS_WINDOW_DAYS } from '../components/Dashboard/dashboardConstants';
 import useAuthenticatedQuery from './useAuthenticatedQuery';
 
 const SSE_REFETCH_DEBOUNCE_MS = 3000;
@@ -24,7 +25,7 @@ const CRITICAL_KEYS = ['stats', 'map', 'chat-analytics'];
 export const useDashboardData = () => {
   const { authenticatedFetch } = useAuth();
   const { refetch: refetchStats } = useAuthenticatedQuery(
-    `${BACKEND_URL}/api/v1/analytics/stats?days=30`,
+    `${BACKEND_URL}/api/v1/analytics/stats?days=${STATS_WINDOW_DAYS}`,
     { enabled: false },
   );
   const { refetch: refetchMap } = useAuthenticatedQuery(

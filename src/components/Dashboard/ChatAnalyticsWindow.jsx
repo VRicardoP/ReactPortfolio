@@ -9,6 +9,7 @@ import '../../charts/register';
 import useChartTheme from '../../hooks/useChartTheme';
 import TabBar from '../UI/TabBar';
 import FloatingWindow from '../Windows/FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 import { useTheme } from '../../context/ThemeContext';
 import '../../styles/dashboard-forms.css';
 
@@ -74,7 +75,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
             id="chat-analytics-window"
             title={t('dashboard.chatAnalytics.title')}
             initialPosition={initialPosition}
-            initialSize={{ width: 550, height: 500 }}
+            initialSize={WINDOW_SIZES.chatAnalytics}
         >
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {!hasData && (

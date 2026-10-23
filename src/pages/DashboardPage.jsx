@@ -10,6 +10,7 @@ import useTypewriter from '../hooks/useTypewriter';
 import useIsMobile from '../hooks/useIsMobile';
 import DesktopDashboardContent from '../components/Dashboard/DesktopDashboardContent';
 import MobileDashboardLayout from '../components/Dashboard/MobileDashboardLayout';
+import { DASHBOARD_TITLE_TYPE_DELAY_MS } from '../components/Dashboard/dashboardConstants';
 import '../styles/dashboard-layout.css';
 import '../styles/dashboard-jobboard.css';
 import '../styles/dashboard-job-extras.css';
@@ -36,7 +37,7 @@ const DashboardPage = () => {
     const { theme, cycleTheme, backgroundEffect, cycleBackground } = useTheme();
     const navigate = useNavigate();
     const isMobile = useIsMobile();
-    const typedText = useTypewriter(t('dashboard.title'), 100);
+    const typedText = useTypewriter(t('dashboard.title'), DASHBOARD_TITLE_TYPE_DELAY_MS);
     const { stats, mapData, chatAnalytics, jobData, loading, error, warnings } = useDashboardData();
 
     // Functions for the buttons

@@ -3,6 +3,7 @@
 
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 
 // Traduce el estado interno de un proyecto ("completed", "in-progress") a
 // la clave de texto que hay que mostrar.
@@ -20,7 +21,7 @@ const PortfolioWindow = ({ data, initialPosition }) => {
             id="portfolio-window"
             title={t('windows.portfolio')}
             initialPosition={initialPosition}
-            initialSize={{ width: 500, height: 450 }}
+            initialSize={WINDOW_SIZES.portfolio}
         >
             <div className="portfolio-content">
                 <div className="portfolio-grid">

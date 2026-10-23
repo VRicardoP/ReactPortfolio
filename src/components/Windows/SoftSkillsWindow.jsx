@@ -3,6 +3,7 @@
 
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 
 // Traduce los emojis de una versión antigua de los datos a una etiqueta de
 // texto corta, para los casos en que el icono guardado ya no es válido.
@@ -34,7 +35,7 @@ const SoftSkillsWindow = ({ data, initialPosition }) => {
             id="soft-skills-window"
             title={t('windows.softSkills')}
             initialPosition={initialPosition}
-            initialSize={{ width: 480, height: 420 }}
+            initialSize={WINDOW_SIZES.softSkills}
         >
             <div className="soft-skills-content">
                 <div className="soft-skills-grid">

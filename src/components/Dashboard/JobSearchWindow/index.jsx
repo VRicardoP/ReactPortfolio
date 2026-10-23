@@ -14,6 +14,7 @@ import LiveSearchPanel from './LiveSearchPanel';
 import AdvancedFilterPanel from './AdvancedFilterPanel';
 import SavedSearchesPanel from './SavedSearchesPanel';
 import '../../../styles/dashboard-forms.css';
+import { WINDOW_SIZES } from '../../../config/windowSizes';
 
 // Unified job-search window: merges the former JSearchLive, JobFilter and SavedSearches
 // windows into one tabbed window. Each tab keeps the exact behavior of its origin window.
@@ -45,7 +46,7 @@ const JobSearchWindow = memo(({ initialPosition }) => {
             id="job-search-window"
             title={t('dashboard.jobSearch.title')}
             initialPosition={initialPosition}
-            initialSize={{ width: 680, height: 580 }}
+            initialSize={WINDOW_SIZES.jobSearch}
         >
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '10px', gap: '10px' }}>
                 {/* Tab bar */}

@@ -3,6 +3,7 @@
 
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 
 const AchievementsWindow = ({ data, initialPosition }) => {
     const { t } = useTranslation();
@@ -13,7 +14,7 @@ const AchievementsWindow = ({ data, initialPosition }) => {
             id="achievements-window"
             title={t('windows.achievements')}
             initialPosition={initialPosition}
-            initialSize={{ width: 520, height: 380 }}
+            initialSize={WINDOW_SIZES.achievements}
         >
             <div className="achievements-content">
                 <div className="achievements-grid">

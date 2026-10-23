@@ -4,6 +4,7 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 
 const SOCIAL_LINKS = [
     { key: 'linkedin', label: 'LinkedIn', prefix: 'https://linkedin.com/in/' },
@@ -38,7 +39,7 @@ const ContactWindow = ({ data, initialPosition }) => {
             id="contact-window"
             title={t('windows.contact')}
             initialPosition={initialPosition}
-            initialSize={{ width: 380, height: 340 }}
+            initialSize={WINDOW_SIZES.contact}
         >
             <div className="contact-content">
                 <p className="contact-message">{data.contact.message}</p>

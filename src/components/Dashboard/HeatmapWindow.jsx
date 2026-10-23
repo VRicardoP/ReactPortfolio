@@ -13,6 +13,7 @@ import TabBar from '../UI/TabBar';
 import FloatingWindow from '../Windows/FloatingWindow';
 import { useTheme } from '../../context/ThemeContext';
 import { useHeatmapData } from '../../hooks/useHeatmapData';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 import '../../styles/dashboard-forms.css';
 
 const HeatmapWindow = memo(({ initialPosition }) => {
@@ -38,7 +39,7 @@ const HeatmapWindow = memo(({ initialPosition }) => {
             id="heatmap-window"
             title={t('dashboard.heatmap.title')}
             initialPosition={initialPosition}
-            initialSize={{ width: 580, height: 480 }}
+            initialSize={WINDOW_SIZES.heatmap}
         >
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {loading && (

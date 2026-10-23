@@ -5,6 +5,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 import { BACKEND_URL, DEFAULT_HEADERS } from '../../config/api';
 import { showToast } from '../UI/Toast';
 import downloadBlob from '../../utils/downloadBlob';
@@ -82,7 +83,7 @@ const ProfileWindow = ({ data, initialPosition }) => {
             id="profile-window"
             title={t('windows.profile')}
             initialPosition={initialPosition}
-            initialSize={{ width: 480, height: 420 }}
+            initialSize={WINDOW_SIZES.profile}
         >
             <div className="profile-content">
                 <div className="profile-header">

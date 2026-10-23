@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import { SOURCE_TAB_DATA, SOURCE_KEYS, SOURCE_COLOR_MAP } from '../../config/jobSources';
 import FloatingWindow from '../Windows/FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 import JobBoardControls from './JobBoardControls';
 import TabBar from '../UI/TabBar';
 import useJobBoardControls from '../../hooks/useJobBoardControls';
@@ -86,7 +87,7 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
             id="job-board-window"
             title={t('dashboard.jobBoard.windowTitle', { defaultValue: 'Job Board' })}
             initialPosition={initialPosition}
-            initialSize={{ width: 750, height: 600 }}
+            initialSize={WINDOW_SIZES.jobBoard}
         >
             <div className="jobboard-container">
                 <TabBar

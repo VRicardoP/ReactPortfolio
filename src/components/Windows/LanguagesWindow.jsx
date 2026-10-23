@@ -3,6 +3,7 @@
 
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 
 // Traduce el texto del nivel de idioma (en varios idiomas: "nativo", "C2",
 // "básico"...) a un número de puntos rellenos, de 1 a 5.
@@ -53,7 +54,7 @@ const LanguagesWindow = ({ data, initialPosition }) => {
             id="languages-window"
             title={t('windows.languages')}
             initialPosition={initialPosition}
-            initialSize={{ width: 300, height: 250 }}
+            initialSize={WINDOW_SIZES.languages}
         >
             <div className="languages-content">
                 {data.languages.map((lang, index) => {

@@ -5,6 +5,7 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 
 const ExperienceWindow = ({ data, initialPosition }) => {
     const { t } = useTranslation();
@@ -32,7 +33,7 @@ const ExperienceWindow = ({ data, initialPosition }) => {
             id="experience-window"
             title={t('windows.experience')}
             initialPosition={initialPosition}
-            initialSize={{ width: 600, height: 550 }}
+            initialSize={WINDOW_SIZES.experience}
         >
             <div className="experience-content">
                 {/* Career span bar */}

@@ -5,6 +5,7 @@
 import { useRef, useEffect, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 
 // Dibuja una categoría de habilidades como una lista de barras de nivel.
 const BarsView = memo(({ data, animated, t }) => {
@@ -58,7 +59,7 @@ const TechSkillsWindow = memo(({ data, initialPosition }) => {
             id="tech-skills-window"
             title={t('windows.techSkills')}
             initialPosition={initialPosition}
-            initialSize={{ width: 500, height: 520 }}
+            initialSize={WINDOW_SIZES.techSkills}
         >
             <div className="tech-skills-content" ref={contentRef}>
                 <BarsView data={data} animated={animated} t={t} />

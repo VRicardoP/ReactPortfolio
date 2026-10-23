@@ -4,6 +4,7 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 
 const StatsWindow = memo(({ data, initialPosition }) => {
     const { t } = useTranslation();
@@ -14,7 +15,7 @@ const StatsWindow = memo(({ data, initialPosition }) => {
                 id="stats-window"
                 title={t('dashboard.stats.title')}
                 initialPosition={initialPosition}
-                initialSize={{ width: 400, height: 300 }}
+                initialSize={WINDOW_SIZES.statsEmpty}
             >
                 <div style={{ textAlign: 'center', padding: '20px' }}>
                     {t('dashboard.stats.loading')}
@@ -28,7 +29,7 @@ const StatsWindow = memo(({ data, initialPosition }) => {
             id="stats-window"
             title={t('dashboard.stats.title')}
             initialPosition={initialPosition}
-            initialSize={{ width: 450, height: 350 }}
+            initialSize={WINDOW_SIZES.stats}
         >
             <div className="stats-container">
                 <div className="stat-card">

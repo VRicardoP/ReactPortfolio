@@ -6,13 +6,14 @@
 // de uso, para mostrarlos en la ventana del panel de administración.
 import { BACKEND_URL } from '../config/api';
 import useAuthenticatedQuery from './useAuthenticatedQuery';
+import { STATS_WINDOW_DAYS } from '../components/Dashboard/dashboardConstants';
 
 export const useHeatmapData = () => {
     const heatmap = useAuthenticatedQuery(
-        `${BACKEND_URL}/api/v1/analytics/heatmap-data?days=30`,
+        `${BACKEND_URL}/api/v1/analytics/heatmap-data?days=${STATS_WINDOW_DAYS}`,
     );
     const engagement = useAuthenticatedQuery(
-        `${BACKEND_URL}/api/v1/analytics/engagement-stats?days=30`,
+        `${BACKEND_URL}/api/v1/analytics/engagement-stats?days=${STATS_WINDOW_DAYS}`,
     );
 
     return {

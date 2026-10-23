@@ -12,6 +12,7 @@ import useJobMarketStats from '../../hooks/useJobMarketStats';
 import { useTheme } from '../../context/ThemeContext';
 import TabBar from '../UI/TabBar';
 import FloatingWindow from '../Windows/FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 
 
 const MARKET_TABS = ['skills', 'remote', 'sources'];
@@ -52,7 +53,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
                 id="job-analytics-window"
                 title={t('dashboard.jobAnalytics.title')}
                 initialPosition={initialPosition}
-                initialSize={{ width: 600, height: 500 }}
+                initialSize={WINDOW_SIZES.jobMarketAnalytics}
             >
                 <div style={{ padding: '20px', color: theme.text, fontFamily: 'Courier New', textAlign: 'center' }}>
                     {t('dashboard.jobAnalytics.noData')}
@@ -90,7 +91,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
             id="job-analytics-window"
             title={t('dashboard.jobAnalytics.title')}
             initialPosition={initialPosition}
-            initialSize={{ width: 600, height: 500 }}
+            initialSize={WINDOW_SIZES.jobMarketAnalytics}
         >
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '10px', gap: '8px' }}>
                 {/* Section selector */}

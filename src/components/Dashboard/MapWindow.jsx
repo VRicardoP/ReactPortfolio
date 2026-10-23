@@ -8,6 +8,9 @@ import FloatingWindow from '../Windows/FloatingWindow';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import maskIp from '../../utils/maskIp';
+import { WINDOW_SIZES } from '../../config/windowSizes';
+
+const MAP_RESIZE_DEBOUNCE_MS = 100;
 
 // this fixes a bug with map icons in react
 delete L.Icon.Default.prototype._getIconUrl;
@@ -30,7 +33,7 @@ const MapResizeHandler = () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(() => {
                 map.invalidateSize();
-            }, 100);
+            }, MAP_RESIZE_DEBOUNCE_MS);
         };
 
         // do it right after loading
@@ -76,7 +79,7 @@ const MapWindow = memo(({ data, initialPosition }) => {
             id="map-window"
             title={t('dashboard.map.title')}
             initialPosition={initialPosition}
-            initialSize={{ width: 600, height: 450 }}
+            initialSize={WINDOW_SIZES.map}
         >
             <div style={{
                 height: '100%',

@@ -25,6 +25,7 @@ const DEFAULT_WINDOW_SIZE = { width: 400, height: 300 };
 const BASE_Z_INDEX = 100;
 const Z_INDEX_NORMALIZE_THRESHOLD = 10000; // reset z-indexes once they climb this high
 const MINIMIZED_WINDOW_SIZE = { width: 180, height: 40 };
+const FIT_HEADER_HEIGHT = 40;
 
 // Evita que una ventana minimizada quede colocada fuera de la pantalla.
 const clampMinimizePosition = (position) => ({
@@ -197,12 +198,11 @@ export const WindowProvider = ({ children }) => {
         const current = windowsRef.current[windowId];
         if (!current) return;
 
-        const headerHeight = 40;
         const padding = 20;
         const maxWidth = globalThis.innerWidth * 0.9;
         const maxHeight = globalThis.innerHeight * 0.85;
         const optimalWidth = Math.min(Math.max(contentSize.width + padding, 300), maxWidth);
-        const optimalHeight = Math.min(Math.max(contentSize.height + headerHeight + padding, 200), maxHeight);
+        const optimalHeight = Math.min(Math.max(contentSize.height + FIT_HEADER_HEIGHT + padding, 200), maxHeight);
         const centerX = Math.max(20, (globalThis.innerWidth - optimalWidth) / 2);
         const centerY = Math.max(80, (globalThis.innerHeight - optimalHeight) / 2);
         const next = {

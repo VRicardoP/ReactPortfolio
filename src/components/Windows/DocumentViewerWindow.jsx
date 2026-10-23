@@ -3,6 +3,7 @@
 
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 
 const DocumentViewerWindow = ({ title, fileUrl, onClose }) => {
     const { t } = useTranslation();
@@ -12,7 +13,7 @@ const DocumentViewerWindow = ({ title, fileUrl, onClose }) => {
             id="document-viewer-window"
             title={title}
             initialPosition={{ x: 180, y: 120 }}
-            initialSize={{ width: 760, height: 680 }}
+            initialSize={WINDOW_SIZES.documentViewer}
         >
             <div className="document-viewer">
                 <div className="document-viewer-actions">

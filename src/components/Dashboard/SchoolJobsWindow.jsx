@@ -6,6 +6,7 @@ import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import FloatingWindow from '../Windows/FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 import '../../styles/dashboard-schools.css';
 
 const PUSH_THRESHOLD = 70;
@@ -86,7 +87,7 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
             id="school-jobs-window"
             title={t('dashboard.schoolJobs.title')}
             initialPosition={initialPosition}
-            initialSize={{ width: 820, height: 480 }}
+            initialSize={WINDOW_SIZES.schoolJobs}
         >
             <div className="school-jobs">
                 <div className="school-jobs-toolbar">

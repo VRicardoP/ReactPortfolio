@@ -6,6 +6,7 @@ import { useCallback, useRef, useEffect } from 'react';
 
 const MAX_SHEAR_DEGREES = 3.5;
 const MAX_VERTICAL_STRETCH = 0.035;
+const WOBBLE_SHEAR_GAIN = 0.18;
 const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
 
 const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => {
@@ -46,7 +47,11 @@ const useDraggable = (windowRef, isMinimized, isMaximized, onPositionChange) => 
 
     let wobbleTransform = '';
     if (dragState.wobbleEnabled) {
-      const targetShear = clamp(-frameDeltaX * 0.18, -MAX_SHEAR_DEGREES, MAX_SHEAR_DEGREES);
+      const targetShear = clamp(
+        -frameDeltaX * WOBBLE_SHEAR_GAIN,
+        -MAX_SHEAR_DEGREES,
+        MAX_SHEAR_DEGREES,
+      );
       const targetStretch = 1 + clamp(
         -frameDeltaY * 0.0025,
         -MAX_VERTICAL_STRETCH,

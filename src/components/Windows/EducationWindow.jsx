@@ -5,6 +5,7 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
+import { WINDOW_SIZES } from '../../config/windowSizes';
 
 // Decide qué tipo de estudio es (grado, bootcamp, certificado, curso) a
 // partir de su etiqueta explícita, o adivinándolo por palabras del título.
@@ -41,7 +42,7 @@ const EducationWindow = ({ data, initialPosition, onOpenDocument }) => {
             id="education-window"
             title={t('windows.education')}
             initialPosition={initialPosition}
-            initialSize={{ width: 500, height: 520 }}
+            initialSize={WINDOW_SIZES.education}
         >
             <div className="education-content">
                 <div className="timeline">
