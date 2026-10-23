@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { JOBS_PAGE_SIZE } from '../components/Dashboard/dashboardConstants';
 
 /**
@@ -68,15 +68,6 @@ const useJobBoardControls = (filteredJobs, options = {}) => {
     const from = sortedJobs.length === 0 ? 0 : safePage * JOBS_PAGE_SIZE + 1;
     const to = Math.min((safePage + 1) * JOBS_PAGE_SIZE, sortedJobs.length);
 
-    // Reset page when filtered list shrinks past current page
-    // Si al filtrar la lista se queda más corta que la página en la que
-    // estábamos, retrocede a la última página que sí existe.
-    useEffect(() => {
-        const maxPage = Math.max(0, Math.ceil(sortedJobs.length / JOBS_PAGE_SIZE) - 1);
-        if (page > maxPage) {
-            setPage(maxPage);
-        }
-    }, [sortedJobs.length, page]);
 
     return {
         sortBy,
