@@ -6,9 +6,9 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useWindowContext } from '../context/WindowContext';
 import { showToast } from '../components/UI/Toast';
 import i18n from '../i18n';
+import { MOBILE_BREAKPOINT } from '../config/layout';
 
 // Responsive breakpoints (px)
-const MOBILE_BREAKPOINT = 768;
 const TABLET_BREAKPOINT = 1200;
 
 // Grid layout for pre-minimize positioning

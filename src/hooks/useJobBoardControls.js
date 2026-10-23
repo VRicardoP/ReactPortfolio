@@ -1,6 +1,5 @@
 import { useMemo, useState, useCallback, useEffect } from 'react';
-
-const PAGE_SIZE = 20;
+import { JOBS_PAGE_SIZE } from '../components/Dashboard/dashboardConstants';
 
 /**
  * Shared hook for job board sorting, pagination, and cache age.
@@ -62,18 +61,18 @@ const useJobBoardControls = (filteredJobs, options = {}) => {
 
     // Paginate
     // Calcula qué trozo de la lista ordenada corresponde a la página actual.
-    const totalPages = Math.max(1, Math.ceil(sortedJobs.length / PAGE_SIZE));
+    const totalPages = Math.max(1, Math.ceil(sortedJobs.length / JOBS_PAGE_SIZE));
     const safePage = Math.min(page, totalPages - 1);
-    const pagedJobs = sortedJobs.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
+    const pagedJobs = sortedJobs.slice(safePage * JOBS_PAGE_SIZE, (safePage + 1) * JOBS_PAGE_SIZE);
 
-    const from = sortedJobs.length === 0 ? 0 : safePage * PAGE_SIZE + 1;
-    const to = Math.min((safePage + 1) * PAGE_SIZE, sortedJobs.length);
+    const from = sortedJobs.length === 0 ? 0 : safePage * JOBS_PAGE_SIZE + 1;
+    const to = Math.min((safePage + 1) * JOBS_PAGE_SIZE, sortedJobs.length);
 
     // Reset page when filtered list shrinks past current page
     // Si al filtrar la lista se queda más corta que la página en la que
     // estábamos, retrocede a la última página que sí existe.
     useEffect(() => {
-        const maxPage = Math.max(0, Math.ceil(sortedJobs.length / PAGE_SIZE) - 1);
+        const maxPage = Math.max(0, Math.ceil(sortedJobs.length / JOBS_PAGE_SIZE) - 1);
         if (page > maxPage) {
             setPage(maxPage);
         }

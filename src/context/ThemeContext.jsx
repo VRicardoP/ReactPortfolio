@@ -4,6 +4,7 @@
 
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { safeLocal } from '../utils/safeStorage';
+import { BACKGROUND_EFFECTS } from '../config/backgrounds';
 
 // definition of available themes
 const themes = {
@@ -79,9 +80,6 @@ const themes = {
 };
 
 const ThemeContext = createContext(null);
-
-// Available 3D/2D background effects. First entry is the default.
-const BACKGROUND_EFFECTS = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
 
 const CURSOR_SIZE = 26;
 

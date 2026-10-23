@@ -14,8 +14,7 @@
  * Returning null means the handler managed output itself (e.g. clear, cat).
  */
 
-const VALID_EFFECTS = ['rain', 'parallax', 'matrix', 'lensflare', 'cube', 'smoke'];
-const SUPPORTED_LANGS = ['en', 'es', 'fr', 'de', 'ja', 'it'];
+import { BACKGROUND_EFFECTS } from './backgrounds';
 
 const FAKE_FILES = {
   'about.txt': 'about',
@@ -218,14 +217,14 @@ function backgroundCommand(args, { backgroundEffect, setBackground, t }) {
     return [
       { text: `  ${t('terminal.backgroundCurrent', { effect: backgroundEffect })}`, type: 'info' },
       { text: `  ${t('terminal.backgroundAvailable')}`, type: 'highlight' },
-      ...VALID_EFFECTS.map(e => ({
+      ...BACKGROUND_EFFECTS.map(e => ({
         text: `    ${e === backgroundEffect ? '> ' : '  '}${e}${e === backgroundEffect ? ' (active)' : ''}`,
         type: e === backgroundEffect ? 'highlight' : 'success',
       })),
       { text: '', type: 'info' },
     ];
   }
-  if (VALID_EFFECTS.includes(sub)) {
+  if (BACKGROUND_EFFECTS.includes(sub)) {
     setBackground(sub);
     return [
       { text: `  ${t('terminal.backgroundChanged', { effect: sub })}`, type: 'success' },
@@ -270,6 +269,7 @@ function themeCommand(args, { themeName, availableThemes, setTheme, t }) {
 function langCommand(args, { i18n, t }) {
   const sub = args[0]?.toLowerCase();
   const currentLang = (i18n.language || 'en').split('-')[0];
+  const supportedLanguages = i18n.options.supportedLngs.filter(lng => lng !== 'cimode');
   if (!sub) {
     return [
       { text: `  ${t('terminal.langCurrent', { lang: currentLang })}`, type: 'info' },
@@ -281,14 +281,14 @@ function langCommand(args, { i18n, t }) {
     return [
       { text: `  ${t('terminal.langCurrent', { lang: currentLang })}`, type: 'info' },
       { text: `  ${t('terminal.langAvailable')}`, type: 'highlight' },
-      ...SUPPORTED_LANGS.map(l => ({
+      ...supportedLanguages.map(l => ({
         text: `    ${l === currentLang ? '> ' : '  '}${l}${l === currentLang ? ' (active)' : ''}`,
         type: l === currentLang ? 'highlight' : 'success',
       })),
       { text: '', type: 'info' },
     ];
   }
-  if (SUPPORTED_LANGS.includes(sub)) {
+  if (supportedLanguages.includes(sub)) {
     i18n.changeLanguage(sub);
     return [
       { text: `  ${t('terminal.langChanged', { lang: sub })}`, type: 'success' },

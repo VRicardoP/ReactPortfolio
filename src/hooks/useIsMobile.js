@@ -2,9 +2,9 @@
 // si el usuario gira el dispositivo o cambia el tamaño de la ventana.
 
 import { useState, useEffect } from 'react';
+import { MOBILE_BREAKPOINT } from '../config/layout';
 
-const MOBILE_BREAKPOINT_PX = 768;
-const MOBILE_QUERY = `(max-width: ${MOBILE_BREAKPOINT_PX}px)`;
+const MOBILE_QUERY = `(max-width: ${MOBILE_BREAKPOINT}px)`;
 
 const useIsMobile = () => {
     const [isMobile, setIsMobile] = useState(() =>
