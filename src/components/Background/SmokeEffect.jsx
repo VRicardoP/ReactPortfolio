@@ -1,126 +1,69 @@
-// Efecto de fondo en 3D: 150 planos con una textura de humo flotando y
-// girando despacio, dando sensación de niebla en movimiento.
+// Efecto 3D de planos de humo que flotan y giran lentamente.
+// Shared renderer, resize and frame lifecycle are delegated to useThreeScene.
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import * as THREE from 'three';
+import useThreeScene from '../../hooks/useThreeScene';
+
 const SmokeEffect = () => {
     const mountRef = useRef(null);
-    const animationIdRef = useRef(null);
 
-    // Monta la escena 3D una sola vez: crea las partículas de humo y el
-    // bucle de animación, y lo limpia todo al desmontar el componente.
-    useEffect(() => {
-        if (!mountRef.current) return;
-
-        const { innerWidth, innerHeight } = window;
-
-        // renderer
-        const renderer = new THREE.WebGLRenderer({
-            antialias: true
+    // Construye las partículas de humo y declara cómo liberar sus recursos.
+    // Texture, geometry and material remain owned by this effect.
+    const build = useCallback(({ width, height }) => {
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(width, height);
+        Object.assign(renderer.domElement.style, {
+            position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', zIndex: '-1',
         });
-        renderer.setSize(innerWidth, innerHeight);
-
-        renderer.domElement.style.position = 'fixed';
-        renderer.domElement.style.top = '0';
-        renderer.domElement.style.left = '0';
-        renderer.domElement.style.width = '100%';
-        renderer.domElement.style.height = '100%';
-        renderer.domElement.style.zIndex = '-1';
-
-        mountRef.current.appendChild(renderer.domElement);
-
-        // clock for delta time
-        const clock = new THREE.Clock();
-
-        // scene and camera
         const scene = new THREE.Scene();
-
-        const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 1, 10000);
+        const camera = new THREE.PerspectiveCamera(75, width / height, 1, 10000);
         camera.position.z = 1000;
         scene.add(camera);
-
-        // directional light like in the original
         const light = new THREE.DirectionalLight(0xffffff, 0.5);
         light.position.set(-1, 0, 1);
         scene.add(light);
 
-        // load the smoke texture from the original URL
-        const textureLoader = new THREE.TextureLoader();
-        const smokeTexture = textureLoader.load(
-            '/textures/smoke.webp'
-        );
-
-        // smoke material - same as the original
+        const smokeTexture = new THREE.TextureLoader().load('/textures/smoke.webp');
         const smokeMaterial = new THREE.MeshLambertMaterial({
             color: 0x00dddd,
             map: smokeTexture,
-            transparent: true
+            transparent: true,
         });
-
-        const smokeGeo = new THREE.PlaneGeometry(300, 300);
+        const smokeGeometry = new THREE.PlaneGeometry(300, 300);
         const smokeParticles = [];
-
-        // create 150 smoke particles like in the original
-        for (let p = 0; p < 150; p++) {
-            const particle = new THREE.Mesh(smokeGeo, smokeMaterial);
+        for (let index = 0; index < 150; index++) {
+            const particle = new THREE.Mesh(smokeGeometry, smokeMaterial);
             particle.position.set(
                 Math.random() * 500 - 250,
                 Math.random() * 500 - 250,
-                Math.random() * 1000 - 100
+                Math.random() * 1000 - 100,
             );
             particle.rotation.z = Math.random() * 360;
             scene.add(particle);
             smokeParticles.push(particle);
         }
+        const clock = new THREE.Clock();
 
-        // animation loop
-        const animate = () => {
-            animationIdRef.current = requestAnimationFrame(animate);
-
-            const delta = clock.getDelta();
-
-            // rotate smoke particles like in the original
-            for (let sp = smokeParticles.length - 1; sp >= 0; sp--) {
-                smokeParticles[sp].rotation.z += delta * 0.2;
-            }
-
-            renderer.render(scene, camera);
+        return {
+            scene,
+            camera,
+            renderer,
+            animate: () => {
+                const delta = clock.getDelta();
+                smokeParticles.forEach(particle => { particle.rotation.z += delta * 0.2; });
+            },
+            dispose: () => {
+                smokeGeometry.dispose();
+                smokeMaterial.dispose();
+                smokeTexture.dispose();
+            },
         };
+    }, []);
 
-        // when the window size changes
-        const onWindowResize = () => {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-            renderer.setSize(width, height);
-        };
-        window.addEventListener('resize', onWindowResize);
+    useThreeScene(mountRef, build);
 
-        animate();
-
-        const mountNode = mountRef.current;
-
-        // cleanup when the component unmounts
-        return () => {
-            window.removeEventListener('resize', onWindowResize);
-
-            if (animationIdRef.current) {
-                cancelAnimationFrame(animationIdRef.current);
-            }
-
-            if (mountNode && renderer.domElement) {
-                mountNode.removeChild(renderer.domElement);
-            }
-
-            renderer.dispose();
-            smokeGeo.dispose();
-            smokeMaterial.dispose();
-            smokeTexture.dispose();
-        };
-    }, []); // theme is not used — smoke color is hardcoded
-
-    return <div ref={mountRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />;
+    return <div ref={mountRef} style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }} />;
 };
 
 export default SmokeEffect;
