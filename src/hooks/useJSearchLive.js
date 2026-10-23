@@ -32,9 +32,9 @@ const useJSearchLive = () => {
     const [formFields, setFormFields] = useState(INITIAL_FORM_FIELDS);
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [cooldown, setCooldown] = useState(false);
+    const [cooldownUntil, setCooldownUntil] = useState(0);
     const [cooldownTimer, setCooldownTimer] = useState(0);
-    const timerRef = useRef(null);
+    const cooldown = cooldownUntil > Date.now();
 
     // Generacion de busqueda: el Enter del input dispara `handleSearch` sin
     // mirar `loading` (el boton si lo mira) y el cooldown solo se arma tras el
@@ -42,32 +42,25 @@ const useJSearchLive = () => {
     // puede confirmar resultados, ni armar el cooldown, ni apagar el indicador.
     const searchGenerationRef = useRef(0);
 
-    // Cleanup timer on unmount
-    // Al desmontar el componente, detiene el contador del tiempo de espera.
+    // Deriva la cuenta atrás de un instante absoluto: el intervalo solo pinta
+    // el tiempo restante y no ejecuta efectos dentro de un updater de estado.
     useEffect(() => {
-        return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
-        };
-    }, []);
+        if (!cooldownUntil) return undefined;
+        const interval = setInterval(() => {
+            const remaining = Math.max(0, Math.ceil((cooldownUntil - Date.now()) / 1000));
+            setCooldownTimer(remaining);
+            if (remaining === 0) {
+                setCooldownUntil(0);
+                clearInterval(interval);
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [cooldownUntil]);
 
     // Pone en marcha la cuenta atrás que impide buscar de nuevo demasiado pronto.
     const startCooldown = useCallback(() => {
-        setCooldown(true);
         setCooldownTimer(COOLDOWN_SECONDS);
-
-        if (timerRef.current) clearInterval(timerRef.current);
-
-        timerRef.current = setInterval(() => {
-            setCooldownTimer(prev => {
-                if (prev <= 1) {
-                    clearInterval(timerRef.current);
-                    timerRef.current = null;
-                    setCooldown(false);
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
+        setCooldownUntil(Date.now() + COOLDOWN_SECONDS * 1000);
     }, []);
 
     // Actualiza un campo del formulario de búsqueda.
