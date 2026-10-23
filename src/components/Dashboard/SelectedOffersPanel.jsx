@@ -15,6 +15,7 @@ import useDocumentGeneration from '../../hooks/useDocumentGeneration';
 const SelectedOffersPanel = memo(({ initialPosition }) => {
     const { t } = useTranslation();
     const docGen = useDocumentGeneration();
+    const { fetchDocuments, generate, getDocumentsFor, downloadPdf } = docGen;
     const { user } = useAuth();
     const [previewAppId, setPreviewAppId] = useState(null);
 
@@ -27,15 +28,15 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
 
     // Abre la vista previa de los documentos de una candidatura.
     const handleViewDocs = useCallback((appId) => {
-        docGen.fetchDocuments(appId);
+        fetchDocuments(appId);
         setPreviewAppId(appId);
-    }, [docGen]);
+    }, [fetchDocuments]);
 
     // Lanza la generación de documentos, ignorando el error aquí (ya se
     // muestra en el estado del hook).
     const handleGenerate = useCallback(
-        (...args) => docGen.generate(...args).catch(() => null),
-        [docGen],
+        (...args) => generate(...args).catch(() => null),
+        [generate],
     );
 
     // Cierra la vista previa de documentos.
@@ -46,17 +47,17 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
     // Descarga en PDF el currículum y/o la carta de una candidatura,
     // consultándolos primero si no se tenían ya en memoria.
     const handleDownloadPdf = useCallback(async (appId) => {
-        let docs = docGen.getDocumentsFor(appId);
+        let docs = getDocumentsFor(appId);
         if (!docs) {
-            docs = await docGen.fetchDocuments(appId);
+            docs = await fetchDocuments(appId);
         }
         if (docs?.cv) {
-            docGen.downloadPdf(docs.cv.id, 'cv_adapted.pdf');
+            downloadPdf(docs.cv.id, 'cv_adapted.pdf');
         }
         if (docs?.coverLetter) {
-            docGen.downloadPdf(docs.coverLetter.id, 'cover_letter.pdf');
+            downloadPdf(docs.coverLetter.id, 'cover_letter.pdf');
         }
-    }, [docGen]);
+    }, [downloadPdf, fetchDocuments, getDocumentsFor]);
 
     // Si se borra la candidatura cuya vista previa está abierta, la cierra.
     const handleDeleteApp = useCallback((appId) => {

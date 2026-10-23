@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import useResizable from '../useResizable'
 
 const makeWindowRef = (overrides = {}) => ({
@@ -16,12 +16,24 @@ const makeWindowRef = (overrides = {}) => ({
   },
 })
 
-const fireResizeStart = (clientX = 500, clientY = 400) => ({
-  clientX,
-  clientY,
-  stopPropagation: vi.fn(),
-  preventDefault: vi.fn(),
-})
+const makePointerEvent = (overrides = {}) => {
+  const captured = new Set()
+  const currentTarget = {
+    setPointerCapture: vi.fn(id => captured.add(id)),
+    hasPointerCapture: vi.fn(id => captured.has(id)),
+    releasePointerCapture: vi.fn(id => captured.delete(id)),
+  }
+  return {
+    pointerId: 7,
+    button: 0,
+    clientX: 500,
+    clientY: 400,
+    currentTarget,
+    stopPropagation: vi.fn(),
+    preventDefault: vi.fn(),
+    ...overrides,
+  }
+}
 
 describe('useResizable', () => {
   let onSizeChange
@@ -32,295 +44,103 @@ describe('useResizable', () => {
     onPositionChange = vi.fn()
   })
 
-  afterEach(() => {
-    vi.restoreAllMocks()
-  })
+  const renderResizable = (windowRef, minimized = false, maximized = false) => renderHook(() =>
+    useResizable(windowRef, minimized, maximized, onSizeChange, onPositionChange)
+  )
 
-  it('returns handleResizeStart function', () => {
+  it('captures the pointer and persists an east resize', () => {
     const windowRef = makeWindowRef()
-    const { result } = renderHook(() =>
-      useResizable(windowRef, false, false, onSizeChange, onPositionChange)
-    )
+    const { result } = renderResizable(windowRef)
+    const down = makePointerEvent({ clientY: 250 })
 
-    expect(typeof result.current.handleResizeStart).toBe('function')
-  })
+    act(() => result.current.handlePointerDown(down, 'e'))
+    expect(down.currentTarget.setPointerCapture).toHaveBeenCalledWith(7)
+    expect(windowRef.current.classList.add).toHaveBeenCalledWith('resizing')
 
-  it('handleResizeStart ignores when minimized', () => {
-    const windowRef = makeWindowRef()
-    const { result } = renderHook(() =>
-      useResizable(windowRef, true, false, onSizeChange, onPositionChange)
-    )
-
-    const event = fireResizeStart()
-    act(() => {
-      result.current.handleResizeStart(event, 'e')
-    })
-
-    expect(event.stopPropagation).not.toHaveBeenCalled()
-    expect(windowRef.current.classList.add).not.toHaveBeenCalled()
-  })
-
-  it('handleResizeStart ignores when maximized', () => {
-    const windowRef = makeWindowRef()
-    const { result } = renderHook(() =>
-      useResizable(windowRef, false, true, onSizeChange, onPositionChange)
-    )
-
-    const event = fireResizeStart()
-    act(() => {
-      result.current.handleResizeStart(event, 's')
-    })
-
-    expect(event.stopPropagation).not.toHaveBeenCalled()
-    expect(windowRef.current.classList.add).not.toHaveBeenCalled()
-  })
-
-  it('east resize increases width', () => {
-    const windowRef = makeWindowRef()
-    const { result } = renderHook(() =>
-      useResizable(windowRef, false, false, onSizeChange, onPositionChange)
-    )
-
-    // Start resize from east edge at (500, 250)
-    const event = fireResizeStart(500, 250)
-    act(() => {
-      result.current.handleResizeStart(event, 'e')
-    })
-
-    // Move mouse 100px to the right
-    act(() => {
-      document.dispatchEvent(
-        new MouseEvent('mousemove', { clientX: 600, clientY: 250 })
-      )
-    })
-
-    // width should be 400 + 100 = 500
+    act(() => result.current.handlePointerMove({ pointerId: 7, clientX: 600, clientY: 250 }))
     expect(windowRef.current.style.width).toBe('500px')
-    // height should remain 300
     expect(windowRef.current.style.height).toBe('300px')
 
-    act(() => {
-      document.dispatchEvent(new MouseEvent('mouseup'))
-    })
-
+    act(() => result.current.handlePointerUp({ pointerId: 7 }))
     expect(onSizeChange).toHaveBeenCalledWith({ width: 500, height: 300 })
+    expect(down.currentTarget.releasePointerCapture).toHaveBeenCalledWith(7)
+    expect(windowRef.current.classList.remove).toHaveBeenCalledWith('resizing')
   })
 
-  it('south resize increases height', () => {
+  it('ignores moves and releases from a different pointer', () => {
     const windowRef = makeWindowRef()
-    const { result } = renderHook(() =>
-      useResizable(windowRef, false, false, onSizeChange, onPositionChange)
-    )
+    const { result } = renderResizable(windowRef)
+    const down = makePointerEvent()
 
-    const event = fireResizeStart(300, 400)
-    act(() => {
-      result.current.handleResizeStart(event, 's')
-    })
+    act(() => result.current.handlePointerDown(down, 'se'))
+    act(() => result.current.handlePointerMove({ pointerId: 8, clientX: 600, clientY: 500 }))
+    act(() => result.current.handlePointerUp({ pointerId: 8 }))
 
-    // Move mouse 80px down
-    act(() => {
-      document.dispatchEvent(
-        new MouseEvent('mousemove', { clientX: 300, clientY: 480 })
-      )
-    })
-
-    // height should be 300 + 80 = 380
-    expect(windowRef.current.style.height).toBe('380px')
-    // width should remain 400
-    expect(windowRef.current.style.width).toBe('400px')
-
-    act(() => {
-      document.dispatchEvent(new MouseEvent('mouseup'))
-    })
-
-    expect(onSizeChange).toHaveBeenCalledWith({ width: 400, height: 380 })
+    expect(windowRef.current.style.width).toBeUndefined()
+    expect(onSizeChange).not.toHaveBeenCalled()
   })
 
-  it('west resize decreases width and adjusts x position', () => {
+  it('updates position when resizing from west', () => {
     const windowRef = makeWindowRef()
-    const { result } = renderHook(() =>
-      useResizable(windowRef, false, false, onSizeChange, onPositionChange)
-    )
+    const { result } = renderResizable(windowRef)
+    const down = makePointerEvent({ clientX: 100, clientY: 250 })
 
-    // Start resize from west edge at (100, 250)
-    const event = fireResizeStart(100, 250)
-    act(() => {
-      result.current.handleResizeStart(event, 'w')
-    })
-
-    // Move mouse 50px to the left => delta = (50 - 100) = -50
-    // proposedWidth = 400 - (-50) = 450, newX = 100 + (-50) = 50
-    act(() => {
-      document.dispatchEvent(
-        new MouseEvent('mousemove', { clientX: 50, clientY: 250 })
-      )
-    })
-
-    expect(windowRef.current.style.width).toBe('450px')
-    expect(windowRef.current.style.left).toBe('50px')
-
-    act(() => {
-      document.dispatchEvent(new MouseEvent('mouseup'))
-    })
+    act(() => result.current.handlePointerDown(down, 'w'))
+    act(() => result.current.handlePointerMove({ pointerId: 7, clientX: 50, clientY: 250 }))
+    act(() => result.current.handlePointerUp({ pointerId: 7 }))
 
     expect(onSizeChange).toHaveBeenCalledWith({ width: 450, height: 300 })
     expect(onPositionChange).toHaveBeenCalledWith({ x: 50, y: 100 })
   })
 
-  it('north resize decreases height and adjusts y position', () => {
+  it('enforces minimum dimensions', () => {
     const windowRef = makeWindowRef()
-    const { result } = renderHook(() =>
-      useResizable(windowRef, false, false, onSizeChange, onPositionChange)
-    )
+    const { result } = renderResizable(windowRef)
+    const down = makePointerEvent()
 
-    // Start resize from north edge at (300, 100)
-    const event = fireResizeStart(300, 100)
-    act(() => {
-      result.current.handleResizeStart(event, 'n')
-    })
+    act(() => result.current.handlePointerDown(down, 'se'))
+    act(() => result.current.handlePointerMove({ pointerId: 7, clientX: 0, clientY: 0 }))
+    act(() => result.current.handlePointerUp({ pointerId: 7 }))
 
-    // Move mouse 60px up => delta = (40 - 100) = -60
-    // proposedHeight = 300 - (-60) = 360, newY = 100 + (-60) = 40
-    act(() => {
-      document.dispatchEvent(
-        new MouseEvent('mousemove', { clientX: 300, clientY: 40 })
-      )
-    })
-
-    expect(windowRef.current.style.height).toBe('360px')
-    expect(windowRef.current.style.top).toBe('40px')
-
-    act(() => {
-      document.dispatchEvent(new MouseEvent('mouseup'))
-    })
-
-    expect(onSizeChange).toHaveBeenCalledWith({ width: 400, height: 360 })
-    expect(onPositionChange).toHaveBeenCalledWith({ x: 100, y: 40 })
+    expect(onSizeChange).toHaveBeenCalledWith({ width: 200, height: 150 })
   })
 
-  it('enforces minimum width (200px)', () => {
+  it.each([
+    ['minimized', true, false],
+    ['maximized', false, true],
+  ])('does not start while %s', (_label, minimized, maximized) => {
     const windowRef = makeWindowRef()
-    const { result } = renderHook(() =>
-      useResizable(windowRef, false, false, onSizeChange, onPositionChange)
-    )
+    const { result } = renderResizable(windowRef, minimized, maximized)
+    const down = makePointerEvent()
 
-    const event = fireResizeStart(500, 250)
-    act(() => {
-      result.current.handleResizeStart(event, 'e')
-    })
+    act(() => result.current.handlePointerDown(down, 'e'))
 
-    // Move mouse 300px to the left => delta = -300
-    // newWidth = max(400 + (-300), 200) = max(100, 200) = 200
-    act(() => {
-      document.dispatchEvent(
-        new MouseEvent('mousemove', { clientX: 200, clientY: 250 })
-      )
-    })
-
-    expect(windowRef.current.style.width).toBe('200px')
-
-    act(() => {
-      document.dispatchEvent(new MouseEvent('mouseup'))
-    })
-
-    expect(onSizeChange).toHaveBeenCalledWith({ width: 200, height: 300 })
+    expect(down.currentTarget.setPointerCapture).not.toHaveBeenCalled()
+    expect(windowRef.current.classList.add).not.toHaveBeenCalled()
   })
 
-  it('enforces minimum height (150px)', () => {
+  it('keeps keyboard resizing available', () => {
     const windowRef = makeWindowRef()
-    const { result } = renderHook(() =>
-      useResizable(windowRef, false, false, onSizeChange, onPositionChange)
-    )
+    const { result } = renderResizable(windowRef)
+    const event = {
+      key: 'ArrowRight',
+      shiftKey: false,
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    }
 
-    const event = fireResizeStart(300, 400)
-    act(() => {
-      result.current.handleResizeStart(event, 's')
-    })
+    act(() => result.current.handleKeyboardResize(event, 'e'))
 
-    // Move mouse 250px up => delta = -250
-    // newHeight = max(300 + (-250), 150) = max(50, 150) = 150
-    act(() => {
-      document.dispatchEvent(
-        new MouseEvent('mousemove', { clientX: 300, clientY: 150 })
-      )
-    })
-
-    expect(windowRef.current.style.height).toBe('150px')
-
-    act(() => {
-      document.dispatchEvent(new MouseEvent('mouseup'))
-    })
-
-    expect(onSizeChange).toHaveBeenCalledWith({ width: 400, height: 150 })
+    expect(onSizeChange).toHaveBeenCalledWith({ width: 410, height: 300 })
   })
 
-  it('mouseup calls onSizeChange with final dimensions', () => {
+  it('removes the resizing class on unmount', () => {
     const windowRef = makeWindowRef()
-    const { result } = renderHook(() =>
-      useResizable(windowRef, false, false, onSizeChange, onPositionChange)
-    )
-
-    const event = fireResizeStart(500, 400)
-    act(() => {
-      result.current.handleResizeStart(event, 'se')
-    })
-
-    // Resize southeast: move 50 right, 30 down
-    act(() => {
-      document.dispatchEvent(
-        new MouseEvent('mousemove', { clientX: 550, clientY: 430 })
-      )
-    })
-
-    act(() => {
-      document.dispatchEvent(new MouseEvent('mouseup'))
-    })
-
-    expect(onSizeChange).toHaveBeenCalledWith({ width: 450, height: 330 })
-    // Position should not change for se resize
-    expect(onPositionChange).not.toHaveBeenCalled()
-  })
-
-  it('adds and removes resizing class', () => {
-    const windowRef = makeWindowRef()
-    const { result } = renderHook(() =>
-      useResizable(windowRef, false, false, onSizeChange, onPositionChange)
-    )
-
-    const event = fireResizeStart(500, 250)
-    act(() => {
-      result.current.handleResizeStart(event, 'e')
-    })
-
-    expect(windowRef.current.classList.add).toHaveBeenCalledWith('resizing')
-
-    act(() => {
-      document.dispatchEvent(
-        new MouseEvent('mousemove', { clientX: 550, clientY: 250 })
-      )
-    })
-
-    act(() => {
-      document.dispatchEvent(new MouseEvent('mouseup'))
-    })
-
-    expect(windowRef.current.classList.remove).toHaveBeenCalledWith('resizing')
-  })
-
-  it('cleanup removes event listeners on unmount', () => {
-    const windowRef = makeWindowRef()
-    const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener')
-
-    const { unmount } = renderHook(() =>
-      useResizable(windowRef, false, false, onSizeChange, onPositionChange)
-    )
+    const { result, unmount } = renderResizable(windowRef)
+    act(() => result.current.handlePointerDown(makePointerEvent(), 'e'))
 
     unmount()
 
-    const removedEvents = removeEventListenerSpy.mock.calls.map((c) => c[0])
-    expect(removedEvents).toContain('mousemove')
-    expect(removedEvents).toContain('mouseup')
-
-    removeEventListenerSpy.mockRestore()
+    expect(windowRef.current.classList.remove).toHaveBeenCalledWith('resizing')
   })
 })

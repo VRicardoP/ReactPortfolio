@@ -134,7 +134,7 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
                         </div>
                     )}
 
-                    {!error && jobs.length > 0 && (
+                    {!error && !loading && jobs.length > 0 && (
                         <table className="visitors-table school-table">
                             <thead>
                                 <tr>

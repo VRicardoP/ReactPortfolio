@@ -75,7 +75,14 @@ const FloatingWindowDesktop = ({
         handlePositionChange
     );
 
-    const { handleResizeStart, handleKeyboardResize } = useResizable(
+    const {
+        handlePointerDown: handleResizeStart,
+        handlePointerMove: handleResizeMove,
+        handlePointerUp: handleResizeEnd,
+        handlePointerCancel: handleResizeCancel,
+        handleLostPointerCapture: handleResizeCaptureLost,
+        handleKeyboardResize
+    } = useResizable(
         windowRef,
         windowState?.isMinimized,
         windowState?.isMaximized,
@@ -96,6 +103,7 @@ const FloatingWindowDesktop = ({
     // keyboard handler for accessibility
     // Permite minimizar la ventana con la tecla Escape.
     const handleKeyDown = (e) => {
+        if (e.target.closest?.('input, select, textarea, [contenteditable]')) return;
         if (e.key === 'Escape') {
             e.preventDefault();
             toggleMinimize(id);
@@ -230,7 +238,11 @@ const FloatingWindowDesktop = ({
                                     role="separator"
                                     aria-label={`Resize window ${label}`}
                                     tabIndex={0}
-                                    onMouseDown={(e) => handleResizeStart(e, dir)}
+                                    onPointerDown={(e) => handleResizeStart(e, dir)}
+                                    onPointerMove={handleResizeMove}
+                                    onPointerUp={handleResizeEnd}
+                                    onPointerCancel={handleResizeCancel}
+                                    onLostPointerCapture={handleResizeCaptureLost}
                                     onKeyDown={(e) => handleKeyboardResize(e, dir)}
                                 />
                             ))}

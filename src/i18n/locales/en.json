@@ -246,6 +246,7 @@
       "generating": "Generating...",
       "documentsReady": "Documents ready",
       "noDocuments": "No documents generated yet.",
+      "corruptDocument": "Generated document is corrupt.",
       "viewDocs": "View Docs",
       "downloadPdf": "Download PDF",
       "downloadJson": "Download JSON",

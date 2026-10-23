@@ -69,4 +69,14 @@ describe('SchoolJobsWindow', () => {
         expect(screen.queryByRole('link', { name: 'dashboard.schoolJobs.openPortal' })).toBeNull();
         expect(screen.getByRole('link', { name: 'dashboard.schoolJobs.emailContact' })).toBeTruthy();
     });
+
+    it('oculta la tabla mientras actualiza los datos', () => {
+        render(<SchoolJobsWindow
+            initialPosition={{ x: 0, y: 0 }}
+            schoolData={{ ...schoolData(), loading: true }}
+        />);
+
+        expect(screen.getByText('dashboard.schoolJobs.loading')).toBeInTheDocument();
+        expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    });
 });

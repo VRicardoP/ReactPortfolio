@@ -9,9 +9,14 @@
  * Lo que de verdad hay que medir no es que el nodo exista, sino que NO se
  * vuelva a montar al minimizar y restaurar: ahí estaba la pérdida de estado.
  */
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+
+const actions = vi.hoisted(() => ({
+    toggleMinimize: vi.fn(),
+    updateSize: vi.fn(),
+}));
 
 vi.mock('../../../hooks/useIsMobile', () => ({ default: () => false }));
 
@@ -32,11 +37,11 @@ vi.mock('../../../context/WindowContext', () => ({
         registerWindow: vi.fn(),
         unregisterWindow: vi.fn(),
         bringToFront: vi.fn(),
-        toggleMinimize: vi.fn(),
+        toggleMinimize: actions.toggleMinimize,
         toggleMaximize: vi.fn(),
         fitToContent: vi.fn(),
         updatePosition: vi.fn(),
-        updateSize: vi.fn(),
+        updateSize: actions.updateSize,
     }),
 }));
 
@@ -98,5 +103,36 @@ describe('DT-185 · minimizar conserva el contenido', () => {
             </FloatingWindow>
         );
         expect(document.querySelector('[class*="resize"]')).toBeTruthy();
+    });
+    it('Escape dentro de un campo editable no minimiza la ventana', () => {
+        minimizado = false;
+        actions.toggleMinimize.mockClear();
+        render(
+            <FloatingWindow id="w1" title="Chat">
+                <input aria-label="mensaje" />
+            </FloatingWindow>
+        );
+
+        fireEvent.keyDown(screen.getByRole('textbox', { name: 'mensaje' }), { key: 'Escape' });
+
+        expect(actions.toggleMinimize).not.toHaveBeenCalled();
+    });
+
+    it('redimensiona con pointerdown y captura en el asa', () => {
+        minimizado = false;
+        actions.updateSize.mockClear();
+        render(<FloatingWindow id="w1" title="Chat"><p>contenido</p></FloatingWindow>);
+        const dialog = screen.getByRole('dialog');
+        dialog.getBoundingClientRect = () => ({ left: 0, top: 0, width: 400, height: 300 });
+        const handle = screen.getByRole('separator', { name: 'Resize window east edge' });
+        handle.setPointerCapture = vi.fn();
+        handle.hasPointerCapture = vi.fn(() => false);
+
+        fireEvent.pointerDown(handle, { pointerId: 3, button: 0, clientX: 400, clientY: 150 });
+        fireEvent.pointerMove(handle, { pointerId: 3, clientX: 450, clientY: 150 });
+        fireEvent.pointerUp(handle, { pointerId: 3 });
+
+        expect(handle.setPointerCapture).toHaveBeenCalledWith(3);
+        expect(actions.updateSize).toHaveBeenCalledWith('w1', { width: 450, height: 300 });
     });
 });

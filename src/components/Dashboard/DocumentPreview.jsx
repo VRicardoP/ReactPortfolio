@@ -2,7 +2,7 @@
 // presentación generados por IA, con pestañas para cambiar entre ambos y
 // botones para descargarlos o volver a generarlos.
 
-import { memo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../../styles/document-preview.css';
 
@@ -85,6 +85,17 @@ const DocumentPreview = memo(({
 }) => {
     const { t } = useTranslation();
     const [activeDocTab, setActiveDocTab] = useState('cv');
+    const activeDoc = documents
+        ? (activeDocTab === 'cv' ? documents.cv : documents.coverLetter)
+        : null;
+    const { content, corrupt } = useMemo(() => {
+        if (!activeDoc) return { content: null, corrupt: false };
+        try {
+            return { content: JSON.parse(activeDoc.content), corrupt: false };
+        } catch {
+            return { content: null, corrupt: true };
+        }
+    }, [activeDoc]);
 
     if (!documents) {
         return (
@@ -100,8 +111,6 @@ const DocumentPreview = memo(({
         );
     }
 
-    const activeDoc = activeDocTab === 'cv' ? documents.cv : documents.coverLetter;
-    const content = activeDoc ? JSON.parse(activeDoc.content) : null;
 
     return (
         <div className="cv-gen-doc-panel">
@@ -124,7 +133,11 @@ const DocumentPreview = memo(({
             </div>
 
             <div className="cv-gen-preview-content">
-                {content ? (
+                {corrupt ? (
+                    <div className="jobboard-empty" role="alert">
+                        {t('dashboard.cvGeneration.corruptDocument')}
+                    </div>
+                ) : content ? (
                     activeDocTab === 'cv'
                         ? <CvContent data={content} />
                         : <CoverLetterContent data={content} />

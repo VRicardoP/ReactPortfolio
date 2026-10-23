@@ -246,6 +246,7 @@
       "generating": "生成中...",
       "documentsReady": "書類準備完了",
       "noDocuments": "生成された書類はありません。",
+      "corruptDocument": "生成された書類が破損しています。",
       "viewDocs": "書類表示",
       "downloadPdf": "PDF ダウンロード",
       "downloadJson": "JSON ダウンロード",
