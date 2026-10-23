@@ -3,33 +3,16 @@
 // vienen, y un segundo bloque con estadísticas de salario (por rango,
 // por tipo de contrato, por fuente).
 
-import { memo, useMemo, useState } from 'react';
+import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import '../../charts/register';
 import useChartTheme from '../../hooks/useChartTheme';
+import useJobMarketStats from '../../hooks/useJobMarketStats';
 import { useTheme } from '../../context/ThemeContext';
-import { JOB_SOURCES } from '../../config/jobSources';
 import TabBar from '../UI/TabBar';
 import FloatingWindow from '../Windows/FloatingWindow';
 
-
-const SALARY_BUCKETS = [
-    { label: '<50k', min: 0, max: 50000 },
-    { label: '50-75k', min: 50000, max: 75000 },
-    { label: '75-100k', min: 75000, max: 100000 },
-    { label: '100-150k', min: 100000, max: 150000 },
-    { label: '150k+', min: 150000, max: Infinity },
-];
-
-// Calcula el salario "medio" de una oferta (el punto intermedio entre su
-// mínimo y su máximo, o el que haya si solo se conoce uno).
-const getMidSalary = (job) => {
-    const minSal = job.salaryMin || 0;
-    const maxSal = job.salaryMax || 0;
-    if (minSal > 0 && maxSal > 0) return (minSal + maxSal) / 2;
-    return minSal || maxSal;
-};
 
 const MARKET_TABS = ['skills', 'remote', 'sources'];
 const SALARY_TABS = ['ranges', 'byType', 'bySource'];
@@ -50,165 +33,16 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     const [section, setSection] = useState('market');
     const [marketTab, setMarketTab] = useState('skills');
     const [salaryTab, setSalaryTab] = useState('ranges');
-
-    // Aggregate all jobs from all sources
-    // Junta en una sola lista las ofertas de las 20 fuentes, con sus
-    // habilidades y si son remotas.
-    const allJobs = useMemo(() => {
-        if (!jobData) return [];
-        const jobs = [];
-        JOB_SOURCES.forEach(({ key }) => {
-            for (const job of jobData[key]?._normalized || []) {
-                jobs.push({
-                    ...job,
-                    source: key.charAt(0).toUpperCase() + key.slice(1),
-                });
-            }
-        });
-        return jobs;
-    }, [jobData]);
-
-    // --- Market charts ---
-    // Prepara el gráfico de las 10 habilidades más pedidas.
-    const skillsChartData = useMemo(() => {
-        const counts = {};
-        allJobs.forEach(j => {
-            j.tags.forEach(s => {
-                const key = s.trim();
-                if (key) counts[key] = (counts[key] || 0) + 1;
-            });
-        });
-        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 10);
-        return {
-            labels: sorted.map(([name]) => name),
-            datasets: [{
-                label: t('dashboard.jobAnalytics.topSkills'),
-                data: sorted.map(([, count]) => count),
-                backgroundColor: `rgba(${theme.primaryRgb}, 0.6)`,
-                borderColor: theme.primary,
-                borderWidth: 1,
-            }],
-        };
-    }, [allJobs, theme, t]);
-
-    // Prepara el gráfico de tarta remoto/presencial.
-    const remoteChartData = useMemo(() => {
-        let remote = 0, onsite = 0;
-        allJobs.forEach(j => j.remote ? remote++ : onsite++);
-        return {
-            labels: [t('dashboard.jobBoard.remote'), t('dashboard.jobBoard.onsite')],
-            datasets: [{
-                data: [remote, onsite],
-                backgroundColor: [
-                    `rgba(${theme.primaryRgb}, 0.6)`,
-                    'rgba(255, 107, 107, 0.6)',
-                ],
-                borderColor: [theme.primary, '#ff6b6b'],
-                borderWidth: 1,
-            }],
-        };
-    }, [allJobs, theme, t]);
-
-    // Prepara el gráfico de ofertas por fuente.
-    const sourceChartData = useMemo(() => {
-        const counts = {};
-        allJobs.forEach(j => { counts[j.source] = (counts[j.source] || 0) + 1; });
-        const labels = Object.keys(counts);
-        return {
-            labels,
-            datasets: [{
-                label: t('dashboard.jobAnalytics.jobsBySource'),
-                data: labels.map(l => counts[l]),
-                backgroundColor: (theme.chartColors || []).slice(0, labels.length).map(c =>
-                    c || `rgba(${theme.primaryRgb}, 0.6)`
-                ),
-                borderColor: theme.primary,
-                borderWidth: 1,
-            }],
-        };
-    }, [allJobs, theme, t]);
-
-    // --- Salary charts ---
-    // Se queda solo con las ofertas que tienen algún dato de salario.
-    const jobsWithSalary = useMemo(() => {
-        return allJobs.filter(job => {
-            const minSal = job.salaryMin || 0;
-            const maxSal = job.salaryMax || 0;
-            return minSal > 0 || maxSal > 0;
-        });
-    }, [allJobs]);
-
-    // Prepara el gráfico de cuántas ofertas hay en cada rango de salario.
-    const rangesChartData = useMemo(() => {
-        const counts = SALARY_BUCKETS.map(() => 0);
-        jobsWithSalary.forEach(job => {
-            const mid = getMidSalary(job);
-            for (let i = 0; i < SALARY_BUCKETS.length; i++) {
-                if (mid >= SALARY_BUCKETS[i].min && mid < SALARY_BUCKETS[i].max) {
-                    counts[i]++;
-                    break;
-                }
-            }
-        });
-        return {
-            labels: SALARY_BUCKETS.map(b => b.label),
-            datasets: [{
-                label: t('dashboard.salary.jobCount'),
-                data: counts,
-                backgroundColor: `rgba(${theme.primaryRgb}, 0.6)`,
-                borderColor: theme.primary,
-                borderWidth: 1,
-            }],
-        };
-    }, [jobsWithSalary, theme, t]);
-
-    // Prepara el gráfico de salario medio por tipo de contrato.
-    const byTypeChartData = useMemo(() => {
-        const grouped = {};
-        jobsWithSalary.forEach(job => {
-            const empType = job.employmentType || 'Unknown';
-            if (!grouped[empType]) grouped[empType] = { total: 0, count: 0 };
-            grouped[empType].total += getMidSalary(job);
-            grouped[empType].count++;
-        });
-        const labels = Object.keys(grouped).sort();
-        const averages = labels.map(l => Math.round(grouped[l].total / grouped[l].count));
-        return {
-            labels,
-            datasets: [{
-                label: t('dashboard.salary.avgSalary'),
-                data: averages,
-                backgroundColor: `rgba(${theme.primaryRgb}, 0.6)`,
-                borderColor: theme.primary,
-                borderWidth: 1,
-            }],
-        };
-    }, [jobsWithSalary, theme, t]);
-
-    // Prepara el gráfico de salario medio por fuente.
-    const bySourceChartData = useMemo(() => {
-        const grouped = {};
-        jobsWithSalary.forEach(job => {
-            const source = job.publisher || job.source || 'Unknown';
-            if (!grouped[source]) grouped[source] = { total: 0, count: 0 };
-            grouped[source].total += getMidSalary(job);
-            grouped[source].count++;
-        });
-        const labels = Object.keys(grouped).sort();
-        const averages = labels.map(l => Math.round(grouped[l].total / grouped[l].count));
-        return {
-            labels,
-            datasets: [{
-                label: t('dashboard.salary.avgSalary'),
-                data: averages,
-                backgroundColor: (theme.chartColors || []).slice(0, labels.length).map(c =>
-                    c || `rgba(${theme.primaryRgb}, 0.6)`
-                ),
-                borderColor: theme.primary,
-                borderWidth: 1,
-            }],
-        };
-    }, [jobsWithSalary, theme, t]);
+    const {
+        allJobs,
+        jobsWithSalary,
+        skillsChartData,
+        remoteChartData,
+        sourceChartData,
+        rangesChartData,
+        byTypeChartData,
+        bySourceChartData,
+    } = useJobMarketStats(jobData, theme, t);
 
 
 
