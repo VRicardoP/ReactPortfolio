@@ -36,10 +36,11 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
             {/* Filter form */}
             <div className="dash-form-grid" style={{ padding: '8px' }}>
                 <div>
-                    <label className="dash-label">
+                    <label className="dash-label" htmlFor="job-filter-query">
                         {t('dashboard.jobFilter.searchLabel')}
                     </label>
                     <input
+                        id="job-filter-query"
                         type="text"
                         placeholder={t('dashboard.jobFilter.searchPlaceholder')}
                         value={filters.q}
@@ -49,10 +50,11 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                     />
                 </div>
                 <div>
-                    <label className="dash-label">
+                    <label className="dash-label" htmlFor="job-filter-country">
                         {t('dashboard.jobFilter.countryLabel')}
                     </label>
                     <input
+                        id="job-filter-country"
                         type="text"
                         placeholder={t('dashboard.jobFilter.countryPlaceholder')}
                         value={filters.country}
@@ -62,10 +64,11 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                     />
                 </div>
                 <div>
-                    <label className="dash-label">
+                    <label className="dash-label" htmlFor="job-filter-city">
                         {t('dashboard.jobFilter.cityLabel')}
                     </label>
                     <input
+                        id="job-filter-city"
                         type="text"
                         placeholder={t('dashboard.jobFilter.cityPlaceholder')}
                         value={filters.city}
@@ -76,10 +79,11 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                 </div>
                 <div style={{ display: 'flex', gap: '6px' }}>
                     <div style={{ flex: 1 }}>
-                        <label className="dash-label">
+                        <label className="dash-label" htmlFor="job-filter-salary-min">
                             {t('dashboard.jobFilter.salaryMin')}
                         </label>
                         <input
+                            id="job-filter-salary-min"
                             type="number"
                             placeholder="0"
                             value={filters.salaryMin}
@@ -89,10 +93,11 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                         />
                     </div>
                     <div style={{ flex: 1 }}>
-                        <label className="dash-label">
+                        <label className="dash-label" htmlFor="job-filter-salary-max">
                             {t('dashboard.jobFilter.salaryMax')}
                         </label>
                         <input
+                            id="job-filter-salary-max"
                             type="number"
                             placeholder="999999"
                             value={filters.salaryMax}

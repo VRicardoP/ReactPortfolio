@@ -3,9 +3,11 @@
 // dejarle ver la página protegida.
 
 import { Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
+    const { t } = useTranslation();
     const { isAuthenticated, loading } = useAuth();
 
     if (loading) {
@@ -19,7 +21,7 @@ const ProtectedRoute = ({ children }) => {
                 fontSize: '20px',
                 fontFamily: 'Courier New'
             }}>
-                Loading...
+                {t('common.loading')}
             </div>
         );
     }

@@ -54,7 +54,17 @@ const EducationWindow = ({ data, initialPosition, onOpenDocument }) => {
                             <div
                                 key={`${edu.title}-${edu.date}`}
                                 className={`timeline-item${isExpanded ? ' expanded' : ''}`}
+                                role="button"
+                                tabIndex={0}
+                                aria-expanded={isExpanded}
                                 onClick={() => toggleExpand(index)}
+                                onKeyDown={(event) => {
+                                    if (event.target !== event.currentTarget) return;
+                                    if (event.key === 'Enter' || event.key === ' ') {
+                                        event.preventDefault();
+                                        toggleExpand(index);
+                                    }
+                                }}
                             >
                                 <div className="timeline-dot" />
                                 {edu.date && <div className="timeline-date">{edu.date}</div>}

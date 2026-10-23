@@ -1,4 +1,7 @@
 {
+  "common": {
+    "loading": "Wird geladen..."
+  },
   "welcome": {
     "title": "Willkommen - {{name}}",
     "greeting": "Hallo! Ich bin {{name}}",
@@ -18,6 +21,7 @@
     "gotIt": "Verstanden, los geht's! ->"
   },
   "chat": {
+    "messages": "Chatnachrichten",
     "greeting": "Hallo! Ich bin Kusanagi! Haben Sie Fragen zu {{name}}?",
     "typing": "Kusanagi schreibt...",
     "placeholder": "Fragen Sie mich etwas...",
@@ -79,6 +83,25 @@
     "statusInProgress": "In Bearbeitung"
   },
   "windows": {
+    "controls": {
+      "minimize": "Minimieren",
+      "maximize": "Maximieren",
+      "fitToContent": "An Inhalt anpassen",
+      "resize": "Fenstergröße ändern: {{edge}}",
+      "resizeEdges": {
+        "n": "Nordkante",
+        "s": "Südkante",
+        "e": "Ostkante",
+        "w": "Westkante",
+        "ne": "Nordostecke",
+        "nw": "Nordwestecke",
+        "se": "Südostecke",
+        "sw": "Südwestecke"
+      },
+      "selectLanguage": "Sprache auswählen",
+      "languages": "Sprachen",
+      "terminal": "Terminal"
+    },
     "profile": "Profil",
     "experience": "Erfahrung",
     "education": "Ausbildung",
@@ -146,6 +169,11 @@
       "title": "Besucherkarte"
     },
     "jobBoard": {
+      "badges": {
+        "new": "NEU",
+        "recent": "Kürzlich",
+        "remote": "REMOTE"
+      },
       "searchPlaceholder": "Stellen suchen...",
       "allLocations": "Alle Standorte",
       "allCategories": "Alle Kategorien",
@@ -259,6 +287,7 @@
       "matchPoints": "Übereinstimmungspunkte"
     },
     "jobAnalytics": {
+      "jobCount": "{{count}} Stellen",
       "title": "Arbeitsmarkt-Analytik",
       "tabSkills": "Top-Fähigkeiten",
       "tabRemote": "Remote vs Vor Ort",
@@ -341,6 +370,9 @@
       "addCard": "Hinzufügen"
     },
     "jsearchLive": {
+      "country": "Land",
+      "datePosted": "Veröffentlichungsdatum",
+      "employmentType": "Beschäftigungsart",
       "title": "JSearch Live-Suche",
       "search": "Suchen",
       "searching": "Suche läuft...",
@@ -371,6 +403,7 @@
       "jobsWithSalary": "Stellen mit Gehaltsangabe"
     },
     "savedSearches": {
+      "remote": "Remote",
       "title": "Gespeicherte Suchen",
       "create": "Neue Suche",
       "empty": "Noch keine gespeicherten Suchen. Erstellen Sie eine, um über passende Stellen benachrichtigt zu werden.",
@@ -468,6 +501,7 @@
       "settings": "Einstellungen"
     },
     "schoolJobs": {
+      "emailSubject": "Initiativbewerbung — IT-Stelle",
       "title": "Schulen-Jobmonitor",
       "scrapeNow": "Jetzt suchen",
       "scraping": "Suche läuft…",

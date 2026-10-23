@@ -3,6 +3,7 @@
 // maximizar; en el móvil se convierte en una sección plegable sencilla.
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useWindowContext } from '../../context/WindowContext';
 import useDraggable from '../../hooks/useDraggable';
 import useResizable from '../../hooks/useResizable';
@@ -19,6 +20,7 @@ const FloatingWindowDesktop = ({
     initialPosition = { x: 100, y: 100 },
     initialSize = { width: 400, height: 300 }
 }) => {
+    const { t } = useTranslation();
     const windowRef = useRef(null);
     const contentRef = useRef(null);
     const {
@@ -188,16 +190,16 @@ const FloatingWindowDesktop = ({
                 onLostPointerCapture={handleDragCaptureLost}
             >
                 <div className="window-controls">
-                    <Tooltip text="Minimize" position="bottom">
+                    <Tooltip text={t('windows.controls.minimize')} position="bottom">
                         <button
-                            aria-label="Minimize"
+                            aria-label={t('windows.controls.minimize')}
                             className="control-btn control-minimize"
                             onClick={handleToggleMinimize}
                         />
                     </Tooltip>
-                    <Tooltip text={isMinimized ? "Fit to content" : "Maximize"} position="bottom">
+                    <Tooltip text={isMinimized ? t('windows.controls.fitToContent') : t('windows.controls.maximize')} position="bottom">
                         <button
-                            aria-label="Maximize"
+                            aria-label={isMinimized ? t('windows.controls.fitToContent') : t('windows.controls.maximize')}
                             className="control-btn control-maximize"
                             onClick={handleToggleMaximize}
                         />
@@ -222,21 +224,14 @@ const FloatingWindowDesktop = ({
                     {/* borders for resizing */}
                     {!isMaximized && (
                         <>
-                            {[
-                                { dir: 'n', label: 'north edge' },
-                                { dir: 's', label: 'south edge' },
-                                { dir: 'e', label: 'east edge' },
-                                { dir: 'w', label: 'west edge' },
-                                { dir: 'ne', label: 'northeast corner' },
-                                { dir: 'nw', label: 'northwest corner' },
-                                { dir: 'se', label: 'southeast corner' },
-                                { dir: 'sw', label: 'southwest corner' },
-                            ].map(({ dir, label }) => (
+                            {['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].map((dir) => (
                                 <div
                                     key={dir}
                                     className={`resize-handle resize-handle-${dir}`}
                                     role="separator"
-                                    aria-label={`Resize window ${label}`}
+                                    aria-label={t('windows.controls.resize', {
+                                        edge: t(`windows.controls.resizeEdges.${dir}`),
+                                    })}
                                     tabIndex={0}
                                     onPointerDown={(e) => handleResizeStart(e, dir)}
                                     onPointerMove={handleResizeMove}

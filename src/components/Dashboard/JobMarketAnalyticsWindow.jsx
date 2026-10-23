@@ -275,7 +275,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
                     />
                     <span style={{ marginLeft: 'auto', fontSize: '11px', color: theme.text, opacity: 0.6, fontFamily: 'Courier New' }}>
                         {section === 'market'
-                            ? `${allJobs.length} jobs`
+                            ? t('dashboard.jobAnalytics.jobCount', { count: allJobs.length })
                             : `${jobsWithSalary.length} ${t('dashboard.salary.jobsWithSalary')}`
                         }
                     </span>

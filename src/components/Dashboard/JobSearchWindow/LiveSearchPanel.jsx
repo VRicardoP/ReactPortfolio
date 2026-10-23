@@ -37,6 +37,7 @@ const LiveSearchPanel = memo(({ live }) => {
                 />
 
                 <select
+                    aria-label={t('dashboard.jsearchLive.country')}
                     value={formFields.country}
                     onChange={(e) => handleFieldChange('country', e.target.value)}
                     className="dash-select"
@@ -51,6 +52,7 @@ const LiveSearchPanel = memo(({ live }) => {
                 </select>
 
                 <select
+                    aria-label={t('dashboard.jsearchLive.datePosted')}
                     value={formFields.date_posted}
                     onChange={(e) => handleFieldChange('date_posted', e.target.value)}
                     className="dash-select"
@@ -63,6 +65,7 @@ const LiveSearchPanel = memo(({ live }) => {
                 </select>
 
                 <select
+                    aria-label={t('dashboard.jsearchLive.employmentType')}
                     value={formFields.employment_type}
                     onChange={(e) => handleFieldChange('employment_type', e.target.value)}
                     className="dash-select"

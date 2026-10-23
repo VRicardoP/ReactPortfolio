@@ -50,8 +50,8 @@ const roleLabel = (t, score) => {
 
 // Construye un enlace "mailto:" con el asunto ya rellenado, o nada si no
 // hay correo de contacto.
-const buildEmailLink = (email) => email
-    ? `mailto:${email}?subject=${encodeURIComponent('Spontaneous application — IT role')}`
+const buildEmailLink = (email, subject) => email
+    ? `mailto:${email}?subject=${encodeURIComponent(subject)}`
     : null;
 
 // Da la URL de la página de ofertas de un colegio (o de su portal general).
@@ -151,7 +151,7 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
                                     const school = schoolsById[job.school_id];
                                     const rscore = roleScoreNum(job.role_score);
                                     const jobsPage = job.url ? null : getJobsPage(school);
-                                    const emailLink = buildEmailLink(school?.contact_email);
+                                    const emailLink = buildEmailLink(school?.contact_email, t('dashboard.schoolJobs.emailSubject'));
                                     return (
                                         <tr
                                             key={job.id}

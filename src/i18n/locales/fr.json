@@ -1,4 +1,7 @@
 {
+  "common": {
+    "loading": "Chargement..."
+  },
   "welcome": {
     "title": "Bienvenue - {{name}}",
     "greeting": "Bonjour ! Je suis {{name}}",
@@ -18,6 +21,7 @@
     "gotIt": "Compris, c'est parti ! ->"
   },
   "chat": {
+    "messages": "Messages du chat",
     "greeting": "Bonjour ! Je suis Kusanagi ! Avez-vous des questions sur {{name}} ?",
     "typing": "Kusanagi écrit...",
     "placeholder": "Posez-moi une question...",
@@ -79,6 +83,25 @@
     "statusInProgress": "En cours"
   },
   "windows": {
+    "controls": {
+      "minimize": "Réduire",
+      "maximize": "Agrandir",
+      "fitToContent": "Ajuster au contenu",
+      "resize": "Redimensionner la fenêtre : {{edge}}",
+      "resizeEdges": {
+        "n": "bord nord",
+        "s": "bord sud",
+        "e": "bord est",
+        "w": "bord ouest",
+        "ne": "coin nord-est",
+        "nw": "coin nord-ouest",
+        "se": "coin sud-est",
+        "sw": "coin sud-ouest"
+      },
+      "selectLanguage": "Choisir la langue",
+      "languages": "Langues",
+      "terminal": "Terminal"
+    },
     "profile": "Profil",
     "experience": "Expérience",
     "education": "Formation",
@@ -146,6 +169,11 @@
       "title": "Carte des Visiteurs"
     },
     "jobBoard": {
+      "badges": {
+        "new": "NOUVEAU",
+        "recent": "Récent",
+        "remote": "TÉLÉTRAVAIL"
+      },
       "searchPlaceholder": "Rechercher des emplois...",
       "allLocations": "Toutes les Localisations",
       "allCategories": "Toutes les Catégories",
@@ -259,6 +287,7 @@
       "matchPoints": "Points de Correspondance"
     },
     "jobAnalytics": {
+      "jobCount": "{{count}} emplois",
       "title": "Analytiques du Marché de l'Emploi",
       "tabSkills": "Top Compétences",
       "tabRemote": "Télétravail vs Sur site",
@@ -341,6 +370,9 @@
       "addCard": "Ajouter"
     },
     "jsearchLive": {
+      "country": "Pays",
+      "datePosted": "Date de publication",
+      "employmentType": "Type de contrat",
       "title": "JSearch Recherche en Direct",
       "search": "Rechercher",
       "searching": "Recherche en cours...",
@@ -371,6 +403,7 @@
       "jobsWithSalary": "offres avec données salariales"
     },
     "savedSearches": {
+      "remote": "Télétravail",
       "title": "Recherches Enregistrées",
       "create": "Nouvelle Recherche",
       "empty": "Aucune recherche enregistrée. Créez-en une pour être notifié des emplois correspondants.",
@@ -468,6 +501,7 @@
       "settings": "Paramètres"
     },
     "schoolJobs": {
+      "emailSubject": "Candidature spontanée — poste informatique",
       "title": "Suivi des emplois — écoles",
       "scrapeNow": "Lancer maintenant",
       "scraping": "Recherche…",

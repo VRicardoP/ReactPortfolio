@@ -32,10 +32,9 @@ export const getJobFreshness = (dateStr) => {
     }
 };
 
-const FRESHNESS_LABELS = {
-    new: 'NEW',
-    recent: 'Recent',
-    old: '',
+const FRESHNESS_LABEL_KEYS = {
+    new: 'dashboard.jobBoard.badges.new',
+    recent: 'dashboard.jobBoard.badges.recent',
 };
 
 /**
@@ -44,12 +43,13 @@ const FRESHNESS_LABELS = {
 // Muestra la etiqueta "Nueva"/"Reciente" sobre una tarjeta de oferta, o
 // nada si la oferta ya es antigua.
 export const FreshnessBadge = memo(({ dateStr }) => {
+    const { t } = useTranslation();
     const freshness = getJobFreshness(dateStr);
     if (!freshness || freshness === 'old') return null;
 
     return (
         <span className={`freshness-badge freshness-${freshness}`}>
-            {FRESHNESS_LABELS[freshness]}
+            {t(FRESHNESS_LABEL_KEYS[freshness])}
         </span>
     );
 });
@@ -92,9 +92,11 @@ export const JobBadges = memo(({
     sourceStyle,
     employmentClassName = '',
     employmentStyle,
-}) => (
+}) => {
+    const { t } = useTranslation();
+    return (
     <>
-        {remote && <span className="jobboard-remote-badge">REMOTE</span>}
+        {remote && <span className="jobboard-remote-badge">{t('dashboard.jobBoard.badges.remote')}</span>}
         {source && (
             <span className="jobboard-source-badge" style={sourceStyle}>
                 {source}
@@ -106,7 +108,8 @@ export const JobBadges = memo(({
             </span>
         )}
     </>
-));
+    );
+});
 
 JobBadges.displayName = 'JobBadges';
 

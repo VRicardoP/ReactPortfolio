@@ -1,4 +1,7 @@
 {
+  "common": {
+    "loading": "Caricamento..."
+  },
   "welcome": {
     "title": "Benvenuto - {{name}}",
     "greeting": "Ciao! Sono {{name}}",
@@ -18,6 +21,7 @@
     "gotIt": "Capito, andiamo! ->"
   },
   "chat": {
+    "messages": "Messaggi della chat",
     "greeting": "Ciao! Sono Kusanagi! Hai domande su {{name}}?",
     "typing": "Kusanagi sta scrivendo...",
     "placeholder": "Chiedimi qualsiasi cosa...",
@@ -79,6 +83,25 @@
     "statusInProgress": "In Corso"
   },
   "windows": {
+    "controls": {
+      "minimize": "Riduci a icona",
+      "maximize": "Ingrandisci",
+      "fitToContent": "Adatta al contenuto",
+      "resize": "Ridimensiona finestra: {{edge}}",
+      "resizeEdges": {
+        "n": "bordo nord",
+        "s": "bordo sud",
+        "e": "bordo est",
+        "w": "bordo ovest",
+        "ne": "angolo nord-est",
+        "nw": "angolo nord-ovest",
+        "se": "angolo sud-est",
+        "sw": "angolo sud-ovest"
+      },
+      "selectLanguage": "Seleziona lingua",
+      "languages": "Lingue",
+      "terminal": "Terminale"
+    },
     "profile": "Profilo",
     "experience": "Esperienza",
     "education": "Formazione",
@@ -146,6 +169,11 @@
       "title": "Mappa Visitatori"
     },
     "jobBoard": {
+      "badges": {
+        "new": "NUOVO",
+        "recent": "Recente",
+        "remote": "DA REMOTO"
+      },
       "searchPlaceholder": "Cerca lavori...",
       "allLocations": "Tutte le Sedi",
       "allCategories": "Tutte le Categorie",
@@ -259,6 +287,7 @@
       "matchPoints": "Punti di Corrispondenza"
     },
     "jobAnalytics": {
+      "jobCount": "{{count}} offerte",
       "title": "Analitiche Mercato del Lavoro",
       "tabSkills": "Top Competenze",
       "tabRemote": "Remoto vs In sede",
@@ -341,6 +370,9 @@
       "addCard": "Aggiungi"
     },
     "jsearchLive": {
+      "country": "Paese",
+      "datePosted": "Data di pubblicazione",
+      "employmentType": "Tipo di impiego",
       "title": "JSearch Ricerca Live",
       "search": "Cerca",
       "searching": "Ricerca in corso...",
@@ -371,6 +403,7 @@
       "jobsWithSalary": "offerte con dati salariali"
     },
     "savedSearches": {
+      "remote": "Da remoto",
       "title": "Ricerche Salvate",
       "create": "Nuova Ricerca",
       "empty": "Nessuna ricerca salvata. Creane una per ricevere notifiche sui lavori corrispondenti.",
@@ -468,6 +501,7 @@
       "settings": "Impostazioni"
     },
     "schoolJobs": {
+      "emailSubject": "Candidatura spontanea — ruolo IT",
       "title": "Monitoraggio impieghi — scuole",
       "scrapeNow": "Cerca ora",
       "scraping": "Ricerca…",

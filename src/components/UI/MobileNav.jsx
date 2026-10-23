@@ -51,7 +51,7 @@ const MobileNav = ({ title, onTerminalToggle }) => {
                             role="menuitem"
                         >
                             <span className="mobile-nav-dropdown-item-icon">{'>_'}</span>
-                            Terminal
+                            {t('windows.controls.terminal')}
                         </button>
                     </div>
                 </>

@@ -16,7 +16,7 @@ const LANGUAGES = [
 ];
 
 const LanguageSwitcher = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -42,13 +42,13 @@ const LanguageSwitcher = () => {
       <button
         className="language-switcher-btn"
         onClick={() => setOpen(prev => !prev)}
-        aria-label="Select language"
+        aria-label={t('windows.controls.selectLanguage')}
         aria-expanded={open}
       >
         {currentLang.toUpperCase()}
       </button>
       {open && (
-        <div className="language-switcher-dropdown" role="listbox" aria-label="Languages">
+        <div className="language-switcher-dropdown" role="listbox" aria-label={t('windows.controls.languages')}>
           {LANGUAGES.map(({ code, label, name }) => (
             <button
               key={code}

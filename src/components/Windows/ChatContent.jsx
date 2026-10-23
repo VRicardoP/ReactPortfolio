@@ -180,7 +180,7 @@ const ChatContent = ({ data }) => {
 
     return (
         <div className="chat-container">
-            <div className="chat-messages" aria-live="polite" aria-label="Chat messages">
+            <div className="chat-messages" aria-live="polite" aria-label={t('chat.messages')}>
                 {messages.map((msg, index) => (
                     <div key={index} className={`chat-message ${msg.type}-message${msg.streaming ? ' streaming' : ''}`}>
                         <p>{msg.text}{msg.streaming && <span className="streaming-cursor" aria-hidden="true">|</span>}</p>

@@ -1,4 +1,7 @@
 {
+  "common": {
+    "loading": "Cargando..."
+  },
   "welcome": {
     "title": "Bienvenido - {{name}}",
     "greeting": "¡Hola! Soy {{name}}",
@@ -18,6 +21,7 @@
     "gotIt": "Entendido, ¡empecemos! ->"
   },
   "chat": {
+    "messages": "Mensajes del chat",
     "greeting": "¡Hola! ¡Soy Kusanagi! ¿Tienes alguna pregunta sobre {{name}}?",
     "typing": "Kusanagi está escribiendo...",
     "placeholder": "Pregúntame lo que quieras...",
@@ -79,6 +83,25 @@
     "statusInProgress": "En Progreso"
   },
   "windows": {
+    "controls": {
+      "minimize": "Minimizar",
+      "maximize": "Maximizar",
+      "fitToContent": "Ajustar al contenido",
+      "resize": "Redimensionar ventana: {{edge}}",
+      "resizeEdges": {
+        "n": "borde norte",
+        "s": "borde sur",
+        "e": "borde este",
+        "w": "borde oeste",
+        "ne": "esquina nordeste",
+        "nw": "esquina noroeste",
+        "se": "esquina sudeste",
+        "sw": "esquina sudoeste"
+      },
+      "selectLanguage": "Seleccionar idioma",
+      "languages": "Idiomas",
+      "terminal": "Terminal"
+    },
     "profile": "Perfil",
     "experience": "Experiencia",
     "education": "Educación",
@@ -146,6 +169,11 @@
       "title": "Mapa de Visitantes"
     },
     "jobBoard": {
+      "badges": {
+        "new": "NUEVA",
+        "recent": "Reciente",
+        "remote": "REMOTO"
+      },
       "searchPlaceholder": "Buscar empleos...",
       "allLocations": "Todas las Ubicaciones",
       "allCategories": "Todas las Categorías",
@@ -259,6 +287,7 @@
       "matchPoints": "Puntos de Coincidencia"
     },
     "jobAnalytics": {
+      "jobCount": "{{count}} empleos",
       "title": "Analíticas del Mercado Laboral",
       "tabSkills": "Top Skills",
       "tabRemote": "Remoto vs Presencial",
@@ -291,6 +320,7 @@
       "noCountryData": "No hay datos de países disponibles"
     },
     "schoolJobs": {
+      "emailSubject": "Solicitud espontánea — puesto de TI",
       "title": "Monitor de empleo en colegios",
       "scrapeNow": "Buscar ahora",
       "scraping": "Buscando…",
@@ -388,6 +418,9 @@
       "addCard": "Añadir"
     },
     "jsearchLive": {
+      "country": "País",
+      "datePosted": "Fecha de publicación",
+      "employmentType": "Tipo de empleo",
       "title": "JSearch Búsqueda en Vivo",
       "search": "Buscar",
       "searching": "Buscando...",
@@ -418,6 +451,7 @@
       "jobsWithSalary": "ofertas con datos de salario"
     },
     "savedSearches": {
+      "remote": "Remoto",
       "title": "Búsquedas Guardadas",
       "create": "Nueva Búsqueda",
       "empty": "Sin búsquedas guardadas. Crea una para recibir notificaciones de empleos.",

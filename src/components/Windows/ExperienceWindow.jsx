@@ -53,7 +53,16 @@ const ExperienceWindow = ({ data, initialPosition }) => {
                             <div
                                 key={index}
                                 className={`timeline-item ${isExpanded ? 'expanded' : ''}`}
+                                role="button"
+                                tabIndex={0}
+                                aria-expanded={isExpanded}
                                 onClick={() => toggleExpand(index)}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter' || event.key === ' ') {
+                                        event.preventDefault();
+                                        toggleExpand(index);
+                                    }
+                                }}
                             >
                                 <div className="timeline-dot" />
                                 <div className="timeline-date">{exp.date}</div>

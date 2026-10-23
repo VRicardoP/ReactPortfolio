@@ -10,7 +10,7 @@ import JobCard from '../JobCard';
 
 // Format filter summary for display (pure rendering helper)
 // Convierte los filtros de una búsqueda guardada en un texto corto y legible.
-const filterSummary = (filters) => {
+const filterSummary = (t, filters) => {
     if (!filters) return '';
     const parts = [];
     if (filters.q) parts.push(filters.q);
@@ -21,7 +21,7 @@ const filterSummary = (filters) => {
         const max = filters.salary_max ? `$${Number(filters.salary_max).toLocaleString()}` : '';
         parts.push(min && max ? `${min}-${max}` : min || `<=${max}`);
     }
-    if (filters.remote_only) parts.push('Remote');
+    if (filters.remote_only) parts.push(t('dashboard.savedSearches.remote'));
     // Legacy
     if (filters.technologies?.length > 0) parts.push(filters.technologies.join(', '));
     return parts.join(' | ');
@@ -154,12 +154,22 @@ const SavedSearchesPanel = memo(({ saved, jobApp }) => {
                                 background: expandedId === search.id
                                     ? `rgba(${theme.primaryRgb}, 0.05)`
                                     : 'rgba(255,255,255,0.02)',
-                                cursor: 'pointer',
                                 transition: 'border-color 0.2s ease, background-color 0.2s ease',
                             }}
-                            onClick={() => handleRun(search)}
                         >
-                            <div style={{ flex: 1, minWidth: 0 }}>
+                            <div
+                                role="button"
+                                tabIndex={0}
+                                aria-expanded={expandedId === search.id}
+                                onClick={() => handleRun(search)}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter' || event.key === ' ') {
+                                        event.preventDefault();
+                                        handleRun(search);
+                                    }
+                                }}
+                                style={{ flex: 1, minWidth: 0, cursor: 'pointer' }}
+                            >
                                 <div style={{
                                     fontFamily: 'Courier New',
                                     fontSize: '13px',
@@ -171,7 +181,7 @@ const SavedSearchesPanel = memo(({ saved, jobApp }) => {
                                     {search.name}
                                 </div>
                                 <div style={{ fontFamily: 'Courier New', fontSize: '10px', color: theme.text, opacity: 0.6, marginTop: '2px' }}>
-                                    {filterSummary(search.filters)}
+                                    {filterSummary(t, search.filters)}
                                 </div>
                             </div>
 
