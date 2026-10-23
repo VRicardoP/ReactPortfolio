@@ -1,281 +1,162 @@
-// Efecto de fondo en 3D: un campo de cubos flotando en el espacio con
-// varias luces que brillan con destello de lente (lensflare), y la cámara
-// se mueve mirando hacia donde está el ratón.
+// Campo 3D de cubos con luces y destellos que responde al puntero fino.
+// useThreeScene owns the renderer loop; this component owns lensflare resources.
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js';
 import { useTheme } from '../../context/ThemeContext';
+import useThreeScene from '../../hooks/useThreeScene';
 
 const LensflareEffect = () => {
     const mountRef = useRef(null);
-    const animationIdRef = useRef(null);
     const boxMaterialRef = useRef(null);
-    const sceneRef = useRef(null);
+    const themeRef = useRef(null);
     const { theme } = useTheme();
+    themeRef.current = theme;
 
-    // Update material and scene background when theme changes — no scene rebuild needed
-    useEffect(() => {
-        if (boxMaterialRef.current) {
-            boxMaterialRef.current.color.set(theme.primary);
-        }
-        if (sceneRef.current) {
-            sceneRef.current.background.set(theme.background);
-        }
-    }, [theme]);
-
-    // Monta toda la escena 3D una sola vez: cubos, luces, destellos y los
-    // controles de ratón para mirar y moverse por la escena.
-    useEffect(() => {
-        if (!mountRef.current) return;
-
-        const { innerWidth, innerHeight } = window;
-
-        // create the scene with dark background and fog like the original
+    // Construye la escena y limita toda interacción al canvas del fondo.
+    // Pointer capture keeps press/release paired without document listeners.
+    const build = useCallback(({ width, height }) => {
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x000000);
+        scene.background = new THREE.Color(themeRef.current.background);
         scene.fog = new THREE.Fog(0x000000, 2500, 10000);
-        sceneRef.current = scene;
-
-        // the camera
-        const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 1, 15000);
+        const camera = new THREE.PerspectiveCamera(40, width / height, 1, 15000);
         camera.position.set(0, 0, 250);
-
-        // the renderer
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(innerWidth, innerHeight);
+        renderer.setSize(width, height);
+        Object.assign(renderer.domElement.style, {
+            position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', zIndex: '-1',
+        });
+        const supportsPointer = window.matchMedia('(pointer: fine)').matches;
+        renderer.domElement.style.pointerEvents = supportsPointer ? 'auto' : 'none';
 
-        renderer.domElement.style.position = 'fixed';
-        renderer.domElement.style.top = '0';
-        renderer.domElement.style.left = '0';
-        renderer.domElement.style.width = '100%';
-        renderer.domElement.style.height = '100%';
-        renderer.domElement.style.zIndex = '-1';
-
-        mountRef.current.appendChild(renderer.domElement);
-
-        // create the floating cubes using InstancedMesh for performance
         const boxGeometry = new THREE.BoxGeometry(250, 250, 250);
         const boxMaterial = new THREE.MeshPhongMaterial({
-            color: new THREE.Color(theme.primary),
+            color: new THREE.Color(themeRef.current.primary),
             specular: 0xffffff,
-            shininess: 50
+            shininess: 50,
         });
         boxMaterialRef.current = boxMaterial;
-
-        const instanceCount = 3000;
-        const instancedMesh = new THREE.InstancedMesh(boxGeometry, boxMaterial, instanceCount);
+        const instancedMesh = new THREE.InstancedMesh(boxGeometry, boxMaterial, 3000);
         const dummy = new THREE.Object3D();
-        for (let i = 0; i < instanceCount; i++) {
+        for (let i = 0; i < 3000; i++) {
             dummy.position.set(
-                8000 * (2.0 * Math.random() - 1.0),
-                8000 * (2.0 * Math.random() - 1.0),
-                8000 * (2.0 * Math.random() - 1.0)
+                8000 * (2 * Math.random() - 1),
+                8000 * (2 * Math.random() - 1),
+                8000 * (2 * Math.random() - 1),
             );
-            dummy.rotation.set(
-                Math.random() * Math.PI,
-                Math.random() * Math.PI,
-                Math.random() * Math.PI
-            );
+            dummy.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
             dummy.updateMatrix();
             instancedMesh.setMatrixAt(i, dummy.matrix);
         }
         instancedMesh.instanceMatrix.needsUpdate = true;
         scene.add(instancedMesh);
 
-        // directional light to illuminate the cubes
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.15);
         dirLight.position.set(0, -1, 0).normalize();
         scene.add(dirLight);
 
-        // function to create lensflare textures procedurally
-        // Dibuja a mano, en un canvas pequeño, el degradado de color que
-        // sirve de textura para el brillo del destello de lente.
-        const createFlareTexture = (size, type) => {
-            const canvas = document.createElement('canvas');
-            canvas.width = size;
-            canvas.height = size;
-            const ctx = canvas.getContext('2d');
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const context = canvas.getContext('2d');
+        const gradient = context.createRadialGradient(256, 256, 0, 256, 256, 256);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+        gradient.addColorStop(0.05, 'rgba(255, 255, 220, 0.9)');
+        gradient.addColorStop(0.1, 'rgba(255, 220, 150, 0.7)');
+        gradient.addColorStop(0.3, 'rgba(255, 150, 50, 0.3)');
+        gradient.addColorStop(0.6, 'rgba(200, 100, 20, 0.1)');
+        gradient.addColorStop(1, 'rgba(100, 50, 0, 0)');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 512, 512);
+        const flareTexture = new THREE.CanvasTexture(canvas);
+        const lensflares = [];
 
-            const centerX = size / 2;
-            const centerY = size / 2;
-            const radius = size / 2;
-
-            if (type === 'main') {
-                // main flare texture - intense central glow
-                const grd = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-                grd.addColorStop(0, 'rgba(255, 255, 255, 1)');
-                grd.addColorStop(0.05, 'rgba(255, 255, 220, 0.9)');
-                grd.addColorStop(0.1, 'rgba(255, 220, 150, 0.7)');
-                grd.addColorStop(0.3, 'rgba(255, 150, 50, 0.3)');
-                grd.addColorStop(0.6, 'rgba(200, 100, 20, 0.1)');
-                grd.addColorStop(1, 'rgba(100, 50, 0, 0)');
-                ctx.fillStyle = grd;
-                ctx.fillRect(0, 0, size, size);
-            } else {
-                // secondary halos
-                const grd = ctx.createRadialGradient(centerX, centerY, radius * 0.7, centerX, centerY, radius);
-                grd.addColorStop(0, 'rgba(255, 200, 100, 0)');
-                grd.addColorStop(0.5, 'rgba(255, 180, 80, 0.15)');
-                grd.addColorStop(0.8, 'rgba(255, 150, 50, 0.1)');
-                grd.addColorStop(1, 'rgba(200, 100, 20, 0)');
-                ctx.fillStyle = grd;
-                ctx.fillRect(0, 0, size, size);
-            }
-
-            return new THREE.CanvasTexture(canvas);
-        };
-
-        const textureFlare0 = createFlareTexture(512, 'main');
-
-        // function to add lights with lensflare
-        // Crea una luz puntual con su propio destello de lente, en el color
-        // y la posición indicados.
-        const addLight = (h, s, l, x, y, z) => {
+        const addLight = (hue, saturation, lightness, x, y, z) => {
             const light = new THREE.PointLight(0xffffff, 1.5, 2000, 0);
-            light.color.setHSL(h, s, l);
+            light.color.setHSL(hue, saturation, lightness);
             light.position.set(x, y, z);
-            scene.add(light);
-
             const lensflare = new Lensflare();
-            lensflare.addElement(new LensflareElement(textureFlare0, 700, 0, light.color));
+            lensflare.addElement(new LensflareElement(flareTexture, 700, 0, light.color));
             light.add(lensflare);
-
-            return light;
+            scene.add(light);
+            lensflares.push(lensflare);
         };
-
-        // add the lights - one main orange/yellow and others with various colors
         addLight(0.08, 0.9, 0.5, 0, 0, -1000);
         addLight(0.55, 0.8, 0.5, 2000, 1000, -3000);
         addLight(0.995, 0.8, 0.5, -2000, -1000, -2000);
 
-        // camera control
-        let mouseX = 0; // normalized -1 to 1
-        let mouseY = 0; // normalized -1 to 1
+        let mouseX = 0;
+        let mouseY = 0;
         let moveForward = false;
         let moveBackward = false;
-
-        // direction where the camera looks (relative to its position)
         const cameraDirection = new THREE.Vector3(0, 0, -1);
         const cameraUp = new THREE.Vector3(0, 1, 0);
-
-        const onMouseMove = (event) => {
-            // normalize between -1 and 1 (0 at the center)
+        const rightAxis = new THREE.Vector3();
+        const lookAtPoint = new THREE.Vector3();
+        const onPointerMove = event => {
             mouseX = (event.clientX / window.innerWidth) * 2 - 1;
             mouseY = (event.clientY / window.innerHeight) * 2 - 1;
         };
-
-        const onMouseDown = (event) => {
-            if (event.button === 0) {
-                moveForward = true;
-            } else if (event.button === 2) {
-                moveBackward = true;
+        const onPointerDown = event => {
+            renderer.domElement.setPointerCapture(event.pointerId);
+            if (event.button === 0) moveForward = true;
+            if (event.button === 2) moveBackward = true;
+        };
+        const onPointerUp = event => {
+            if (renderer.domElement.hasPointerCapture(event.pointerId)) {
+                renderer.domElement.releasePointerCapture(event.pointerId);
             }
+            if (event.button === 0) moveForward = false;
+            if (event.button === 2) moveBackward = false;
         };
-
-        const onMouseUp = (event) => {
-            if (event.button === 0) {
-                moveForward = false;
-            } else if (event.button === 2) {
-                moveBackward = false;
-            }
-        };
-
-        // prevent the right-click context menu
-        const onContextMenu = (event) => {
-            event.preventDefault();
-        };
-
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mousedown', onMouseDown);
-        document.addEventListener('mouseup', onMouseUp);
+        const onContextMenu = event => event.preventDefault();
+        renderer.domElement.addEventListener('pointermove', onPointerMove);
+        renderer.domElement.addEventListener('pointerdown', onPointerDown);
+        renderer.domElement.addEventListener('pointerup', onPointerUp);
+        renderer.domElement.addEventListener('pointercancel', onPointerUp);
         renderer.domElement.addEventListener('contextmenu', onContextMenu);
 
-        // Bucle de animación: gira la dirección de la cámara según la
-        // posición del ratón y mueve la cámara hacia delante/atrás si se
-        // mantiene pulsado un botón del ratón.
-        // animation loop
-        const animate = () => {
-            animationIdRef.current = requestAnimationFrame(animate);
-
-            // calculate rotation speed based on distance from center
-            // farther from center = faster, at center = static
-            const rotationSpeed = 0.03;
-            const rotationX = -mouseX * Math.abs(mouseX) * rotationSpeed; // yaw (left/right)
-            const rotationY = -mouseY * Math.abs(mouseY) * rotationSpeed; // pitch (up/down)
-
-            // rotate the camera direction horizontally (yaw)
-            cameraDirection.applyAxisAngle(cameraUp, rotationX);
-
-            // rotate the camera direction vertically (pitch)
-            // calculate the perpendicular axis for pitch
-            const rightAxis = new THREE.Vector3();
-            rightAxis.crossVectors(cameraDirection, cameraUp).normalize();
-            cameraDirection.applyAxisAngle(rightAxis, rotationY);
-
-            // normalize the direction
-            cameraDirection.normalize();
-
-            // forward/backward movement with mouse buttons
-            const moveSpeed = 50;
-            if (moveForward) {
-                camera.position.addScaledVector(cameraDirection, moveSpeed);
-            }
-            if (moveBackward) {
-                camera.position.addScaledVector(cameraDirection, -moveSpeed);
-            }
-
-            // the camera looks in the calculated direction
-            const lookAtPoint = new THREE.Vector3();
-            lookAtPoint.copy(camera.position).add(cameraDirection);
-            camera.lookAt(lookAtPoint);
-
-            renderer.render(scene, camera);
+        return {
+            scene,
+            camera,
+            renderer,
+            animate: () => {
+                const rotationX = -mouseX * Math.abs(mouseX) * 0.03;
+                const rotationY = -mouseY * Math.abs(mouseY) * 0.03;
+                cameraDirection.applyAxisAngle(cameraUp, rotationX);
+                rightAxis.crossVectors(cameraDirection, cameraUp).normalize();
+                cameraDirection.applyAxisAngle(rightAxis, rotationY).normalize();
+                if (moveForward) camera.position.addScaledVector(cameraDirection, 50);
+                if (moveBackward) camera.position.addScaledVector(cameraDirection, -50);
+                camera.lookAt(lookAtPoint.copy(camera.position).add(cameraDirection));
+            },
+            dispose: () => {
+                renderer.domElement.removeEventListener('pointermove', onPointerMove);
+                renderer.domElement.removeEventListener('pointerdown', onPointerDown);
+                renderer.domElement.removeEventListener('pointerup', onPointerUp);
+                renderer.domElement.removeEventListener('pointercancel', onPointerUp);
+                renderer.domElement.removeEventListener('contextmenu', onContextMenu);
+                lensflares.forEach(lensflare => lensflare.dispose());
+                instancedMesh.dispose();
+                boxGeometry.dispose();
+                boxMaterial.dispose();
+                boxMaterialRef.current = null;
+            },
         };
-
-        // when the window size changes
-        const onWindowResize = () => {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-            renderer.setSize(width, height);
-        };
-        window.addEventListener('resize', onWindowResize);
-
-        animate();
-
-        const mountNode = mountRef.current;
-
-        // cleanup when the component unmounts
-        return () => {
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mousedown', onMouseDown);
-            document.removeEventListener('mouseup', onMouseUp);
-            renderer.domElement.removeEventListener('contextmenu', onContextMenu);
-            window.removeEventListener('resize', onWindowResize);
-
-            if (animationIdRef.current) {
-                cancelAnimationFrame(animationIdRef.current);
-            }
-
-            if (mountNode && renderer.domElement) {
-                mountNode.removeChild(renderer.domElement);
-            }
-
-            boxMaterialRef.current = null;
-            sceneRef.current = null;
-            scene.clear(); // dispose all meshes from scene
-            boxGeometry.dispose();
-            boxMaterial.dispose();
-            renderer.dispose();
-            textureFlare0.dispose();
-        };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    return <div ref={mountRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />;
+    const { scene } = useThreeScene(mountRef, build);
+
+    // Cambia tema sobre los recursos vivos sin reconstruir tres mil instancias.
+    // The refs are populated by useThreeScene after construction.
+    useEffect(() => {
+        boxMaterialRef.current?.color.set(theme.primary);
+        scene.current?.background.set(theme.background);
+    }, [scene, theme]);
+
+    return <div ref={mountRef} style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }} />;
 };
 
 export default LensflareEffect;
