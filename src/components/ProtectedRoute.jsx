@@ -12,15 +12,7 @@ const ProtectedRoute = ({ children }) => {
 
     if (loading) {
         return (
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                color: '#00ffff',
-                fontSize: '20px',
-                fontFamily: 'Courier New'
-            }}>
+            <div className="protected-route-loading">
                 {t('common.loading')}
             </div>
         );

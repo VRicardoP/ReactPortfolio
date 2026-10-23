@@ -18,7 +18,6 @@ const JobCard = memo(({
     sourceStyle,
     formatSalary,
     translatedTitle,
-    fitStyle,
     expanded = false,
     onToggle,
 }) => {
@@ -38,7 +37,7 @@ const JobCard = memo(({
                     </div>
                     <div className="ai-match-card-score-col">
                         <span className="ai-match-score" style={{ color: theme.primary }}>{job.ai_score}%</span>
-                        <span className="ai-match-fit-badge" style={{ background: fitStyle.bg, color: fitStyle.text, border: `1px solid ${fitStyle.border}` }}>{job.fit?.toUpperCase()}</span>
+                        <span className={`ai-match-fit-badge fit-${job.fit || 'unknown'}`}>{job.fit?.toUpperCase()}</span>
                     </div>
                 </div>
                 <div className="ai-match-card-meta">
@@ -53,8 +52,8 @@ const JobCard = memo(({
                 </button>
                 {expanded && (
                     <div className="ai-match-skills-detail">
-                        {job.matching_skills?.length > 0 && <div className="ai-match-skills-group"><span className="ai-match-skills-label" style={{ color: '#00ff64' }}>[OK] {t('dashboard.aiMatch.matchingSkills')}:</span><div className="ai-match-skills-tags">{job.matching_skills.map(skill => <span key={skill} className="ai-match-skill-tag-match">{skill}</span>)}</div></div>}
-                        {job.missing_skills?.length > 0 && <div className="ai-match-skills-group"><span className="ai-match-skills-label" style={{ color: '#ff6b6b' }}>[X] {t('dashboard.aiMatch.missingSkills')}:</span><div className="ai-match-skills-tags">{job.missing_skills.map(skill => <span key={skill} className="ai-match-skill-tag-miss">{skill}</span>)}</div></div>}
+                        {job.matching_skills?.length > 0 && <div className="ai-match-skills-group"><span className="ai-match-skills-label text-success">[OK] {t('dashboard.aiMatch.matchingSkills')}:</span><div className="ai-match-skills-tags">{job.matching_skills.map(skill => <span key={skill} className="ai-match-skill-tag-match">{skill}</span>)}</div></div>}
+                        {job.missing_skills?.length > 0 && <div className="ai-match-skills-group"><span className="ai-match-skills-label text-danger">[X] {t('dashboard.aiMatch.missingSkills')}:</span><div className="ai-match-skills-tags">{job.missing_skills.map(skill => <span key={skill} className="ai-match-skill-tag-miss">{skill}</span>)}</div></div>}
                         {job.reason && <p className="ai-match-reason">{job.reason}</p>}
                     </div>
                 )}
@@ -74,7 +73,7 @@ const JobCard = memo(({
                         <CompanyResearchName company={job.company}>{job.company}</CompanyResearchName>
                         {job.location ? ` — ${job.location}` : ''}
                         {(job.salary_min || job.salary_max) && (
-                            <span style={{ color: '#4CAF50', marginLeft: '6px' }}>
+                            <span className="job-card-salary">
                                 {job.salary_currency || 'USD'} {job.salary_min ? Number(job.salary_min).toLocaleString() : '?'}
                                 -{job.salary_max ? Number(job.salary_max).toLocaleString() : '?'}
                             </span>
@@ -134,7 +133,7 @@ const JobCard = memo(({
                 </div>
                 <div style={{ display: 'flex', gap: '8px', marginTop: '4px', flexWrap: 'wrap', alignItems: 'center' }}>
                     {job.location && <span style={{ fontFamily: 'Courier New', fontSize: '10px', color: theme.text, opacity: 0.7 }}>{job.location}</span>}
-                    {(job.salary_min || job.salary_max) && <span style={{ fontFamily: 'Courier New', fontSize: '10px', color: '#4CAF50', fontWeight: 'bold' }}>{formatSalary(job.salary_min, job.salary_max, job.salary_currency)}</span>}
+                    {(job.salary_min || job.salary_max) && <span className="job-card-salary job-card-salary--compact">{formatSalary(job.salary_min, job.salary_max, job.salary_currency)}</span>}
                     <JobBadges employmentType={job.employment_type} employmentStyle={{ fontFamily: 'Courier New', fontSize: '10px', color: theme.text, opacity: 0.5 }} />
                 </div>
                 <Tags tags={job.tags} />

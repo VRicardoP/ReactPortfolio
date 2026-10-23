@@ -31,7 +31,7 @@ const ParallaxEffect = () => {
         },
         background: {
             color: {
-                value: '#000000'
+                value: theme.background,
             }
         },
         fpsLimit: 60,

@@ -10,6 +10,36 @@
   --lh-body: 1.5;
 }
 
+.text-danger { color: var(--theme-error); }
+.text-success { color: var(--theme-success); }
+.text-muted { color: var(--theme-text); opacity: 0.7; }
+
+.protected-route-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: var(--theme-primary);
+  font: 20px 'Courier New', monospace;
+}
+
+.app-error-boundary {
+  color: var(--theme-error);
+  font-family: 'Courier New', monospace;
+  padding: 20px;
+  text-align: center;
+}
+
+.app-error-retry {
+  color: var(--theme-primary);
+  background: transparent;
+  border: 1px solid currentColor;
+  padding: 8px 16px;
+  cursor: var(--cursor-pointer, pointer);
+  font-family: 'Courier New', monospace;
+  margin-top: 10px;
+}
+
 body {
   margin: 0;
   font-family: 'Courier New', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', monospace;

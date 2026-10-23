@@ -162,6 +162,11 @@ export const ThemeProvider = ({ children }) => {
         root.style.setProperty('--theme-text-highlight', theme.textHighlight);
         root.style.setProperty('--theme-border', theme.border);
         root.style.setProperty('--theme-border-light', theme.borderLight);
+        root.style.setProperty('--theme-success', theme.success);
+        root.style.setProperty('--theme-error', theme.error);
+        root.style.setProperty('--theme-warning', theme.warning);
+        root.style.setProperty('--theme-background-light', theme.backgroundLight);
+        root.style.setProperty('--theme-background-medium', theme.backgroundMedium);
         Object.entries(themedCursors(theme.primary)).forEach(([name, value]) => {
             root.style.setProperty(name, value);
         });

@@ -110,7 +110,7 @@ exports[`JobCard > preserva la estructura de la variante filter 1`] = `
       Bern
     </span>
     <span
-      style="font-family: "Courier New"; font-size: 10px; color: rgb(76, 175, 80); font-weight: bold;"
+      class="job-card-salary job-card-salary--compact"
     >
       50000-70000
     </span>
@@ -251,8 +251,7 @@ exports[`JobCard > preserva la estructura de la variante match 1`] = `
         %
       </span>
       <span
-        class="ai-match-fit-badge"
-        style="background: rgb(0, 0, 0); color: rgb(255, 255, 255); border: 1px solid rgb(204, 204, 204);"
+        class="ai-match-fit-badge fit-good"
       >
         GOOD
       </span>
@@ -290,8 +289,7 @@ exports[`JobCard > preserva la estructura de la variante match 1`] = `
       class="ai-match-skills-group"
     >
       <span
-        class="ai-match-skills-label"
-        style="color: rgb(0, 255, 100);"
+        class="ai-match-skills-label text-success"
       >
         [OK] 
         dashboard.aiMatch.matchingSkills
@@ -311,8 +309,7 @@ exports[`JobCard > preserva la estructura de la variante match 1`] = `
       class="ai-match-skills-group"
     >
       <span
-        class="ai-match-skills-label"
-        style="color: rgb(255, 107, 107);"
+        class="ai-match-skills-label text-danger"
       >
         [X] 
         dashboard.aiMatch.missingSkills
@@ -371,7 +368,7 @@ exports[`JobCard > preserva la estructura de la variante saved 1`] = `
       </span>
        — Bern
       <span
-        style="color: rgb(76, 175, 80); margin-left: 6px;"
+        class="job-card-salary"
       >
         CHF
          

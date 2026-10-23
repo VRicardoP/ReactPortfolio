@@ -60,7 +60,7 @@ const MatrixEffect = () => {
         // columna de caracteres un poco más abajo que en el fotograma anterior.
         const draw = () => {
             // completely clear the canvas
-            ctx.fillStyle = '#000000';
+            ctx.fillStyle = themeRef.current.background;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.font = `${fontSize}px monospace`;
@@ -128,7 +128,7 @@ const MatrixEffect = () => {
                 width: '100%',
                 height: '100%',
                 zIndex: -1,
-                background: '#000000'
+                background: theme.background,
             }}
         />
     );

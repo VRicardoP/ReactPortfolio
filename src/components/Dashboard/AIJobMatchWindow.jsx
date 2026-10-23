@@ -17,16 +17,6 @@ import { AI_MATCH_PAGE_SIZE } from './dashboardConstants';
 import { SOURCE_COLOR_MAP } from '../../config/jobSources';
 import '../../styles/ai-match.css';
 
-// Colores de la etiqueta según lo bien que encaja la oferta (excelente,
-// buena, parcial, mala, desconocida).
-const FIT_COLORS = {
-    excellent: { bg: 'rgba(0, 255, 100, 0.15)', text: '#00ff64', border: 'rgba(0, 255, 100, 0.3)' },
-    good: { bg: 'rgba(0, 200, 255, 0.15)', text: '#00c8ff', border: 'rgba(0, 200, 255, 0.3)' },
-    partial: { bg: 'rgba(255, 200, 0, 0.15)', text: '#ffc800', border: 'rgba(255, 200, 0, 0.3)' },
-    poor: { bg: 'rgba(255, 100, 100, 0.15)', text: '#ff8888', border: 'rgba(255, 100, 100, 0.2)' },
-    unknown: { bg: 'rgba(150, 150, 150, 0.15)', text: '#999', border: 'rgba(150, 150, 150, 0.2)' },
-};
-
 // Da el texto que se muestra mientras el análisis corre en el servidor,
 // según en qué fase va (comparando ofertas, puntuando con IA, terminando...).
 /** i18n label for the current background-analysis stage. */
@@ -268,7 +258,6 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
 
                         <div className="ai-match-results">
                             {pagedResults.map((job, idx) => {
-                                const fitStyle = FIT_COLORS[job.fit] || FIT_COLORS.unknown;
                                 const globalIdx = page * AI_MATCH_PAGE_SIZE + idx;
                                 const isExpanded = expandedId === globalIdx;
 
@@ -278,7 +267,6 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                         job={job}
                                         variant="match"
                                         translatedTitle={translatedTitles[job.title]}
-                                        fitStyle={fitStyle}
                                         expanded={isExpanded}
                                         onToggle={() => toggleExpanded(globalIdx)}
                                         actions={(
@@ -341,15 +329,6 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                 {missingSkills.map(skill => {
                                     const isAdded = addedSkills.has(skill);
                                     const isToggling = togglingSkills.has(skill);
-                                    /* DT-135: commented because ai-match.css
-                                       `.ai-match-skill-toggle-btn.added` already defines these values;
-                                       the inline background also prevented `.added:hover` from winning.
-                                       Original JSX prop:
-                                       style={isAdded ? {
-                                           background: 'rgba(0, 255, 100, 0.1)',
-                                           borderColor: 'rgba(0, 255, 100, 0.3)',
-                                           color: '#00ff64',
-                                       } : {}} */
                                     return (
                                         <button
                                             key={skill}

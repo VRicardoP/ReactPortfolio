@@ -18,10 +18,10 @@ const ROLE_IRRELEVANT = 0.0;
 const ROLE_EXCLUDED = -1.0;
 
 // Da el color del distintivo de urgencia según la puntuación.
-const urgencyColor = (score) => {
-    if (score >= PUSH_THRESHOLD) return '#ff5252'; // red — act now
-    if (score >= DIGEST_THRESHOLD) return '#ffb74d'; // amber — digest
-    return '#9e9e9e'; // silent
+const urgencyClass = (score) => {
+    if (score >= PUSH_THRESHOLD) return 'school-badge--push';
+    if (score >= DIGEST_THRESHOLD) return 'school-badge--digest';
+    return 'school-badge--silent';
 };
 
 // Da el texto del distintivo de urgencia según la puntuación.
@@ -34,11 +34,11 @@ const urgencyLabel = (t, score) => {
 // Convierte la puntuación de relevancia (puede venir como texto) a número.
 const roleScoreNum = (v) => (v == null ? 0 : Number(v));
 // Da el color del distintivo de relevancia para informática.
-const roleColor = (score) => {
-    if (score >= ROLE_MATCH) return '#4caf50'; // verde — IT match
-    if (score >= ROLE_PARTIAL) return '#26a69a'; // teal — partial
-    if (score <= ROLE_EXCLUDED) return '#9e9e9e'; // gris — docente excluido
-    return '#bdbdbd'; // gris claro — irrelevante
+const roleClass = (score) => {
+    if (score >= ROLE_MATCH) return 'school-badge--match';
+    if (score >= ROLE_PARTIAL) return 'school-badge--partial';
+    if (score <= ROLE_EXCLUDED) return 'school-badge--excluded';
+    return 'school-badge--irrelevant';
 };
 // Da el texto del distintivo de relevancia para informática.
 const roleLabel = (t, score) => {
@@ -159,16 +159,14 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
                                         >
                                             <td>
                                                 <span
-                                                    className="school-badge school-badge--relevance"
-                                                    style={{ background: roleColor(rscore) }}
+                                                    className={`school-badge school-badge--relevance ${roleClass(rscore)}`}
                                                 >
                                                     {roleLabel(t, rscore)}
                                                 </span>
                                             </td>
                                             <td>
                                                 <span
-                                                    className="school-badge school-badge--urgency"
-                                                    style={{ background: urgencyColor(job.urgency_score) }}
+                                                    className={`school-badge school-badge--urgency ${urgencyClass(job.urgency_score)}`}
                                                 >
                                                     {job.urgency_score}
                                                 </span>

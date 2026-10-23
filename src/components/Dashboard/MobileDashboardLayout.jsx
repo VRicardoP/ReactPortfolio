@@ -108,9 +108,8 @@ const MobileDashboardLayout = memo(({
                                             {t('dashboard.backToPortfolio')}
                                         </button>
                                         <button
-                                            className="mobile-nav-dropdown-item"
+                                            className="mobile-nav-dropdown-item text-danger"
                                             onClick={onLogout}
-                                            style={{ color: '#ff6b6b' }}
                                         >
                                             <span className="mobile-nav-dropdown-item-icon" aria-hidden="true">EXIT</span>
                                             {t('dashboard.logout')}

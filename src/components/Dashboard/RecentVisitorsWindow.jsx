@@ -22,8 +22,7 @@ const RecentVisitorsWindow = memo(({ data, initialPosition }) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     height: '100%',
-                    color: '#D3D3D3'
-                }}>
+                }} className="text-muted">
                     {t('dashboard.recentVisitors.noData')}
                 </div>
             </FloatingWindow>

@@ -243,3 +243,12 @@
   color: #00ff00;
   border: 1px solid rgba(0,255,0,0.25);
 }
+ .job-card-salary {
+  margin-left: 6px;
+  color: var(--theme-success);
+}
+
+.job-card-salary--compact {
+  margin-left: 0;
+  font: bold 10px 'Courier New', monospace;
+}

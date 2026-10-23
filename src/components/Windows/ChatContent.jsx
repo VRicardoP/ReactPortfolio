@@ -51,14 +51,10 @@ const ChatContent = ({ data }) => {
                     autoComplete="off"
                 />
                 {input.length > 0 && (
-                    <span className="chat-char-count" aria-live="off" style={{
-                        fontSize: '10px',
-                        color: input.length >= MAX_CHAT_MESSAGE_LENGTH ? '#ff6b6b' : '#888',
-                        position: 'absolute',
-                        right: '70px',
-                        bottom: '14px',
-                        fontFamily: 'Courier New',
-                    }}>
+                    <span
+                        className={`chat-char-count${input.length >= MAX_CHAT_MESSAGE_LENGTH ? ' limit' : ''}`}
+                        aria-live="off"
+                    >
                         {input.length}/{MAX_CHAT_MESSAGE_LENGTH}
                     </span>
                 )}

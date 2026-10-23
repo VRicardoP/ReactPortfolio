@@ -5,6 +5,22 @@
   padding: 0;
 }
 
+.chat-error { color: var(--theme-error); }
+
+.chat-char-count {
+  position: absolute;
+  right: 70px;
+  bottom: 14px;
+  color: var(--theme-text);
+  opacity: 0.65;
+  font: 10px 'Courier New', monospace;
+}
+
+.chat-char-count.limit {
+  color: var(--theme-error);
+  opacity: 1;
+}
+
 .chat-messages {
   flex: 1;
   overflow-y: auto;
