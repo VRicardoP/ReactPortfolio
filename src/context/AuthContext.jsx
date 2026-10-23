@@ -5,13 +5,12 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
+import useInactivityLogout from '../hooks/useInactivityLogout';
+import { authenticatedRequest, SETTLED } from '../services/authFetch';
 import { safeSession } from '../utils/safeStorage';
 
 const AuthContext = createContext();
 
-const INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000;
-const ACTIVITY_EVENTS = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
-const SETTLED = Object.freeze({ COMMITTED: 'committed', FAILED: 'failed', STALE: 'stale' });
 // Borra tokens de una versión antigua de la app que guardaba la sesión en el
 // navegador en vez de en una cookie segura.
 const clearLegacyTokens = () => {
@@ -39,7 +38,6 @@ export const AuthProvider = ({ children }) => {
     const loginControllerRef = useRef(null);
     const authEpochRef = useRef(0);
     const loginAttemptRef = useRef(0);
-    const inactivityTimerRef = useRef(null);
 
     // Marca el inicio de una sesión nueva (login o logout), para que las
     // respuestas de peticiones antiguas que lleguen tarde se puedan descartar.
@@ -175,26 +173,7 @@ export const AuthProvider = ({ children }) => {
         return flight;
     }, [openSession, settleSession]);
 
-    // Si el usuario pasa 15 minutos sin tocar nada (ratón, teclado, scroll...)
-    // mientras tiene sesión abierta, se le cierra la sesión automáticamente.
-    useEffect(() => {
-        if (!isAuthenticated) return;
-        const resetTimer = () => {
-            clearTimeout(inactivityTimerRef.current);
-            inactivityTimerRef.current = setTimeout(() => {
-                safeSession.set('logoutReason', 'inactivity');
-                void logout();
-            }, INACTIVITY_TIMEOUT_MS);
-        };
-        resetTimer();
-        for (const event of ACTIVITY_EVENTS) {
-            window.addEventListener(event, resetTimer, { passive: true });
-        }
-        return () => {
-            clearTimeout(inactivityTimerRef.current);
-            for (const event of ACTIVITY_EVENTS) window.removeEventListener(event, resetTimer);
-        };
-    }, [isAuthenticated, logout]);
+    useInactivityLogout(isAuthenticated, logout);
 
     // Hace una petición al servidor añadiendo las credenciales de sesión, y si
     // el servidor dice que la sesión caducó, intenta renovarla y reintenta una
@@ -202,29 +181,12 @@ export const AuthProvider = ({ children }) => {
     const authenticatedFetch = useCallback(async (url, options = {}) => {
         if (!isAuthenticated) throw new Error('No authenticated session');
         const epoch = authEpochRef.current;
-        const headers = { ...DEFAULT_HEADERS, ...options.headers };
-        if (options.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
-
-        let response = await fetch(url, { ...options, headers, credentials: 'include' });
-        if (response.status === 401) {
-            const outcome = await tryRefresh();
-            if (outcome === SETTLED.STALE || authEpochRef.current !== epoch) {
-                throw new Error('Session expired');
-            }
-            if (outcome === SETTLED.FAILED) {
-                throw new Error('Session expired');
-            }
-            response = await fetch(url, { ...options, headers, credentials: 'include' });
-            if (response.status === 401) {
-                if (authEpochRef.current === epoch) void logout();
-                throw new Error('Session expired');
-            }
-        }
-        if (!response.ok) {
-            const error = await response.json().catch(() => ({}));
-            throw Object.assign(new Error(error.detail || 'Request failed'), { status: response.status });
-        }
-        return response;
+        return authenticatedRequest(url, options, {
+            epoch,
+            currentEpoch: () => authEpochRef.current,
+            tryRefresh,
+            logout,
+        });
     }, [isAuthenticated, logout, tryRefresh]);
 
     return (
