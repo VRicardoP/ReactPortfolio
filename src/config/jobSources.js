@@ -185,7 +185,7 @@ export function normalizeJob(job, source) {
 export function normalizeCoreJob(job, source) {
   return {
     ...normalizeJob(job, source),
-    id: job.id,
+    id: job.id ?? `${source}-${job.job_ref}`,
     jobRef: job.job_ref || job.id,
     source,
   };

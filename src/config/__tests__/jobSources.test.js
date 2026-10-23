@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { CORE_SOURCE_BY_KEY, JOB_SOURCES } from '../jobSources'
+import { CORE_SOURCE_BY_KEY, JOB_SOURCES, normalizeCoreJob } from '../jobSources'
 
 const CORE_SOURCES = {
   arbeitnow: 'arbeitnow', irishjobs: 'irishjobs', jobgether: 'jobgether',
@@ -100,5 +100,10 @@ describe('job source handover', () => {
       expect(item).not.toHaveProperty('skillsField')
       expect(item).not.toHaveProperty('alwaysRemote')
     }
+  })
+
+  it('falls back to the Core source and job reference when id is absent', () => {
+    expect(normalizeCoreJob({ job_ref: 'abc-123' }, 'remotive').id)
+      .toBe('remotive-abc-123')
   })
 })
