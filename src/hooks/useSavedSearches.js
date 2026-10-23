@@ -5,6 +5,7 @@ import { BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
 import { JOBS_PAGE_SIZE } from '../components/Dashboard/dashboardConstants';
 import { buildJobSearchParams } from '../utils/jobSearchParams';
+import useAuthenticatedQuery from './useAuthenticatedQuery';
 
 const INITIAL_FORM = {
     name: '',
@@ -26,9 +27,15 @@ const INITIAL_FORM = {
 const useSavedSearches = () => {
     const { t } = useTranslation();
     const { authenticatedFetch } = useAuth();
+    const {
+        loading,
+        refetch: refetchSearches,
+    } = useAuthenticatedQuery(
+        `${BACKEND_URL}/api/v1/saved-searches/`,
+        { enabled: false },
+    );
 
     const [searches, setSearches] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState(INITIAL_FORM);
     const [expandedId, setExpandedId] = useState(null);
@@ -44,18 +51,14 @@ const useSavedSearches = () => {
     // Fetch saved searches on mount
     // Pide al servidor la lista de búsquedas guardadas.
     const fetchSearches = useCallback(async () => {
-        setLoading(true);
-        try {
-            const response = await authenticatedFetch(`${BACKEND_URL}/api/v1/saved-searches/`);
-            const data = await response.json();
-            setSearches(Array.isArray(data) ? data : data.results || data.data || []);
-        } catch {
+        const data = await refetchSearches();
+        if (data === null) {
             setSearches([]);
             showToast(t('dashboard.savedSearches.errorLoad'));
-        } finally {
-            setLoading(false);
+            return;
         }
-    }, [authenticatedFetch, t]);
+        setSearches(Array.isArray(data) ? data : data.results || data.data || []);
+    }, [refetchSearches, t]);
 
     useEffect(() => {
         fetchSearches();
