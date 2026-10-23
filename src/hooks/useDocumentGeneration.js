@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { BACKEND_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import { safeSession } from '../utils/safeStorage';
+import downloadBlob from '../utils/downloadBlob';
 
 const logger = {
     warn: (...args) => { if (import.meta.env.DEV) console.warn('[useDocumentGeneration]', ...args); },
@@ -191,12 +192,7 @@ export default function useDocumentGeneration() {
                 `${BACKEND_URL}/api/v1/cv-generation/${docId}/pdf`
             );
             const blob = await resp.blob();
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename || 'document.pdf';
-            a.click();
-            URL.revokeObjectURL(url);
+            downloadBlob(blob, filename || 'document.pdf');
         } catch (err) {
             logger.warn('Failed to download PDF', err);
         }
@@ -211,12 +207,7 @@ export default function useDocumentGeneration() {
             const data = await resp.json();
             const content = JSON.parse(data.content);
             const blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename || 'document.json';
-            a.click();
-            URL.revokeObjectURL(url);
+            downloadBlob(blob, filename || 'document.json');
         } catch (err) {
             logger.warn('Failed to download JSON', err);
         }

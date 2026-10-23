@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
+import { formatJobSalary } from '../utils/formatSalary';
 import useAuthenticatedQuery from './useAuthenticatedQuery';
 
 const COOLDOWN_SECONDS = 12;
@@ -105,28 +106,6 @@ const useJSearchLive = () => {
         }
     }, [formFields, cooldown, searchJobs, startCooldown, t]);
 
-    /**
-     * Format salary range from a job object's salary fields.
-     * @param {Object} job — job object with optional salary fields
-     * @returns {string|null} formatted salary string or null
-     */
-    // Da el rango de salario de una oferta en un texto legible, o nada si no
-    // tiene datos de salario.
-    const formatSalary = useCallback((job) => {
-        const minSalary = job.job_min_salary || job.min_salary;
-        const maxSalary = job.job_max_salary || job.max_salary;
-        if (!minSalary && !maxSalary) return null;
-
-        const currency = job.job_salary_currency || job.salary_currency || 'USD';
-        const period = job.job_salary_period || 'year';
-
-        if (minSalary && maxSalary) {
-            return `${currency} ${minSalary.toLocaleString()}-${maxSalary.toLocaleString()}/${period}`;
-        }
-        if (minSalary) return `${currency} ${minSalary.toLocaleString()}+/${period}`;
-        return `${currency} ${maxSalary.toLocaleString()}/${period}`;
-    }, []);
-
     return {
         formFields,
         results,
@@ -135,7 +114,7 @@ const useJSearchLive = () => {
         cooldownTimer,
         handleFieldChange,
         handleSearch,
-        formatSalary,
+        formatSalary: formatJobSalary,
     };
 };
 

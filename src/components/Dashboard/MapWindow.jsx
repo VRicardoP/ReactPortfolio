@@ -7,20 +7,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import FloatingWindow from '../Windows/FloatingWindow';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-
-// Oculta la última parte de una IP (v4 o v6), para no mostrarla completa.
-const maskIp = (ip) => {
-    if (!ip) return 'N/A';
-    const parts = ip.split('.');
-    if (parts.length === 4) return `${parts[0]}.${parts[1]}.${parts[2]}.***`;
-    // IPv6 or other format - mask last segment
-    const segments = ip.split(':');
-    if (segments.length > 1) {
-        segments[segments.length - 1] = '****';
-        return segments.join(':');
-    }
-    return ip;
-};
+import maskIp from '../../utils/maskIp';
 
 // this fixes a bug with map icons in react
 delete L.Icon.Default.prototype._getIconUrl;

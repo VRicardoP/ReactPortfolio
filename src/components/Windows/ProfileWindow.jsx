@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 import { BACKEND_URL, DEFAULT_HEADERS } from '../../config/api';
 import { showToast } from '../UI/Toast';
+import downloadBlob from '../../utils/downloadBlob';
 
 const QUICK_STATS = [
     { key: 'yearsExp', fallback: '20+ yrs' },
@@ -23,26 +24,13 @@ const RECRUITER_SECTIONS = [
 
 // Descarga un fichero desde una URL y lo guarda en el dispositivo del visitante.
 const downloadFile = async (url, filename) => {
-    let objectUrl;
-    let anchor;
-    try {
-        const response = await fetch(url, { headers: DEFAULT_HEADERS });
-        if (!response.ok) {
-            const error = new Error(`Download failed with status ${response.status}`);
-            error.status = response.status;
-            throw error;
-        }
-
-        objectUrl = URL.createObjectURL(await response.blob());
-        anchor = document.createElement('a');
-        anchor.href = objectUrl;
-        anchor.download = filename;
-        document.body.appendChild(anchor);
-        anchor.click();
-    } finally {
-        anchor?.remove();
-        if (objectUrl) URL.revokeObjectURL(objectUrl);
+    const response = await fetch(url, { headers: DEFAULT_HEADERS });
+    if (!response.ok) {
+        const error = new Error(`Download failed with status ${response.status}`);
+        error.status = response.status;
+        throw error;
     }
+    downloadBlob(await response.blob(), filename);
 };
 
 const ProfileWindow = ({ data, initialPosition }) => {

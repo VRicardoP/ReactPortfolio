@@ -4,6 +4,7 @@ import { BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
 import { JOBS_PAGE_SIZE } from '../components/Dashboard/dashboardConstants';
 import { buildJobSearchParams } from '../utils/jobSearchParams';
+import { formatFilterSalary } from '../utils/formatSalary';
 import useAuthenticatedQuery from './useAuthenticatedQuery';
 
 const INITIAL_FILTERS = {
@@ -172,15 +173,6 @@ const useJobFilter = (onSaveSearch) => {
     const hasFilters = filters.country || filters.city
         || filters.salaryMin || filters.salaryMax || filters.q || filters.remoteOnly;
 
-    // Da el rango de salario en un texto legible.
-    const formatSalary = useCallback((min, max, currency) => {
-        const cur = currency || 'USD';
-        if (min && max) return `${cur} ${Number(min).toLocaleString()} - ${Number(max).toLocaleString()}`;
-        if (min) return `${cur} ${Number(min).toLocaleString()}+`;
-        if (max) return `${cur} <=${Number(max).toLocaleString()}`;
-        return '';
-    }, []);
-
     return {
         filters,
         results,
@@ -196,7 +188,7 @@ const useJobFilter = (onSaveSearch) => {
         handleLoadMore,
         handleClear,
         handleSave,
-        formatSalary,
+        formatSalary: formatFilterSalary,
     };
 };
 
