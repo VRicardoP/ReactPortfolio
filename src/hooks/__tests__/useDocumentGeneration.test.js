@@ -745,4 +745,15 @@ describe('durable document request identity', () => {
     await act(async () => { await result.current.fetchAllDocuments() })
     expect(result.current.getDocumentsFor('app').cv.id).toBe('new')
   })
+
+  it('clears only the acknowledged operation identity', () => {
+    sessionStorage.setItem('document-operation:first', 'operation-1')
+    sessionStorage.setItem('document-operation:second', 'operation-2')
+    const { result } = renderHook(() => useDocumentGeneration())
+
+    act(() => result.current.clearOperation('operation-1'))
+
+    expect(sessionStorage.getItem('document-operation:first')).toBeNull()
+    expect(sessionStorage.getItem('document-operation:second')).toBe('operation-2')
+  })
 })

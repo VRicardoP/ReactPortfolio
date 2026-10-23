@@ -2,54 +2,16 @@
 // quedó pendiente de entregar: lista los casos atascados y permite
 // reintentar cada uno sin volver a generarlo desde cero.
 
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/AuthContext';
-import { BACKEND_URL } from '../../config/api';
-import { safeSession } from '../../utils/safeStorage';
+import useDeliveryRecovery from '../../hooks/useDeliveryRecovery';
 
 /** Delivery only: no regeneration path, even after the application was deleted. */
-export default function DocumentDeliveryRecovery({ onDelivered }) {
+export default function DocumentDeliveryRecovery({ onDelivered, clearOperation }) {
     const { t } = useTranslation();
-    const { authenticatedFetch } = useAuth();
-    const [items, setItems] = useState(null);
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState(false);
-    const endpoint = `${BACKEND_URL}/api/v1/cv-generation/operations/`;
-
-    // Pide al servidor la lista de entregas pendientes.
-    const load = async () => {
-        const response = await authenticatedFetch(endpoint);
-        const data = await response.json();
-        if (!Array.isArray(data) || data.some(x => !x || typeof x.operation_id !== 'string')) {
-            throw new Error('Invalid delivery list');
-        }
-        setItems(data);
-    };
-    // Vuelve a cargar la lista de pendientes.
-    const refresh = async () => {
-        setBusy(true);
-        setError(false);
-        try { await load(); } catch { setError(true); } finally { setBusy(false); }
-    };
-    // Reintenta entregar un documento concreto que se había quedado atascado.
-    const retry = async (item) => {
-        setBusy(true);
-        setError(false);
-        try {
-            const response = await authenticatedFetch(endpoint + item.operation_id + '/retry', { method: 'POST' });
-            const result = await response.json();
-            if (result.status !== 'delivered') throw new Error('Still pending');
-            // Clear only this acknowledged operation. An explicit future Generate
-            // must be new work, not a replay of the recovered delivery.
-            for (const key of safeSession.keys()) {
-                if (key.startsWith('document-operation:') &&
-                    safeSession.get(key) === item.operation_id) safeSession.remove(key);
-            }
-            await load();
-            onDelivered?.(item.application_id);
-        } catch { setError(true); } finally { setBusy(false); }
-    };
+    const { items, busy, error, refresh, retry } = useDeliveryRecovery(
+        onDelivered,
+        clearOperation,
+    );
     return (
         <section className="document-delivery-recovery" aria-busy={busy}>
             <button type="button" className="cv-gen-btn" disabled={busy} onClick={refresh}>

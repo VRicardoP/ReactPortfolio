@@ -4,53 +4,14 @@
 
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/AuthContext';
-import { BACKEND_URL } from '../../config/api';
+import useDocumentLibrary from '../../hooks/useDocumentLibrary';
 
 /** Full history, independent of live applications. Never regenerate from this view. */
 export default function DocumentLibrary({ onDownloadPdf, onDownloadJson, onDeleted }) {
     const { t } = useTranslation();
-    const { authenticatedFetch } = useAuth();
     const id = useId();
     const [open, setOpen] = useState(false);
-    const [documents, setDocuments] = useState([]);
-    const [busy, setBusy] = useState(false);
-    const [error, setError] = useState(false);
-    const endpoint = `${BACKEND_URL}/api/v1/cv-generation/`;
-
-    // Pide al servidor la lista completa de documentos generados.
-    const refresh = async () => {
-        setBusy(true);
-        setError(false);
-        try {
-            const response = await authenticatedFetch(endpoint);
-            const items = await response.json();
-            if (!Array.isArray(items) || items.some(d => !d || typeof d.id !== 'string')) {
-                throw new Error('Invalid document list');
-            }
-            setDocuments(items);
-        } catch {
-            setError(true);
-        } finally {
-            setBusy(false);
-        }
-    };
-
-    // Borra un documento, pidiendo confirmación antes.
-    const remove = async (doc) => {
-        if (!window.confirm(t('dashboard.cvGeneration.confirmDeleteDocument'))) return;
-        setBusy(true);
-        setError(false);
-        try {
-            await authenticatedFetch(endpoint + doc.id, { method: 'DELETE' });
-            setDocuments(previous => previous.filter(item => item.id !== doc.id));
-            onDeleted?.(doc.application_id);
-        } catch {
-            setError(true);
-        } finally {
-            setBusy(false);
-        }
-    };
+    const { documents, busy, error, refresh, remove } = useDocumentLibrary(onDeleted, t);
 
     return (
         <section className="document-library">

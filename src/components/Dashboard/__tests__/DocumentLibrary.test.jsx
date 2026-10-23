@@ -13,6 +13,7 @@ vi.mock('../../../hooks/useDocumentGeneration', () => ({
     default: () => ({
         fetchAllDocuments: vi.fn(), fetchDocuments: mocks.refresh,
         getDocumentsFor: () => null, documents: {}, generatingSet: new Set(),
+        clearOperation: vi.fn(),
         downloadPdf: mocks.pdf, downloadJson: mocks.json,
     }),
 }));

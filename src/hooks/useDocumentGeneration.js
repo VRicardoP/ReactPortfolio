@@ -256,6 +256,16 @@ export default function useDocumentGeneration() {
         return generating.has(applicationId);
     }, [generating]);
 
+    // Retira únicamente la intención persistida que corresponde a una entrega
+    // ya confirmada. El formato privado de las claves queda encapsulado aquí.
+    const clearOperation = useCallback((operationId) => {
+        for (const key of safeSession.keys()) {
+            if (key.startsWith('document-operation:') && safeSession.get(key) === operationId) {
+                safeSession.remove(key);
+            }
+        }
+    }, []);
+
     return {
         generate,
         fetchDocuments,
@@ -264,6 +274,7 @@ export default function useDocumentGeneration() {
         downloadPdf,
         downloadJson,
         deleteDocument,
+        clearOperation,
         isGenerating,
         generatingSet: generating,
         documents,

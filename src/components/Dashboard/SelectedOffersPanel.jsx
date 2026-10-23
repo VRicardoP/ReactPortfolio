@@ -74,7 +74,10 @@ const SelectedOffersPanel = memo(({ initialPosition }) => {
             <div className="selected-offers-panel">
                 <div className={`selected-offers-kanban${previewAppId ? ' with-preview' : ''}`}>
                     {docGen.error && <p role="alert">{docGen.error}</p>}
-                    <DocumentDeliveryRecovery onDelivered={docGen.fetchDocuments} />
+                    <DocumentDeliveryRecovery
+                        onDelivered={docGen.fetchDocuments}
+                        clearOperation={docGen.clearOperation}
+                    />
                     <DocumentLibrary key={user?.id}
                         onDownloadPdf={docGen.downloadPdf}
                         onDownloadJson={docGen.downloadJson}

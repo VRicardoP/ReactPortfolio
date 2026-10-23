@@ -11,15 +11,22 @@ beforeEach(() => { vi.clearAllMocks(); sessionStorage.clear(); });
 
 it('reloads pending work and retries delivery, never the generator', async () => {
     const done = vi.fn();
+    const clearOperation = vi.fn((operationId) => {
+        for (let index = sessionStorage.length - 1; index >= 0; index--) {
+            const key = sessionStorage.key(index);
+            if (sessionStorage.getItem(key) === operationId) sessionStorage.removeItem(key);
+        }
+    });
     sessionStorage.setItem('document-operation:original', 'operation');
     sessionStorage.setItem('document-operation:other', 'another');
     mocks.fetch.mockResolvedValueOnce(response([item]))
         .mockResolvedValueOnce(response({ status: 'delivered' }))
         .mockResolvedValueOnce(response([]));
-    render(<DocumentDeliveryRecovery onDelivered={done} />);
+    render(<DocumentDeliveryRecovery onDelivered={done} clearOperation={clearOperation} />);
     fireEvent.click(screen.getByRole('button', { name: 'dashboard.cvGeneration.pendingDeliveries' }));
     fireEvent.click(await screen.findByRole('button', { name: 'dashboard.cvGeneration.retryDelivery' }));
     await waitFor(() => expect(done).toHaveBeenCalledWith('deleted-app'));
+    expect(clearOperation).toHaveBeenCalledWith('operation');
     expect(sessionStorage.getItem('document-operation:original')).toBeNull();
     expect(sessionStorage.getItem('document-operation:other')).toBe('another');
     expect(mocks.fetch.mock.calls[1][0]).toMatch(/operations\/operation\/retry$/);
