@@ -20,6 +20,29 @@ const JobCard = memo(({
 }) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
+    if (variant === 'saved') {
+        return (
+            <article style={{ padding: '6px 8px', borderBottom: `1px solid ${theme.borderLight}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '12px', color: theme.textHighlight, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{job.title}</div>
+                    <div style={{ fontSize: '10px', color: theme.text, opacity: 0.7 }}>
+                        <CompanyResearchName company={job.company}>{job.company}</CompanyResearchName>
+                        {job.location ? ` — ${job.location}` : ''}
+                        {(job.salary_min || job.salary_max) && (
+                            <span style={{ color: '#4CAF50', marginLeft: '6px' }}>
+                                {job.salary_currency || 'USD'} {job.salary_min ? Number(job.salary_min).toLocaleString() : '?'}
+                                -{job.salary_max ? Number(job.salary_max).toLocaleString() : '?'}
+                            </span>
+                        )}
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexShrink: 0 }}>
+                    <span style={{ fontSize: '9px', padding: '1px 5px', borderRadius: '3px', fontFamily: 'Courier New', background: `rgba(${theme.primaryRgb}, 0.1)`, color: theme.primary, border: `1px solid rgba(${theme.primaryRgb}, 0.2)` }}>{job.source}</span>
+                    {actions}
+                </div>
+            </article>
+        );
+    }
     if (variant === 'live') {
         const title = job.job_title || job.title;
         const company = job.employer_name || job.employer;

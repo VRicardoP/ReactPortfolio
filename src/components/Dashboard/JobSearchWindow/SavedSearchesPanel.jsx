@@ -6,7 +6,7 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../context/ThemeContext';
-import { CompanyResearchName } from '../JobCardExtras';
+import JobCard from '../JobCard';
 
 // Format filter summary for display (pure rendering helper)
 // Convierte los filtros de una búsqueda guardada en un texto corto y legible.
@@ -210,59 +210,22 @@ const SavedSearchesPanel = memo(({ saved, jobApp }) => {
                                     </div>
                                 )}
                                 {searchResults.map(job => (
-                                    <div
+                                    <JobCard
                                         key={`${job.source}-${job.id}`}
-                                        style={{
-                                            padding: '6px 8px',
-                                            borderBottom: `1px solid ${theme.borderLight}`,
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            gap: '8px',
-                                        }}
-                                    >
-                                        <div style={{ flex: 1, minWidth: 0 }}>
-                                            <div style={{
-                                                fontSize: '12px', color: theme.textHighlight,
-                                                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                            }}>
-                                                {job.title}
-                                            </div>
-                                            <div style={{ fontSize: '10px', color: theme.text, opacity: 0.7 }}>
-                                                <CompanyResearchName company={job.company}>{job.company}</CompanyResearchName>
-                                                {job.location ? ` — ${job.location}` : ''}
-                                                {(job.salary_min || job.salary_max) && (
-                                                    <span style={{ color: '#4CAF50', marginLeft: '6px' }}>
-                                                        {job.salary_currency || 'USD'} {job.salary_min ? Number(job.salary_min).toLocaleString() : '?'}
-                                                        -{job.salary_max ? Number(job.salary_max).toLocaleString() : '?'}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexShrink: 0 }}>
-                                            <span style={{
-                                                fontSize: '9px', padding: '1px 5px',
-                                                borderRadius: '3px', fontFamily: 'Courier New',
-                                                background: `rgba(${theme.primaryRgb}, 0.1)`,
-                                                color: theme.primary,
-                                                border: `1px solid rgba(${theme.primaryRgb}, 0.2)`,
-                                            }}>
-                                                {job.source}
-                                            </span>
-                                            {job.url && (
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); handleOpenOffer(job); }}
-                                                    className={`jobboard-apply-btn ${openedIds.has(job.id) ? 'applied' : ''}`}
-                                                    style={{ padding: '2px 8px', fontSize: '10px' }}
-                                                >
-                                                    {openedIds.has(job.id)
-                                                        ? t('dashboard.jobBoard.opened')
-                                                        : t('dashboard.jobBoard.viewOffer')
-                                                    }
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
+                                        job={job}
+                                        variant="saved"
+                                        actions={job.url && (
+                                            <button
+                                                onClick={(event) => { event.stopPropagation(); handleOpenOffer(job); }}
+                                                className={`jobboard-apply-btn ${openedIds.has(job.id) ? 'applied' : ''}`}
+                                                style={{ padding: '2px 8px', fontSize: '10px' }}
+                                            >
+                                                {openedIds.has(job.id)
+                                                    ? t('dashboard.jobBoard.opened')
+                                                    : t('dashboard.jobBoard.viewOffer')}
+                                            </button>
+                                        )}
+                                    />
                                 ))}
                             </div>
                         )}

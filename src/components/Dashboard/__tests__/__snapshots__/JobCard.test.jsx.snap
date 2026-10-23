@@ -207,3 +207,48 @@ exports[`JobCard > preserva la estructura de la variante live 1`] = `
   </div>
 </article>
 `;
+
+exports[`JobCard > preserva la estructura de la variante saved 1`] = `
+<article
+  style="padding: 6px 8px; border-bottom: 1px solid rgb(51, 51, 51); display: flex; justify-content: space-between; align-items: center; gap: 8px;"
+>
+  <div
+    style="flex: 1 1 0%; min-width: 0px;"
+  >
+    <div
+      style="font-size: 12px; color: rgb(255, 255, 255); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+    >
+      Original
+    </div>
+    <div
+      style="font-size: 10px; color: rgb(221, 221, 221); opacity: 0.7;"
+    >
+      <span>
+        Example
+      </span>
+       — Bern
+      <span
+        style="color: rgb(76, 175, 80); margin-left: 6px;"
+      >
+        CHF
+         
+        50,000
+        -
+        70,000
+      </span>
+    </div>
+  </div>
+  <div
+    style="display: flex; gap: 4px; align-items: center; flex-shrink: 0;"
+  >
+    <span
+      style="font-size: 9px; padding: 1px 5px; border-radius: 3px; font-family: "Courier New"; background: rgba(0, 229, 255, 0.1); color: rgb(0, 229, 255); border: 1px solid rgba(0, 229, 255, 0.2);"
+    >
+      test
+    </span>
+    <button>
+      Open
+    </button>
+  </div>
+</article>
+`;

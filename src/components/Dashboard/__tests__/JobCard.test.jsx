@@ -50,4 +50,14 @@ describe('JobCard', () => {
         );
         expect(container.firstChild).toMatchSnapshot();
     });
+    it('preserva la estructura de la variante saved', () => {
+        const { container } = render(
+            <JobCard
+                job={{ ...job, salary_min: 50000, salary_max: 70000, salary_currency: 'CHF' }}
+                variant="saved"
+                actions={<button>Open</button>}
+            />
+        );
+        expect(container.firstChild).toMatchSnapshot();
+    });
 });
