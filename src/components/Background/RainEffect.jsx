@@ -1,206 +1,119 @@
-// Efecto de fondo animado: miles de gotas de lluvia cayendo en 3D, con la
-// cámara moviéndose un poco según la posición del ratón.
+// Efecto de lluvia 3D cuyo color sigue el tema y cuya cámara responde al puntero.
+// Shared renderer, resize and frame lifecycle are delegated to useThreeScene.
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { useTheme } from '../../context/ThemeContext';
+import useThreeScene from '../../hooks/useThreeScene';
 
 const RainEffect = () => {
     const mountRef = useRef(null);
-    const animationIdRef = useRef(null);
     const rainMaterialRef = useRef(null);
+    const themeRef = useRef(null);
     const { theme } = useTheme();
+    themeRef.current = theme;
 
-    // Cambia el color de la lluvia cuando cambia el tema, sin tener que
-    // reconstruir toda la escena 3D.
-    // Update rain color when theme changes — no scene rebuild needed
-    useEffect(() => {
-        if (rainMaterialRef.current) {
-            rainMaterialRef.current.color.set(theme.primary);
-        }
-    }, [theme]);
-
-    // Monta la escena 3D una sola vez: crea la cámara, la luz, el suelo y
-    // las gotas, pone en marcha la animación, y lo limpia todo al desmontar.
-    useEffect(() => {
-        if (!mountRef.current) return;
-
-        const { innerWidth, innerHeight } = window;
-
-        // create the 3D world
+    // Construye la lluvia y conserva aquí únicamente sus recursos específicos.
+    // Pointer normalization reads the current viewport width after every resize.
+    const build = useCallback(({ width, height }) => {
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000000);
-
-        // the camera from where we see everything
-        const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
         camera.position.set(0, 50, 100);
         camera.lookAt(0, 0, 0);
-
-        // this draws everything on the screen
-        const renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            alpha: false
-        });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
         renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(innerWidth, innerHeight);
-
-        // place the canvas fullscreen in the background
+        renderer.setSize(width, height);
         renderer.domElement.className = 'rain-canvas';
-        // DT-135: commented because base.css `canvas.rain-canvas` defines these
-        // same six properties with `!important`, so these assignments never win.
-        // renderer.domElement.style.position = 'fixed';
-        // renderer.domElement.style.top = '0';
-        // renderer.domElement.style.left = '0';
-        // renderer.domElement.style.width = '100%';
-        // renderer.domElement.style.height = '100%';
-        // renderer.domElement.style.zIndex = '-1';
+        renderer.domElement.style.pointerEvents = window.matchMedia('(pointer: fine)').matches ? 'auto' : 'none';
 
-        mountRef.current.appendChild(renderer.domElement);
-
-        // an ambient light so something is visible
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
-        scene.add(ambientLight);
-
-        // a light coming from one side
+        scene.add(new THREE.AmbientLight(0x404040, 0.5));
         const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
         directionalLight.position.set(50, 100, 50);
         scene.add(directionalLight);
 
-        // the black floor where the drops fall
         const floorGeometry = new THREE.PlaneGeometry(500, 500);
         floorGeometry.rotateX(-Math.PI / 2);
-        const floorMaterial = new THREE.MeshBasicMaterial({
-            color: 0x000000,
-            side: THREE.DoubleSide
-        });
+        const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide });
         const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-        floor.position.y = 0;
         scene.add(floor);
 
-        // create many raindrops using lines
         const rainCount = 3000;
         const rainGeometry = new THREE.BufferGeometry();
         const positions = [];
         const velocities = [];
-
         for (let i = 0; i < rainCount; i++) {
-            // where each drop starts
             const x = (Math.random() - 0.5) * 400;
             const y = Math.random() * 150;
             const z = (Math.random() - 0.5) * 400;
-
-            // each drop is a small vertical line
-            positions.push(x, y, z);
-            positions.push(x, y - 2, z); // the length of the drop
-
-            velocities.push(Math.random() * 0.5 + 0.5); // how fast it falls
+            positions.push(x, y, z, x, y - 2, z);
+            velocities.push(Math.random() * 0.5 + 0.5);
         }
-
         rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-
-        // convert theme color to hexadecimal for THREE.js
-        const themeColor = new THREE.Color(theme.primary);
-
         const rainMaterial = new THREE.LineBasicMaterial({
-            color: themeColor,
+            color: new THREE.Color(themeRef.current.primary),
             transparent: true,
             opacity: 0.6,
-            linewidth: 1
+            linewidth: 1,
         });
-
-        // store material ref so theme useEffect can update color without rebuilding
         rainMaterialRef.current = rainMaterial;
-
         const rain = new THREE.LineSegments(rainGeometry, rainMaterial);
         scene.add(rain);
 
-        // to move the camera with the mouse
-        let mouseX = 0;
         let targetRotationY = 0;
         let currentRotationY = 0;
-
-        const onMouseMove = (event) => {
-            mouseX = (event.clientX / innerWidth) * 2 - 1;
+        const onPointerMove = event => {
+            const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
             targetRotationY = mouseX * 0.3;
         };
-        document.addEventListener('mousemove', onMouseMove);
+        renderer.domElement.addEventListener('pointermove', onPointerMove);
 
-        // the loop that makes everything move
-        const animate = () => {
-            animationIdRef.current = requestAnimationFrame(animate);
-
-            const positions = rain.geometry.attributes.position.array;
-
-            // move each drop downward
-            for (let i = 0; i < rainCount; i++) {
-                const i6 = i * 6; // each drop has 6 numbers for its position
-                const velocity = velocities[i];
-
-                // move the drop down a little
-                positions[i6 + 1] -= velocity * 0.5;
-                positions[i6 + 4] -= velocity * 0.5;
-
-                // if it hits the ground put it back at the top
-                if (positions[i6 + 1] < 0) {
-                    positions[i6 + 1] = 150;
-                    positions[i6 + 4] = 150 - 2;
-                    positions[i6] = (Math.random() - 0.5) * 400;
-                    positions[i6 + 3] = positions[i6];
-                    positions[i6 + 2] = (Math.random() - 0.5) * 400;
-                    positions[i6 + 5] = positions[i6 + 2];
+        return {
+            scene,
+            camera,
+            renderer,
+            animate: () => {
+                const coordinates = rain.geometry.attributes.position.array;
+                for (let i = 0; i < rainCount; i++) {
+                    const index = i * 6;
+                    const fall = velocities[i] * 0.5;
+                    coordinates[index + 1] -= fall;
+                    coordinates[index + 4] -= fall;
+                    if (coordinates[index + 1] < 0) {
+                        coordinates[index + 1] = 150;
+                        coordinates[index + 4] = 148;
+                        coordinates[index] = (Math.random() - 0.5) * 400;
+                        coordinates[index + 3] = coordinates[index];
+                        coordinates[index + 2] = (Math.random() - 0.5) * 400;
+                        coordinates[index + 5] = coordinates[index + 2];
+                    }
                 }
-            }
-
-            rain.geometry.attributes.position.needsUpdate = true;
-
-            // smoothly move the camera with the mouse
-            currentRotationY += (targetRotationY - currentRotationY) * 0.05;
-            camera.position.x = Math.sin(currentRotationY) * 100;
-            camera.position.z = Math.cos(currentRotationY) * 100;
-            camera.lookAt(0, 20, 0);
-
-            renderer.render(scene, camera);
+                rain.geometry.attributes.position.needsUpdate = true;
+                currentRotationY += (targetRotationY - currentRotationY) * 0.05;
+                camera.position.x = Math.sin(currentRotationY) * 100;
+                camera.position.z = Math.cos(currentRotationY) * 100;
+                camera.lookAt(0, 20, 0);
+            },
+            dispose: () => {
+                renderer.domElement.removeEventListener('pointermove', onPointerMove);
+                rainGeometry.dispose();
+                rainMaterial.dispose();
+                floorGeometry.dispose();
+                floorMaterial.dispose();
+                rainMaterialRef.current = null;
+            },
         };
-
-        // when I resize the window adjust the camera
-        const onWindowResize = () => {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-            renderer.setSize(width, height);
-        };
-        window.addEventListener('resize', onWindowResize);
-
-        // start the animation
-        animate();
-
-        const mountNode = mountRef.current;
-
-        // when the component unmounts clean up everything
-        return () => {
-            document.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('resize', onWindowResize);
-
-            if (animationIdRef.current) {
-                cancelAnimationFrame(animationIdRef.current);
-            }
-
-            if (mountNode && renderer.domElement) {
-                mountNode.removeChild(renderer.domElement);
-            }
-
-            rainMaterialRef.current = null;
-            renderer.dispose();
-            rainGeometry.dispose();
-            rainMaterial.dispose();
-            floorGeometry.dispose();
-            floorMaterial.dispose();
-        };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    return <div ref={mountRef} style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />;
+    useThreeScene(mountRef, build);
+
+    // Actualiza el material vivo sin reconstruir la geometría de la lluvia.
+    // Theme changes stay independent from scene construction.
+    useEffect(() => {
+        rainMaterialRef.current?.color.set(theme.primary);
+    }, [theme]);
+
+    return <div ref={mountRef} style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }} />;
 };
 
 export default RainEffect;
