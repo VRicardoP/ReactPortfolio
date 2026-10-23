@@ -6,7 +6,7 @@
 import { lazy, Suspense, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useWindowLayout from '../../hooks/useWindowLayout';
-import { useSSENotifications } from '../../hooks/useSSENotifications';
+import { useSSEEvents } from '../../hooks/useSSEEvents';
 import useSchoolJobs from '../../hooks/useSchoolJobs';
 import ErrorBoundary from '../ErrorBoundary';
 
@@ -63,7 +63,7 @@ const DesktopDashboardContent = memo(({
     stats, mapData, chatAnalytics, jobData,
 }) => {
     // Listen for SSE notifications (new jobs toast, etc.)
-    useSSENotifications();
+    useSSEEvents();
 
     // Fetch schools + detected jobs ONCE here and share with both school windows
     // (avoids the duplicate GETs from each window calling the hook — DT-98).

@@ -5,7 +5,7 @@
 import { lazy, Suspense, memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
-import { useSSENotifications } from '../../hooks/useSSENotifications';
+import { useSSEEvents } from '../../hooks/useSSEEvents';
 import { DashboardLoader } from './DesktopDashboardContent';
 import { DASHBOARD_TABS } from './dashboardConstants';
 import ErrorBoundary from '../ErrorBoundary';
@@ -31,7 +31,7 @@ const MobileDashboardLayout = memo(({
     const { theme, cycleTheme, cycleBackground, backgroundEffect } = useTheme();
     const [activeTab, setActiveTab] = useState('overview');
 
-    useSSENotifications();
+    useSSEEvents();
 
     return (
         <>

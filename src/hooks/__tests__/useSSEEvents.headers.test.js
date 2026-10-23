@@ -23,8 +23,8 @@ vi.mock('../../config/api', () => ({
 beforeEach(() => { calls = []; });
 
 it('the stream uses authenticatedFetch and keeps the ngrok header', async () => {
-    const { useSSENotifications } = await import('../useSSENotifications');
-    renderHook(() => useSSENotifications());
+    const { useSSEEvents } = await import('../useSSEEvents');
+    renderHook(() => useSSEEvents());
 
     expect(calls).toHaveLength(1);
     const { url, options } = calls[0];

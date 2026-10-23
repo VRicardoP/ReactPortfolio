@@ -18,7 +18,7 @@ vi.mock('react-i18next', async importOriginal => ({
     useTranslation: () => ({ t: key => key }),
 }));
 vi.mock('../../../hooks/useWindowLayout', () => ({ default: () => {} }));
-vi.mock('../../../hooks/useSSENotifications', () => ({ useSSENotifications: () => ({}) }));
+vi.mock('../../../hooks/useSSEEvents', () => ({ useSSEEvents: () => ({}) }));
 vi.mock('../../../hooks/useSchoolJobs', () => ({ default: () => ({ schools: [], jobs: [] }) }));
 
 // La ventana que revienta es la MISMA que reventaba en producción.

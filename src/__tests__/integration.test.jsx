@@ -15,7 +15,7 @@ vi.mock('../hooks/useDashboardData', () => ({
     mapData: [], chatAnalytics: {}, jobData: {}, loading: false, error: null,
   }),
 }));
-vi.mock('../hooks/useSSENotifications', () => ({ useSSENotifications: () => ({}) }));
+vi.mock('../hooks/useSSEEvents', () => ({ useSSEEvents: () => ({}) }));
 vi.mock('../hooks/useWindowLayout', () => ({ default: () => ({}) }));
 vi.mock('../hooks/useTypewriter', () => ({ default: (text) => text }));
 
