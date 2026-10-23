@@ -5,34 +5,19 @@
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    ArcElement,
-    Title,
-    Tooltip,
-    Legend
-} from 'chart.js';
+import '../../charts/register';
+import useChartTheme from '../../hooks/useChartTheme';
+import TabBar from '../UI/TabBar';
 import FloatingWindow from '../Windows/FloatingWindow';
 import { useTheme } from '../../context/ThemeContext';
 import '../../styles/dashboard-forms.css';
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    ArcElement,
-    Title,
-    Tooltip,
-    Legend
-);
 
 const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const { theme } = useTheme();
     const { t } = useTranslation();
+    const { barOptions: chartOptions, doughnutOptions } = useChartTheme();
 
     // Las estadísticas generales (totales, tasa de éxito...).
     const stats = useMemo(() => {
@@ -80,55 +65,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
         };
     }, [data, theme, t]);
 
-    // Opciones visuales del gráfico de barras, ajustadas al tema de color actual.
-    const chartOptions = useMemo(() => ({
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                titleColor: theme.primary,
-                bodyColor: theme.text,
-                borderColor: theme.primary,
-                borderWidth: 1
-            }
-        },
-        scales: {
-            x: {
-                grid: { color: `rgba(${theme.primaryRgb}, 0.1)` },
-                ticks: { color: theme.text, font: { family: 'Courier New', size: 10 } }
-            },
-            y: {
-                beginAtZero: true,
-                grid: { color: `rgba(${theme.primaryRgb}, 0.1)` },
-                ticks: { color: theme.text, font: { family: 'Courier New' } }
-            }
-        }
-    }), [theme]);
 
-    // Opciones visuales del gráfico de tarta, ajustadas al tema de color actual.
-    const doughnutOptions = useMemo(() => ({
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'right',
-                labels: {
-                    color: theme.text,
-                    font: { family: 'Courier New', size: 10 },
-                    boxWidth: 12
-                }
-            },
-            tooltip: {
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                titleColor: theme.primary,
-                bodyColor: theme.text,
-                borderColor: theme.primary,
-                borderWidth: 1
-            }
-        }
-    }), [theme]);
 
     const hasData = data && (data.general || (data.top_questions && data.top_questions.length > 0) || (data.timeline_daily && data.timeline_daily.length > 0));
 
@@ -145,20 +82,20 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
                         {t('dashboard.chatAnalytics.waitingForQuestions')}
                     </div>
                 )}
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    <button className={`dash-tab${activeTab === 'overview' ? ' dash-tab--active' : ''}`} onClick={() => setActiveTab('overview')}>
-                        {t('dashboard.chatAnalytics.tabOverview')}
-                    </button>
-                    <button className={`dash-tab${activeTab === 'questions' ? ' dash-tab--active' : ''}`} onClick={() => setActiveTab('questions')}>
-                        {t('dashboard.chatAnalytics.tabQuestions')}
-                    </button>
-                    <button className={`dash-tab${activeTab === 'timeline' ? ' dash-tab--active' : ''}`} onClick={() => setActiveTab('timeline')}>
-                        {t('dashboard.chatAnalytics.tabTimeline')}
-                    </button>
-                    <button className={`dash-tab${activeTab === 'countries' ? ' dash-tab--active' : ''}`} onClick={() => setActiveTab('countries')}>
-                        {t('dashboard.chatAnalytics.tabCountries')}
-                    </button>
-                </div>
+                <TabBar
+                    style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}
+                    tabClassName="dash-tab"
+                    activeClassName="dash-tab--active"
+                    ariaLabel={t('dashboard.chatAnalytics.title')}
+                    active={activeTab}
+                    onChange={setActiveTab}
+                    tabs={[
+                        { key: 'overview', label: t('dashboard.chatAnalytics.tabOverview') },
+                        { key: 'questions', label: t('dashboard.chatAnalytics.tabQuestions') },
+                        { key: 'timeline', label: t('dashboard.chatAnalytics.tabTimeline') },
+                        { key: 'countries', label: t('dashboard.chatAnalytics.tabCountries') },
+                    ]}
+                />
 
                 <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
                     {activeTab === 'overview' && (

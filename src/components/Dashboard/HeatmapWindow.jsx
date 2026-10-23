@@ -5,30 +5,14 @@
 import { memo, useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    ArcElement,
-    Title,
-    Tooltip,
-    Legend
-} from 'chart.js';
+import '../../charts/register';
+import useChartTheme from '../../hooks/useChartTheme';
+import TabBar from '../UI/TabBar';
 import FloatingWindow from '../Windows/FloatingWindow';
 import { useTheme } from '../../context/ThemeContext';
 import { useHeatmapData } from '../../hooks/useHeatmapData';
 import '../../styles/dashboard-forms.css';
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    ArcElement,
-    Title,
-    Tooltip,
-    Legend
-);
 
 /** Render heatmap dots on a canvas using radial gradients. */
 // Dibuja a mano, sobre un canvas, los puntos de calor: más clics en una
@@ -118,6 +102,7 @@ function cleanWindowId(id) {
 const HeatmapWindow = memo(({ initialPosition }) => {
     const [activeTab, setActiveTab] = useState('heatmap');
     const { theme } = useTheme();
+    const { barOptions: timelineOptions, hBarOptions, doughnutOptions } = useChartTheme();
     const { t } = useTranslation();
     const { heatmapData, engagementStats, loading } = useHeatmapData();
     const canvasRef = useRef(null);
@@ -162,90 +147,30 @@ const HeatmapWindow = memo(({ initialPosition }) => {
         return () => observer.disconnect();
     }, [activeTab, drawHeatmap]);
 
-    // Chart.js configs
-    // Opciones del gráfico de barras horizontales (tiempo de atención por ventana).
+    // El gráfico horizontal conserva los formateadores de duración sobre la
+    // base visual compartida por todos los gráficos del panel.
     const barOptions = useMemo(() => ({
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
+        ...hBarOptions,
         plugins: {
-            legend: { display: false },
+            ...hBarOptions.plugins,
             tooltip: {
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                titleColor: theme.primary,
-                bodyColor: theme.text,
-                borderColor: theme.primary,
-                borderWidth: 1,
-                callbacks: {
-                    label: (ctx) => formatDuration(ctx.raw),
-                },
-            }
+                ...hBarOptions.plugins.tooltip,
+                callbacks: { label: ctx => formatDuration(ctx.raw) },
+            },
         },
         scales: {
+            ...hBarOptions.scales,
             x: {
-                grid: { color: `rgba(${theme.primaryRgb}, 0.1)` },
+                ...hBarOptions.scales.x,
                 ticks: {
-                    color: theme.text,
-                    font: { family: 'Courier New', size: 10 },
-                    callback: (v) => formatDuration(v),
+                    ...hBarOptions.scales.x.ticks,
+                    callback: value => formatDuration(value),
                 },
             },
-            y: {
-                grid: { display: false },
-                ticks: { color: theme.text, font: { family: 'Courier New', size: 10 } },
-            }
-        }
-    }), [theme]);
-
-    // Opciones del gráfico de tarta (distribución de clics).
-    const doughnutOptions = useMemo(() => ({
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'right',
-                labels: {
-                    color: theme.text,
-                    font: { family: 'Courier New', size: 10 },
-                    boxWidth: 12,
-                },
-            },
-            tooltip: {
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                titleColor: theme.primary,
-                bodyColor: theme.text,
-                borderColor: theme.primary,
-                borderWidth: 1,
-            }
-        }
-    }), [theme]);
-
-    // Opciones del gráfico de barras de sesiones por día.
-    const timelineOptions = useMemo(() => ({
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                titleColor: theme.primary,
-                bodyColor: theme.text,
-                borderColor: theme.primary,
-                borderWidth: 1,
-            }
         },
-        scales: {
-            x: {
-                grid: { color: `rgba(${theme.primaryRgb}, 0.1)` },
-                ticks: { color: theme.text, font: { family: 'Courier New', size: 10 } },
-            },
-            y: {
-                beginAtZero: true,
-                grid: { color: `rgba(${theme.primaryRgb}, 0.1)` },
-                ticks: { color: theme.text, font: { family: 'Courier New' } },
-            }
-        }
-    }), [theme]);
+    }), [hBarOptions]);
+
+
 
     // Chart data
     // Prepara los datos del gráfico de tiempo de atención por ventana (top 10).
@@ -319,26 +244,19 @@ const HeatmapWindow = memo(({ initialPosition }) => {
                     </div>
                 )}
 
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    <button
-                        className={`dash-tab${activeTab === 'heatmap' ? ' dash-tab--active' : ''}`}
-                        onClick={() => setActiveTab('heatmap')}
-                    >
-                        {t('dashboard.heatmap.tabHeatmap')}
-                    </button>
-                    <button
-                        className={`dash-tab${activeTab === 'engagement' ? ' dash-tab--active' : ''}`}
-                        onClick={() => setActiveTab('engagement')}
-                    >
-                        {t('dashboard.heatmap.tabEngagement')}
-                    </button>
-                    <button
-                        className={`dash-tab${activeTab === 'timeline' ? ' dash-tab--active' : ''}`}
-                        onClick={() => setActiveTab('timeline')}
-                    >
-                        {t('dashboard.heatmap.tabTimeline')}
-                    </button>
-                </div>
+                <TabBar
+                    style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}
+                    tabClassName="dash-tab"
+                    activeClassName="dash-tab--active"
+                    ariaLabel={t('dashboard.heatmap.title')}
+                    active={activeTab}
+                    onChange={setActiveTab}
+                    tabs={[
+                        { key: 'heatmap', label: t('dashboard.heatmap.tabHeatmap') },
+                        { key: 'engagement', label: t('dashboard.heatmap.tabEngagement') },
+                        { key: 'timeline', label: t('dashboard.heatmap.tabTimeline') },
+                    ]}
+                />
 
                 <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
                     {activeTab === 'heatmap' && (

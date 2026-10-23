@@ -6,22 +6,13 @@
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    ArcElement,
-    Title,
-    Tooltip,
-    Legend,
-} from 'chart.js';
+import '../../charts/register';
+import useChartTheme from '../../hooks/useChartTheme';
 import { useTheme } from '../../context/ThemeContext';
 import { JOB_SOURCES } from '../../config/jobSources';
 import TabBar from '../UI/TabBar';
 import FloatingWindow from '../Windows/FloatingWindow';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
 const SALARY_BUCKETS = [
     { label: '<50k', min: 0, max: 50000 },
@@ -55,6 +46,7 @@ const TAB_I18N_KEY = {
 const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
+    const { barOptions: chartOptions, doughnutOptions } = useChartTheme();
     const [section, setSection] = useState('market');
     const [marketTab, setMarketTab] = useState('skills');
     const [salaryTab, setSalaryTab] = useState('ranges');
@@ -218,30 +210,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
         };
     }, [jobsWithSalary, theme, t]);
 
-    // --- Shared chart options ---
-    // Opciones visuales comunes para los gráficos de barras, según el tema actual.
-    const chartOptions = useMemo(() => ({
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', titleColor: theme.primary, bodyColor: theme.text },
-        },
-        scales: {
-            x: { grid: { color: `rgba(${theme.primaryRgb}, 0.1)` }, ticks: { color: theme.text, font: { family: 'Courier New', size: 10 } } },
-            y: { beginAtZero: true, grid: { color: `rgba(${theme.primaryRgb}, 0.1)` }, ticks: { color: theme.text, font: { family: 'Courier New', size: 10 } } },
-        },
-    }), [theme]);
 
-    // Opciones visuales para el gráfico de tarta.
-    const doughnutOptions = useMemo(() => ({
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { position: 'right', labels: { color: theme.text, font: { family: 'Courier New', size: 11 }, boxWidth: 14 } },
-            tooltip: { backgroundColor: 'rgba(0,0,0,0.8)' },
-        },
-    }), [theme]);
 
     if (allJobs.length === 0) {
         return (
