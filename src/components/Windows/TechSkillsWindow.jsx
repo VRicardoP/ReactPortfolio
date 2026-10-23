@@ -2,7 +2,7 @@
 // categoría (frontend, backend, bases de datos...) como barras de progreso
 // que se rellenan con una pequeña animación al abrir la ventana.
 
-import { useRef, useEffect, useState, memo } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 import { WINDOW_SIZES } from '../../config/windowSizes';
@@ -43,7 +43,6 @@ BarsView.displayName = 'BarsView';
 const TechSkillsWindow = memo(({ data, initialPosition }) => {
     const { t } = useTranslation();
     const [animated, setAnimated] = useState(false);
-    const contentRef = useRef(null);
 
     // Espera a que la ventana esté dibujada para empezar la animación de
     // las barras, así se ve cómo se rellenan en vez de aparecer ya llenas.
@@ -61,7 +60,7 @@ const TechSkillsWindow = memo(({ data, initialPosition }) => {
             initialPosition={initialPosition}
             initialSize={WINDOW_SIZES.techSkills}
         >
-            <div className="tech-skills-content" ref={contentRef}>
+            <div className="tech-skills-content">
                 <BarsView data={data} animated={animated} t={t} />
             </div>
         </FloatingWindow>

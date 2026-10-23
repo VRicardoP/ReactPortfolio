@@ -22,7 +22,6 @@ const FloatingWindowDesktop = ({
 }) => {
     const { t } = useTranslation();
     const windowRef = useRef(null);
-    const contentRef = useRef(null);
     const {
         windows,
         activeWindowId,
@@ -56,14 +55,7 @@ const FloatingWindowDesktop = ({
     // stable callback references to prevent re-renders from killing drag/resize listeners
     const handlePositionChange = useCallback((pos) => updatePosition(id, pos), [id, updatePosition]);
     const handleSizeChange = useCallback((size) => updateSize(id, size), [id, updateSize]);
-    // DT-137: commented because the pointer event bubbles to the window's
-    // `onPointerDown`, which now performs the single canonical bringToFront.
-    // const handleBringToFront = useCallback(() => bringToFront(id), [id, bringToFront]);
-
     // this allows dragging and resizing the window
-    // DT-137: previous mouse-only binding preserved; Pointer Events provide
-    // capture and keep movement on the header without document listeners.
-    // const { handleMouseDown: handleDragStart } = useDraggable(
     const {
         handlePointerDown: handleDragStart,
         handlePointerMove: handleDragMove,
@@ -72,7 +64,6 @@ const FloatingWindowDesktop = ({
         handleLostPointerCapture: handleDragCaptureLost
     } = useDraggable(
         windowRef,
-        windowState?.isMinimized,
         windowState?.isMaximized,
         handlePositionChange
     );
@@ -215,7 +206,7 @@ const FloatingWindowDesktop = ({
                 chat, el Kanban volvía a pedir sus datos y el mapa se
                 reconstruía. Leaflet y el mapa de calor recuperan su tamaño al
                 volver a mostrarse porque ambos observan su contenedor. */}
-            <div className="window-content" ref={contentRef}>
+            <div className="window-content">
                 {children}
             </div>
 

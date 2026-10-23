@@ -258,9 +258,7 @@ export const WindowProvider = ({ children }) => {
         toggleMaximize,
         fitToContent,
         updatePosition,
-        updateSize,
-        getWindowTitle,
-        showWindowToast
+        updateSize
     }), [
         windows,
         activeWindowId,
@@ -271,9 +269,7 @@ export const WindowProvider = ({ children }) => {
         toggleMaximize,
         fitToContent,
         updatePosition,
-        updateSize,
-        getWindowTitle,
-        showWindowToast
+        updateSize
     ]);
 
     return (

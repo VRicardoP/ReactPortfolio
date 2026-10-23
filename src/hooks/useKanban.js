@@ -276,7 +276,6 @@ const useKanban = () => {
         setAddingTo,
         newApp,
         grouped,
-        fetchApplications,
         handleDragStart,
         handleDragOver,
         handleDrop,

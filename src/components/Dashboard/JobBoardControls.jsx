@@ -1,17 +1,17 @@
 // Barra de controles que comparten los tableros de ofertas: el selector de
-// orden, cuántas ofertas se están mostrando, la edad de la caché, y los
+// orden, cuántas ofertas se están mostrando y los
 // botones de página anterior/siguiente.
 
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Pager from '../UI/Pager';
 
-const JobBoardControls = memo(({ sortBy, onSortChange, page, totalPages, from, to, total, onPageChange, cacheAge }) => {
+const JobBoardControls = memo(({ sortBy, onSortChange, page, totalPages, from, to, total, onPageChange }) => {
     const { t } = useTranslation();
 
     return (
         <>
-            {/* Sort + cache age row */}
+            {/* Sort + result count row */}
             <div className="jobboard-controls">
                 <select
                     value={sortBy}
@@ -28,11 +28,6 @@ const JobBoardControls = memo(({ sortBy, onSortChange, page, totalPages, from, t
                     {t('dashboard.jobBoard.showing', { from, to, total })}
                 </span>
 
-                {cacheAge && (
-                    <span className="jobboard-cache-badge">
-                        {cacheAge}
-                    </span>
-                )}
             </div>
 
             <Pager

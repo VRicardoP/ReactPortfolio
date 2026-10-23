@@ -75,7 +75,7 @@ describe('useDraggable', () => {
 
   it('returns the complete Pointer Events contract', () => {
     const { result } = renderHook(() =>
-      useDraggable(makeWindowRef(), false, false, onPositionChange)
+      useDraggable(makeWindowRef(), false, onPositionChange)
     )
 
     expect(result.current).toEqual({
@@ -93,7 +93,7 @@ describe('useDraggable', () => {
   ])('ignores %s', (_label, isMaximized, eventOptions) => {
     const windowRef = makeWindowRef()
     const { result } = renderHook(() =>
-      useDraggable(windowRef, false, isMaximized, onPositionChange)
+      useDraggable(windowRef, isMaximized, onPositionChange)
     )
 
     act(() => result.current.handlePointerDown(makePointerEvent(eventOptions)))
@@ -106,7 +106,7 @@ describe('useDraggable', () => {
     const control = document.createElement('span')
     control.className = 'control-btn'
     const { result } = renderHook(() =>
-      useDraggable(windowRef, false, false, onPositionChange)
+      useDraggable(windowRef, false, onPositionChange)
     )
 
     act(() => result.current.handlePointerDown(makePointerEvent({ target: control })))
@@ -119,7 +119,7 @@ describe('useDraggable', () => {
     const captureTarget = makeCaptureTarget()
     const event = makePointerEvent({ currentTarget: captureTarget })
     const { result } = renderHook(() =>
-      useDraggable(windowRef, false, false, onPositionChange)
+      useDraggable(windowRef, false, onPositionChange)
     )
 
     act(() => result.current.handlePointerDown(event))
@@ -136,7 +136,7 @@ describe('useDraggable', () => {
     const windowRef = makeWindowRef()
     const captureTarget = makeCaptureTarget()
     const { result } = renderHook(() =>
-      useDraggable(windowRef, false, false, onPositionChange)
+      useDraggable(windowRef, false, onPositionChange)
     )
 
     act(() => result.current.handlePointerDown(makePointerEvent({ currentTarget: captureTarget })))
@@ -161,7 +161,7 @@ describe('useDraggable', () => {
     const windowRef = makeWindowRef()
     const captureTarget = makeCaptureTarget()
     const { result } = renderHook(() =>
-      useDraggable(windowRef, false, false, onPositionChange)
+      useDraggable(windowRef, false, onPositionChange)
     )
 
     act(() => result.current.handlePointerDown(makePointerEvent({ currentTarget: captureTarget })))
@@ -192,7 +192,7 @@ describe('useDraggable', () => {
     const windowRef = makeWindowRef()
     const captureTarget = makeCaptureTarget()
     const { result } = renderHook(() =>
-      useDraggable(windowRef, false, false, onPositionChange)
+      useDraggable(windowRef, false, onPositionChange)
     )
 
     act(() => result.current.handlePointerDown(makePointerEvent({ currentTarget: captureTarget })))
@@ -212,7 +212,7 @@ describe('useDraggable', () => {
     const windowRef = makeWindowRef()
     const captureTarget = makeCaptureTarget()
     const { result } = renderHook(() =>
-      useDraggable(windowRef, false, false, onPositionChange)
+      useDraggable(windowRef, false, onPositionChange)
     )
 
     act(() => result.current.handlePointerDown(makePointerEvent({ currentTarget: captureTarget })))
@@ -227,7 +227,7 @@ describe('useDraggable', () => {
   it('ignores events from a different pointer', () => {
     const windowRef = makeWindowRef()
     const { result } = renderHook(() =>
-      useDraggable(windowRef, false, false, onPositionChange)
+      useDraggable(windowRef, false, onPositionChange)
     )
 
     act(() => result.current.handlePointerDown(makePointerEvent()))
@@ -242,7 +242,7 @@ describe('useDraggable', () => {
     const windowRef = makeWindowRef()
     const captureTarget = makeCaptureTarget()
     const { result } = renderHook(() =>
-      useDraggable(windowRef, false, false, onPositionChange)
+      useDraggable(windowRef, false, onPositionChange)
     )
 
     act(() => result.current.handlePointerDown(makePointerEvent({ currentTarget: captureTarget })))
@@ -258,7 +258,7 @@ describe('useDraggable', () => {
     const windowRef = makeWindowRef()
     const captureTarget = makeCaptureTarget()
     const { result } = renderHook(() =>
-      useDraggable(windowRef, false, false, onPositionChange)
+      useDraggable(windowRef, false, onPositionChange)
     )
 
     act(() => result.current.handlePointerDown(makePointerEvent({ currentTarget: captureTarget })))
@@ -270,7 +270,7 @@ describe('useDraggable', () => {
   it('cancels a pending frame and clears drag styles on unmount', () => {
     const windowRef = makeWindowRef()
     const { result, unmount } = renderHook(() =>
-      useDraggable(windowRef, false, false, onPositionChange)
+      useDraggable(windowRef, false, onPositionChange)
     )
 
     act(() => result.current.handlePointerDown(makePointerEvent()))
@@ -285,17 +285,3 @@ describe('useDraggable', () => {
     expect(windowRef.current.style.transformOrigin).toBe('')
   })
 })
-
-/* DT-137: contrato anterior conservado como referencia. Estas llamadas se
-   comentan porque el hook activo ya no registra listeners globales ni escribe
-   posición en cada evento; las pruebas superiores validan captura y rAF.
-
-const { handleMouseDown } = useDraggable(
-  windowRef, false, false, onPositionChange, onBringToFront
-)
-handleMouseDown(new MouseEvent('mousedown'))
-document.dispatchEvent(new MouseEvent('mousemove'))
-document.dispatchEvent(new MouseEvent('mouseup'))
-expect(removedEvents).toContain('mousemove')
-expect(removedEvents).toContain('mouseup')
-*/

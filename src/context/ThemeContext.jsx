@@ -14,8 +14,6 @@ const themes = {
         primaryRgb: '0, 255, 255',
         secondary: '#D3D3D3',
         background: 'rgba(0, 0, 0, 0.95)',
-        backgroundLight: 'rgba(0, 255, 255, 0.05)',
-        backgroundMedium: 'rgba(0, 255, 255, 0.1)',
         border: 'rgba(0, 255, 255, 0.3)',
         borderLight: 'rgba(0, 255, 255, 0.2)',
         text: '#D3D3D3',
@@ -37,8 +35,6 @@ const themes = {
         primaryRgb: '160, 160, 160',
         secondary: '#e0e0e0',
         background: 'rgba(20, 20, 25, 0.95)',
-        backgroundLight: 'rgba(160, 160, 160, 0.05)',
-        backgroundMedium: 'rgba(160, 160, 160, 0.1)',
         border: 'rgba(160, 160, 160, 0.3)',
         borderLight: 'rgba(160, 160, 160, 0.2)',
         text: '#e0e0e0',
@@ -60,8 +56,6 @@ const themes = {
         primaryRgb: '212, 165, 116',
         secondary: '#e8d5c4',
         background: 'rgba(15, 10, 5, 0.95)',
-        backgroundLight: 'rgba(212, 165, 116, 0.05)',
-        backgroundMedium: 'rgba(212, 165, 116, 0.1)',
         border: 'rgba(212, 165, 116, 0.3)',
         borderLight: 'rgba(212, 165, 116, 0.2)',
         text: '#e8d5c4',
@@ -165,8 +159,6 @@ export const ThemeProvider = ({ children }) => {
         root.style.setProperty('--theme-success', theme.success);
         root.style.setProperty('--theme-error', theme.error);
         root.style.setProperty('--theme-warning', theme.warning);
-        root.style.setProperty('--theme-background-light', theme.backgroundLight);
-        root.style.setProperty('--theme-background-medium', theme.backgroundMedium);
         Object.entries(themedCursors(theme.primary)).forEach(([name, value]) => {
             root.style.setProperty(name, value);
         });

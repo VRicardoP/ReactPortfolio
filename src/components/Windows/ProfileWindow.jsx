@@ -133,7 +133,7 @@ const ProfileWindow = ({ data, initialPosition }) => {
                 {recruiterMode ? (
                     <div className="recruiter-view">
                         {RECRUITER_SECTIONS.map(({ labelKey, itemKeys }) => (
-                            <div key={labelKey} className="recruiter-section">
+                            <div key={labelKey}>
                                 <div className="recruiter-section-title">{t(labelKey)}</div>
                                 <ul className="recruiter-list">
                                     {itemKeys.map((key) => (

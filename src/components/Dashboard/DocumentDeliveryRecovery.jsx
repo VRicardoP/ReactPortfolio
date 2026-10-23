@@ -13,7 +13,7 @@ export default function DocumentDeliveryRecovery({ onDelivered, clearOperation }
         clearOperation,
     );
     return (
-        <section className="document-delivery-recovery" aria-busy={busy}>
+        <section aria-busy={busy}>
             <button type="button" className="cv-gen-btn" disabled={busy} onClick={refresh}>
                 {t('dashboard.cvGeneration.pendingDeliveries')}
             </button>

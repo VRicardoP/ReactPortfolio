@@ -100,7 +100,7 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
                         ...tab,
                         label: (
                             <>
-                                <span className="job-tab-label">
+                                <span>
                                     {t(`dashboard.jobBoard.tab${tab.key.charAt(0).toUpperCase() + tab.key.slice(1)}`)}
                                 </span>
                                 {sourceCounts[tab.key] > 0 && (

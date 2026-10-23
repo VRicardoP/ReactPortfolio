@@ -477,3 +477,14 @@
   white-space: nowrap;
   cursor: var(--cursor-help, help);
 }
+.nav-button--primary {
+  background: var(--theme-primary);
+  color: var(--theme-background);
+  border: 1px solid var(--theme-primary);
+}
+
+.nav-button--outline {
+  background: transparent;
+  color: var(--theme-primary);
+  border: 1px solid var(--theme-primary);
+}

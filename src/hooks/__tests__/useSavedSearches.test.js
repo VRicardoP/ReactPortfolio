@@ -215,9 +215,6 @@ describe('useSavedSearches', () => {
       result.current.handleFormChange('remoteOnly', true)
     })
 
-    // Check autoName value
-    expect(result.current.autoName()).toBe('python | DE | Remote')
-
     // Mock create POST + re-fetch
     mockAuthenticatedFetch
       .mockResolvedValueOnce(makeMockResponse({ id: 2 }))
@@ -232,26 +229,38 @@ describe('useSavedSearches', () => {
     expect(body.name).toBe('python | DE | Remote')
   })
 
-  it('auto-name includes salary range', () => {
-    // Hang the initial fetch
-    mockAuthenticatedFetch.mockReturnValue(new Promise(() => {}))
+  it('auto-name includes salary range', async () => {
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse([]))
 
     const { result } = renderHook(() => useSavedSearches())
+    await waitFor(() => expect(result.current.loading).toBe(false))
 
     act(() => {
       result.current.handleFormChange('salaryMin', '50000')
       result.current.handleFormChange('salaryMax', '80000')
     })
 
-    expect(result.current.autoName()).toBe('$50000-80000')
+    mockAuthenticatedFetch
+      .mockResolvedValueOnce(makeMockResponse({ id: 2 }))
+      .mockResolvedValueOnce(makeMockResponse([]))
+    await act(async () => { await result.current.handleCreate() })
+
+    const body = JSON.parse(mockAuthenticatedFetch.mock.calls[1][1].body)
+    expect(body.name).toBe('$50000-80000')
   })
 
-  it('auto-name falls back to "Search" when no filters', () => {
-    mockAuthenticatedFetch.mockReturnValue(new Promise(() => {}))
+  it('auto-name falls back to "Search" when no filters', async () => {
+    mockAuthenticatedFetch.mockResolvedValueOnce(makeMockResponse([]))
 
     const { result } = renderHook(() => useSavedSearches())
+    await waitFor(() => expect(result.current.loading).toBe(false))
+    mockAuthenticatedFetch
+      .mockResolvedValueOnce(makeMockResponse({ id: 2 }))
+      .mockResolvedValueOnce(makeMockResponse([]))
+    await act(async () => { await result.current.handleCreate() })
 
-    expect(result.current.autoName()).toBe('Search')
+    const body = JSON.parse(mockAuthenticatedFetch.mock.calls[1][1].body)
+    expect(body.name).toBe('Search')
   })
 
   // --- 6. Delete a saved search ---

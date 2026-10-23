@@ -199,25 +199,15 @@ const DashboardPage = () => {
                 <div className="dashboard-nav">
                     <button
                         onClick={cycleTheme}
-                        className="nav-button theme-button"
+                        className="nav-button nav-button--primary"
                         title={`${t('dashboard.theme')}: ${theme.name}`}
-                        style={{
-                            backgroundColor: theme.primary,
-                            color: '#000',
-                            border: `1px solid ${theme.primary}`
-                        }}
                     >
                         {t('dashboard.theme')}
                     </button>
                     <button
                         onClick={cycleBackground}
-                        className="nav-button theme-button"
+                        className="nav-button nav-button--outline"
                         title={`${t(`dashboard.${bgKey}`)}`}
-                        style={{
-                            backgroundColor: 'transparent',
-                            color: theme.primary,
-                            border: `1px solid ${theme.primary}`
-                        }}
                     >
                         {t(`dashboard.${bgKey}`)}
                     </button>
