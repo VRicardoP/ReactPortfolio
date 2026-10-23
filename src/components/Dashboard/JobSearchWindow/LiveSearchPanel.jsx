@@ -4,6 +4,7 @@
 
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import JobCard from '../JobCard';
 
 // Live JSearch tab — real-time job search with cooldown (formerly JSearchLiveWindow).
 // Purely presentational: all state/logic lives in the useJSearchLive hook, passed in as `live`.
@@ -104,73 +105,21 @@ const LiveSearchPanel = memo(({ live }) => {
                         {t('dashboard.jsearchLive.noResults')}
                     </div>
                 )}
-
                 {results.map((job, idx) => {
-                    const jobTitle = job.job_title || job.title;
-                    const employerName = job.employer_name || job.employer;
-                    const employerLogo = job.employer_logo;
-                    const isRemote = job.job_is_remote ?? job.is_remote;
-                    const city = job.job_city || job.city;
-                    const country = job.job_country || job.country;
-                    const empType = job.job_employment_type || job.employment_type;
-                    const publisher = job.job_publisher || job.publisher;
                     const applyLink = job.job_apply_link || job.apply_link;
-                    const salary = formatSalary(job);
-
                     return (
-                        <div key={job.job_id || idx} className="jobboard-card jsearch-card">
-                            <div className="jobboard-card-header">
-                                <div className="jsearch-title-row">
-                                    {employerLogo && (
-                                        <img
-                                            src={employerLogo}
-                                            alt={employerName}
-                                            className="jsearch-logo"
-                                            onError={(e) => { e.target.style.display = 'none'; }}
-                                        />
-                                    )}
-                                    <h3 className="jobboard-title">{jobTitle}</h3>
-                                </div>
-                                <span className={`jobboard-type ${isRemote ? 'jsearch-remote' : 'jsearch-onsite'}`}>
-                                    {isRemote ? t('dashboard.jobBoard.remote') : t('dashboard.jobBoard.onsite')}
-                                </span>
-                            </div>
-
-                            <div className="jobboard-company">{employerName}</div>
-
-                            <div className="jobboard-meta">
-                                <span className="jobboard-country">
-                                    {city}{country ? ` (${country})` : ''}
-                                </span>
-                                {empType && <span className="jobboard-industry">{empType}</span>}
-                            </div>
-
-                            {salary && (
-                                <div className="jsearch-salary">{salary}</div>
+                        <JobCard
+                            key={job.job_id || idx}
+                            job={job}
+                            variant="live"
+                            formatSalary={formatSalary}
+                            actions={applyLink && (
+                                <a href={applyLink} target="_blank" rel="noopener noreferrer"
+                                    className="jobboard-apply-btn jsearch-apply">
+                                    {t('dashboard.jobBoard.apply')}
+                                </a>
                             )}
-
-                            {publisher && (
-                                <div className="jsearch-source">
-                                    <span className="jsearch-source-tag">{publisher}</span>
-                                </div>
-                            )}
-
-                            <div className="jobboard-card-footer">
-                                <span className="jobboard-date">
-                                    {job.job_posted_at || job.posted_at || t('dashboard.jobBoard.recently')}
-                                </span>
-                                {applyLink && (
-                                    <a
-                                        href={applyLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="jobboard-apply-btn jsearch-apply"
-                                    >
-                                        {t('dashboard.jobBoard.apply')}
-                                    </a>
-                                )}
-                            </div>
-                        </div>
+                        />
                     );
                 })}
             </div>

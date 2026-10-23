@@ -20,6 +20,40 @@ const JobCard = memo(({
 }) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
+    if (variant === 'live') {
+        const title = job.job_title || job.title;
+        const company = job.employer_name || job.employer;
+        const remote = job.job_is_remote ?? job.is_remote;
+        const city = job.job_city || job.city;
+        const country = job.job_country || job.country;
+        const employmentType = job.job_employment_type || job.employment_type;
+        const publisher = job.job_publisher || job.publisher;
+        const salary = formatSalary(job);
+        return (
+            <article className="jobboard-card jsearch-card">
+                <div className="jobboard-card-header">
+                    <div className="jsearch-title-row">
+                        {job.employer_logo && <img src={job.employer_logo} alt={company} className="jsearch-logo" onError={event => { event.currentTarget.style.display = 'none'; }} />}
+                        <h3 className="jobboard-title">{title}</h3>
+                    </div>
+                    <span className={`jobboard-type ${remote ? 'jsearch-remote' : 'jsearch-onsite'}`}>
+                        {remote ? t('dashboard.jobBoard.remote') : t('dashboard.jobBoard.onsite')}
+                    </span>
+                </div>
+                <div className="jobboard-company">{company}</div>
+                <div className="jobboard-meta">
+                    <span className="jobboard-country">{city}{country ? ` (${country})` : ''}</span>
+                    {employmentType && <span className="jobboard-industry">{employmentType}</span>}
+                </div>
+                {salary && <div className="jsearch-salary">{salary}</div>}
+                {publisher && <div className="jsearch-source"><span className="jsearch-source-tag">{publisher}</span></div>}
+                <div className="jobboard-card-footer">
+                    <span className="jobboard-date">{job.job_posted_at || job.posted_at || t('dashboard.jobBoard.recently')}</span>
+                    {actions}
+                </div>
+            </article>
+        );
+    }
     if (variant === 'filter') {
         return (
             <article style={{ padding: '8px 10px', border: `1px solid ${theme.borderLight}`, borderRadius: '4px', background: 'rgba(255,255,255,0.02)' }}>

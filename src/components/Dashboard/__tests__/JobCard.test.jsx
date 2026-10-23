@@ -39,4 +39,15 @@ describe('JobCard', () => {
         );
         expect(container.firstChild).toMatchSnapshot();
     });
+    it('preserva la estructura de la variante live', () => {
+        const { container } = render(
+            <JobCard
+                job={{ ...job, job_title: 'Live', employer_name: 'Live Co', job_is_remote: true, job_city: 'Zürich', job_country: 'CH', job_publisher: 'JSearch' }}
+                variant="live"
+                formatSalary={() => 'CHF 100000'}
+                actions={<a href="https://example.test/job">Apply</a>}
+            />
+        );
+        expect(container.firstChild).toMatchSnapshot();
+    });
 });

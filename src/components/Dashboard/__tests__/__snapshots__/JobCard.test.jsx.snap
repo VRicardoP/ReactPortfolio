@@ -139,3 +139,71 @@ exports[`JobCard > preserva la estructura de la variante filter 1`] = `
   </div>
 </article>
 `;
+
+exports[`JobCard > preserva la estructura de la variante live 1`] = `
+<article
+  class="jobboard-card jsearch-card"
+>
+  <div
+    class="jobboard-card-header"
+  >
+    <div
+      class="jsearch-title-row"
+    >
+      <h3
+        class="jobboard-title"
+      >
+        Live
+      </h3>
+    </div>
+    <span
+      class="jobboard-type jsearch-remote"
+    >
+      dashboard.jobBoard.remote
+    </span>
+  </div>
+  <div
+    class="jobboard-company"
+  >
+    Live Co
+  </div>
+  <div
+    class="jobboard-meta"
+  >
+    <span
+      class="jobboard-country"
+    >
+      Zürich
+       (CH)
+    </span>
+  </div>
+  <div
+    class="jsearch-salary"
+  >
+    CHF 100000
+  </div>
+  <div
+    class="jsearch-source"
+  >
+    <span
+      class="jsearch-source-tag"
+    >
+      JSearch
+    </span>
+  </div>
+  <div
+    class="jobboard-card-footer"
+  >
+    <span
+      class="jobboard-date"
+    >
+      dashboard.jobBoard.recently
+    </span>
+    <a
+      href="https://example.test/job"
+    >
+      Apply
+    </a>
+  </div>
+</article>
+`;
