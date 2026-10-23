@@ -12,6 +12,7 @@ import {
   normalizeCoreJob,
   normalizeJob,
 } from '../config/jobSources';
+import useAuthenticatedQuery from './useAuthenticatedQuery';
 
 const SSE_REFETCH_DEBOUNCE_MS = 3000;
 
@@ -22,6 +23,18 @@ const CRITICAL_KEYS = ['stats', 'map', 'chat-analytics'];
 
 export const useDashboardData = () => {
   const { authenticatedFetch } = useAuth();
+  const { refetch: refetchStats } = useAuthenticatedQuery(
+    `${BACKEND_URL}/api/v1/analytics/stats?days=30`,
+    { enabled: false },
+  );
+  const { refetch: refetchMap } = useAuthenticatedQuery(
+    `${BACKEND_URL}/api/v1/analytics/map-data`,
+    { enabled: false },
+  );
+  const { refetch: refetchChatAnalytics } = useAuthenticatedQuery(
+    `${BACKEND_URL}/api/v1/analytics/chat/full-stats`,
+    { enabled: false },
+  );
   const [stats, setStats] = useState(null);
   const [mapData, setMapData] = useState(null);
   const [chatAnalytics, setChatAnalytics] = useState(null);
@@ -33,61 +46,38 @@ export const useDashboardData = () => {
   // Pide los datos más importantes del panel (estadísticas, mapa, chat) a la
   // vez; si alguno falla, lo apunta como aviso pero sigue con los demás.
   const fetchCritical = useCallback(async ({ silent = false } = {}) => {
-    // DT-95: el reset de `error` se hace siempre, incluso en silent. Antes solo
-    // se reseteaba si !silent → un error previo se quedaba "pegado" cuando el
-    // SSE disparaba un refetch exitoso.
+    // DT-95: el reset de `error` se hace siempre, incluso en silent.
     setError(null);
     if (!silent) setLoading(true);
+
+    const [statsData, mapDataPoints, chatAnalyticsJson] = await Promise.all([
+      refetchStats(),
+      refetchMap(),
+      refetchChatAnalytics(),
+    ]);
     const failedSources = [];
+    if (statsData === null) failedSources.push('stats');
+    if (mapDataPoints === null) failedSources.push('map');
+    if (chatAnalyticsJson === null) failedSources.push('chat-analytics');
 
-    const promises = [
-      authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/stats?days=30`)
-        .then(res => res.json())
-        .catch(() => { failedSources.push('stats'); return null; }),
-
-      authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/map-data`)
-        .then(res => res.json())
-        .catch(() => { failedSources.push('map'); return []; }),
-
-      // DT-187: aquí había un `res.ok ? … : …` inalcanzable.
-      // `authenticatedFetch` LANZA ante cualquier respuesta que no sea 2xx, así
-      // que a este `.then` solo llegan respuestas correctas y el caso de un 403
-      // (usuario sin permisos de administrador) cae en el `.catch`.
-      authenticatedFetch(`${BACKEND_URL}/api/v1/analytics/chat/full-stats`)
-        .then(res => res.json())
-        .catch(() => {
-          failedSources.push('chat-analytics');
-          return { general: null, top_questions: [], timeline_daily: [], by_country: [] };
-        }),
-    ];
-
-    try {
-      const [statsData, mapDataPoints, chatAnalyticsJson] = await Promise.all(promises);
-      setStats(statsData);
-      setMapData(mapDataPoints);
-      setChatAnalytics(chatAnalyticsJson);
-      // DT-187: `warnings` se ACUMULA. Antes se sobrescribía, así que cada
-      // refetch silencioso (los que dispara el canal de avisos en directo)
-      // borraba las fuentes de empleo que había anotado el bucle de fondo,
-      // aunque siguieran sin datos.
-      setWarnings(prev => [
-        ...prev.filter(k => !CRITICAL_KEYS.includes(k)),
-        ...failedSources,
-      ]);
-      // DT-187: si falla lo esencial, se enciende el error. Antes era
-      // IMPOSIBLE: cada promesa tenía su propio `.catch` devolviendo un valor
-      // de reserva, así que `Promise.all` no podía rechazar y este `catch`
-      // nunca se ejecutaba. Con el servidor caído, el panel se pintaba vacío
-      // en vez de mostrar la pantalla de error que ya existía.
-      if (failedSources.includes('stats')) {
-        setError('Failed to load dashboard data');
-      }
-    } catch (err) {
-      setError(err.message || 'Failed to load dashboard data');
-    } finally {
-      if (!silent) setLoading(false);
+    setStats(statsData);
+    setMapData(mapDataPoints ?? []);
+    setChatAnalytics(chatAnalyticsJson ?? {
+      general: null,
+      top_questions: [],
+      timeline_daily: [],
+      by_country: [],
+    });
+    // Conserva los avisos de las fuentes de empleo durante un refetch crítico.
+    setWarnings(prev => [
+      ...prev.filter(k => !CRITICAL_KEYS.includes(k)),
+      ...failedSources,
+    ]);
+    if (failedSources.includes('stats')) {
+      setError('Failed to load dashboard data');
     }
-  }, [authenticatedFetch]);
+    if (!silent) setLoading(false);
+  }, [refetchChatAnalytics, refetchMap, refetchStats]);
 
   // Al abrir el panel, pide primero lo importante, y luego va pidiendo las
   // ofertas de cada fuente de empleo en segundo plano, una por una.
