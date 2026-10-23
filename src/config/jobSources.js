@@ -1,16 +1,5 @@
-// Lista única con los datos de las 20 páginas de empleo de donde se
-// recogen ofertas (color, URL para pedirlas, y cómo convertir cada oferta
-// al mismo formato común). Cualquier ventana que muestre ofertas lee de
-// aquí, para no tener que repetir esta información en cada sitio.
-/**
- * Centralized job sources registry — single source of truth.
- * All job-related components import from here instead of defining their own lists.
- */
+// Registro único de las fuentes de empleo y su conversión al contrato común.
 
-// Relaciona el nombre de cada fuente con el nombre que usa el sistema
-// central ("Core") que las recoge en vivo; solo NAV se llama distinto ahí.
-// Sources whose live harvesting is authoritative in Core. The dashboard keeps
-// the established tab names; NAV is the only namespace that differs in Core.
 export const CORE_SOURCE_BY_KEY = Object.freeze({
   arbeitnow: 'arbeitnow',
   irishjobs: 'irishjobs',
@@ -23,382 +12,123 @@ export const CORE_SOURCE_BY_KEY = Object.freeze({
   zentraljob: 'zentraljob',
 });
 
-// Las 20 fuentes de empleo. Cada una tiene su color, (a veces) la URL
-// donde pedir sus ofertas, y una función `normalize` que convierte el
-// formato propio de esa página al formato común que usa toda la app
-// (título, empresa, ubicación, fecha, url, etiquetas, si es remoto...).
+const firstTruthy = (job, fields, fallback = '') => {
+  for (const field of fields) {
+    if (job[field]) return job[field];
+  }
+  return typeof fallback === 'function' ? fallback(job) : fallback;
+};
+
+const makeNormalizer = ({
+  key,
+  locationDefault = '',
+  alwaysRemote = false,
+  idFields = ['id'],
+  titleFields = ['title'],
+  companyFields = ['company'],
+  locationFields = ['location'],
+  dateFields = ['date'],
+  urlFields = ['url'],
+  tagFields = ['tags'],
+  employmentTypeFields = ['employment_type'],
+  employmentType,
+  remoteFields = ['remote'],
+  salaryFields = {
+    min: ['salary_min', 'job_min_salary', 'min_salary'],
+    max: ['salary_max', 'job_max_salary', 'max_salary'],
+  },
+  remoteValue,
+  publisherFields = ['job_publisher', 'publisher'],
+}) => (job) => {
+  const rawId = firstTruthy(job, idFields);
+  const remote = alwaysRemote || (remoteValue
+    ? remoteValue(job)
+    : remoteFields.some(field => job[field] === true));
+  return {
+    id: rawId
+      ? `${key}-${rawId}`
+      : `${key}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    title: firstTruthy(job, titleFields),
+    company: firstTruthy(job, companyFields),
+    location: firstTruthy(job, locationFields, locationDefault),
+    date: firstTruthy(job, dateFields),
+    url: firstTruthy(job, urlFields),
+    tags: firstTruthy(job, tagFields, []),
+    remote,
+    source: key,
+    employmentType: employmentType
+      ? employmentType(job)
+      : firstTruthy(job, employmentTypeFields),
+    salaryMin: firstTruthy(job, salaryFields.min, null),
+    salaryMax: firstTruthy(job, salaryFields.max, null),
+    publisher: firstTruthy(job, publisherFields),
+  };
+};
+
+const source = (key, color, options = {}, urlPath) => ({
+  key,
+  color,
+  ...(urlPath ? { urlPath } : {}),
+  normalize: makeNormalizer({ key, ...options }),
+});
+
 export const JOB_SOURCES = [
-  {
-    key: 'jobicy',
-    color: '#00e5ff',
-    urlPath: '/api/v1/jobicy-jobs/recent',
-    skillsField: 'skills',
-    alwaysRemote: true,
-    normalize: (job) => ({
-      id: job.id ? `jobicy-${job.id}` : `jobicy-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.country || '',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.skills || [],
-      remote: true,
-      source: 'jobicy',
-      employmentType: job.type || '',
-    }),
-  },
-  {
-    key: 'remotive',
-    color: '#ab47bc',
-    skillsField: 'tags',
-    alwaysRemote: true,
-    normalize: (job) => ({
-      id: job.id ? `remotive-${job.id}` : `remotive-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Worldwide',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: true,
-      source: 'remotive',
-      employmentType: job.job_type || '',
-    }),
-  },
-  {
-    key: 'arbeitnow',
-    color: '#ff9800',
-    skillsField: 'tags',
-    alwaysRemote: false,
-    normalize: (job) => ({
-      id: (job.slug || job.id) ? `arbeitnow-${job.slug || job.id}` : `arbeitnow-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || '',
-      date: job.created_at || job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: job.remote === true,
-      source: 'arbeitnow',
-      employmentType: (job.job_types || []).join(', '),
-    }),
-  },
-  {
-    key: 'jsearch',
-    color: '#2196f3',
-    urlPath: '/api/v1/jsearch-jobs/recent',
-    skillsField: null, // JSearch has no skills field
-    alwaysRemote: false,
-    normalize: (job) => ({
-      id: (job.job_id || job.id) ? `jsearch-${job.job_id || job.id}` : `jsearch-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.job_title || job.title || '',
-      company: job.employer_name || job.employer || '',
-      location: job.job_city || job.city || job.location || '',
-      date: job.job_posted_at || job.posted_at || job.date || '',
-      url: job.job_apply_link || job.apply_link || job.url || '',
-      tags: [],
-      remote: job.job_is_remote ?? job.is_remote ?? false,
-      source: 'jsearch',
-      employmentType: job.job_employment_type || job.employment_type || '',
-    }),
-  },
-  {
-    key: 'remoteok',
-    color: '#00c853',
-    urlPath: '/api/v1/remoteok-jobs/recent',
-    skillsField: 'tags',
-    alwaysRemote: true,
-    normalize: (job) => ({
-      id: job.id ? `remoteok-${job.id}` : `remoteok-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.position || job.title || '',
-      company: job.company || '',
-      location: job.location || 'Remote',
-      date: job.date || '',
-      url: job.apply_url || job.url || '',
-      tags: job.tags || [],
-      remote: true,
-      source: 'remoteok',
-      employmentType: '',
-    }),
-  },
-  {
-    key: 'himalayas',
-    color: '#e91e63',
-    urlPath: '/api/v1/himalayas-jobs/recent',
-    skillsField: 'categories',
-    alwaysRemote: true,
-    normalize: (job) => ({
-      id: (job.id || job.guid) ? `himalayas-${job.id || job.guid}` : `himalayas-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.companyName || job.company || '',
-      location: job.location || (job.locationRestrictions || []).join(', ') || 'Remote',
-      date: job.pubDate || job.date || '',
-      url: job.applicationLink || job.url || '',
-      tags: job.categories || job.tags || [],
-      remote: true,
-      source: 'himalayas',
-      employmentType: job.employmentType || '',
-    }),
-  },
-  {
-    key: 'adzuna',
-    color: '#ff5722',
-    urlPath: '/api/v1/adzuna-jobs/recent',
-    skillsField: 'tags',
-    alwaysRemote: false,
-    normalize: (job) => ({
-      id: job.id ? `adzuna-${job.id}` : `adzuna-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || '',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: job.remote === true,
-      source: 'adzuna',
-      employmentType: job.contract_type || '',
-    }),
-  },
-  {
-    key: 'weworkremotely',
-    color: '#9c27b0',
-    skillsField: 'tags',
-    alwaysRemote: true,
-    normalize: (job) => ({
-      id: (job.id || job.guid) ? `weworkremotely-${job.id || job.guid}` : `weworkremotely-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Remote',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: true,
-      source: 'weworkremotely',
-      employmentType: job.employment_type || '',
-    }),
-  },
-  {
-    key: 'ostjob',
-    color: '#d32f2f',
-    skillsField: 'tags',
-    alwaysRemote: false,
-    normalize: (job) => ({
-      id: job.id ? `ostjob-${job.id}` : `ostjob-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Switzerland',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: job.remote === true,
-      source: 'ostjob',
-      employmentType: job.employment_type || '',
-    }),
-  },
-  {
-    key: 'zentraljob',
-    color: '#f44336',
-    skillsField: 'tags',
-    alwaysRemote: false,
-    normalize: (job) => ({
-      id: job.id ? `zentraljob-${job.id}` : `zentraljob-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Switzerland',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: job.remote === true,
-      source: 'zentraljob',
-      employmentType: job.employment_type || '',
-    }),
-  },
-  {
-    key: 'swisstechjobs',
-    color: '#4caf50',
-    urlPath: '/api/v1/swisstechjobs-jobs/recent',
-    skillsField: 'tags',
-    alwaysRemote: false,
-    normalize: (job) => ({
-      id: job.id ? `swisstechjobs-${job.id}` : `swisstechjobs-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Switzerland',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: job.remote === true,
-      source: 'swisstechjobs',
-      employmentType: '',
-    }),
-  },
-  {
-    key: 'ictjobs',
-    color: '#ffc107',
-    urlPath: '/api/v1/ictjobs-jobs/recent',
-    skillsField: 'tags',
-    alwaysRemote: false,
-    normalize: (job) => ({
-      id: job.id ? `ictjobs-${job.id}` : `ictjobs-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Switzerland',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: job.remote === true,
-      source: 'ictjobs',
-      employmentType: job.employment_type || job.prof_group || '',
-    }),
-  },
-  {
-    key: 'swissdevjobs',
-    color: '#009688',
-    urlPath: '/api/v1/swissdevjobs-jobs/recent',
-    skillsField: 'tags',
-    alwaysRemote: false,
-    normalize: (job) => ({
-      id: job.id ? `swissdevjobs-${job.id}` : `swissdevjobs-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Switzerland',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: job.remote === true,
-      source: 'swissdevjobs',
-      employmentType: job.employment_type || '',
-    }),
-  },
-  {
-    key: 'jobscout24',
-    color: '#3f51b5',
-    urlPath: '/api/v1/jobscout24-jobs/recent',
-    skillsField: 'tags',
-    alwaysRemote: false,
-    normalize: (job) => ({
-      id: job.id ? `jobscout24-${job.id}` : `jobscout24-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Switzerland',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: job.remote === true,
-      source: 'jobscout24',
-      employmentType: job.employment_type || '',
-    }),
-  },
-  {
-    key: 'dynamitejobs',
-    color: '#8bc34a',
-    urlPath: '/api/v1/dynamitejobs-jobs/recent',
-    skillsField: 'tags',
-    alwaysRemote: true,
-    normalize: (job) => ({
-      id: job.id ? `dynamitejobs-${job.id}` : `dynamitejobs-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Worldwide',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: true,
-      source: 'dynamitejobs',
-      employmentType: job.employment_type || '',
-    }),
-  },
-  {
-    key: 'jobroom',
-    color: '#c62828',
-    urlPath: '/api/v1/jobroom-jobs/recent',
-    skillsField: 'tags',
-    alwaysRemote: false,
-    normalize: (job) => ({
-      id: job.id ? `jobroom-${job.id}` : `jobroom-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Switzerland',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: job.remote === true,
-      source: 'jobroom',
-      employmentType: job.employment_type || '',
-    }),
-  },
-  {
-    key: 'thehub',
-    color: '#1de9b6',
-    skillsField: 'tags',
-    alwaysRemote: true,
-    normalize: (job) => ({
-      id: job.id ? `thehub-${job.id}` : `thehub-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Remote',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: true,
-      source: 'thehub',
-      employmentType: job.employment_type || '',
-    }),
-  },
-  {
-    key: 'jobgether',
-    color: '#7c4dff',
-    skillsField: 'tags',
-    alwaysRemote: true,
-    normalize: (job) => ({
-      id: job.id ? `jobgether-${job.id}` : `jobgether-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Remote',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: true,
-      source: 'jobgether',
-      employmentType: job.employment_type || '',
-    }),
-  },
-  {
-    key: 'nav',
-    color: '#0d47a1',
-    skillsField: 'tags',
-    alwaysRemote: false,
-    normalize: (job) => ({
-      id: job.id ? `nav-${job.id}` : `nav-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Norway',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: job.remote === true,
-      source: 'nav',
-      employmentType: job.employment_type || '',
-    }),
-  },
-  {
-    key: 'irishjobs',
-    color: '#2e7d32',
-    skillsField: 'tags',
-    alwaysRemote: false,
-    normalize: (job) => ({
-      id: job.id ? `irishjobs-${job.id}` : `irishjobs-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title: job.title || '',
-      company: job.company || '',
-      location: job.location || 'Ireland',
-      date: job.date || '',
-      url: job.url || '',
-      tags: job.tags || [],
-      remote: job.remote === true,
-      source: 'irishjobs',
-      employmentType: job.employment_type || '',
-    }),
-  },
+  source('jobicy', '#00e5ff', {
+    locationFields: ['country'], tagFields: ['skills'], alwaysRemote: true,
+    employmentTypeFields: ['type'],
+  }, '/api/v1/jobicy-jobs/recent'),
+  source('remotive', '#ab47bc', {
+    locationDefault: 'Worldwide', alwaysRemote: true,
+    employmentTypeFields: ['job_type'],
+  }),
+  source('arbeitnow', '#ff9800', {
+    idFields: ['slug', 'id'], dateFields: ['created_at', 'date'],
+    employmentType: job => (job.job_types || []).join(', '),
+  }),
+  source('jsearch', '#2196f3', {
+    idFields: ['job_id', 'id'], titleFields: ['job_title', 'title'],
+    companyFields: ['employer_name', 'employer'],
+    locationFields: ['job_city', 'city', 'location'],
+    dateFields: ['job_posted_at', 'posted_at', 'date'],
+    urlFields: ['job_apply_link', 'apply_link', 'url'], tagFields: [],
+    remoteFields: ['job_is_remote', 'is_remote'],
+    remoteValue: job => job.job_is_remote ?? job.is_remote ?? false,
+    employmentTypeFields: ['job_employment_type', 'employment_type'],
+  }, '/api/v1/jsearch-jobs/recent'),
+  source('remoteok', '#00c853', {
+    titleFields: ['position', 'title'], locationDefault: 'Remote',
+    urlFields: ['apply_url', 'url'], alwaysRemote: true, employmentTypeFields: [],
+  }, '/api/v1/remoteok-jobs/recent'),
+  source('himalayas', '#e91e63', {
+    idFields: ['id', 'guid'], companyFields: ['companyName', 'company'],
+    locationDefault: job => (job.locationRestrictions || []).join(', ') || 'Remote',
+    dateFields: ['pubDate', 'date'], urlFields: ['applicationLink', 'url'],
+    tagFields: ['categories', 'tags'], alwaysRemote: true,
+    employmentTypeFields: ['employmentType'],
+  }, '/api/v1/himalayas-jobs/recent'),
+  source('adzuna', '#ff5722', { employmentTypeFields: ['contract_type'] }, '/api/v1/adzuna-jobs/recent'),
+  source('weworkremotely', '#9c27b0', {
+    idFields: ['id', 'guid'], locationDefault: 'Remote', alwaysRemote: true,
+  }),
+  source('ostjob', '#d32f2f', { locationDefault: 'Switzerland' }),
+  source('zentraljob', '#f44336', { locationDefault: 'Switzerland' }),
+  source('swisstechjobs', '#4caf50', {
+    locationDefault: 'Switzerland', employmentTypeFields: [],
+  }, '/api/v1/swisstechjobs-jobs/recent'),
+  source('ictjobs', '#ffc107', {
+    locationDefault: 'Switzerland',
+    employmentTypeFields: ['employment_type', 'prof_group'],
+  }, '/api/v1/ictjobs-jobs/recent'),
+  source('swissdevjobs', '#009688', { locationDefault: 'Switzerland' }, '/api/v1/swissdevjobs-jobs/recent'),
+  source('jobscout24', '#3f51b5', { locationDefault: 'Switzerland' }, '/api/v1/jobscout24-jobs/recent'),
+  source('dynamitejobs', '#8bc34a', {
+    locationDefault: 'Worldwide', alwaysRemote: true,
+  }, '/api/v1/dynamitejobs-jobs/recent'),
+  source('jobroom', '#c62828', { locationDefault: 'Switzerland' }, '/api/v1/jobroom-jobs/recent'),
+  source('thehub', '#1de9b6', { locationDefault: 'Remote', alwaysRemote: true }),
+  source('jobgether', '#7c4dff', { locationDefault: 'Remote', alwaysRemote: true }),
+  source('nav', '#0d47a1', { locationDefault: 'Norway' }),
+  source('irishjobs', '#2e7d32', { locationDefault: 'Ireland' }),
 ];
 
 // Listas y mapas calculados a partir de JOB_SOURCES, listos para que los
@@ -432,6 +162,9 @@ export function normalizeJob(job, source) {
   if (fn) return fn(job);
   return {
     id: `${source}-${job.id || Math.random()}`,
+    salaryMin: firstTruthy(job, ['salary_min', 'job_min_salary', 'min_salary'], null),
+    salaryMax: firstTruthy(job, ['salary_max', 'job_max_salary', 'max_salary'], null),
+    publisher: firstTruthy(job, ['job_publisher', 'publisher']),
     title: job.title || '',
     company: job.company || '',
     location: job.location || '',

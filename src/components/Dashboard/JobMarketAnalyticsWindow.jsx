@@ -17,7 +17,7 @@ import {
     Legend,
 } from 'chart.js';
 import { useTheme } from '../../context/ThemeContext';
-import { JOB_SOURCES, extractJobs } from '../../config/jobSources';
+import { JOB_SOURCES } from '../../config/jobSources';
 import FloatingWindow from '../Windows/FloatingWindow';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
@@ -33,8 +33,8 @@ const SALARY_BUCKETS = [
 // Calcula el salario "medio" de una oferta (el punto intermedio entre su
 // mínimo y su máximo, o el que haya si solo se conoce uno).
 const getMidSalary = (job) => {
-    const minSal = job.job_min_salary || job.min_salary || 0;
-    const maxSal = job.job_max_salary || job.max_salary || 0;
+    const minSal = job.salaryMin || 0;
+    const maxSal = job.salaryMax || 0;
     if (minSal > 0 && maxSal > 0) return (minSal + maxSal) / 2;
     return minSal || maxSal;
 };
@@ -64,17 +64,13 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     const allJobs = useMemo(() => {
         if (!jobData) return [];
         const jobs = [];
-        JOB_SOURCES.forEach(({ key, skillsField, alwaysRemote }) => {
-            const rawJobs = extractJobs(jobData[key]);
-            rawJobs.forEach(j => {
-                const skills = skillsField ? (j[skillsField] || j.tags || []) : [];
+        JOB_SOURCES.forEach(({ key }) => {
+            for (const job of jobData[key]?._normalized || []) {
                 jobs.push({
-                    ...j,
-                    skills,
-                    remote: alwaysRemote || j.remote === true,
+                    ...job,
                     source: key.charAt(0).toUpperCase() + key.slice(1),
                 });
-            });
+            }
         });
         return jobs;
     }, [jobData]);
@@ -84,7 +80,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     const skillsChartData = useMemo(() => {
         const counts = {};
         allJobs.forEach(j => {
-            j.skills.forEach(s => {
+            j.tags.forEach(s => {
                 const key = s.trim();
                 if (key) counts[key] = (counts[key] || 0) + 1;
             });
@@ -143,8 +139,8 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     // Se queda solo con las ofertas que tienen algún dato de salario.
     const jobsWithSalary = useMemo(() => {
         return allJobs.filter(job => {
-            const minSal = job.job_min_salary || job.min_salary || 0;
-            const maxSal = job.job_max_salary || job.max_salary || 0;
+            const minSal = job.salaryMin || 0;
+            const maxSal = job.salaryMax || 0;
             return minSal > 0 || maxSal > 0;
         });
     }, [allJobs]);
@@ -177,7 +173,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     const byTypeChartData = useMemo(() => {
         const grouped = {};
         jobsWithSalary.forEach(job => {
-            const empType = job.job_employment_type || job.employment_type || 'Unknown';
+            const empType = job.employmentType || 'Unknown';
             if (!grouped[empType]) grouped[empType] = { total: 0, count: 0 };
             grouped[empType].total += getMidSalary(job);
             grouped[empType].count++;
@@ -200,7 +196,7 @@ const JobMarketAnalyticsWindow = memo(({ jobData, initialPosition }) => {
     const bySourceChartData = useMemo(() => {
         const grouped = {};
         jobsWithSalary.forEach(job => {
-            const source = job.job_publisher || job.publisher || job.source || 'Unknown';
+            const source = job.publisher || job.source || 'Unknown';
             if (!grouped[source]) grouped[source] = { total: 0, count: 0 };
             grouped[source].total += getMidSalary(job);
             grouped[source].count++;
