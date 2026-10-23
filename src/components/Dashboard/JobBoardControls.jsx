@@ -4,6 +4,7 @@
 
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import Pager from '../UI/Pager';
 
 const JobBoardControls = memo(({ sortBy, onSortChange, page, totalPages, from, to, total, onPageChange, cacheAge }) => {
     const { t } = useTranslation();
@@ -34,28 +35,17 @@ const JobBoardControls = memo(({ sortBy, onSortChange, page, totalPages, from, t
                 )}
             </div>
 
-            {/* Pagination - only if more than one page */}
-            {totalPages > 1 && (
-                <div className="jobboard-pagination">
-                    <button
-                        className="jobboard-page-btn"
-                        disabled={page === 0}
-                        onClick={() => onPageChange(page - 1)}
-                    >
-                        {t('dashboard.jobBoard.prev')}
-                    </button>
-                    <span className="jobboard-page-info">
-                        {t('dashboard.jobBoard.page', { page: page + 1, pages: totalPages })}
-                    </span>
-                    <button
-                        className="jobboard-page-btn"
-                        disabled={page >= totalPages - 1}
-                        onClick={() => onPageChange(page + 1)}
-                    >
-                        {t('dashboard.jobBoard.next')}
-                    </button>
-                </div>
-            )}
+            <Pager
+                page={page}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+                previousLabel={t('dashboard.jobBoard.prev')}
+                nextLabel={t('dashboard.jobBoard.next')}
+                pageLabel={t('dashboard.jobBoard.page', { page: page + 1, pages: totalPages })}
+                className="jobboard-pagination"
+                buttonClassName="jobboard-page-btn"
+                pageClassName="jobboard-page-info"
+            />
         </>
     );
 });

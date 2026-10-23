@@ -7,6 +7,7 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
 import TabBar from '../UI/TabBar';
+import Pager from '../UI/Pager';
 import { useTheme } from '../../context/ThemeContext';
 import useJobApplication from '../../hooks/useJobApplication';
 import useSkillsGap from '../../hooks/useSkillsGap';
@@ -250,34 +251,20 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                 {/* Results tab */}
                 {results.length > 0 && activeTab === TAB_RESULTS && (
                     <>
-                        <div className="ai-match-pagination" style={{ color: theme.text }}>
-                            <span>{filteredResults.length} {t('dashboard.jobFilter.resultsFound')}</span>
-                            {totalPages > 1 && (
-                                <div>
-                                    <button
-                                        disabled={page === 0}
-                                        onClick={prevPage}
-                                        className="ai-match-page-btn"
-                                        style={{
-                                            background: `rgba(${theme.primaryRgb}, 0.2)`,
-                                            border: `1px solid ${theme.primary}`,
-                                            color: theme.primary,
-                                        }}
-                                    >&lt;</button>
-                                    <span>{page + 1}/{totalPages}</span>
-                                    <button
-                                        disabled={page >= totalPages - 1}
-                                        onClick={nextPage}
-                                        className="ai-match-page-btn"
-                                        style={{
-                                            background: `rgba(${theme.primaryRgb}, 0.2)`,
-                                            border: `1px solid ${theme.primary}`,
-                                            color: theme.primary,
-                                        }}
-                                    >&gt;</button>
-                                </div>
-                            )}
-                        </div>
+                        <Pager
+                            page={page}
+                            totalPages={totalPages}
+                            onPageChange={(next) => next < page ? prevPage() : nextPage()}
+                            summary={<span>{filteredResults.length} {t('dashboard.jobFilter.resultsFound')}</span>}
+                            className="ai-match-pagination"
+                            buttonClassName="ai-match-page-btn"
+                            style={{ color: theme.text }}
+                            buttonStyle={{
+                                background: `rgba(${theme.primaryRgb}, 0.2)`,
+                                border: `1px solid ${theme.primary}`,
+                                color: theme.primary,
+                            }}
+                        />
 
                         <div className="ai-match-results">
                             {pagedResults.map((job, idx) => {
