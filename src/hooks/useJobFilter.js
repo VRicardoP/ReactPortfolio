@@ -1,10 +1,10 @@
 import { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
 import { JOBS_PAGE_SIZE } from '../components/Dashboard/dashboardConstants';
 import { buildJobSearchParams } from '../utils/jobSearchParams';
+import useAuthenticatedQuery from './useAuthenticatedQuery';
 
 const INITIAL_FILTERS = {
     country: '',
@@ -38,7 +38,10 @@ const INITIAL_FILTERS = {
  */
 const useJobFilter = (onSaveSearch) => {
     const { t } = useTranslation();
-    const { authenticatedFetch } = useAuth();
+    const { refetch: fetchJobs } = useAuthenticatedQuery(null, {
+        enabled: false,
+        throwOnError: true,
+    });
 
     const [filters, setFilters] = useState(INITIAL_FILTERS);
     const [results, setResults] = useState([]);
@@ -89,10 +92,9 @@ const useJobFilter = (onSaveSearch) => {
         setSearched(true);
         try {
             const qs = buildQueryParams({ offset, cursor });
-            const response = await authenticatedFetch(
+            const data = await fetchJobs(
                 `${BACKEND_URL}/api/v1/jobs/search?${qs}`
             );
-            const data = await response.json();
             if (!isCurrent()) return;
             const items = data.data || [];
             const meta = data.metadata || {};
@@ -121,7 +123,7 @@ const useJobFilter = (onSaveSearch) => {
             // busqueda mas nueva sigue en vuelo, manda la suya.
             if (isCurrent()) setLoading(false);
         }
-    }, [authenticatedFetch, buildQueryParams, t]);
+    }, [buildQueryParams, fetchJobs, t]);
 
     // Lanza una búsqueda nueva desde el principio.
     const handleSearch = useCallback(() => fetchPage({ offset: 0 }), [fetchPage]);
