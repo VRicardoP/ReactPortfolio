@@ -126,7 +126,7 @@ const MobileDashboardLayout = memo(({
             <TabBar
                 className="mobile-dashboard-tabs"
                 tabClassName="mobile-dashboard-tab"
-                ariaLabel={t('dashboard.mobileSections')}
+                ariaLabel={t('dashboard.title')}
                 active={activeTab}
                 onChange={setActiveTab}
                 tabs={DASHBOARD_TABS.map(tab => ({
