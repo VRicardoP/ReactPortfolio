@@ -5,8 +5,7 @@
 
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../../context/ThemeContext';
-import { CompanyResearchName, JobBadges, JobDate } from '../JobCardExtras';
+import JobCard from '../JobCard';
 
 // Advanced filter tab — multi-field aggregated search (formerly JobFilterWindow).
 // Purely presentational: filter state/logic lives in useJobFilter (passed in as `filter`),
@@ -16,7 +15,6 @@ import { CompanyResearchName, JobBadges, JobDate } from '../JobCardExtras';
 // inert. Behavior is preserved (no visible button); the dead wiring is not resurrected here.
 const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
     const { t } = useTranslation();
-    const { theme } = useTheme();
     const { handleOpenOffer, openedIds } = jobApp;
 
     const {
@@ -156,102 +154,22 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
                 )}
 
                 {results.map(job => (
-                    <div
+                    <JobCard
                         key={`${job.source}-${job.id}`}
-                        style={{
-                            padding: '8px 10px',
-                            border: `1px solid ${theme.borderLight}`,
-                            borderRadius: '4px',
-                            background: 'rgba(255,255,255,0.02)',
-                        }}
-                    >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{
-                                    fontFamily: 'Courier New', fontSize: '13px',
-                                    color: theme.textHighlight, fontWeight: 'bold',
-                                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                }}>
-                                    {job.title}
-                                </div>
-                                <div style={{ fontFamily: 'Courier New', fontSize: '11px', color: theme.text, marginTop: '2px' }}>
-                                    <CompanyResearchName company={job.company}>{job.company}</CompanyResearchName>
-                                </div>
-                            </div>
-                            <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexShrink: 0 }}>
-                                <JobBadges
-                                    remote={job.remote}
-                                    source={job.source}
-                                    sourceStyle={{
-                                        backgroundColor: 'rgba(255,255,255,0.08)',
-                                        color: theme.primary,
-                                        borderColor: `rgba(${theme.primaryRgb}, 0.3)`,
-                                    }}
-                                />
-                            </div>
-                        </div>
-
-                        <div style={{ display: 'flex', gap: '8px', marginTop: '4px', flexWrap: 'wrap', alignItems: 'center' }}>
-                            {job.location && (
-                                <span style={{ fontFamily: 'Courier New', fontSize: '10px', color: theme.text, opacity: 0.7 }}>
-                                    {job.location}
-                                </span>
-                            )}
-                            {(job.salary_min || job.salary_max) && (
-                                <span style={{
-                                    fontFamily: 'Courier New', fontSize: '10px',
-                                    color: '#4CAF50', fontWeight: 'bold',
-                                }}>
-                                    {formatSalary(job.salary_min, job.salary_max, job.salary_currency)}
-                                </span>
-                            )}
-                            <JobBadges
-                                employmentType={job.employment_type}
-                                employmentStyle={{
-                                    fontFamily: 'Courier New',
-                                    fontSize: '10px',
-                                    color: theme.text,
-                                    opacity: 0.5,
-                                }}
-                            />
-                        </div>
-
-                        {job.tags && job.tags.length > 0 && (
-                            <div style={{ display: 'flex', gap: '4px', marginTop: '4px', flexWrap: 'wrap' }}>
-                                {job.tags.slice(0, 5).map(tag => (
-                                    <span key={tag} className="jobboard-skill-tag">
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
+                        job={job}
+                        variant="filter"
+                        formatSalary={formatSalary}
+                        actions={job.url && (
+                            <button
+                                onClick={() => handleOpenOffer(job)}
+                                className={`jobboard-apply-btn ${openedIds.has(job.id) ? 'applied' : ''}`}
+                            >
+                                {openedIds.has(job.id)
+                                    ? t('dashboard.jobBoard.opened')
+                                    : t('dashboard.jobBoard.viewOffer')}
+                            </button>
                         )}
-
-                        <div style={{
-                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                            marginTop: '6px',
-                        }}>
-                            <JobDate
-                                date={job.date}
-                                style={{
-                                    fontFamily: 'Courier New',
-                                    fontSize: '10px',
-                                    color: theme.text,
-                                    opacity: 0.5,
-                                }}
-                            />
-                            {job.url && (
-                                <button
-                                    onClick={() => handleOpenOffer(job)}
-                                    className={`jobboard-apply-btn ${openedIds.has(job.id) ? 'applied' : ''}`}
-                                >
-                                    {openedIds.has(job.id)
-                                        ? t('dashboard.jobBoard.opened')
-                                        : t('dashboard.jobBoard.viewOffer')
-                                    }
-                                </button>
-                            )}
-                        </div>
-                    </div>
+                    />
                 ))}
 
                 {/* "Load more": follows next_cursor (core) or accumulated

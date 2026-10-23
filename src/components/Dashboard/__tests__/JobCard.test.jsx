@@ -1,6 +1,12 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
+vi.mock('../../../context/ThemeContext', () => ({
+    useTheme: () => ({ theme: {
+        primary: '#00e5ff', primaryRgb: '0, 229, 255', text: '#ddd',
+        textHighlight: '#fff', borderLight: '#333',
+    } }),
+}));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: key => key }) }));
 vi.mock('../JobCardExtras', () => ({
     CompanyResearchName: ({ children }) => <span>{children}</span>,
@@ -20,6 +26,17 @@ const job = {
 describe('JobCard', () => {
     it('preserva la estructura de la variante board', () => {
         const { container } = render(<JobCard job={job} actions={<button>Save</button>} showSource />);
+        expect(container.firstChild).toMatchSnapshot();
+    });
+    it('preserva la estructura de la variante filter', () => {
+        const { container } = render(
+            <JobCard
+                job={{ ...job, salary_min: 50000, salary_max: 70000, employment_type: 'FULLTIME' }}
+                variant="filter"
+                formatSalary={(min, max) => `${min}-${max}`}
+                actions={<button>Open</button>}
+            />
+        );
         expect(container.firstChild).toMatchSnapshot();
     });
 });

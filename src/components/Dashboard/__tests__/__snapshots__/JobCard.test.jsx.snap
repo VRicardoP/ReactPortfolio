@@ -73,3 +73,69 @@ exports[`JobCard > preserva la estructura de la variante board 1`] = `
   </div>
 </article>
 `;
+
+exports[`JobCard > preserva la estructura de la variante filter 1`] = `
+<article
+  style="padding: 8px 10px; border: 1px solid rgb(51, 51, 51); border-radius: 4px; background: rgba(255, 255, 255, 0.02);"
+>
+  <div
+    style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;"
+  >
+    <div
+      style="flex: 1 1 0%; min-width: 0px;"
+    >
+      <div
+        style="font-family: "Courier New"; font-size: 13px; color: rgb(255, 255, 255); font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+      >
+        Original
+      </div>
+      <div
+        style="font-family: "Courier New"; font-size: 11px; color: rgb(221, 221, 221); margin-top: 2px;"
+      >
+        <span>
+          Example
+        </span>
+      </div>
+    </div>
+    <span>
+      badges
+    </span>
+  </div>
+  <div
+    style="display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; align-items: center;"
+  >
+    <span
+      style="font-family: "Courier New"; font-size: 10px; color: rgb(221, 221, 221); opacity: 0.7;"
+    >
+      Bern
+    </span>
+    <span
+      style="font-family: "Courier New"; font-size: 10px; color: rgb(76, 175, 80); font-weight: bold;"
+    >
+      50000-70000
+    </span>
+    <span>
+      badges
+    </span>
+  </div>
+  <div
+    class="jobboard-skills"
+  >
+    <span
+      class="jobboard-skill-tag"
+    >
+      React
+    </span>
+  </div>
+  <div
+    style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;"
+  >
+    <time>
+      2026-10-23
+    </time>
+    <button>
+      Open
+    </button>
+  </div>
+</article>
+`;
