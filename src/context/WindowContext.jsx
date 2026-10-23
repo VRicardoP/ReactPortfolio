@@ -6,46 +6,17 @@ import { createContext, useContext, useState, useCallback, useRef, useMemo, useE
 import { showToast } from '../components/UI/Toast';
 import i18n from '../i18n';
 
-const WindowStateContext = createContext();
-const WindowCallbacksContext = createContext();
+const WindowContext = createContext();
 
-// Granular hooks — use these when you only need state OR callbacks
-// Da acceso solo a los DATOS de las ventanas (cuáles hay, cuál está activa),
-// sin las funciones de acción — así un componente que solo lee no se vuelve
-// a dibujar cuando cambian las funciones.
-// eslint-disable-next-line react-refresh/only-export-components
-export const useWindowState = () => {
-    const context = useContext(WindowStateContext);
-    if (!context) {
-        throw new Error('useWindowState must be used within WindowProvider');
-    }
-    return context;
-};
-
-// Da acceso solo a las ACCIONES sobre las ventanas (abrir, cerrar,
-// minimizar...), sin los datos — así un componente que solo actúa no se
-// vuelve a dibujar cada vez que una ventana cambia de posición o tamaño.
-// eslint-disable-next-line react-refresh/only-export-components
-export const useWindowCallbacks = () => {
-    const context = useContext(WindowCallbacksContext);
-    if (!context) {
-        throw new Error('useWindowCallbacks must be used within WindowProvider');
-    }
-    return context;
-};
-
-// Backward-compatible hook — combines both contexts.
-// NOTE: Every state change (window position, size, z-index, minimize, maximize) re-renders ALL
-// consumers of this hook. If your component only needs callbacks (openWindow, closeWindow, etc.)
-// and does NOT read `windows`, `activeWindowId`, or `loading`, use `useWindowCallbacks()` directly
-// to avoid unnecessary re-renders.
-// Da acceso a TODO (datos + acciones) de una vez, para no tener que usar los
-// dos hooks anteriores por separado.
+// Da acceso a los datos y acciones del sistema de ventanas.
+// The previous state/callback split had no consumers and did not isolate renders.
 // eslint-disable-next-line react-refresh/only-export-components
 export const useWindowContext = () => {
-    const state = useWindowState();
-    const callbacks = useWindowCallbacks();
-    return useMemo(() => ({ ...state, ...callbacks }), [state, callbacks]);
+    const context = useContext(WindowContext);
+    if (!context) {
+        throw new Error('useWindowContext must be used within WindowProvider');
+    }
+    return context;
 };
 
 // Layout / z-index defaults for floating windows.
@@ -67,8 +38,9 @@ export const WindowProvider = ({ children }) => {
     const [windows, setWindows] = useState({});
     const [activeWindowId, setActiveWindowId] = useState(null);
     const highestZIndexRef = useRef(BASE_Z_INDEX);
-    const toastTimeoutRef = useRef({});
+    const windowsRef = useRef(windows);
     const prevActiveRef = useRef(null);
+    windowsRef.current = windows;
 
     // Dispatch custom events for interaction tracking (low coupling via DOM events)
     // Cuando cambia la ventana activa, avisa al resto de la aplicación (por
@@ -87,86 +59,70 @@ export const WindowProvider = ({ children }) => {
         prevActiveRef.current = activeWindowId;
     }, [activeWindowId]);
 
-    // to show notifications without duplicates
-    // Muestra un mensaje emergente breve sobre una ventana, evitando que se
-    // amontonen varios mensajes iguales a la vez.
-    const showWindowToast = useCallback((windowId, message) => {
-        if (toastTimeoutRef.current[windowId]) {
-            clearTimeout(toastTimeoutRef.current[windowId]);
-        }
-
+    // Muestra el mensaje asociado a una acción ya confirmada sobre la ventana.
+    // Keep notifications outside React state updaters, which StrictMode may replay.
+    const showWindowToast = useCallback((_windowId, message) => {
         showToast(message, 2000);
-
-        toastTimeoutRef.current[windowId] = setTimeout(() => {
-            delete toastTimeoutRef.current[windowId];
-        }, 2000);
     }, []);
 
     // when I create a new window I store it here
     // Da de alta una ventana nueva, con su posición y tamaño iniciales (si ya
     // existía, no hace nada).
     const registerWindow = useCallback((windowId, initialState = {}) => {
-        setWindows(prev => {
-            // if it already exists don't create it again
-            if (prev[windowId]) return prev;
-
-            const position = initialState.position || DEFAULT_WINDOW_POSITION;
-            return {
-                ...prev,
-                [windowId]: {
-                    isMinimized: initialState.isMinimized ?? false,
-                    isMaximized: initialState.isMaximized || false,
-                    size: initialState.size || DEFAULT_WINDOW_SIZE,
-                    zIndex: initialState.zIndex || BASE_Z_INDEX,
-                    ...initialState,
-                    position,
-                    minimizePosition: initialState.minimizePosition || position,
-                    restorePosition: initialState.restorePosition || null,
-                }
-            };
-        });
+        if (windowsRef.current[windowId]) return;
+        const position = initialState.position || DEFAULT_WINDOW_POSITION;
+        const next = {
+            ...windowsRef.current,
+            [windowId]: {
+                isMinimized: initialState.isMinimized ?? false,
+                isMaximized: initialState.isMaximized || false,
+                size: initialState.size || DEFAULT_WINDOW_SIZE,
+                zIndex: initialState.zIndex || BASE_Z_INDEX,
+                ...initialState,
+                position,
+                minimizePosition: initialState.minimizePosition || position,
+                restorePosition: initialState.restorePosition || null,
+            }
+        };
+        windowsRef.current = next;
+        setWindows(next);
     }, []);
 
     // when I close a window I remove it from the list
     // Quita una ventana de la lista cuando se cierra.
     const unregisterWindow = useCallback((windowId) => {
-        setWindows(prev => {
-            const newWindows = { ...prev };
-            delete newWindows[windowId];
-            return newWindows;
-        });
+        if (!windowsRef.current[windowId]) return;
+        const next = { ...windowsRef.current };
+        delete next[windowId];
+        windowsRef.current = next;
+        setWindows(next);
     }, []);
 
     // bring a window in front of all the others
     // Pone una ventana por delante de todas las demás (al hacer clic en ella),
     // y de vez en cuando reordena los números internos para que no crezcan sin límite.
     const bringToFront = useCallback((windowId) => {
+        const previous = windowsRef.current;
+        const current = previous[windowId];
+        if (!current) return;
+
+        const newHighest = highestZIndexRef.current + 1;
+        highestZIndexRef.current = newHighest;
+        let next;
+        if (newHighest > Z_INDEX_NORMALIZE_THRESHOLD) {
+            const sorted = Object.entries(previous).sort((a, b) => a[1].zIndex - b[1].zIndex);
+            next = {};
+            sorted.forEach(([id, win], index) => {
+                next[id] = { ...win, zIndex: BASE_Z_INDEX + index };
+            });
+            next[windowId] = { ...next[windowId], zIndex: BASE_Z_INDEX + sorted.length };
+            highestZIndexRef.current = BASE_Z_INDEX + sorted.length;
+        } else {
+            next = { ...previous, [windowId]: { ...current, zIndex: newHighest } };
+        }
+        windowsRef.current = next;
+        setWindows(next);
         setActiveWindowId(windowId);
-        setWindows(prev => {
-            const current = prev[windowId];
-            if (!current) return prev;
-
-            const newHighest = highestZIndexRef.current + 1;
-            highestZIndexRef.current = newHighest;
-
-            // Normalize if z-index gets too high
-            if (newHighest > Z_INDEX_NORMALIZE_THRESHOLD) {
-                const sorted = Object.entries(prev)
-                    .sort((a, b) => a[1].zIndex - b[1].zIndex);
-                const normalized = {};
-                sorted.forEach(([id, win], index) => {
-                    normalized[id] = { ...win, zIndex: BASE_Z_INDEX + index };
-                });
-                normalized[windowId] = { ...normalized[windowId], zIndex: BASE_Z_INDEX + sorted.length };
-                highestZIndexRef.current = BASE_Z_INDEX + sorted.length;
-                return normalized;
-            }
-
-            return {
-                ...prev,
-                [windowId]: { ...current, zIndex: newHighest }
-            };
-        });
     }, []);
 
     // get translated window title from windowId
@@ -181,164 +137,120 @@ export const WindowProvider = ({ children }) => {
     // Minimiza o restaura una ventana, recordando por separado dónde estaba
     // minimizada y dónde estaba normal, para no perder ninguna de las dos posiciones.
     const toggleMinimize = useCallback((windowId) => {
-        setWindows(prev => {
-            const window = prev[windowId];
-            if (!window) return prev;
+        const current = windowsRef.current[windowId];
+        if (!current) return;
+        const newIsMinimized = !current.isMinimized;
+        const position = newIsMinimized
+            ? clampMinimizePosition(current.minimizePosition || current.position)
+            : (current.restorePosition || current.position);
+        const next = {
+            ...windowsRef.current,
+            [windowId]: {
+                ...current,
+                isMinimized: newIsMinimized,
+                isMaximized: current.isMaximized && newIsMinimized ? false : current.isMaximized,
+                position,
+                minimizePosition: newIsMinimized ? position : current.minimizePosition,
+                restorePosition: newIsMinimized ? current.position : null,
+            }
+        };
+        windowsRef.current = next;
+        setWindows(next);
 
-            const newIsMinimized = !window.isMinimized;
-            const position = newIsMinimized
-                ? clampMinimizePosition(window.minimizePosition || window.position)
-                : (window.restorePosition || window.position);
-
-            const newState = {
-                ...prev,
-                [windowId]: {
-                    ...window,
-                    isMinimized: newIsMinimized,
-                    isMaximized: window.isMaximized && newIsMinimized ? false : window.isMaximized,
-                    position,
-                    minimizePosition: newIsMinimized ? position : window.minimizePosition,
-                    restorePosition: newIsMinimized ? window.position : null,
-                }
-            };
-
-            const windowTitle = getWindowTitle(windowId);
-            showWindowToast(
-                windowId,
-                i18n.t(newIsMinimized ? 'toast.minimized' : 'toast.restored', { window: windowTitle })
-            );
-
-            return newState;
-        });
+        const windowTitle = getWindowTitle(windowId);
+        showWindowToast(
+            windowId,
+            i18n.t(newIsMinimized ? 'toast.minimized' : 'toast.restored', { window: windowTitle })
+        );
     }, [showWindowToast, getWindowTitle]);
 
     // to toggle the window fullscreen on or off
     // Pone o quita el modo pantalla completa de una ventana (y si estaba
     // minimizada, primero la restaura).
     const toggleMaximize = useCallback((windowId) => {
-        setWindows(prev => {
-            const window = prev[windowId];
-            if (!window) return prev;
+        const current = windowsRef.current[windowId];
+        if (!current) return;
 
-            if (window.isMinimized) {
-                return {
-                    ...prev,
-                    [windowId]: {
-                        ...window,
-                        isMinimized: false,
-                        position: window.restorePosition || window.position,
-                        restorePosition: null
-                    }
-                };
+        const nextWindow = current.isMinimized
+            ? {
+                ...current,
+                isMinimized: false,
+                position: current.restorePosition || current.position,
+                restorePosition: null
             }
+            : { ...current, isMaximized: !current.isMaximized };
+        const next = { ...windowsRef.current, [windowId]: nextWindow };
+        windowsRef.current = next;
+        setWindows(next);
 
-            const newIsMaximized = !window.isMaximized;
-
-            const newState = {
-                ...prev,
-                [windowId]: {
-                    ...window,
-                    isMaximized: newIsMaximized
-                }
-            };
-
+        if (!current.isMinimized) {
             const windowTitle = getWindowTitle(windowId);
-
-            if (newIsMaximized) {
-                showWindowToast(windowId, i18n.t('toast.maximized', { window: windowTitle }));
-            } else {
-                showWindowToast(windowId, i18n.t('toast.restored', { window: windowTitle }));
-            }
-
-            return newState;
-        });
+            const message = current.isMaximized ? 'toast.restored' : 'toast.maximized';
+            showWindowToast(windowId, i18n.t(message, { window: windowTitle }));
+        }
     }, [showWindowToast, getWindowTitle]);
 
     // fit the window to the optimal size to show all the content
     // Ajusta el tamaño de una ventana para que quepa justo todo su contenido,
     // y la centra en la pantalla.
     const fitToContent = useCallback((windowId, contentSize) => {
-        setWindows(prev => {
-            const window = prev[windowId];
-            if (!window) return prev;
+        const current = windowsRef.current[windowId];
+        if (!current) return;
 
-            // add padding for the header and borders
-            const headerHeight = 40;
-            const padding = 20;
-            const maxWidth = globalThis.innerWidth * 0.9;
-            const maxHeight = globalThis.innerHeight * 0.85;
+        const headerHeight = 40;
+        const padding = 20;
+        const maxWidth = globalThis.innerWidth * 0.9;
+        const maxHeight = globalThis.innerHeight * 0.85;
+        const optimalWidth = Math.min(Math.max(contentSize.width + padding, 300), maxWidth);
+        const optimalHeight = Math.min(Math.max(contentSize.height + headerHeight + padding, 200), maxHeight);
+        const centerX = Math.max(20, (globalThis.innerWidth - optimalWidth) / 2);
+        const centerY = Math.max(80, (globalThis.innerHeight - optimalHeight) / 2);
+        const next = {
+            ...windowsRef.current,
+            [windowId]: {
+                ...current,
+                isMinimized: false,
+                isMaximized: false,
+                size: { width: optimalWidth, height: optimalHeight },
+                position: { x: centerX, y: centerY }
+            }
+        };
+        windowsRef.current = next;
+        setWindows(next);
 
-            const optimalWidth = Math.min(Math.max(contentSize.width + padding, 300), maxWidth);
-            const optimalHeight = Math.min(Math.max(contentSize.height + headerHeight + padding, 200), maxHeight);
-
-            // center the window on the screen
-            const centerX = Math.max(20, (globalThis.innerWidth - optimalWidth) / 2);
-            const centerY = Math.max(80, (globalThis.innerHeight - optimalHeight) / 2);
-
-            const windowTitle = getWindowTitle(windowId);
-
-            showWindowToast(windowId, i18n.t('toast.fittedToContent', { window: windowTitle }));
-
-            return {
-                ...prev,
-                [windowId]: {
-                    ...window,
-                    isMinimized: false,
-                    isMaximized: false,
-                    size: { width: optimalWidth, height: optimalHeight },
-                    position: { x: centerX, y: centerY }
-                }
-            };
-        });
+        const windowTitle = getWindowTitle(windowId);
+        showWindowToast(windowId, i18n.t('toast.fittedToContent', { window: windowTitle }));
     }, [showWindowToast, getWindowTitle]);
 
     // save where the window is when I move it
     // Guarda la nueva posición de una ventana cuando el usuario la arrastra.
     const updatePosition = useCallback((windowId, position) => {
-        setWindows(prev => {
-            const window = prev[windowId];
-            if (!window) return prev;
-
-            // if it didn't move don't do anything
-            if (window.position.x === position.x && window.position.y === position.y) {
-                return prev;
-            }
-
-            return {
-                ...prev,
-                [windowId]: {
-                    ...window,
-                    position,
-                    minimizePosition: position
-                }
-            };
-        });
+        const current = windowsRef.current[windowId];
+        if (!current || (current.position.x === position.x && current.position.y === position.y)) return;
+        const next = {
+            ...windowsRef.current,
+            [windowId]: { ...current, position, minimizePosition: position }
+        };
+        windowsRef.current = next;
+        setWindows(next);
     }, []);
 
     // save the new size when I resize the window
     // Guarda el nuevo tamaño de una ventana cuando el usuario la redimensiona.
     const updateSize = useCallback((windowId, size) => {
-        setWindows(prev => {
-            const window = prev[windowId];
-            if (!window) return prev;
-
-            // if the size is the same don't do anything
-            if (window.size.width === size.width && window.size.height === size.height) {
-                return prev;
-            }
-
-            return {
-                ...prev,
-                [windowId]: {
-                    ...window,
-                    size
-                }
-            };
-        });
+        const current = windowsRef.current[windowId];
+        if (!current || (current.size.width === size.width && current.size.height === size.height)) return;
+        const next = {
+            ...windowsRef.current,
+            [windowId]: { ...current, size }
+        };
+        windowsRef.current = next;
+        setWindows(next);
     }, []);
 
-    // Callbacks are stable (all wrapped in useCallback) — this value rarely changes
-    const callbacksValue = useMemo(() => ({
+    const value = useMemo(() => ({
+        windows,
+        activeWindowId,
         registerWindow,
         unregisterWindow,
         bringToFront,
@@ -350,6 +262,8 @@ export const WindowProvider = ({ children }) => {
         getWindowTitle,
         showWindowToast
     }), [
+        windows,
+        activeWindowId,
         registerWindow,
         unregisterWindow,
         bringToFront,
@@ -362,17 +276,9 @@ export const WindowProvider = ({ children }) => {
         showWindowToast
     ]);
 
-    // State changes on every window mutation (position, size, z-index, minimize, maximize)
-    const stateValue = useMemo(() => ({
-        windows,
-        activeWindowId
-    }), [windows, activeWindowId]);
-
     return (
-        <WindowCallbacksContext.Provider value={callbacksValue}>
-            <WindowStateContext.Provider value={stateValue}>
-                {children}
-            </WindowStateContext.Provider>
-        </WindowCallbacksContext.Provider>
+        <WindowContext.Provider value={value}>
+            {children}
+        </WindowContext.Provider>
     );
 };

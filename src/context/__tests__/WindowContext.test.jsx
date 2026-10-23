@@ -1,6 +1,8 @@
+import { StrictMode } from 'react'
 import { render, screen, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { WindowProvider, useWindowContext } from '../WindowContext'
+import { showToast } from '../../components/UI/Toast'
 
 // Mock the Toast module to avoid side effects
 vi.mock('../../components/UI/Toast', () => ({
@@ -266,4 +268,28 @@ describe('WindowContext', () => {
     expect(windows['win-clamp'].position.y).toBeLessThanOrEqual(window.innerHeight - 40)
   })
 
+  it('ignores an unknown window when bringing it to front', () => {
+    renderWithProvider()
+
+    act(() => contextRef.current.bringToFront('missing-window'))
+
+    expect(screen.getByTestId('active').textContent).toBe('none')
+  })
+
+  it('emits one toast when StrictMode replays state updaters', () => {
+    const captureContext = (ctx) => { contextRef.current = ctx }
+    render(
+      <StrictMode>
+        <WindowProvider>
+          <TestConsumer onContext={captureContext} />
+        </WindowProvider>
+      </StrictMode>
+    )
+    act(() => contextRef.current.registerWindow('strict-window'))
+    vi.clearAllMocks()
+
+    act(() => contextRef.current.toggleMinimize('strict-window'))
+
+    expect(showToast).toHaveBeenCalledTimes(1)
+  })
 })

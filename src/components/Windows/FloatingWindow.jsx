@@ -107,9 +107,9 @@ const FloatingWindowDesktop = ({
     const handleToggleMinimize = (e) => {
         e.stopPropagation();
         toggleMinimize(id);
-        // if it was minimized bring it to front when restoring
+        // Restoring can bring the registered window forward immediately.
         if (windowState?.isMinimized) {
-            setTimeout(() => bringToFront(id), 100);
+            bringToFront(id);
         }
     };
 
@@ -127,7 +127,7 @@ const FloatingWindowDesktop = ({
             toggleMaximize(id);
         }
 
-        setTimeout(() => bringToFront(id), 100);
+        bringToFront(id);
     }, [windowState?.isMinimized, id, fitToContent, initialSize, toggleMaximize, bringToFront]);
 
     if (!windowState) return null;
