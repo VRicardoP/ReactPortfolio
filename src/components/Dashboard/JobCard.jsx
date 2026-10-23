@@ -17,9 +17,54 @@ const JobCard = memo(({
     showSource = false,
     sourceStyle,
     formatSalary,
+    translatedTitle,
+    fitStyle,
+    expanded = false,
+    onToggle,
 }) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
+    if (variant === 'match') {
+        const title = job.title_en || translatedTitle || job.title;
+        return (
+            <article className="ai-match-card" style={{ border: `1px solid ${theme.borderLight}` }}>
+                <div className="ai-match-card-header">
+                    <div className="ai-match-card-title-col">
+                        <div className="ai-match-card-title" style={{ color: theme.textHighlight }}>
+                            {title}
+                            {(job.title_en || translatedTitle) && <span className="ai-match-translated-badge" title={job.title}>{t('dashboard.aiMatch.translated')}</span>}
+                        </div>
+                        <div className="ai-match-card-company" style={{ color: theme.text }}><CompanyResearchName company={job.company}>{job.company}</CompanyResearchName></div>
+                    </div>
+                    <div className="ai-match-card-score-col">
+                        <span className="ai-match-score" style={{ color: theme.primary }}>{job.ai_score}%</span>
+                        <span className="ai-match-fit-badge" style={{ background: fitStyle.bg, color: fitStyle.text, border: `1px solid ${fitStyle.border}` }}>{job.fit?.toUpperCase()}</span>
+                    </div>
+                </div>
+                <div className="ai-match-card-meta">
+                    {job.location && <span className="ai-match-card-meta-text" style={{ color: theme.text }}>{job.location}</span>}
+                    <JobBadges remote={job.remote} source={job.source} employmentType={job.employment_type}
+                        sourceStyle={{ backgroundColor: 'rgba(255,255,255,0.08)', color: theme.primary, borderColor: `rgba(${theme.primaryRgb}, 0.3)` }}
+                        employmentClassName="ai-match-card-meta-text secondary" employmentStyle={{ color: theme.text }} />
+                </div>
+                <JobSummary job={job} className="ai-match-summary" style={{ color: theme.text }} />
+                <button className="ai-match-skills-toggle" style={{ color: theme.primary }} onClick={onToggle} aria-expanded={expanded}>
+                    {t('dashboard.aiMatch.skillsAnalysis')} {expanded ? '-' : '+'}
+                </button>
+                {expanded && (
+                    <div className="ai-match-skills-detail">
+                        {job.matching_skills?.length > 0 && <div className="ai-match-skills-group"><span className="ai-match-skills-label" style={{ color: '#00ff64' }}>[OK] {t('dashboard.aiMatch.matchingSkills')}:</span><div className="ai-match-skills-tags">{job.matching_skills.map(skill => <span key={skill} className="ai-match-skill-tag-match">{skill}</span>)}</div></div>}
+                        {job.missing_skills?.length > 0 && <div className="ai-match-skills-group"><span className="ai-match-skills-label" style={{ color: '#ff6b6b' }}>[X] {t('dashboard.aiMatch.missingSkills')}:</span><div className="ai-match-skills-tags">{job.missing_skills.map(skill => <span key={skill} className="ai-match-skill-tag-miss">{skill}</span>)}</div></div>}
+                        {job.reason && <p className="ai-match-reason">{job.reason}</p>}
+                    </div>
+                )}
+                <div className="ai-match-card-footer">
+                    <JobDate date={job.date} className="ai-match-card-date" style={{ color: theme.text }} />
+                    <div className="ai-match-card-actions">{actions}</div>
+                </div>
+            </article>
+        );
+    }
     if (variant === 'saved') {
         return (
             <article style={{ padding: '6px 8px', borderBottom: `1px solid ${theme.borderLight}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>

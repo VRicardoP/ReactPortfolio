@@ -60,4 +60,17 @@ describe('JobCard', () => {
         );
         expect(container.firstChild).toMatchSnapshot();
     });
+    it('preserva la estructura de la variante match', () => {
+        const { container } = render(
+            <JobCard
+                job={{ ...job, ai_score: 91, fit: 'good', matching_skills: ['React'], missing_skills: ['Go'], reason: 'Good fit' }}
+                variant="match"
+                fitStyle={{ bg: '#000', text: '#fff', border: '#ccc' }}
+                expanded
+                onToggle={vi.fn()}
+                actions={<button>Save</button>}
+            />
+        );
+        expect(container.firstChild).toMatchSnapshot();
+    });
 });

@@ -12,7 +12,7 @@ import { useTheme } from '../../context/ThemeContext';
 import useJobApplication from '../../hooks/useJobApplication';
 import useSkillsGap from '../../hooks/useSkillsGap';
 import useAIJobMatch, { ALL_MATCH_SOURCES, TAB_RESULTS, TAB_SKILLS_GAP } from '../../hooks/useAIJobMatch';
-import { CompanyResearchName, JobBadges, JobDate, JobSummary } from './JobCardExtras';
+import JobCard from './JobCard';
 import { AI_MATCH_PAGE_SIZE } from './dashboardConstants';
 import { SOURCE_COLOR_MAP } from '../../config/jobSources';
 import '../../styles/ai-match.css';
@@ -273,119 +273,16 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                 const isExpanded = expandedId === globalIdx;
 
                                 return (
-                                    <div
+                                    <JobCard
                                         key={`${job.source}-${job.id}-${globalIdx}`}
-                                        className="ai-match-card"
-                                        style={{ border: `1px solid ${theme.borderLight}` }}
-                                    >
-                                        <div className="ai-match-card-header">
-                                            <div className="ai-match-card-title-col">
-                                                <div className="ai-match-card-title" style={{ color: theme.textHighlight }}>
-                                                    {/* `title_en` llega ya resuelto del backend (enriquecimiento en
-                                                        segundo plano); el boton manual sigue cubriendo lo aun pendiente. */}
-                                                    {job.title_en || translatedTitles[job.title] || job.title}
-                                                    {(job.title_en || translatedTitles[job.title]) && (
-                                                        <span
-                                                            className="ai-match-translated-badge"
-                                                            title={job.title}
-                                                        >
-                                                            {t('dashboard.aiMatch.translated')}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <div className="ai-match-card-company" style={{ color: theme.text }}>
-                                                    <CompanyResearchName company={job.company}>{job.company}</CompanyResearchName>
-                                                </div>
-                                            </div>
-                                            <div className="ai-match-card-score-col">
-                                                <span className="ai-match-score" style={{ color: theme.primary }}>
-                                                    {job.ai_score}%
-                                                </span>
-                                                <span className="ai-match-fit-badge" style={{
-                                                    background: fitStyle.bg,
-                                                    color: fitStyle.text,
-                                                    border: `1px solid ${fitStyle.border}`,
-                                                }}>
-                                                    {job.fit?.toUpperCase()}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <div className="ai-match-card-meta">
-                                            {job.location && (
-                                                <span className="ai-match-card-meta-text" style={{ color: theme.text }}>
-                                                    {job.location}
-                                                </span>
-                                            )}
-                                            <JobBadges
-                                                remote={job.remote}
-                                                source={job.source}
-                                                employmentType={job.employment_type}
-                                                sourceStyle={{
-                                                    backgroundColor: 'rgba(255,255,255,0.08)',
-                                                    color: theme.primary,
-                                                    borderColor: `rgba(${theme.primaryRgb}, 0.3)`,
-                                                }}
-                                                employmentClassName="ai-match-card-meta-text secondary"
-                                                employmentStyle={{ color: theme.text }}
-                                            />
-                                        </div>
-
-                                        <JobSummary
-                                            job={job}
-                                            className="ai-match-summary"
-                                            style={{ color: theme.text }}
-                                        />
-                                        <button
-                                            className="ai-match-skills-toggle"
-                                            style={{ color: theme.primary }}
-                                            onClick={() => toggleExpanded(globalIdx)}
-                                            aria-expanded={isExpanded}
-                                        >
-                                            {t('dashboard.aiMatch.skillsAnalysis')} {isExpanded ? '-' : '+'}
-                                        </button>
-
-                                        {isExpanded && (
-                                            <div className="ai-match-skills-detail">
-                                                {job.matching_skills?.length > 0 && (
-                                                    <div className="ai-match-skills-group">
-                                                        <span className="ai-match-skills-label" style={{ color: '#00ff64' }}>
-                                                            [OK] {t('dashboard.aiMatch.matchingSkills')}:
-                                                        </span>
-                                                        <div className="ai-match-skills-tags">
-                                                            {job.matching_skills.map(s => (
-                                                                <span key={s} className="ai-match-skill-tag-match">{s}</span>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                )}
-                                                {job.missing_skills?.length > 0 && (
-                                                    <div className="ai-match-skills-group">
-                                                        <span className="ai-match-skills-label" style={{ color: '#ff6b6b' }}>
-                                                            [X] {t('dashboard.aiMatch.missingSkills')}:
-                                                        </span>
-                                                        <div className="ai-match-skills-tags">
-                                                            {job.missing_skills.map(s => (
-                                                                <span key={s} className="ai-match-skill-tag-miss">{s}</span>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                )}
-                                                {job.reason && (
-                                                    <p className="ai-match-reason">{job.reason}</p>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        <div className="ai-match-card-footer">
-                                            <JobDate
-                                                date={job.date}
-                                                className="ai-match-card-date"
-                                                style={{ color: theme.text }}
-                                            />
-                                            <div className="ai-match-card-actions">
-                                                {/* «Me interesa»: marca ligera, primer paso del embudo. Faltaba
-                                                    porque ese estado no existía en el backend (tt33u2264w20). */}
+                                        job={job}
+                                        variant="match"
+                                        translatedTitle={translatedTitles[job.title]}
+                                        fitStyle={fitStyle}
+                                        expanded={isExpanded}
+                                        onToggle={() => toggleExpanded(globalIdx)}
+                                        actions={(
+                                            <>
                                                 <button
                                                     onClick={() => handleInterested(job)}
                                                     disabled={interestedIds.has(job.id)}
@@ -393,8 +290,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                                 >
                                                     {interestedIds.has(job.id)
                                                         ? t('dashboard.jobBoard.interestedDone')
-                                                        : t('dashboard.jobBoard.interested')
-                                                    }
+                                                        : t('dashboard.jobBoard.interested')}
                                                 </button>
                                                 <button
                                                     onClick={() => handleSave(job)}
@@ -403,8 +299,7 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                                 >
                                                     {savedIds.has(job.id)
                                                         ? t('dashboard.aiMatch.saved')
-                                                        : t('dashboard.aiMatch.saveToBoard')
-                                                    }
+                                                        : t('dashboard.aiMatch.saveToBoard')}
                                                 </button>
                                                 {job.url && (
                                                     <button
@@ -413,13 +308,12 @@ const AIJobMatchWindow = memo(({ initialPosition }) => {
                                                     >
                                                         {openedIds.has(job.id)
                                                             ? t('dashboard.jobBoard.opened')
-                                                            : t('dashboard.jobBoard.viewOffer')
-                                                        }
+                                                            : t('dashboard.jobBoard.viewOffer')}
                                                     </button>
                                                 )}
-                                            </div>
-                                        </div>
-                                    </div>
+                                            </>
+                                        )}
+                                    />
                                 );
                             })}
                         </div>
