@@ -98,13 +98,13 @@ const useAIJobMatch = () => {
     // Consulta el progreso una y otra vez hasta que el análisis termine, y
     // entonces carga el resultado.
     /** Poll /analyze/progress until the background run ends, then load the result. */
-    const followRunningAnalysis = useCallback(async () => {
+    const followRunningAnalysis = useCallback(async (isCancelled = () => false) => {
         for (;;) {
             const response = await authenticatedFetch(
                 `${BACKEND_URL}/api/v1/ai-match/analyze/progress`
             );
             const state = await response.json();
-            if (!mountedRef.current) return;
+            if (isCancelled() || !mountedRef.current) return;
             setProgress(state);
             if (state.state === 'done') {
                 await fetchResult();
@@ -114,7 +114,7 @@ const useAIJobMatch = () => {
                 throw new Error(state.error || 'Analysis failed');
             }
             await sleep(POLL_INTERVAL_MS);
-            if (!mountedRef.current) return;
+            if (isCancelled() || !mountedRef.current) return;
         }
     }, [authenticatedFetch, fetchResult]);
 
@@ -176,7 +176,7 @@ const useAIJobMatch = () => {
                     setLoading(true);
                     setProgress(state);
                     try {
-                        await followRunningAnalysis();
+                        await followRunningAnalysis(() => cancelled);
                     } finally {
                         if (mountedRef.current) {
                             setLoading(false);
