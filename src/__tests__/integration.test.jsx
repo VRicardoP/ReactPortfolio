@@ -142,28 +142,30 @@ describe('authentication integration', () => {
   });
 
   it('logs out after fifteen minutes of inactivity', async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.useFakeTimers();
     global.fetch = vi.fn(async () => reply(200));
     renderProtectedRoute();
-    expect(await screen.findByTestId('protected-content')).toBeInTheDocument();
-    act(() => { vi.advanceTimersByTime(15 * 60 * 1000); });
-    expect(await screen.findByTestId('login-marker')).toBeInTheDocument();
+    await act(async () => {});
+    expect(screen.getByTestId('protected-content')).toBeInTheDocument();
+    await act(async () => { await vi.advanceTimersByTimeAsync(15 * 60 * 1000); });
+    expect(screen.getByTestId('login-marker')).toBeInTheDocument();
     expect(sessionStorage.getItem('logoutReason')).toBe('inactivity');
   });
 
   it('resets the inactivity timeout on interaction', async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.useFakeTimers();
     global.fetch = vi.fn(async () => reply(200));
     renderProtectedRoute();
-    expect(await screen.findByTestId('protected-content')).toBeInTheDocument();
-    act(() => {
-      vi.advanceTimersByTime(14 * 60 * 1000);
+    await act(async () => {});
+    expect(screen.getByTestId('protected-content')).toBeInTheDocument();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(14 * 60 * 1000);
       window.dispatchEvent(new Event('click'));
-      vi.advanceTimersByTime(14 * 60 * 1000);
+      await vi.advanceTimersByTimeAsync(14 * 60 * 1000);
     });
     expect(screen.getByTestId('protected-content')).toBeInTheDocument();
-    act(() => { vi.advanceTimersByTime(2 * 60 * 1000); });
-    expect(await screen.findByTestId('login-marker')).toBeInTheDocument();
+    await act(async () => { await vi.advanceTimersByTimeAsync(2 * 60 * 1000); });
+    expect(screen.getByTestId('login-marker')).toBeInTheDocument();
   });
 
   it('shows and consumes the inactivity reason on login', async () => {
