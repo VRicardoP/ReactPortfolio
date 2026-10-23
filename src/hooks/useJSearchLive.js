@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../context/AuthContext';
 import { BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
+import useAuthenticatedQuery from './useAuthenticatedQuery';
 
 const COOLDOWN_SECONDS = 12;
 
@@ -23,7 +23,10 @@ const INITIAL_FORM_FIELDS = {
 // de espera entre búsquedas (para no saturar la API), y cómo formatear el salario.
 const useJSearchLive = () => {
     const { t } = useTranslation();
-    const { authenticatedFetch } = useAuth();
+    const { refetch: searchJobs } = useAuthenticatedQuery(null, {
+        enabled: false,
+        throwOnError: true,
+    });
 
     const [formFields, setFormFields] = useState(INITIAL_FORM_FIELDS);
     const [results, setResults] = useState([]);
@@ -88,8 +91,7 @@ const useJSearchLive = () => {
             if (formFields.employment_type !== 'all') params.set('employment_type', formFields.employment_type);
             if (formFields.remote_only) params.set('remote_only', 'true');
 
-            const response = await authenticatedFetch(`${BACKEND_URL}/api/v1/jsearch-jobs/search?${params.toString()}`);
-            const data = await response.json();
+            const data = await searchJobs(`${BACKEND_URL}/api/v1/jsearch-jobs/search?${params.toString()}`);
             if (!isCurrent()) return;
             setResults(Array.isArray(data) ? data : data.data || data.results || data.jobs || []);
             startCooldown();
@@ -101,7 +103,7 @@ const useJSearchLive = () => {
             // Apagar el indicador solo si nadie ha tomado el relevo.
             if (isCurrent()) setLoading(false);
         }
-    }, [authenticatedFetch, formFields, cooldown, startCooldown, t]);
+    }, [formFields, cooldown, searchJobs, startCooldown, t]);
 
     /**
      * Format salary range from a job object's salary fields.
