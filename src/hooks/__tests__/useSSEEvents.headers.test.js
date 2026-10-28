@@ -18,6 +18,8 @@ vi.mock('../../i18n', () => ({ default: { t: key => key, language: 'es' } }));
 vi.mock('../../config/api', () => ({
     BACKEND_URL: 'https://ejemplo.ngrok-free.dev',
     DEFAULT_HEADERS: { 'ngrok-skip-browser-warning': 'true' },
+    ADMIN_BACKEND_URL: 'https://ejemplo.ngrok-free.dev',
+    ADMIN_HEADERS: { 'ngrok-skip-browser-warning': 'true' },
 }));
 
 beforeEach(() => { calls = []; });

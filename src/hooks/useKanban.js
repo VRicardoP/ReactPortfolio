@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
-import { BACKEND_URL } from '../config/api';
+import { ADMIN_BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
 import useAuthenticatedQuery from './useAuthenticatedQuery';
 // DT-127: las columnas del pipeline son UNA sola lista (config/kanbanColumns).
@@ -28,7 +28,7 @@ const useKanban = () => {
     const { t } = useTranslation();
     const { authenticatedFetch } = useAuth();
     const { refetch: refetchApplications } = useAuthenticatedQuery(
-        `${BACKEND_URL}/api/v1/applications/`,
+        `${ADMIN_BACKEND_URL}/api/v1/applications/`,
         { enabled: false },
     );
 
@@ -134,7 +134,7 @@ const useKanban = () => {
                 const destino = flight.pending;
                 flight.pending = null;
                 try {
-                    await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/${id}`, {
+                    await authenticatedFetch(`${ADMIN_BACKEND_URL}/api/v1/applications/${id}`, {
                         method: 'PATCH',
                         body: JSON.stringify({ status: destino }),
                     });
@@ -187,7 +187,7 @@ const useKanban = () => {
         if (!newApp.title.trim() || !newApp.company.trim()) return;
 
         try {
-            const response = await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/`, {
+            const response = await authenticatedFetch(`${ADMIN_BACKEND_URL}/api/v1/applications/`, {
                 method: 'POST',
                 body: JSON.stringify({
                     title: newApp.title.trim(),
@@ -230,7 +230,7 @@ const useKanban = () => {
         const removed = index === -1 ? null : applications[index];
         setApplications(prev => prev.filter(a => a.id !== appId));
         try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/applications/${appId}`, {
+            await authenticatedFetch(`${ADMIN_BACKEND_URL}/api/v1/applications/${appId}`, {
                 method: 'DELETE',
             });
         } catch {

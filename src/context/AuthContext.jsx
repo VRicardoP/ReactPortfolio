@@ -4,7 +4,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
+import { ADMIN_BACKEND_URL, ADMIN_HEADERS } from '../config/api';
 import useInactivityLogout from '../hooks/useInactivityLogout';
 import { authenticatedRequest, SETTLED } from '../services/authFetch';
 import { safeSession } from '../utils/safeStorage';
@@ -64,9 +64,9 @@ export const AuthProvider = ({ children }) => {
         const refresh = (async () => {
             let authenticated = false;
             try {
-                const response = await fetch(`${BACKEND_URL}/api/v1/auth/refresh`, {
+                const response = await fetch(`${ADMIN_BACKEND_URL}/api/v1/auth/refresh`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', ...DEFAULT_HEADERS },
+                    headers: { 'Content-Type': 'application/json', ...ADMIN_HEADERS },
                     credentials: 'include',
                 });
                 authenticated = response.ok;
@@ -92,8 +92,8 @@ export const AuthProvider = ({ children }) => {
             const epoch = authEpochRef.current;
             let authenticated = false;
             try {
-                const response = await fetch(`${BACKEND_URL}/api/v1/auth/users/me`, {
-                    headers: DEFAULT_HEADERS,
+                const response = await fetch(`${ADMIN_BACKEND_URL}/api/v1/auth/users/me`, {
+                    headers: ADMIN_HEADERS,
                     credentials: 'include',
                 });
                 if (response.ok) authenticated = true;
@@ -123,11 +123,11 @@ export const AuthProvider = ({ children }) => {
         try {
             if (logoutPromiseRef.current) await logoutPromiseRef.current;
             const formData = new URLSearchParams({ username, password });
-            const response = await fetch(`${BACKEND_URL}/api/v1/auth/token`, {
+            const response = await fetch(`${ADMIN_BACKEND_URL}/api/v1/auth/token`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    ...DEFAULT_HEADERS,
+                    ...ADMIN_HEADERS,
                 },
                 body: formData.toString(),
                 credentials: 'include',
@@ -161,9 +161,9 @@ export const AuthProvider = ({ children }) => {
         loginControllerRef.current?.abort();
         const epoch = openSession();
         settleSession(epoch, false);
-        const request = fetch(`${BACKEND_URL}/api/v1/auth/logout`, {
+        const request = fetch(`${ADMIN_BACKEND_URL}/api/v1/auth/logout`, {
             method: 'POST',
-            headers: DEFAULT_HEADERS,
+            headers: ADMIN_HEADERS,
             credentials: 'include',
         }).catch(() => {});
         const flight = request.finally(() => {

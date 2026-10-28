@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKEND_URL } from '../config/api';
+import { ADMIN_BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
 import { JOBS_PAGE_SIZE } from '../components/Dashboard/dashboardConstants';
 import { buildJobSearchParams } from '../utils/jobSearchParams';
@@ -94,7 +94,7 @@ const useJobFilter = (onSaveSearch) => {
         try {
             const qs = buildQueryParams({ offset, cursor });
             const data = await fetchJobs(
-                `${BACKEND_URL}/api/v1/jobs/search?${qs}`
+                `${ADMIN_BACKEND_URL}/api/v1/jobs/search?${qs}`
             );
             if (!isCurrent()) return;
             const items = data.data || [];

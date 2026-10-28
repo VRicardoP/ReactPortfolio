@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { useAuth } from '../context/AuthContext';
-import { BACKEND_URL } from '../config/api';
+import { ADMIN_BACKEND_URL } from '../config/api';
 import useAuthenticatedQuery from './useAuthenticatedQuery';
 
-const SCHOOLS_URL = `${BACKEND_URL}/api/v1/schools/`;
-const SCHOOL_JOBS_URL = `${BACKEND_URL}/api/v1/schools/jobs/all`;
-const SCHOOL_JOB_ACTIONS_URL = `${BACKEND_URL}/api/v1/schools/jobs`;
-const REFRESH_URL = `${BACKEND_URL}/api/v1/schools/refresh`;
+const SCHOOLS_URL = `${ADMIN_BACKEND_URL}/api/v1/schools/`;
+const SCHOOL_JOBS_URL = `${ADMIN_BACKEND_URL}/api/v1/schools/jobs/all`;
+const SCHOOL_JOB_ACTIONS_URL = `${ADMIN_BACKEND_URL}/api/v1/schools/jobs`;
+const REFRESH_URL = `${ADMIN_BACKEND_URL}/api/v1/schools/refresh`;
 
 // Espera tras POST /refresh antes de re-pollear (el scraper corre en background)
 const SCRAPE_POLL_DELAY_MS = 8000;

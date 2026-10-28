@@ -535,9 +535,9 @@
       }
     },
     "schoolContacts": {
-      "title": "Contatti manuali (scuole)",
-      "help": "Scuole senza elenco pubblico — invia candidatura spontanea secondo la cadenza indicata.",
-      "noContacts": "Nessuna scuola manual_only configurata.",
+      "title": "Contatto diretto (scuole)",
+      "help": "Scuole a cui puoi rivolgerti da solo: quelle che accettano candidature via email, più quelle che nessuno monitora per te — per queste ultime il link è l'unico modo per scoprire un posto vacante.",
+      "noContacts": "Al momento nessuna scuola richiede contatto diretto.",
       "unverified": "(contatto non verificato)",
       "everyNDays": "ogni {{days}} giorni",
       "visitSite": "Visita il sito",
@@ -545,8 +545,14 @@
         "school": "Scuola",
         "contact": "Contatto",
         "reminderEvery": "Promemoria",
-        "actions": "Azioni"
-      }
+        "actions": "Azioni",
+        "mode": "Monitoraggio"
+      },
+      "modes": {
+        "scrape": "Monitorata",
+        "manual_only": "Solo manuale"
+      },
+      "checkJobsPage": "Vedi offerte"
     },
     "jobSearch": {
       "title": "Ricerca lavoro",

@@ -5,6 +5,8 @@ vi.mock('../../context/AuthContext', () => ({ useAuth: vi.fn() }))
 vi.mock('../../config/api', () => ({
   BACKEND_URL: 'http://test',
   DEFAULT_HEADERS: { 'ngrok-skip-browser-warning': 'true' },
+  ADMIN_BACKEND_URL: 'http://test',
+  ADMIN_HEADERS: { 'ngrok-skip-browser-warning': 'true' },
 }))
 vi.mock('../../components/UI/Toast', () => ({ showToast: vi.fn() }))
 

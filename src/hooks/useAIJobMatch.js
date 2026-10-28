@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { BACKEND_URL } from '../config/api';
+import { ADMIN_BACKEND_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import useAnalysisRun from './useAnalysisRun';
 import useAuthenticatedQuery from './useAuthenticatedQuery';
@@ -15,7 +15,7 @@ export { ALL_MATCH_SOURCES };
 const useAIJobMatch = () => {
     const { authenticatedFetch } = useAuth();
     const { refetch: refetchResult } = useAuthenticatedQuery(
-        `${BACKEND_URL}/api/v1/ai-match/analyze/result`,
+        `${ADMIN_BACKEND_URL}/api/v1/ai-match/analyze/result`,
         { enabled: false, throwOnError: true },
     );
     const analysis = useAnalysisRun(authenticatedFetch, refetchResult);
@@ -43,7 +43,7 @@ const useAIJobMatch = () => {
         setTranslating(true);
         try {
             const response = await authenticatedFetch(
-                `${BACKEND_URL}/api/v1/ai-match/translate-titles`,
+                `${ADMIN_BACKEND_URL}/api/v1/ai-match/translate-titles`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

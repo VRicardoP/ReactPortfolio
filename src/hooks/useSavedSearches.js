@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
-import { BACKEND_URL } from '../config/api';
+import { ADMIN_BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
 import { JOBS_PAGE_SIZE } from '../components/Dashboard/dashboardConstants';
 import { buildJobSearchParams } from '../utils/jobSearchParams';
@@ -31,7 +31,7 @@ const useSavedSearches = () => {
         loading,
         refetch: refetchSearches,
     } = useAuthenticatedQuery(
-        `${BACKEND_URL}/api/v1/saved-searches/`,
+        `${ADMIN_BACKEND_URL}/api/v1/saved-searches/`,
         { enabled: false },
     );
 
@@ -93,7 +93,7 @@ const useSavedSearches = () => {
         if (!name) return;
 
         try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/saved-searches/`, {
+            await authenticatedFetch(`${ADMIN_BACKEND_URL}/api/v1/saved-searches/`, {
                 method: 'POST',
                 body: JSON.stringify({
                     name,
@@ -151,7 +151,7 @@ const useSavedSearches = () => {
             });
 
             const response = await authenticatedFetch(
-                `${BACKEND_URL}/api/v1/jobs/search?${params.toString()}`
+                `${ADMIN_BACKEND_URL}/api/v1/jobs/search?${params.toString()}`
             );
             const data = await response.json();
             if (!isCurrent()) return;
@@ -177,7 +177,7 @@ const useSavedSearches = () => {
         if (!confirmed) return;
 
         try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/saved-searches/${id}`, {
+            await authenticatedFetch(`${ADMIN_BACKEND_URL}/api/v1/saved-searches/${id}`, {
                 method: 'DELETE',
             });
             setSearches(prev => prev.filter(s => s.id !== id));

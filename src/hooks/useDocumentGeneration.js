@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKEND_URL } from '../config/api';
+import { ADMIN_BACKEND_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import { safeSession } from '../utils/safeStorage';
 import downloadBlob from '../utils/downloadBlob';
@@ -81,7 +81,7 @@ export default function useDocumentGeneration() {
             operationKey = key;
             const operationId = safeSession.get(key) || crypto.randomUUID();
             safeSession.set(key, operationId); // unavailable storage => no HTTP
-            const resp = await authenticatedFetch(`${BACKEND_URL}/api/v1/cv-generation/generate`, {
+            const resp = await authenticatedFetch(`${ADMIN_BACKEND_URL}/api/v1/cv-generation/generate`, {
                 method: 'POST',
                 body: JSON.stringify({ ...intent, operation_id: operationId }),
             });
@@ -125,7 +125,7 @@ export default function useDocumentGeneration() {
         const stamp = stampRead();
         try {
             const resp = await authenticatedFetch(
-                `${BACKEND_URL}/api/v1/cv-generation/?application_id=${applicationId}`
+                `${ADMIN_BACKEND_URL}/api/v1/cv-generation/?application_id=${applicationId}`
             );
             const docs = await resp.json();
             const cv = docs.find(d => d.doc_type === 'cv') || null;
@@ -147,7 +147,7 @@ export default function useDocumentGeneration() {
     const fetchAllDocuments = useCallback(async () => {
         const stamp = stampRead();
         try {
-            const resp = await authenticatedFetch(`${BACKEND_URL}/api/v1/cv-generation/`);
+            const resp = await authenticatedFetch(`${ADMIN_BACKEND_URL}/api/v1/cv-generation/`);
             const docs = await resp.json();
             const indexed = {};
             for (const doc of docs) {
@@ -189,7 +189,7 @@ export default function useDocumentGeneration() {
     const downloadPdf = useCallback(async (docId, filename) => {
         try {
             const resp = await authenticatedFetch(
-                `${BACKEND_URL}/api/v1/cv-generation/${docId}/pdf`
+                `${ADMIN_BACKEND_URL}/api/v1/cv-generation/${docId}/pdf`
             );
             const blob = await resp.blob();
             downloadBlob(blob, filename || 'document.pdf');
@@ -202,7 +202,7 @@ export default function useDocumentGeneration() {
     const downloadJson = useCallback(async (docId, filename) => {
         try {
             const resp = await authenticatedFetch(
-                `${BACKEND_URL}/api/v1/cv-generation/${docId}`
+                `${ADMIN_BACKEND_URL}/api/v1/cv-generation/${docId}`
             );
             const data = await resp.json();
             const content = JSON.parse(data.content);
@@ -216,7 +216,7 @@ export default function useDocumentGeneration() {
     // Borra un documento generado, tanto en el servidor como en memoria.
     const deleteDocument = useCallback(async (docId, applicationId) => {
         try {
-            await authenticatedFetch(`${BACKEND_URL}/api/v1/cv-generation/${docId}`, {
+            await authenticatedFetch(`${ADMIN_BACKEND_URL}/api/v1/cv-generation/${docId}`, {
                 method: 'DELETE',
             });
             // Borrar es la CUARTA escritura local del mapa, y era la unica que

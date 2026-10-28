@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { BACKEND_URL } from '../config/api';
+import { ADMIN_BACKEND_URL } from '../config/api';
 
 const POLL_INTERVAL_MS = 2500;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -39,7 +39,7 @@ const useAnalysisRun = (authenticatedFetch, refetchResult) => {
     const followRunningAnalysis = useCallback(async (isCancelled = () => false) => {
         for (;;) {
             const response = await authenticatedFetch(
-                `${BACKEND_URL}/api/v1/ai-match/analyze/progress`
+                `${ADMIN_BACKEND_URL}/api/v1/ai-match/analyze/progress`
             );
             const state = await response.json();
             if (isCancelled() || !mountedRef.current) return;
@@ -60,7 +60,7 @@ const useAnalysisRun = (authenticatedFetch, refetchResult) => {
         setProgress(null);
         try {
             const response = await authenticatedFetch(
-                `${BACKEND_URL}/api/v1/ai-match/analyze/start`,
+                `${ADMIN_BACKEND_URL}/api/v1/ai-match/analyze/start`,
                 { method: 'POST' }
             );
             const payload = await response.json();
@@ -86,7 +86,7 @@ const useAnalysisRun = (authenticatedFetch, refetchResult) => {
                 await fetchResult();
                 if (sourceRef.current === 'core') return;
                 const response = await authenticatedFetch(
-                    `${BACKEND_URL}/api/v1/ai-match/analyze/progress`
+                    `${ADMIN_BACKEND_URL}/api/v1/ai-match/analyze/progress`
                 );
                 if (cancelled) return;
                 const state = await response.json();

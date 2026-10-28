@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { BACKEND_URL } from '../config/api';
+import { ADMIN_BACKEND_URL } from '../config/api';
 import {
   CORE_SOURCE_BY_KEY,
   JOB_SOURCES,
@@ -25,15 +25,15 @@ const CRITICAL_KEYS = ['stats', 'map', 'chat-analytics'];
 export const useDashboardData = () => {
   const { authenticatedFetch } = useAuth();
   const { refetch: refetchStats } = useAuthenticatedQuery(
-    `${BACKEND_URL}/api/v1/analytics/stats?days=${STATS_WINDOW_DAYS}`,
+    `${ADMIN_BACKEND_URL}/api/v1/analytics/stats?days=${STATS_WINDOW_DAYS}`,
     { enabled: false },
   );
   const { refetch: refetchMap } = useAuthenticatedQuery(
-    `${BACKEND_URL}/api/v1/analytics/map-data`,
+    `${ADMIN_BACKEND_URL}/api/v1/analytics/map-data`,
     { enabled: false },
   );
   const { refetch: refetchChatAnalytics } = useAuthenticatedQuery(
-    `${BACKEND_URL}/api/v1/analytics/chat/full-stats`,
+    `${ADMIN_BACKEND_URL}/api/v1/analytics/chat/full-stats`,
     { enabled: false },
   );
   const [stats, setStats] = useState(null);
@@ -95,7 +95,7 @@ export const useDashboardData = () => {
         const path = coreSource
           ? `/api/v1/jobs/search?source=${encodeURIComponent(coreSource)}&limit=100`
           : urlPath;
-        authenticatedFetch(`${BACKEND_URL}${path}`)
+        authenticatedFetch(`${ADMIN_BACKEND_URL}${path}`)
           .then(res => {
             if (!res.ok) throw new Error(`Job source ${key} returned ${res.status}`);
             return res.json();

@@ -354,9 +354,9 @@
       }
     },
     "schoolContacts": {
-      "title": "School Contacts (manual)",
-      "help": "Schools without a public listing — send a spontaneous application on the cadence below.",
-      "noContacts": "No manual-only schools configured.",
+      "title": "School Contacts (direct)",
+      "help": "Schools you can approach yourself: those that accept an application by email, plus those nobody harvests for you — for the latter the link is the only way to spot a vacancy.",
+      "noContacts": "No schools need direct contact right now.",
       "unverified": "(contact unverified)",
       "everyNDays": "every {{days}} days",
       "visitSite": "Visit site",
@@ -364,8 +364,14 @@
         "school": "School",
         "contact": "Contact",
         "reminderEvery": "Reminder",
-        "actions": "Actions"
-      }
+        "actions": "Actions",
+        "mode": "Monitoring"
+      },
+      "modes": {
+        "scrape": "Monitored",
+        "manual_only": "Manual only"
+      },
+      "checkJobsPage": "Check jobs page"
     },
     "heatmap": {
       "title": "Interaction Heatmap",

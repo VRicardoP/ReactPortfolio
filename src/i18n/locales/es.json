@@ -354,9 +354,9 @@
       }
     },
     "schoolContacts": {
-      "title": "Contactos manuales (colegios)",
-      "help": "Colegios sin listado público — envía candidatura espontánea según la cadencia indicada.",
-      "noContacts": "No hay colegios manual_only configurados.",
+      "title": "Contacto directo (colegios)",
+      "help": "Colegios a los que puedes acudir por tu cuenta: los que aceptan candidatura por correo, más los que nadie cosecha por ti — para estos últimos el enlace es la única forma de detectar una vacante.",
+      "noContacts": "Ahora mismo ningún colegio requiere contacto directo.",
       "unverified": "(contacto sin verificar)",
       "everyNDays": "cada {{days}} días",
       "visitSite": "Visitar sitio",
@@ -364,8 +364,14 @@
         "school": "Colegio",
         "contact": "Contacto",
         "reminderEvery": "Recordatorio",
-        "actions": "Acciones"
-      }
+        "actions": "Acciones",
+        "mode": "Vigilancia"
+      },
+      "modes": {
+        "scrape": "Vigilado",
+        "manual_only": "Solo manual"
+      },
+      "checkJobsPage": "Ver ofertas"
     },
     "heatmap": {
       "title": "Mapa de Calor de Interacciones",

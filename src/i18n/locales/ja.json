@@ -535,9 +535,9 @@
       }
     },
     "schoolContacts": {
-      "title": "手動連絡先（学校）",
-      "help": "公開求人がない学校 — 指定の頻度で自発的応募を送ってください。",
-      "noContacts": "manual_only の学校が登録されていません。",
+      "title": "直接連絡（学校）",
+      "help": "自分から動ける学校 — メールでの応募を受け付ける学校と、誰も代わりに監視していない学校。後者はリンクが求人を見つける唯一の手段です。",
+      "noContacts": "現在、直接連絡が必要な学校はありません。",
       "unverified": "（連絡先未確認）",
       "everyNDays": "{{days}} 日ごと",
       "visitSite": "サイトを開く",
@@ -545,8 +545,14 @@
         "school": "学校",
         "contact": "連絡先",
         "reminderEvery": "リマインダー",
-        "actions": "操作"
-      }
+        "actions": "操作",
+        "mode": "監視"
+      },
+      "modes": {
+        "scrape": "監視中",
+        "manual_only": "手動のみ"
+      },
+      "checkJobsPage": "求人を見る"
     },
     "jobSearch": {
       "title": "求人検索",

@@ -535,9 +535,9 @@
       }
     },
     "schoolContacts": {
-      "title": "Manuelle Kontakte (Schulen)",
-      "help": "Schulen ohne öffentliche Liste — sende eine Initiativbewerbung in der angegebenen Frequenz.",
-      "noContacts": "Keine manual_only Schulen konfiguriert.",
+      "title": "Direktkontakt (Schulen)",
+      "help": "Schulen, an die du dich selbst wenden kannst: die, die Bewerbungen per E-Mail annehmen, plus die, die niemand für dich überwacht — bei letzteren ist der Link der einzige Weg, eine Stelle zu entdecken.",
+      "noContacts": "Derzeit benötigt keine Schule Direktkontakt.",
       "unverified": "(Kontakt nicht verifiziert)",
       "everyNDays": "alle {{days}} Tage",
       "visitSite": "Webseite besuchen",
@@ -545,8 +545,14 @@
         "school": "Schule",
         "contact": "Kontakt",
         "reminderEvery": "Erinnerung",
-        "actions": "Aktionen"
-      }
+        "actions": "Aktionen",
+        "mode": "Überwachung"
+      },
+      "modes": {
+        "scrape": "Überwacht",
+        "manual_only": "Nur manuell"
+      },
+      "checkJobsPage": "Stellen ansehen"
     },
     "jobSearch": {
       "title": "Jobsuche",

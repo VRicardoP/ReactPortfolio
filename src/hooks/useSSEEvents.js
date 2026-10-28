@@ -3,7 +3,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { BACKEND_URL, DEFAULT_HEADERS } from '../config/api';
+import { ADMIN_BACKEND_URL, ADMIN_HEADERS } from '../config/api';
 import { showToast } from '../components/UI/Toast';
 import i18n from '../i18n';
 
@@ -62,8 +62,8 @@ export const useSSEEvents = () => {
 
             try {
                 const response = await authenticatedFetch(
-                    `${BACKEND_URL}/api/v1/notifications/stream`,
-                    { headers: DEFAULT_HEADERS, signal: controller.signal },
+                    `${ADMIN_BACKEND_URL}/api/v1/notifications/stream`,
+                    { headers: ADMIN_HEADERS, signal: controller.signal },
                 );
                 if (!response.ok) {
                     scheduleReconnect();

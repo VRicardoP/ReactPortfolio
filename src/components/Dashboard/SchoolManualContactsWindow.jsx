@@ -1,6 +1,13 @@
-// Ventana del panel que lista los colegios que hay que contactar a mano
-// (los que no se vigilan automáticamente): su correo, cada cuánto hay que
-// recordar escribirles, y un enlace a su web.
+// Ventana del panel que lista los colegios a los que se puede escribir
+// directamente: su correo, cada cuánto recordar escribirles, y un enlace a su
+// web.
+//
+// El criterio es la POLÍTICA de contacto del colegio, no cómo se le vigila.
+// Antes filtraba por `monitoring_mode === 'manual_only'`, que es otra cosa —
+// "no se puede raspar su web"— y dejaba fuera colegios que aceptan correo
+// directo aunque además publiquen sus ofertas. La columna de modo distingue
+// unos de otros, porque para los vigilados la candidatura espontánea es un
+// añadido y no la única vía.
 
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,13 +16,33 @@ import FloatingWindow from '../Windows/FloatingWindow';
 import { WINDOW_SIZES } from '../../config/windowSizes';
 import '../../styles/dashboard-schools.css';
 
+// Políticas que admiten candidatura por correo. `portal_only` queda fuera a
+// propósito: ese colegio solo acepta su propio formulario.
+const POLITICAS_CONTACTO_DIRECTO = Object.freeze([
+    'direct_email',
+    'direct_email_ok',
+    'direct_email_director',
+]);
+
+// Un colegio que no se cosecha no manda nunca una oferta al panel, así que su
+// enlace es la única vía de enterarse: entra aunque su política sea de portal.
+const noSeCosecha = (s) => s.monitoring_mode === 'manual_only';
+
+// La página de ofertas es el enlace útil; la raíz del portal es el respaldo.
+const enlaceDe = (s) => s.jobs_page_url || s.portal_url || null;
+
 const SchoolManualContactsWindow = memo(({ initialPosition, schoolData }) => {
     const { t } = useTranslation();
     const { schools, loading, error } = schoolData;
 
-    // Se queda solo con los colegios marcados como "solo contacto manual".
-    const manualSchools = useMemo(
-        () => schools.filter((s) => s.monitoring_mode === 'manual_only'),
+    // Dos motivos para estar aquí: que se le pueda escribir, o que nadie vigile
+    // sus ofertas por él. Los que se cosechan y solo admiten portal no entran:
+    // de esos el panel ya recibe las vacantes.
+    const contactSchools = useMemo(
+        () =>
+            schools.filter(
+                (s) => POLITICAS_CONTACTO_DIRECTO.includes(s.policy) || noSeCosecha(s)
+            ),
         [schools]
     );
 
@@ -42,30 +69,31 @@ const SchoolManualContactsWindow = memo(({ initialPosition, schoolData }) => {
                 </div>
             )}
 
-            {!error && !loading && manualSchools.length === 0 && (
+            {!error && !loading && contactSchools.length === 0 && (
                 <div className="school-msg">
                     {t('dashboard.schoolContacts.noContacts')}
                 </div>
             )}
 
-            {!error && manualSchools.length > 0 && (
+            {!error && contactSchools.length > 0 && (
                 <div className="school-contacts-scroll">
                     <table className="visitors-table school-table">
                         <thead>
                             <tr>
                                 <th>{t('dashboard.schoolContacts.cols.school')}</th>
                                 <th>{t('dashboard.schoolContacts.cols.contact')}</th>
+                                <th>{t('dashboard.schoolContacts.cols.mode')}</th>
                                 <th>{t('dashboard.schoolContacts.cols.reminderEvery')}</th>
                                 <th>{t('dashboard.schoolContacts.cols.actions')}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {manualSchools.map((s) => (
+                            {contactSchools.map((s) => (
                                 <tr key={s.id}>
                                     <td>
                                         {s.name}
                                         <div className="school-cell-sub">
-                                            {s.policy}
+                                            {[s.city, s.policy].filter(Boolean).join(' · ')}
                                         </div>
                                     </td>
                                     <td>
@@ -74,14 +102,19 @@ const SchoolManualContactsWindow = memo(({ initialPosition, schoolData }) => {
                                             : <em>{t('dashboard.schoolContacts.unverified')}</em>}
                                     </td>
                                     <td>
+                                        {t(`dashboard.schoolContacts.modes.${s.monitoring_mode}`)}
+                                    </td>
+                                    <td>
                                         {s.manual_reminder_interval_days
                                             ? t('dashboard.schoolContacts.everyNDays', { days: s.manual_reminder_interval_days })
                                             : '—'}
                                     </td>
                                     <td>
-                                        {s.portal_url && (
-                                            <a href={s.portal_url} target="_blank" rel="noopener noreferrer">
-                                                {t('dashboard.schoolContacts.visitSite')}
+                                        {enlaceDe(s) && (
+                                            <a href={enlaceDe(s)} target="_blank" rel="noopener noreferrer">
+                                                {noSeCosecha(s)
+                                                    ? t('dashboard.schoolContacts.checkJobsPage')
+                                                    : t('dashboard.schoolContacts.visitSite')}
                                             </a>
                                         )}
                                     </td>

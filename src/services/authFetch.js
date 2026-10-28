@@ -1,4 +1,4 @@
-import { DEFAULT_HEADERS } from '../config/api';
+import { ADMIN_HEADERS } from '../config/api';
 
 export const SETTLED = Object.freeze({
     COMMITTED: 'committed',
@@ -9,7 +9,7 @@ export const SETTLED = Object.freeze({
 // Ejecuta una petición protegida, renueva una vez si la cookie ha caducado y
 // evita que una respuesta antigua cierre una sesión más reciente.
 export const authenticatedRequest = async (url, options, session) => {
-    const headers = { ...DEFAULT_HEADERS, ...options.headers };
+    const headers = { ...ADMIN_HEADERS, ...options.headers };
     if (options.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
 
     const request = () => fetch(url, {
