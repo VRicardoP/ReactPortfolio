@@ -15,7 +15,7 @@ vi.mock('../../context/AuthContext', () => ({
   }),
 }))
 
-// Mock jobSources to avoid loading all 16 sources in tests
+// Mock jobSources to avoid loading all 20 sources in tests
 vi.mock('../../config/jobSources', () => ({
   CORE_SOURCE_BY_KEY: mockCoreSources,
   JOB_SOURCES: [
