@@ -14,7 +14,7 @@ import { useTheme } from '../../context/ThemeContext';
 import '../../styles/dashboard-forms.css';
 
 
-const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
+const ChatAnalyticsWindow = memo(({ data, initialPosition, defaultExpanded }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const { theme } = useTheme();
     const { t } = useTranslation();
@@ -75,6 +75,7 @@ const ChatAnalyticsWindow = memo(({ data, initialPosition }) => {
             id="chat-analytics-window"
             title={t('dashboard.chatAnalytics.title')}
             initialPosition={initialPosition}
+            defaultExpanded={defaultExpanded}
             initialSize={WINDOW_SIZES.chatAnalytics}
         >
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>

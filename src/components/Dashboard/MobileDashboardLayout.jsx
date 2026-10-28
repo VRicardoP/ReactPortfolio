@@ -7,6 +7,7 @@ import TabBar from '../UI/TabBar';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import { useSSEEvents } from '../../hooks/useSSEEvents';
+import useSchoolJobs from '../../hooks/useSchoolJobs';
 import { DashboardLoader } from './DesktopDashboardContent';
 import { DASHBOARD_TABS } from './dashboardConstants';
 import ErrorBoundary from '../ErrorBoundary';
@@ -22,6 +23,8 @@ const SelectedOffersPanel = lazy(() => import('./SelectedOffersPanel'));
 const JobSearchWindow = lazy(() => import('./JobSearchWindow'));
 const AIJobMatchWindow = lazy(() => import('./AIJobMatchWindow'));
 const HeatmapWindow = lazy(() => import('./HeatmapWindow'));
+const SchoolJobsWindow = lazy(() => import('./SchoolJobsWindow'));
+const SchoolManualContactsWindow = lazy(() => import('./SchoolManualContactsWindow'));
 
 // Mobile: tabbed layout with collapsible sections
 const MobileDashboardLayout = memo(({
@@ -31,6 +34,9 @@ const MobileDashboardLayout = memo(({
     const { t } = useTranslation();
     const { theme, cycleTheme, cycleBackground, backgroundEffect } = useTheme();
     const [activeTab, setActiveTab] = useState('overview');
+    // Igual que en escritorio (DesktopDashboardContent): un único hook, pasado
+    // a las dos ventanas de colegios, para que compartan datos y no dupliquen peticiones.
+    const schoolData = useSchoolJobs();
 
     useSSEEvents();
 
@@ -41,7 +47,17 @@ const MobileDashboardLayout = memo(({
             </nav>
 
             <div className="mobile-dashboard-container">
-                <div className="mobile-dashboard-content">
+                {/* Sin tabIndex: el panel siempre trae controles enfocables propios
+                    (botones, enlaces, tablas), así que fijarlo añadiría una parada
+                    de tabulación redundante antes de llegar a ellos (patrón ARIA
+                    APG de pestañas: el tabindex del panel es solo para cuando NO
+                    hay nada enfocable dentro). */}
+                <div
+                    className="mobile-dashboard-content"
+                    role="tabpanel"
+                    id={`dashboard-panel-${activeTab}`}
+                    aria-labelledby={`dashboard-tab-${activeTab}`}
+                >
                     {activeTab === 'overview' && (
                         <Suspense fallback={<DashboardLoader />}>
                             {/* DT-128: un ErrorBoundary POR ventana, como en escritorio. */}
@@ -74,6 +90,13 @@ const MobileDashboardLayout = memo(({
                             <ErrorBoundary><SelectedOffersPanel /></ErrorBoundary>
                             <ErrorBoundary><JobSearchWindow /></ErrorBoundary>
                             <ErrorBoundary><AIJobMatchWindow /></ErrorBoundary>
+                        </Suspense>
+                    )}
+
+                    {activeTab === 'schools' && (
+                        <Suspense fallback={<DashboardLoader />}>
+                            <ErrorBoundary><SchoolJobsWindow schoolData={schoolData} defaultExpanded /></ErrorBoundary>
+                            <ErrorBoundary><SchoolManualContactsWindow schoolData={schoolData} /></ErrorBoundary>
                         </Suspense>
                     )}
 
@@ -130,6 +153,8 @@ const MobileDashboardLayout = memo(({
                 onChange={setActiveTab}
                 tabs={DASHBOARD_TABS.map(tab => ({
                     key: tab.key,
+                    id: `dashboard-tab-${tab.key}`,
+                    controls: `dashboard-panel-${tab.key}`,
                     label: (
                         <>
                             <span className="mobile-dashboard-tab-icon" aria-hidden="true">{tab.icon}</span>

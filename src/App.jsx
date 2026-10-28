@@ -241,18 +241,12 @@ MobilePortfolioLayout.displayName = 'MobilePortfolioLayout';
 // móvil o escritorio, carga los datos del portfolio, y registra la
 // visita para las estadísticas.
 function App() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const isMobile = useIsMobile();
 
   // track the user's visit
   useVisitorTracking();
   useInteractionTracking();
-
-  // Mantiene el atributo "lang" de la página sincronizado con el idioma elegido.
-  // Sync html lang attribute with current i18n language
-  useEffect(() => {
-    document.documentElement.lang = i18n.language;
-  }, [i18n.language]);
 
   // Pequeña pista en la consola del navegador sobre el Terminal escondido.
   // subtle console hint about the terminal easter egg

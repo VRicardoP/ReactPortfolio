@@ -12,6 +12,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
 import LanguageSwitcher from './components/UI/LanguageSwitcher';
 import Toast from './components/UI/Toast';
+import DocumentLangSync from './components/DocumentLangSync';
 import App from './App.jsx';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')).render(
     <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
+        <DocumentLangSync />
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/login" element={<LoginPage />} />

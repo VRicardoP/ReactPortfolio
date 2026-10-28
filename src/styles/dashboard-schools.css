@@ -26,6 +26,11 @@
 .school-jobs-scroll {
     flex: 1;
     overflow-y: auto;
+    /* La tabla tiene 6 columnas: en móvil no cabe en el ancho del acordeón.
+       Scroll horizontal CONTENIDO aquí, nunca en la página (body: overflow-x
+       hidden en base.css) — mismo patrón que .kanban-board/.ai-match-source-tabs. */
+    overflow-x: auto;
+    scrollbar-width: thin;
 }
 
 /* Loading / empty / help messages */
@@ -42,6 +47,18 @@
 
 .school-table {
     width: 100%;
+}
+
+/* `width: 100%` por sí solo deja que el texto se envuelva hasta caber —
+   ilegible con 4-6 columnas en un móvil. El mínimo fuerza el scroll del
+   contenedor en vez de aplastar las columnas; en escritorio no hace nada
+   porque las ventanas ya son más anchas que estos valores. */
+.school-jobs-scroll .school-table {
+    min-width: 760px; /* 6 columnas: relevancia, urgencia, colegio, puesto, detectado, acciones */
+}
+
+.school-contacts-scroll .school-table {
+    min-width: 560px; /* 4 columnas: colegio, contacto, vigilancia, acciones */
 }
 
 /* Dimmed row for low-relevance (non-IT) offers */
@@ -119,4 +136,6 @@
 
 .school-contacts-scroll {
     overflow-y: auto;
+    overflow-x: auto; /* 4 columnas + enlaces: mismo motivo que .school-jobs-scroll */
+    scrollbar-width: thin;
 }

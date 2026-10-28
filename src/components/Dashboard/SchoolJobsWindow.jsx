@@ -58,7 +58,7 @@ const buildEmailLink = (email, subject) => email
 // Da la URL de la página de ofertas de un colegio (o de su portal general).
 const getJobsPage = (school) => school?.jobs_page_url || school?.portal_url || null;
 
-const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
+const SchoolJobsWindow = memo(({ initialPosition, schoolData, defaultExpanded }) => {
     const { t } = useTranslation();
     // DT-141: firma anterior, sustituida por la que incorpora el descarte persistente.
     // const { schools, jobs, loading, error, refreshing, triggerScrape, refresh } = schoolData;
@@ -88,6 +88,7 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData }) => {
             title={t('dashboard.schoolJobs.title')}
             initialPosition={initialPosition}
             initialSize={WINDOW_SIZES.schoolJobs}
+            defaultExpanded={defaultExpanded}
         >
             <div className="school-jobs">
                 <div className="school-jobs-toolbar">

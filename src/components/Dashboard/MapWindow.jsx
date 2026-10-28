@@ -63,7 +63,7 @@ const MapResizeHandler = () => {
     return null;
 };
 
-const MapWindow = memo(({ data, initialPosition }) => {
+const MapWindow = memo(({ data, initialPosition, defaultExpanded }) => {
     const { t } = useTranslation();
 
     // if there's no data use an empty array
@@ -79,6 +79,7 @@ const MapWindow = memo(({ data, initialPosition }) => {
             id="map-window"
             title={t('dashboard.map.title')}
             initialPosition={initialPosition}
+            defaultExpanded={defaultExpanded}
             initialSize={WINDOW_SIZES.map}
         >
             <div style={{

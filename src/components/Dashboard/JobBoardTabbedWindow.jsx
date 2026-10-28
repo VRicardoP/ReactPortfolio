@@ -14,7 +14,7 @@ import useJobBoardControls from '../../hooks/useJobBoardControls';
 import useJobApplication from '../../hooks/useJobApplication';
 import JobCard from './JobCard';
 
-const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
+const JobBoardTabbedWindow = memo(({ jobData, initialPosition, defaultExpanded }) => {
     const { t } = useTranslation();
     const { theme } = useTheme();
     const [activeTab, setActiveTab] = useState('all');
@@ -87,6 +87,7 @@ const JobBoardTabbedWindow = memo(({ jobData, initialPosition }) => {
             id="job-board-window"
             title={t('dashboard.jobBoard.windowTitle', { defaultValue: 'Job Board' })}
             initialPosition={initialPosition}
+            defaultExpanded={defaultExpanded}
             initialSize={WINDOW_SIZES.jobBoard}
         >
             <div className="jobboard-container">

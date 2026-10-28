@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import FloatingWindow from '../Windows/FloatingWindow';
 import { WINDOW_SIZES } from '../../config/windowSizes';
 
-const StatsWindow = memo(({ data, initialPosition }) => {
+const StatsWindow = memo(({ data, initialPosition, defaultExpanded }) => {
     const { t } = useTranslation();
 
     if (!data) {
@@ -16,6 +16,7 @@ const StatsWindow = memo(({ data, initialPosition }) => {
                 title={t('dashboard.stats.title')}
                 initialPosition={initialPosition}
                 initialSize={WINDOW_SIZES.statsEmpty}
+                defaultExpanded={defaultExpanded}
             >
                 <div style={{ textAlign: 'center', padding: '20px' }}>
                     {t('dashboard.stats.loading')}
@@ -30,6 +31,7 @@ const StatsWindow = memo(({ data, initialPosition }) => {
             title={t('dashboard.stats.title')}
             initialPosition={initialPosition}
             initialSize={WINDOW_SIZES.stats}
+            defaultExpanded={defaultExpanded}
         >
             <div className="stats-container">
                 <div className="stat-card">

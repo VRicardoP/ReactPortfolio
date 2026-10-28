@@ -12,5 +12,6 @@ export const DASHBOARD_TABS = [
     { key: 'map', icon: 'MAP' },
     { key: 'chat', icon: 'CHAT' },
     { key: 'jobs', icon: 'JOBS' },
+    { key: 'schools', icon: 'EDU' },
     { key: 'settings', icon: 'CFG' },
 ];
