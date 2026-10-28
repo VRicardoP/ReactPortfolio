@@ -17,7 +17,7 @@ vi.mock('react-i18next', async importOriginal => ({
     useTranslation: () => ({ t: key => key }),
 }));
 vi.mock('../../../context/ThemeContext', () => ({
-    useTheme: () => ({ theme: { primary: '#0ff' }, cycleTheme: vi.fn(), cycleBackground: vi.fn(), backgroundEffect: 'rain' }),
+    useTheme: () => ({ theme: { primary: '#0ff' }, cycleTheme: vi.fn(), compactBackground: false, toggleCompactBackground: vi.fn() }),
 }));
 vi.mock('../../../hooks/useSSEEvents', () => ({ useSSEEvents: () => ({}) }));
 vi.mock('../../../hooks/useSchoolJobs', () => ({ default: () => ({ schools: [], jobs: [] }) }));

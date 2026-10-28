@@ -472,27 +472,63 @@
   }
 }
 
-/* Touch devices - Larger touch areas */
+/* Touch devices (tablets that keep the desktop layout) - real 44 px targets */
 @media (hover: none) and (pointer: coarse) {
+  /* DT-208: el botón entero mide 44x44 (WCAG 2.5.5) y el punto de color se
+     dibuja dentro con ::before. Antes el botón medía 24 px con un halo
+     invisible de 44 px centrado: a 6 px de separación, los halos de los dos
+     botones se pisaban 14 px y el toque entre ambos era azar. */
   .control-btn {
-    width: 24px;
-    height: 24px;
-    position: relative;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .control-btn::before {
     content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 44px;
-    height: 44px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--control-dot);
+    transition: transform 0.2s ease;
+  }
+
+  .control-btn.control-minimize {
+    --control-dot: #8A2BE2;
+    background-color: transparent;
+  }
+
+  .control-btn.control-maximize {
+    --control-dot: #FFCC00;
+    background-color: transparent;
+  }
+
+  .window-controls {
+    gap: 0;
   }
 
   .window-header {
-    padding: 10px;
-    min-height: 40px;
+    padding: 4px 6px;
+    min-height: 52px;
+  }
+
+  /* La pastilla minimizada mide 40 px de alto (useWindowLayout la coloca por
+     filas de 48): dentro caben botones de 32, por encima del mínimo de 24 px
+     de WCAG 2.5.8. */
+  .window-collapsed .window-header {
+    min-height: 0;
+  }
+
+  .window-collapsed .control-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .window-collapsed .control-btn::before {
+    width: 14px;
+    height: 14px;
   }
 
   .resize-handle-n,
@@ -514,7 +550,7 @@
   }
 
   /* Visual feedback on touch */
-  .control-btn:active {
+  .control-btn:active::before {
     transform: scale(1.3);
   }
 

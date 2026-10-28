@@ -10,6 +10,24 @@
   --lh-body: 1.5;
 }
 
+/* DT-208: en el diseño compacto (useIsMobile.js escribe el atributo) toda la
+   escala sube dos puntos: 12-14 px es legible con ratón a 60 cm, no con el
+   dedo a 30 cm. Los campos de formulario van a 16 px fijos porque iOS hace
+   zoom automático al enfocar cualquier campo más pequeño. */
+html[data-layout="compact"] {
+  --fs-caption: 12px;
+  --fs-sm: 14px;
+  --fs-body: 16px;
+  --fs-lead: 18px;
+  --fs-section: 20px;
+  --fs-window-title: 22px;
+  --fs-display: 30px;
+}
+
+html[data-layout="compact"] :is(input, textarea, select) {
+  font-size: 16px;
+}
+
 .text-danger { color: var(--theme-error); }
 .text-success { color: var(--theme-success); }
 .text-muted { color: var(--theme-text); opacity: 0.7; }
@@ -47,19 +65,21 @@ body {
   color: #00ffff;
 }
 
-/* Desktop: fixed windows need overflow hidden */
-@media (min-width: 769px) {
-  body {
-    overflow: hidden;
-  }
+/* El modo lo decide useIsMobile.js con UNA consulta (config/layout.js) y lo
+   escribe en <html data-layout>. Antes el CSS repetía aquí su propio umbral de
+   768 px y, al cambiar el de JavaScript, el body seguía sin hacer scroll en un
+   móvil en horizontal (DT-208). Sin atributo (antes de que React arranque, o
+   si falla) el body hace scroll: es el valor seguro. */
+
+/* Escritorio: las ventanas son fijas, la página no debe hacer scroll */
+html[data-layout="desktop"] body {
+  overflow: hidden;
 }
 
-/* Mobile: scrollable sections need vertical scroll */
-@media (max-width: 768px) {
-  body {
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
+/* Compacto: secciones apiladas, scroll vertical normal */
+body {
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 * {

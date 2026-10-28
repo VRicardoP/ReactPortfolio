@@ -112,6 +112,13 @@ export const ThemeProvider = ({ children }) => {
         return BACKGROUND_EFFECTS.includes(saved) ? saved : BACKGROUND_EFFECTS[0];
     });
 
+    // DT-208: en el diseño compacto no hay efecto 3D (batería). Este
+    // interruptor enciende un fondo CSS ligero (CompactBackground); apagado
+    // por defecto, recordado entre visitas.
+    const [compactBackground, setCompactBackground] = useState(() =>
+        safeLocal.get('portfolio-compact-background') === 'on'
+    );
+
     const theme = useMemo(() => themes[themeName], [themeName]);
 
     // Cambia el tema de color y lo recuerda para la próxima visita.
@@ -145,6 +152,13 @@ export const ThemeProvider = ({ children }) => {
         setBackground(BACKGROUND_EFFECTS[nextIndex]);
     }, [backgroundEffect, setBackground]);
 
+    // Enciende o apaga el fondo ligero del diseño compacto y lo recuerda.
+    const toggleCompactBackground = useCallback(() => {
+        const next = !compactBackground;
+        setCompactBackground(next);
+        safeLocal.set('portfolio-compact-background', next ? 'on' : 'off');
+    }, [compactBackground]);
+
     // apply global CSS variables when the theme changes
     useEffect(() => {
         const root = document.documentElement;
@@ -172,8 +186,11 @@ export const ThemeProvider = ({ children }) => {
         backgroundEffect,
         setBackground,
         cycleBackground,
+        compactBackground,
+        toggleCompactBackground,
         availableThemes: Object.keys(themes).map(key => ({ key, name: themes[key].name }))
-    }), [theme, themeName, setTheme, backgroundEffect, setBackground, cycleTheme, cycleBackground]);
+    }), [theme, themeName, setTheme, backgroundEffect, setBackground, cycleTheme, cycleBackground,
+        compactBackground, toggleCompactBackground]);
 
     return (
         <ThemeContext.Provider value={value}>

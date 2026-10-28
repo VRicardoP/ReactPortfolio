@@ -11,7 +11,7 @@ const SOCIAL_LINKS = [
     { key: 'gitlab', label: 'GitLab', prefix: 'https://gitlab.com/' },
 ];
 
-const ContactWindow = ({ data, initialPosition }) => {
+const ContactWindow = ({ data, initialPosition, defaultExpanded }) => {
     const [copied, setCopied] = useState(false);
     const { t } = useTranslation();
 
@@ -40,6 +40,7 @@ const ContactWindow = ({ data, initialPosition }) => {
             title={t('windows.contact')}
             initialPosition={initialPosition}
             initialSize={WINDOW_SIZES.contact}
+            defaultExpanded={defaultExpanded}
         >
             <div className="contact-content">
                 <p className="contact-message">{data.contact.message}</p>

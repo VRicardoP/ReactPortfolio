@@ -25,7 +25,11 @@ const RainEffect = () => {
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(width, height);
         renderer.domElement.className = 'rain-canvas';
-        renderer.domElement.style.pointerEvents = window.matchMedia('(pointer: fine)').matches ? 'auto' : 'none';
+        // DT-208: también responde al dedo (tablet en modo escritorio). Ahí la
+        // página no hace scroll, así que el gesto no compite con nada;
+        // touch-action: none evita que el navegador se lo quede.
+        renderer.domElement.style.pointerEvents = 'auto';
+        renderer.domElement.style.touchAction = 'none';
 
         scene.add(new THREE.AmbientLight(0x404040, 0.5));
         const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);

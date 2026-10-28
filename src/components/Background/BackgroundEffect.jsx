@@ -1,10 +1,12 @@
 // Elige y muestra el fondo animado activo (lluvia, matrix, cubo, etc.),
-// descargando solo el código del efecto elegido, y lo desactiva en móvil
-// para no gastar batería/rendimiento con gráficos 3D pesados.
+// descargando solo el código del efecto elegido. En el diseño compacto no
+// carga ninguno (batería/rendimiento con gráficos 3D pesados): como mucho el
+// fondo CSS ligero, si el visitante lo ha encendido en el menú (DT-208).
 
 import { lazy, Suspense } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import useIsMobile from '../../hooks/useIsMobile';
+import CompactBackground from './CompactBackground';
 
 // Lazy-load each effect so only the active one is downloaded
 const RainEffect = lazy(() => import('./RainEffect'));
@@ -25,10 +27,10 @@ const EFFECTS = {
 
 const BackgroundEffect = () => {
     const isMobile = useIsMobile();
-    const { backgroundEffect } = useTheme();
+    const { backgroundEffect, compactBackground } = useTheme();
 
-    // Skip heavy Three.js/Canvas effects on mobile (CSS gradient used instead)
-    if (isMobile) return null;
+    // Skip heavy Three.js/Canvas effects in the compact layout
+    if (isMobile) return compactBackground ? <CompactBackground /> : null;
 
     const EffectComponent = EFFECTS[backgroundEffect] || RainEffect;
 

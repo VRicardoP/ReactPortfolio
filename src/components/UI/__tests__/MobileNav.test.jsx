@@ -1,5 +1,17 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+
+const cycleTheme = vi.fn();
+const toggleCompactBackground = vi.fn();
+vi.mock('../../../context/ThemeContext', () => ({
+    useTheme: () => ({
+        theme: { primary: '#0ff' },
+        cycleTheme,
+        compactBackground: false,
+        toggleCompactBackground,
+    }),
+}));
+
 import MobileNav from '../MobileNav';
 
 describe('MobileNav', () => {
@@ -7,6 +19,23 @@ describe('MobileNav', () => {
         title: 'Vicente Pau',
         onTerminalToggle: vi.fn(),
     };
+
+    // DT-208: en móvil no había forma de cambiar el tema ni de tener fondo.
+    it('offers theme cycling and the animated-background switch in the menu', () => {
+        render(<MobileNav {...defaultProps} />);
+        fireEvent.click(screen.getByLabelText('Menu'));
+
+        fireEvent.click(screen.getByRole('menuitem', { name: /theme/i }));
+        expect(cycleTheme).toHaveBeenCalledOnce();
+
+        const bgSwitch = screen.getByRole('menuitemcheckbox', { name: /animated background/i });
+        expect(bgSwitch).toHaveAttribute('aria-checked', 'false');
+        fireEvent.click(bgSwitch);
+        expect(toggleCompactBackground).toHaveBeenCalledOnce();
+
+        // Neither closes the menu: the visitor can keep cycling themes.
+        expect(screen.getByRole('menu')).toBeInTheDocument();
+    });
 
     it('renders the title', () => {
         render(<MobileNav {...defaultProps} />);

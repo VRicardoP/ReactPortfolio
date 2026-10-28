@@ -567,7 +567,9 @@
   "mobile": {
     "menu": "Menü",
     "openChat": "Chat öffnen",
-    "closeChat": "Chat schließen"
+    "closeChat": "Chat schließen",
+    "theme": "Design",
+    "animatedBackground": "Animierter Hintergrund"
   },
   "terminal": {
     "title": "Terminal",

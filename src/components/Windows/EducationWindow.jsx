@@ -25,7 +25,7 @@ const TYPE_LABEL_KEYS = {
     course: 'education.typeCourse'
 };
 
-const EducationWindow = ({ data, initialPosition, onOpenDocument }) => {
+const EducationWindow = ({ data, initialPosition, onOpenDocument, defaultExpanded }) => {
     const { t, i18n } = useTranslation();
     const [expandedIndex, setExpandedIndex] = useState(null);
     const documentLanguage = (i18n.language || 'en').split('-')[0] === 'es' ? 'es' : 'en';
@@ -43,6 +43,7 @@ const EducationWindow = ({ data, initialPosition, onOpenDocument }) => {
             title={t('windows.education')}
             initialPosition={initialPosition}
             initialSize={WINDOW_SIZES.education}
+            defaultExpanded={defaultExpanded}
         >
             <div className="education-content">
                 <div className="timeline">

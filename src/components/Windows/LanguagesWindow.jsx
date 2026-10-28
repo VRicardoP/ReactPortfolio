@@ -45,7 +45,7 @@ const getLevelDots = (levelStr) => {
     return 3;
 };
 
-const LanguagesWindow = ({ data, initialPosition }) => {
+const LanguagesWindow = ({ data, initialPosition, defaultExpanded }) => {
     const { t } = useTranslation();
     if (!data) return null;
 
@@ -55,6 +55,7 @@ const LanguagesWindow = ({ data, initialPosition }) => {
             title={t('windows.languages')}
             initialPosition={initialPosition}
             initialSize={WINDOW_SIZES.languages}
+            defaultExpanded={defaultExpanded}
         >
             <div className="languages-content">
                 {data.languages.map((lang, index) => {

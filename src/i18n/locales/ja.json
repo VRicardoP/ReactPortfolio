@@ -566,7 +566,9 @@
   "mobile": {
     "menu": "メニュー",
     "openChat": "チャットを開く",
-    "closeChat": "チャットを閉じる"
+    "closeChat": "チャットを閉じる",
+    "theme": "テーマ",
+    "animatedBackground": "背景アニメーション"
   },
   "terminal": {
     "title": "ターミナル",

@@ -40,7 +40,7 @@ const BarsView = memo(({ data, animated, t }) => {
 });
 BarsView.displayName = 'BarsView';
 
-const TechSkillsWindow = memo(({ data, initialPosition }) => {
+const TechSkillsWindow = memo(({ data, initialPosition, defaultExpanded }) => {
     const { t } = useTranslation();
     const [animated, setAnimated] = useState(false);
 
@@ -59,6 +59,7 @@ const TechSkillsWindow = memo(({ data, initialPosition }) => {
             title={t('windows.techSkills')}
             initialPosition={initialPosition}
             initialSize={WINDOW_SIZES.techSkills}
+            defaultExpanded={defaultExpanded}
         >
             <div className="tech-skills-content">
                 <BarsView data={data} animated={animated} t={t} />

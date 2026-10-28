@@ -32,7 +32,7 @@ const MobileDashboardLayout = memo(({
     onLogout, onGoHome,
 }) => {
     const { t } = useTranslation();
-    const { theme, cycleTheme, cycleBackground, backgroundEffect } = useTheme();
+    const { theme, cycleTheme, compactBackground, toggleCompactBackground } = useTheme();
     const [activeTab, setActiveTab] = useState('overview');
     // Igual que en escritorio (DesktopDashboardContent): un único hook, pasado
     // a las dos ventanas de colegios, para que compartan datos y no dupliquen peticiones.
@@ -119,12 +119,18 @@ const MobileDashboardLayout = memo(({
                                             />
                                             {t('dashboard.theme')}
                                         </button>
+                                        {/* DT-208: el botón que rotaba los efectos 3D no hacía
+                                            nada visible aquí (el compacto no los carga). Este
+                                            enciende el fondo CSS ligero, como en MobileNav. */}
                                         <button
                                             className="mobile-nav-dropdown-item"
-                                            onClick={cycleBackground}
+                                            onClick={toggleCompactBackground}
+                                            aria-pressed={compactBackground}
                                         >
-                                            <span className="mobile-nav-dropdown-item-icon" aria-hidden="true">BG</span>
-                                            {t(`dashboard.${backgroundEffect === 'rain' ? 'bgRain' : backgroundEffect === 'parallax' ? 'bgParallax' : backgroundEffect === 'matrix' ? 'bgMatrix' : backgroundEffect === 'lensflare' ? 'bgLensflare' : backgroundEffect === 'cube' ? 'bgCube' : 'bgSmoke'}`)}
+                                            <span className="mobile-nav-dropdown-item-icon" aria-hidden="true">
+                                                {compactBackground ? 'ON' : 'OFF'}
+                                            </span>
+                                            {t('mobile.animatedBackground')}
                                         </button>
                                         <button
                                             className="mobile-nav-dropdown-item"

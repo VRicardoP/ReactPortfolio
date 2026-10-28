@@ -28,8 +28,11 @@ const LensflareEffect = () => {
         Object.assign(renderer.domElement.style, {
             position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', zIndex: '-1',
         });
-        const supportsPointer = window.matchMedia('(pointer: fine)').matches;
-        renderer.domElement.style.pointerEvents = supportsPointer ? 'auto' : 'none';
+        // DT-208: también responde al dedo (tablet en modo escritorio): arrastrar
+        // gira la cámara y mantener pulsado avanza. La página no hace scroll en
+        // ese modo, así que el gesto no compite con nada.
+        renderer.domElement.style.pointerEvents = 'auto';
+        renderer.domElement.style.touchAction = 'none';
 
         const boxGeometry = new THREE.BoxGeometry(250, 250, 250);
         const boxMaterial = new THREE.MeshPhongMaterial({

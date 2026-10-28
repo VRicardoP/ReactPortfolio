@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import FloatingWindow from './FloatingWindow';
 import { WINDOW_SIZES } from '../../config/windowSizes';
 
-const AchievementsWindow = ({ data, initialPosition }) => {
+const AchievementsWindow = ({ data, initialPosition, defaultExpanded }) => {
     const { t } = useTranslation();
     if (!data?.achievements) return null;
 
@@ -15,6 +15,7 @@ const AchievementsWindow = ({ data, initialPosition }) => {
             title={t('windows.achievements')}
             initialPosition={initialPosition}
             initialSize={WINDOW_SIZES.achievements}
+            defaultExpanded={defaultExpanded}
         >
             <div className="achievements-content">
                 <div className="achievements-grid">

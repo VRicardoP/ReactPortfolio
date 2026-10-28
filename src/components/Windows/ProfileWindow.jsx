@@ -34,7 +34,7 @@ const downloadFile = async (url, filename) => {
     downloadBlob(await response.blob(), filename);
 };
 
-const ProfileWindow = ({ data, initialPosition }) => {
+const ProfileWindow = ({ data, initialPosition, defaultExpanded }) => {
     const { t, i18n } = useTranslation();
     const [recruiterMode, setRecruiterMode] = useState(false);
     const [showCvMenu, setShowCvMenu] = useState(false);
@@ -84,6 +84,7 @@ const ProfileWindow = ({ data, initialPosition }) => {
             title={t('windows.profile')}
             initialPosition={initialPosition}
             initialSize={WINDOW_SIZES.profile}
+            defaultExpanded={defaultExpanded}
         >
             <div className="profile-content">
                 <div className="profile-header">

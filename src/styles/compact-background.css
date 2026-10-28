@@ -1,0 +1,40 @@
+/* Fondo ligero del diseño compacto (CompactBackground.jsx, DT-208).
+   Se pinta entre el degradado del body y el contenido (z-index -1). */
+
+.compact-background {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.compact-background::before,
+.compact-background::after {
+    content: '';
+    position: absolute;
+    inset: -40%;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(var(--theme-primary-rgb, 0, 255, 255), 0.22), transparent 45%),
+        radial-gradient(circle at 70% 70%, rgba(var(--theme-primary-rgb, 0, 255, 255), 0.14), transparent 40%);
+    animation: compactDrift 24s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+.compact-background::after {
+    animation-duration: 38s;
+    animation-direction: alternate-reverse;
+    opacity: 0.6;
+}
+
+@keyframes compactDrift {
+    from { transform: translate3d(-6%, -4%, 0) rotate(0deg); }
+    to { transform: translate3d(6%, 4%, 0) rotate(10deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .compact-background::before,
+    .compact-background::after {
+        animation: none;
+    }
+}

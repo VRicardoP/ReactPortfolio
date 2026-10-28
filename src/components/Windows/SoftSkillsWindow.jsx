@@ -26,7 +26,7 @@ const iconLabel = (icon) => {
     return /^[A-Z0-9]{1,5}$/.test(icon || '') ? icon : 'SKL';
 };
 
-const SoftSkillsWindow = ({ data, initialPosition }) => {
+const SoftSkillsWindow = ({ data, initialPosition, defaultExpanded }) => {
     const { t } = useTranslation();
     if (!data) return null;
 
@@ -36,6 +36,7 @@ const SoftSkillsWindow = ({ data, initialPosition }) => {
             title={t('windows.softSkills')}
             initialPosition={initialPosition}
             initialSize={WINDOW_SIZES.softSkills}
+            defaultExpanded={defaultExpanded}
         >
             <div className="soft-skills-content">
                 <div className="soft-skills-grid">

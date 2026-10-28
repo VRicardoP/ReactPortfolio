@@ -1,11 +1,28 @@
 /* ===== MOBILE PORTFOLIO LAYOUT ===== */
 
+/* DT-208: alturas y márgenes seguros en un solo sitio. `dvh` es el alto real
+   con la barra del navegador a la vista (100vh la ignora y deja el borde
+   inferior tapado); env(safe-area-inset-*) son la muesca y la barra de inicio
+   de los móviles sin marco (index.html pide viewport-fit=cover). */
+:root {
+    --mobile-nav-height: 56px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* El degradado vive en el body, no en los contenedores, para que el fondo
+   animado opcional (CompactBackground) pueda pintarse entre ambos. */
+html[data-layout="compact"] body {
+    background: linear-gradient(180deg, #000000 0%, #0a1929 50%, #000000 100%);
+}
+
 .mobile-portfolio-container {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    padding: 56px 12px 80px; /* top: nav height, bottom: chat FAB space */
-    background: linear-gradient(180deg, #000000 0%, #0a1929 50%, #000000 100%);
+    min-height: 100dvh;
+    /* top: nav height, bottom: chat FAB space */
+    padding: calc(var(--mobile-nav-height) + var(--safe-top)) 12px calc(80px + var(--safe-bottom));
     -webkit-overflow-scrolling: touch;
 }
 
@@ -123,7 +140,7 @@
 
 .mobile-chat-fab {
     position: fixed;
-    bottom: 20px;
+    bottom: calc(20px + var(--safe-bottom));
     right: 20px;
     width: 56px;
     height: 56px;
@@ -188,6 +205,8 @@
     left: 0;
     right: 0;
     height: 85vh;
+    height: 85dvh;
+    padding-bottom: var(--safe-bottom);
     background: rgba(10, 25, 40, 0.98);
     border-top: 2px solid var(--theme-primary, #00ffff);
     border-radius: 16px 16px 0 0;
@@ -248,11 +267,11 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 56px;
+    height: calc(var(--mobile-nav-height) + var(--safe-top));
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px;
+    padding: var(--safe-top) 12px 0;
     background: rgba(0, 0, 0, 0.92);
     border-bottom: 1px solid rgba(var(--theme-primary-rgb, 0, 255, 255), 0.2);
     z-index: 999;
@@ -340,7 +359,7 @@
 /* Mobile nav dropdown menu */
 .mobile-nav-dropdown {
     position: fixed;
-    top: 56px;
+    top: calc(var(--mobile-nav-height) + var(--safe-top));
     left: 0;
     right: 0;
     background: rgba(10, 15, 25, 0.97);
@@ -392,7 +411,7 @@
 .mobile-nav-dropdown-overlay {
     position: fixed;
     inset: 0;
-    top: 56px;
+    top: calc(var(--mobile-nav-height) + var(--safe-top));
     z-index: 997;
 }
 
@@ -402,8 +421,9 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    padding: 56px 12px 64px; /* top: nav, bottom: tab bar */
-    background: linear-gradient(180deg, #000000 0%, #0a1929 50%, #000000 100%);
+    min-height: 100dvh;
+    /* top: nav, bottom: tab bar */
+    padding: calc(var(--mobile-nav-height) + var(--safe-top)) 12px calc(64px + var(--safe-bottom));
     -webkit-overflow-scrolling: touch;
 }
 
@@ -417,7 +437,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 56px;
+    height: calc(56px + var(--safe-bottom));
+    padding-bottom: var(--safe-bottom);
     display: flex;
     background: rgba(0, 0, 0, 0.95);
     border-top: 1px solid rgba(var(--theme-primary-rgb, 0, 255, 255), 0.25);
@@ -504,6 +525,12 @@
 /* ===== LANDSCAPE ADJUSTMENTS ===== */
 
 @media (max-height: 500px) and (orientation: landscape) {
+    /* La barra superior se estrecha; contenedores y desplegable la siguen
+       porque todos leen la misma variable. */
+    :root {
+        --mobile-nav-height: 44px;
+    }
+
     .mobile-hero {
         padding: 12px 16px 10px;
     }
@@ -514,14 +541,7 @@
 
     .mobile-chat-sheet {
         height: 90vh;
-    }
-
-    .mobile-nav-header {
-        height: 44px;
-    }
-
-    .mobile-portfolio-container {
-        padding-top: 44px;
+        height: 90dvh;
     }
 }
 

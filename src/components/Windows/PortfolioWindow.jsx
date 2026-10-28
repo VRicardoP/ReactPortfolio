@@ -12,7 +12,7 @@ const STATUS_LABEL_KEYS = {
     'in-progress': 'portfolio.statusInProgress',
 };
 
-const PortfolioWindow = ({ data, initialPosition }) => {
+const PortfolioWindow = ({ data, initialPosition, defaultExpanded }) => {
     const { t } = useTranslation();
     if (!data) return null;
 
@@ -22,6 +22,7 @@ const PortfolioWindow = ({ data, initialPosition }) => {
             title={t('windows.portfolio')}
             initialPosition={initialPosition}
             initialSize={WINDOW_SIZES.portfolio}
+            defaultExpanded={defaultExpanded}
         >
             <div className="portfolio-content">
                 <div className="portfolio-grid">

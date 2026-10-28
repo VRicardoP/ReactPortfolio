@@ -11,6 +11,16 @@ import useIsMobile from '../../hooks/useIsMobile';
 import Tooltip from '../UI/Tooltip';
 import '../../styles/floating-window.css';
 
+// DT-208: margen que una ventana recién creada deja hasta el borde de la
+// pantalla. En una tablet que conserva el escritorio, una ventana de 900 px
+// no puede nacer más ancha que el viewport; después mandan arrastrar y
+// redimensionar, que ya acotan por su cuenta.
+const VIEWPORT_MARGIN = 20;
+const fitToViewport = ({ width, height }) => ({
+    width: Math.min(width, window.innerWidth - VIEWPORT_MARGIN * 2),
+    height: Math.min(height, window.innerHeight - VIEWPORT_MARGIN * 2),
+});
+
 // Desktop: the original floating window with drag, resize, minimize, maximize
 // Versión de escritorio: la ventana flotante de verdad, con todos sus controles.
 const FloatingWindowDesktop = ({
@@ -42,7 +52,7 @@ const FloatingWindowDesktop = ({
     useEffect(() => {
         registerWindow(id, {
             position: initialPosition,
-            size: initialSize,
+            size: fitToViewport(initialSize),
             isMinimized: false,
             isMaximized: false,
             zIndex: 100

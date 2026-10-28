@@ -19,8 +19,11 @@ const CubeEffect = () => {
         Object.assign(renderer.domElement.style, {
             position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', zIndex: '-1',
         });
-        const supportsOrbit = window.matchMedia('(pointer: fine)').matches;
-        renderer.domElement.style.pointerEvents = supportsOrbit ? 'auto' : 'none';
+        // DT-208: también responde al dedo (tablet en modo escritorio); OrbitControls
+        // ya gira con un dedo. La página no hace scroll en ese modo, y
+        // touch-action: none evita que el navegador se quede el gesto.
+        renderer.domElement.style.pointerEvents = 'auto';
+        renderer.domElement.style.touchAction = 'none';
 
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000a0b);
@@ -56,7 +59,6 @@ const CubeEffect = () => {
         controls.rotateSpeed = 0.9;
         controls.enableZoom = false;
         controls.enablePan = false;
-        controls.enabled = supportsOrbit;
         controls.enableDamping = true;
         controls.dampingFactor = 0.02;
         controls.update();
