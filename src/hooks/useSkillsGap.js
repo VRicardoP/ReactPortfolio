@@ -1,8 +1,7 @@
 import { useState, useMemo, useCallback, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { ADMIN_BACKEND_URL } from '../config/api';
 
-const SKILLS_TOGGLE_URL = `${ADMIN_BACKEND_URL}/api/v1/cv-profiles/skills`;
+const SKILLS_TOGGLE_URL = `/api/v1/cv-profiles/skills`;
 
 /**
  * Extracts and manages the aggregated missing skills from AI match results.

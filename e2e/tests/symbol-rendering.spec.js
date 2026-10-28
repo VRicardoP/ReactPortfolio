@@ -47,7 +47,9 @@ test('dashboard has no font-dependent pictograms in desktop windows or mobile ta
   await expect(page.locator('.mobile-dashboard-tabs')).toBeVisible();
 
   const tabCount = await page.locator('.mobile-dashboard-tab').count();
-  expect(tabCount).toBe(5);
+  // 6 desde DT-206 (2026-10-28): overview, map, chat, jobs, schools, settings.
+  // La cota es deliberada — una pestaña nueva tiene que pasar por aquí.
+  expect(tabCount).toBe(6);
   for (let index = 0; index < tabCount; index += 1) {
     await page.locator('.mobile-dashboard-tab').nth(index).click();
     expect(await renderedRiskySymbols(page)).toEqual([]);

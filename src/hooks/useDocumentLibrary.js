@@ -1,9 +1,8 @@
 import { useCallback, useState } from 'react';
 
-import { ADMIN_BACKEND_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 
-const ENDPOINT = `${ADMIN_BACKEND_URL}/api/v1/cv-generation/`;
+const ENDPOINT = `/api/v1/cv-generation/`;
 
 // Carga y elimina documentos retenidos sin mezclar HTTP con su presentación.
 const useDocumentLibrary = (onDeleted, t) => {

@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { ADMIN_BACKEND_URL } from '../config/api';
 import { useAuth } from './AuthContext';
 
 const ApplicationsContext = createContext(null);
@@ -20,7 +19,7 @@ export const ApplicationsProvider = ({ children }) => {
         if (inFlightRef.current.has(key)) return false;
         inFlightRef.current.add(key);
         try {
-            const response = await authenticatedFetch(`${ADMIN_BACKEND_URL}/api/v1/applications/`, {
+            const response = await authenticatedFetch(`/api/v1/applications/`, {
                 method: 'POST',
                 body: JSON.stringify({
                     title: job.title || '',

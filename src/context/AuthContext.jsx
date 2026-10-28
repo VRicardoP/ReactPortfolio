@@ -4,9 +4,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { ADMIN_BACKEND_URL, ADMIN_HEADERS } from '../config/api';
 import useInactivityLogout from '../hooks/useInactivityLogout';
-import { authenticatedRequest, SETTLED } from '../services/authFetch';
+import { adminFetch, authenticatedRequest, SETTLED } from '../services/authFetch';
 import { safeSession } from '../utils/safeStorage';
 
 const AuthContext = createContext();
@@ -64,10 +63,9 @@ export const AuthProvider = ({ children }) => {
         const refresh = (async () => {
             let authenticated = false;
             try {
-                const response = await fetch(`${ADMIN_BACKEND_URL}/api/v1/auth/refresh`, {
+                const response = await adminFetch('/api/v1/auth/refresh', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', ...ADMIN_HEADERS },
-                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
                 });
                 authenticated = response.ok;
             } catch {
@@ -92,10 +90,7 @@ export const AuthProvider = ({ children }) => {
             const epoch = authEpochRef.current;
             let authenticated = false;
             try {
-                const response = await fetch(`${ADMIN_BACKEND_URL}/api/v1/auth/users/me`, {
-                    headers: ADMIN_HEADERS,
-                    credentials: 'include',
-                });
+                const response = await adminFetch('/api/v1/auth/users/me');
                 if (response.ok) authenticated = true;
                 else if (response.status === 401) {
                     authenticated = (await tryRefresh()) === SETTLED.COMMITTED;
@@ -123,14 +118,10 @@ export const AuthProvider = ({ children }) => {
         try {
             if (logoutPromiseRef.current) await logoutPromiseRef.current;
             const formData = new URLSearchParams({ username, password });
-            const response = await fetch(`${ADMIN_BACKEND_URL}/api/v1/auth/token`, {
+            const response = await adminFetch('/api/v1/auth/token', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    ...ADMIN_HEADERS,
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: formData.toString(),
-                credentials: 'include',
                 signal: controller.signal,
             });
             if (!response.ok) {
@@ -161,11 +152,7 @@ export const AuthProvider = ({ children }) => {
         loginControllerRef.current?.abort();
         const epoch = openSession();
         settleSession(epoch, false);
-        const request = fetch(`${ADMIN_BACKEND_URL}/api/v1/auth/logout`, {
-            method: 'POST',
-            headers: ADMIN_HEADERS,
-            credentials: 'include',
-        }).catch(() => {});
+        const request = adminFetch('/api/v1/auth/logout', { method: 'POST' }).catch(() => {});
         const flight = request.finally(() => {
             if (logoutPromiseRef.current === flight) logoutPromiseRef.current = null;
         });

@@ -3,7 +3,6 @@
 
 import { useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { ADMIN_BACKEND_URL, ADMIN_HEADERS } from '../config/api';
 import { showToast } from '../components/UI/Toast';
 import i18n from '../i18n';
 
@@ -61,9 +60,11 @@ export const useSSEEvents = () => {
             }, HEARTBEAT_MS);
 
             try {
+                // DT-129: la cabecera de ngrok la pone el transporte
+                // (services/authFetch.js), no este hook — ver su test.
                 const response = await authenticatedFetch(
-                    `${ADMIN_BACKEND_URL}/api/v1/notifications/stream`,
-                    { headers: ADMIN_HEADERS, signal: controller.signal },
+                    '/api/v1/notifications/stream',
+                    { signal: controller.signal },
                 );
                 if (!response.ok) {
                     scheduleReconnect();

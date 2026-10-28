@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ADMIN_BACKEND_URL } from '../config/api';
 import { showToast } from '../components/UI/Toast';
 import { formatJobSalary } from '../utils/formatSalary';
 import useAuthenticatedQuery from './useAuthenticatedQuery';
@@ -85,7 +84,7 @@ const useJSearchLive = () => {
             if (formFields.employment_type !== 'all') params.set('employment_type', formFields.employment_type);
             if (formFields.remote_only) params.set('remote_only', 'true');
 
-            const data = await searchJobs(`${ADMIN_BACKEND_URL}/api/v1/jsearch-jobs/search?${params.toString()}`);
+            const data = await searchJobs(`/api/v1/jsearch-jobs/search?${params.toString()}`);
             if (!isCurrent()) return;
             setResults(Array.isArray(data) ? data : data.data || data.results || data.jobs || []);
             startCooldown();

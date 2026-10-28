@@ -1,9 +1,8 @@
 import { useCallback, useState } from 'react';
 
-import { ADMIN_BACKEND_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 
-const ENDPOINT = `${ADMIN_BACKEND_URL}/api/v1/cv-generation/operations/`;
+const ENDPOINT = `/api/v1/cv-generation/operations/`;
 
 // Recupera entregas pendientes; nunca inicia una generación nueva.
 const useDeliveryRecovery = (onDelivered, clearOperation) => {

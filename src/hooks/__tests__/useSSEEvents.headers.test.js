@@ -1,4 +1,12 @@
-/** DT-129: the SSE request must preserve the ngrok bypass header. */
+/** DT-129: the SSE request must preserve the ngrok bypass header.
+ *
+ * DT-207 (2026-10-28): the header is no longer the hook's job. The hook hands
+ * the transport a PATH and nothing else; `services/authFetch.js` resolves the
+ * admin base and adds the ngrok header for every panel request. That guarantee
+ * now lives in `services/__tests__/authFetch.test.js`. What this test keeps:
+ * the hook goes through `authenticatedFetch` (cookie session, refresh cycle),
+ * passes the stream path, and never sets an Authorization header of its own.
+ */
 import { renderHook } from '@testing-library/react';
 import { beforeEach, expect, it, vi } from 'vitest';
 
@@ -15,22 +23,16 @@ vi.mock('../../context/AuthContext', () => ({
 }));
 vi.mock('../../components/UI/Toast', () => ({ showToast: vi.fn() }));
 vi.mock('../../i18n', () => ({ default: { t: key => key, language: 'es' } }));
-vi.mock('../../config/api', () => ({
-    BACKEND_URL: 'https://ejemplo.ngrok-free.dev',
-    DEFAULT_HEADERS: { 'ngrok-skip-browser-warning': 'true' },
-    ADMIN_BACKEND_URL: 'https://ejemplo.ngrok-free.dev',
-    ADMIN_HEADERS: { 'ngrok-skip-browser-warning': 'true' },
-}));
 
 beforeEach(() => { calls = []; });
 
-it('the stream uses authenticatedFetch and keeps the ngrok header', async () => {
+it('the stream goes through authenticatedFetch with a path and no Authorization header', async () => {
     const { useSSEEvents } = await import('../useSSEEvents');
     renderHook(() => useSSEEvents());
 
     expect(calls).toHaveLength(1);
     const { url, options } = calls[0];
-    expect(url).toContain('/api/v1/notifications/stream');
-    expect(options.headers['ngrok-skip-browser-warning']).toBe('true');
-    expect(options.headers.Authorization).toBeUndefined();
+    expect(url).toBe('/api/v1/notifications/stream');
+    expect(options.headers?.Authorization).toBeUndefined();
+    expect(options.signal).toBeInstanceOf(AbortSignal);
 });
