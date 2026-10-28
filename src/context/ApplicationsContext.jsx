@@ -13,7 +13,11 @@ export const ApplicationsProvider = ({ children }) => {
     const inFlightRef = useRef(new Set());
 
     // Registra una oferta una sola vez mientras exista una petición equivalente.
-    // The shared in-flight key closes the race between different dashboard windows.
+    // Sin esto, dos ventanas del panel podrían mandar la MISMA petición de
+    // guardado a la vez (el usuario hace doble clic, o dos pestañas abiertas);
+    // la clave compartida hace que la segunda espere a la primera en vez de
+    // disparar su propia petición duplicada ("race" = condición de carrera:
+    // dos cosas compitiendo por hacer lo mismo al mismo tiempo).
     const register = useCallback(async (job, status) => {
         const key = `${status}:${job.id}`;
         if (inFlightRef.current.has(key)) return false;

@@ -144,9 +144,12 @@ const useSavedSearches = () => {
                 remoteOnly: filters.remote_only,
                 limit: JOBS_PAGE_SIZE,
                 // DT-161: esta vista previa declaraba `oneshot: true` ("pido la
-                // pagina 1 y no continuo") para no sobrescribir la anotacion de
-                // que motor servia la busqueda del filtro avanzado y romperle su
-                // "cargar mas". Con un solo motor no hay anotacion que pisar.
+                // pagina 1 y no continuo") para no pisar la anotacion de que
+                // motor servia la busqueda del filtro avanzado: antes de la
+                // migracion al nucleo central (DT-144) podia haber DOS motores
+                // sirviendo resultados a la vez, y esta vista previa no debia
+                // interferir con "cargar mas" del filtro avanzado si estaban en
+                // motores distintos. Con un solo motor no hay nada que pisar.
             });
 
             const response = await authenticatedFetch(

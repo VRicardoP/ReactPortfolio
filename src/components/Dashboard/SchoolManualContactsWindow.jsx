@@ -24,8 +24,11 @@ const POLITICAS_CONTACTO_DIRECTO = Object.freeze([
     'direct_email_director',
 ]);
 
-// Un colegio que no se cosecha no manda nunca una oferta al panel, así que su
-// enlace es la única vía de enterarse: entra aunque su política sea de portal.
+// "Cosechar" = vigilar automáticamente la web del colegio para detectar ofertas
+// nuevas (lo que hace SchoolJobsWindow). Un colegio que no se cosecha
+// (`monitoring_mode === 'manual_only'`, porque no se puede raspar su web) no
+// manda nunca una oferta al panel, así que su enlace es la única vía de
+// enterarse: entra aunque su política sea de portal.
 const noSeCosecha = (s) => s.monitoring_mode === 'manual_only';
 
 // La página de ofertas es el enlace útil; la raíz del portal es el respaldo.

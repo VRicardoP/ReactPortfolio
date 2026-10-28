@@ -60,8 +60,6 @@ const getJobsPage = (school) => school?.jobs_page_url || school?.portal_url || n
 
 const SchoolJobsWindow = memo(({ initialPosition, schoolData, defaultExpanded }) => {
     const { t } = useTranslation();
-    // DT-141: firma anterior, sustituida por la que incorpora el descarte persistente.
-    // const { schools, jobs, loading, error, refreshing, triggerScrape, refresh } = schoolData;
     const {
         schools,
         jobs,

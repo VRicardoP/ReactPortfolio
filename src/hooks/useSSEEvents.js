@@ -60,8 +60,12 @@ export const useSSEEvents = () => {
             }, HEARTBEAT_MS);
 
             try {
-                // DT-129: la cabecera de ngrok la pone el transporte
-                // (services/authFetch.js), no este hook — ver su test.
+                // DT-129: ngrok (el túnel que expone el backend a internet)
+                // intercepta la primera petición de cada visitante con una
+                // página de aviso HTML en vez de la respuesta real, a menos que
+                // lleve una cabecera que la salte — si no, este stream recibiría
+                // esa página de aviso en vez de eventos. La cabecera la pone el
+                // transporte (services/authFetch.js), no este hook — ver su test.
                 const response = await authenticatedFetch(
                     '/api/v1/notifications/stream',
                     { signal: controller.signal },

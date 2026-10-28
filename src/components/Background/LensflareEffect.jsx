@@ -149,7 +149,11 @@ const LensflareEffect = () => {
 
     const { scene } = useThreeScene(mountRef, build);
 
-    // Cambia tema sobre los recursos vivos sin reconstruir tres mil instancias.
+    // Cambia tema sobre los recursos vivos sin reconstruir las tres mil
+    // copias del destello (un InstancedMesh de Three.js: en vez de crear 3000
+    // objetos 3D separados —caro—, es UN solo objeto que dibuja la misma
+    // forma 3000 veces con posiciones distintas; reconstruirlo entero solo
+    // para cambiar un color sería un desperdicio).
     // The refs are populated by useThreeScene after construction.
     useEffect(() => {
         boxMaterialRef.current?.color.set(theme.primary);

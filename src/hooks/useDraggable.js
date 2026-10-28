@@ -62,8 +62,12 @@ const useDraggable = (windowRef, isMaximized, onPositionChange) => {
       wobbleTransform = ` skewX(${dragState.shearX.toFixed(2)}deg) scaleY(${dragState.stretchY.toFixed(3)})`;
     }
 
-    // DT-138: the translation-only assignment is preserved as the exact
-    // rollback behavior. The active line appends compositor-only deformation.
+    // DT-138: la línea de abajo añade el efecto de "bamboleo" (shearX/scaleY
+    // de arriba) al mover la ventana. La línea comentada es la versión SIN ese
+    // efecto — sin tocar la posición (translate3d), que es lo único que hacía
+    // antes de añadirlo. Se deja ahí a propósito: si el bamboleo da problemas
+    // en algún navegador, volver a la versión simple es borrar un solo trozo
+    // de texto, no reconstruir la línea desde cero.
     // windowRef.current.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0)`;
     windowRef.current.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0)${wobbleTransform}`;
   }, [windowRef]);
@@ -135,8 +139,12 @@ const useDraggable = (windowRef, isMaximized, onPositionChange) => {
           node.style.willChange = '';
           node.style.transformOrigin = '';
         };
-        // DT-138: the direct finish listener is preserved as reference. It
-        // cleaned styles but left the finished Animation attached in Chromium.
+        // DT-138: la versión comentada de abajo solo limpiaba los estilos al
+        // terminar la animación, pero en Chromium dejaba la Animation ya
+        // terminada todavía "enganchada" al elemento (sin liberar memoria). La
+        // versión activa añade animation.cancel() para soltarla del todo. Se
+        // deja la versión simple comentada por si algún navegador se porta mal
+        // con el cancel() explícito — volver atrás es un cambio de una línea.
         // animation.addEventListener('finish', clearSettlingStyles, { once: true });
         animation.addEventListener('finish', () => {
           clearSettlingStyles();

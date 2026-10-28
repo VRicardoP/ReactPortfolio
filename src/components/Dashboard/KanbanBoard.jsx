@@ -86,9 +86,12 @@ const KanbanBoard = memo(({
                             className="kanban-add-form"
                             style={{ borderBottom: `1px solid ${theme.borderLight}` }}
                         >
-                            {/* DT-135: original `style={{ borderColor: theme.border, color: theme.text }}`
-                                is commented for borderColor because kanban.css `.kanban-input:focus`
-                                must control the focused border; dynamic text color remains inline. */}
+                            {/* DT-135: un estilo inline SIEMPRE gana sobre una regla CSS normal, así
+                                que un `borderColor` inline aquí impediría que kanban.css pudiera
+                                cambiar el borde al enfocar el campo (`.kanban-input:focus`) — por
+                                eso ese borde se deja fuera del inline y vive solo en el CSS. El
+                                color de texto sí cambia con el tema en tiempo real, así que se
+                                queda inline. */}
                             <input
                                 type="text"
                                 placeholder={t('dashboard.kanban.titlePlaceholder')}
@@ -97,8 +100,8 @@ const KanbanBoard = memo(({
                                 className="kanban-input"
                                 style={{ color: theme.text }}
                             />
-                            {/* DT-135: original `style={{ borderColor: theme.border, color: theme.text }}`;
-                                borderColor is superseded by `.kanban-input:focus`. */}
+                            {/* DT-135: mismo motivo que arriba — el borde al enfocar lo decide
+                                kanban.css (`.kanban-input:focus`), un estilo inline se lo comería. */}
                             <input
                                 type="text"
                                 placeholder={t('dashboard.kanban.companyPlaceholder')}
@@ -107,8 +110,8 @@ const KanbanBoard = memo(({
                                 className="kanban-input"
                                 style={{ color: theme.text }}
                             />
-                            {/* DT-135: original `style={{ borderColor: theme.border, color: theme.text }}`;
-                                borderColor is superseded by `.kanban-input:focus`. */}
+                            {/* DT-135: mismo motivo que arriba — el borde al enfocar lo decide
+                                kanban.css (`.kanban-input:focus`), un estilo inline se lo comería. */}
                             <input
                                 type="text"
                                 placeholder={t('dashboard.kanban.urlPlaceholder')}

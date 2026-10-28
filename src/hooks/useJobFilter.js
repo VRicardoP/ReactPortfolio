@@ -24,15 +24,21 @@ const INITIAL_FILTERS = {
  * query building, cursor/offset pagination ("load more"), and
  * save-to-saved-searches integration. Used by AdvancedFilterPanel.
  *
- * Pagination contract: metadata carries `total` (null bajo el feed keyset del
- * nucleo central), `has_more` y `next_cursor`. El hook nunca depende de `total`
+ * Pagination contract: metadata carries `total` (null cuando el núcleo central
+ * sirve por cursor — "keyset": en vez de pedir "página 3", el backend pide
+ * "lo que viene después de este punto", y entonces no sabe de antemano cuántas
+ * páginas hay en total, así que `total` no puede rellenarse sin contar el
+ * corpus entero), `has_more` y `next_cursor`. El hook nunca depende de `total`
  * para paginar: "cargar mas" sigue `next_cursor` cuando viene y un desplazamiento
  * acumulado cuando no, guiado por `has_more`.
  *
  * DT-161: aqui se guardaba y reenviaba `metadata.sequence`, un token que el
- * backend acuñaba al servir la pagina 1 para que las paginas siguientes salieran
- * del MISMO motor de catalogo. Con un solo motor desde el traspaso no hay dos
- * corpus entre los que mezclar, asi que el token y su hilo se han retirado.
+ * backend acuñaba al servir la pagina 1 para que las paginas siguientes
+ * salieran del MISMO motor de busqueda. Antes de la migracion al nucleo
+ * central (DT-144) habia DOS motores posibles sirviendo resultados (el local
+ * de este backend y el del nucleo), y mezclar paginas de uno y otro a mitad
+ * de una busqueda daba resultados incoherentes — de ahi el token. Con un solo
+ * motor no hay nada que mezclar, asi que el token y su hilo se han retirado.
  *
  * @param {Function} [onSaveSearch] — optional callback to save current filters
  */

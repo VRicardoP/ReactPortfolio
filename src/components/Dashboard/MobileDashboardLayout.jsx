@@ -60,7 +60,10 @@ const MobileDashboardLayout = memo(({
                 >
                     {activeTab === 'overview' && (
                         <Suspense fallback={<DashboardLoader />}>
-                            {/* DT-128: un ErrorBoundary POR ventana, como en escritorio. */}
+                            {/* DT-128: un ErrorBoundary POR ventana, no uno compartido por todo el
+                                grupo — con uno compartido, el fallo de una sola ventana (un
+                                TypeError real que ocurrió) se llevaba por delante a sus vecinas
+                                sanas. Mismo motivo que en DesktopDashboardContent.jsx. */}
                             <ErrorBoundary><StatsWindow data={stats} defaultExpanded /></ErrorBoundary>
                             <ErrorBoundary><RecentVisitorsWindow data={stats} /></ErrorBoundary>
                             <ErrorBoundary><HeatmapWindow /></ErrorBoundary>

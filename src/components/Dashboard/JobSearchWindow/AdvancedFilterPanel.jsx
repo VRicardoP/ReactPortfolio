@@ -22,9 +22,11 @@ const AdvancedFilterPanel = memo(({ filter, jobApp }) => {
         handleFilterChange, handleSearch, handleLoadMore, handleClear, formatSalary,
     } = filter;
 
-    // Single pagination contract (local offset engine AND core keyset feed):
-    // `total` is null when the backend cannot count the corpus (cursor mode) —
-    // show what we have, with a "+" while more pages exist.
+    // `total` llega null cuando el núcleo central pagina "por cursor" (pide
+    // "lo que viene después de este punto" en vez de "la página 3"), porque
+    // entonces no sabe de antemano cuántos resultados hay en total sin contar
+    // el conjunto entero — se muestra lo que hay, con un "+" mientras queden
+    // más páginas (ver useJobFilter.js para el mismo contrato explicado).
     // Calcula el texto de "cuántos resultados hay": el número exacto si se
     // conoce, o "lo que hay cargado + un símbolo +" si no se puede contar el total.
     const resultCountLabel = total != null
