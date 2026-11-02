@@ -43,6 +43,10 @@ vi.mock('../../config/jobSources', () => ({
   normalizeCoreJob: (job, source) => ({ ...job, id: job.id, source }),
 }))
 
+// DT-210: las 20 fuentes se piden en UNA sola llamada a este endpoint, que
+// responde la copia guardada que el worker refresca por su cuenta.
+const JOB_SOURCES_PATH = '/api/v1/dashboard/job-sources'
+
 describe('useDashboardData', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -66,7 +70,6 @@ describe('useDashboardData', () => {
     const mockStats = { total_visitors: 42, unique_visitors: 30 }
     const mockMapData = [{ lat: 47.3, lon: 8.5, city: 'Zurich' }]
     const mockChatAnalytics = { general: { total_chats: 10 }, top_questions: [], timeline_daily: [], by_country: [] }
-    const mockJobData = [{ id: 1, title: 'Dev' }]
 
     mockAuthenticatedFetch
       // Call 1: stats
@@ -75,8 +78,8 @@ describe('useDashboardData', () => {
       .mockResolvedValueOnce(makeMockResponse(mockMapData))
       // Call 3: chat analytics
       .mockResolvedValueOnce(makeMockResponse(mockChatAnalytics))
-      // Call 4: job source (testjobs)
-      .mockResolvedValueOnce(makeMockResponse(mockJobData))
+      // Call 4: job sources (UNA sola llamada para las 20 fuentes)
+      .mockResolvedValueOnce(makeMockResponse({ sources: {}, warnings: [] }))
 
     const { result } = renderHook(() => useDashboardData())
 
@@ -95,7 +98,7 @@ describe('useDashboardData', () => {
       .mockResolvedValueOnce(makeMockResponse({}))
       .mockResolvedValueOnce(makeMockResponse([]))
       .mockResolvedValueOnce(makeMockResponse({ general: null, top_questions: [], timeline_daily: [], by_country: [] }))
-      .mockResolvedValueOnce(makeMockResponse([]))
+      .mockResolvedValueOnce(makeMockResponse({ sources: {}, warnings: [] }))
 
     const { result } = renderHook(() => useDashboardData())
 
@@ -131,16 +134,17 @@ describe('useDashboardData', () => {
       .mockResolvedValueOnce(makeMockResponse({}))
       .mockResolvedValueOnce(makeMockResponse([]))
       .mockResolvedValueOnce(makeMockResponse({ general: null, top_questions: [], timeline_daily: [], by_country: [] }))
-      .mockResolvedValueOnce(makeMockResponse({ data: [{ id: 'core-vacancy', title: 'Current role' }] }))
+      .mockResolvedValueOnce(makeMockResponse({
+        sources: { testjobs: { data: [{ id: 'core-vacancy', title: 'Current role' }] } },
+        warnings: [],
+      }))
 
     const { result } = renderHook(() => useDashboardData())
 
     await waitFor(() => expect(result.current.jobData.testjobs).toBeDefined())
-    expect(mockAuthenticatedFetch).toHaveBeenNthCalledWith(
-      4,
-      // DT-161: la marca `oneshot=true` se retiro con el mecanismo de secuencia.
-      expect.stringContaining('/api/v1/jobs/search?source=core-testjobs&limit=100'),
-    )
+    // DT-210: una sola llamada trae las 20 fuentes; cuál de ellas viene del
+    // catálogo del núcleo lo decide el backend, no la URL que pide el navegador.
+    expect(mockAuthenticatedFetch).toHaveBeenNthCalledWith(4, JOB_SOURCES_PATH)
     expect(result.current.jobData.testjobs._normalized[0]).toMatchObject({
       id: 'core-vacancy',
       source: 'testjobs',
@@ -154,8 +158,8 @@ describe('useDashboardData', () => {
       .mockResolvedValueOnce(makeMockResponse({ total: 5 }))
       .mockResolvedValueOnce(makeMockResponse([]))
       .mockResolvedValueOnce(makeMockResponse({ general: null, top_questions: [], timeline_daily: [], by_country: [] }))
-      // Job source fetch
-      .mockResolvedValueOnce(makeMockResponse(mockJobData))
+      // Job sources — UNA llamada con las 20 fuentes dentro
+      .mockResolvedValueOnce(makeMockResponse({ sources: { testjobs: mockJobData }, warnings: [] }))
 
     const { result } = renderHook(() => useDashboardData())
 
@@ -163,7 +167,7 @@ describe('useDashboardData', () => {
       expect(result.current.loading).toBe(false)
     })
 
-    // jobData loads progressively in the background, normalized at fetch time
+    // jobData se rellena de una vez al llegar la respuesta, normalizado ya
     await waitFor(() => {
       expect(result.current.jobData).toHaveProperty('testjobs')
     })
@@ -201,11 +205,16 @@ describe('useDashboardData', () => {
   })
 
   it('DT-187: un refetch no borra los avisos de las fuentes de empleo', async () => {
-    // Las fuentes de empleo las anota el bucle de fondo; setWarnings las
+    // Las fuentes de empleo las anota la llamada de fondo; setWarnings las
     // SOBRESCRIBIA en cada recarga de lo esencial (que dispara el canal de
     // avisos en directo), aunque siguieran sin datos.
     mockAuthenticatedFetch.mockImplementation((url) => {
-      if (String(url).includes('/test-jobs/')) return Promise.reject(new Error('source down'))
+      if (url === JOB_SOURCES_PATH) {
+        // DT-210: el backend es quien marca una fuente concreta como caida
+        // dentro de su copia guardada; aqui se simula esa fuente (testjobs)
+        // sin datos, en vez de un fallo de red aparte por fuente.
+        return Promise.resolve(makeMockResponse({ sources: {}, warnings: ['testjobs'] }))
+      }
       return Promise.resolve({ ok: true, json: async () => ({}) })
     })
 

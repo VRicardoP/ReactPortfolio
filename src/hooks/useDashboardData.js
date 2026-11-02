@@ -1,6 +1,14 @@
 // Trae todos los datos que necesita el panel de administración: las
 // estadísticas de visitantes, el mapa, las del chat, y las ofertas de todas
 // las fuentes de empleo a la vez (si alguna falla, no bloquea a las demás).
+//
+// DT-210: las 20 fuentes se piden en UNA sola llamada a
+// `/api/v1/dashboard/job-sources`, que sirve una copia que el worker
+// refresca por su cuenta cada 10 minutos. Antes el navegador disparaba 20
+// peticiones en paralelo contra el núcleo central en cada carga del panel —
+// cada una por separado tarda unos segundos, pero las 20 juntas desbordaban
+// el tiempo que el backend espera a que el núcleo responda, y la mitad o más
+// acababan en "unavailable" aunque el núcleo funcionara bien.
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -79,8 +87,9 @@ export const useDashboardData = () => {
     if (!silent) setLoading(false);
   }, [refetchChatAnalytics, refetchMap, refetchStats]);
 
-  // Al abrir el panel, pide primero lo importante, y luego va pidiendo las
-  // ofertas de cada fuente de empleo en segundo plano, una por una.
+  // Al abrir el panel, pide primero lo importante, y luego las ofertas de
+  // todas las fuentes de empleo EN UNA SOLA LLAMADA (DT-210): la responde una
+  // copia que el worker ya tiene preparada, nunca 20 peticiones en vivo.
   useEffect(() => {
     let aborted = false;
 
@@ -88,32 +97,33 @@ export const useDashboardData = () => {
       await fetchCritical();
       if (aborted) return;
 
-      // Job data — loads in background, normalize at fetch time so render is cheap
-      JOB_SOURCES.forEach(({ key, urlPath }) => {
-        const coreSource = CORE_SOURCE_BY_KEY[key];
-        const path = coreSource
-          ? `/api/v1/jobs/search?source=${encodeURIComponent(coreSource)}&limit=100`
-          : urlPath;
-        authenticatedFetch(path)
-          .then(res => {
-            if (!res.ok) throw new Error(`Job source ${key} returned ${res.status}`);
-            return res.json();
-          })
-          .then(data => {
-            if (aborted) return;
-            const raw = extractJobs(data);
-            const _normalized = raw.reduce((acc, job) => {
-              try {
-                acc.push(coreSource ? normalizeCoreJob(job, key) : normalizeJob(job, key));
-              } catch (e) {
-                if (import.meta.env.DEV) console.warn(`[useDashboardData] Failed to normalize job from ${key}:`, job, e);
-              }
-              return acc;
-            }, []);
-            setJobData(prev => ({ ...prev, [key]: { ...data, _normalized } }));
-          })
-          .catch(() => { if (!aborted) setWarnings(prev => [...prev, key]); });
-      });
+      try {
+        const res = await authenticatedFetch('/api/v1/dashboard/job-sources');
+        if (!res.ok) throw new Error(`job-sources returned ${res.status}`);
+        const { sources, warnings: sourceWarnings } = await res.json();
+        if (aborted) return;
+
+        const nextJobData = {};
+        JOB_SOURCES.forEach(({ key }) => {
+          const data = sources[key];
+          if (!data) return;
+          const coreSource = CORE_SOURCE_BY_KEY[key];
+          const raw = extractJobs(data);
+          const _normalized = raw.reduce((acc, job) => {
+            try {
+              acc.push(coreSource ? normalizeCoreJob(job, key) : normalizeJob(job, key));
+            } catch (e) {
+              if (import.meta.env.DEV) console.warn(`[useDashboardData] Failed to normalize job from ${key}:`, job, e);
+            }
+            return acc;
+          }, []);
+          nextJobData[key] = { ...data, _normalized };
+        });
+        setJobData(nextJobData);
+        setWarnings(prev => [...prev, ...sourceWarnings]);
+      } catch {
+        if (!aborted) setWarnings(prev => [...prev, ...JOB_SOURCES.map(s => s.key)]);
+      }
     };
 
     run();
