@@ -65,6 +65,27 @@ describe('usePortfolioData', () => {
     expect(result.current.error).toBeNull()
   })
 
+  // DT-209: antes la API se esperaba POR COMPLETO antes de intentar el
+  // estático — un servidor LENTO (no caído, así que nunca entraba en el
+  // catch) retrasaba igual la aparición de las ventanas del portfolio
+  // público. Ahora se piden a la vez y gana quien responda antes.
+  it('DT-209 · no espera a una API lenta si el estático ya respondió', async () => {
+    const staticData = { name: 'Vicente', skills: ['React'] }
+    global.fetch.mockImplementation((url) => {
+      if (String(url).includes('cv-profiles')) return new Promise(() => {}) // la API nunca responde
+      return Promise.resolve({ ok: true, json: () => Promise.resolve(staticData) })
+    })
+
+    const { result } = renderHook(() => usePortfolioData())
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false)
+    })
+
+    expect(result.current.data).toEqual(staticData)
+    expect(result.current.error).toBeNull()
+  })
+
   it('returns error when both API and static file fail', async () => {
     // API call fails
     global.fetch.mockResolvedValueOnce({ ok: false, status: 500 })
@@ -82,9 +103,10 @@ describe('usePortfolioData', () => {
   })
 
   it('returns error on complete network failure', async () => {
-    // API call throws
+    // API y estático se piden en paralelo (DT-209): ya no hay un "último
+    // error" único que mostrar, así que el mensaje es el genérico, igual
+    // que cuando ambas fuentes responden con un simple "no ok".
     global.fetch.mockRejectedValueOnce(new Error('API unreachable'))
-    // Static file also throws
     global.fetch.mockRejectedValueOnce(new Error('Network error'))
 
     const { result } = renderHook(() => usePortfolioData())
@@ -94,20 +116,26 @@ describe('usePortfolioData', () => {
     })
 
     expect(result.current.data).toBeNull()
-    expect(result.current.error).toBe('Network error')
+    expect(result.current.error).toBe('Failed to load portfolio data')
   })
 
   // --- Regresión P2-3 (auditoría G9 2026-08-27) ---
   // Es el portfolio PÚBLICO: si la respuesta de un idioma abandonado aterriza
   // tarde, todo el contenido queda en un idioma distinto del que muestra el
   // conmutador, y así se queda hasta que el usuario vuelva a cambiarlo.
+  //
+  // DT-209: la API y el fichero estático se piden en paralelo, así que el
+  // mock tiene que colgar AMBAS fuentes del español (antes solo colgaba la
+  // de la API — el estático nunca se llegaba a pedir bajo el diseño
+  // secuencial) para seguir representando "el idioma abandonado no responde
+  // a tiempo", y no una carrera ganada por casualidad por el estático.
   it('C5 · cambiar de idioma dos veces deja el contenido en el idioma vigente', async () => {
     let resolveSpanish
     const spanishFlight = new Promise((resolve) => { resolveSpanish = resolve })
     global.fetch = vi.fn((url) => {
       const target = String(url)
-      if (target.includes('lang=es')) return spanishFlight
-      if (target.includes('lang=de')) {
+      if (target.includes('lang=es') || target.includes('-es.json')) return spanishFlight
+      if (target.includes('lang=de') || target.includes('-de.json')) {
         return Promise.resolve({ ok: true, json: () => Promise.resolve({ lang: 'DE' }) })
       }
       return Promise.resolve({ ok: true, json: () => Promise.resolve({ lang: 'EN' }) })
