@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="VP">
+  <!-- Identidad del sitio: terminal cian sobre fondo oscuro (tema por defecto
+       de ThemeContext: primary #00ffff sobre rgba(0,0,0,0.95)). Sustituye al
+       logotipo por defecto de Vite, que Google mostraba en sus resultados
+       (estudio SEO 2026-11-09, DT-213). -->
+  <rect width="64" height="64" rx="12" fill="#07131c"/>
+  <rect x="2.5" y="2.5" width="59" height="59" rx="10" fill="none" stroke="#00ffff" stroke-width="3"/>
+  <text x="32" y="43" text-anchor="middle"
+        font-family="'Courier New', monospace" font-size="30" font-weight="bold"
+        fill="#00ffff">VP</text>
+</svg>

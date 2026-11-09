@@ -1,0 +1,13 @@
+# Cabeceras de Cloudflare Pages (DT-214, estudio SEO 2026-11-09).
+#
+# `robots.txt` pide no rastrear estas rutas, pero un Disallow no impide
+# indexar: si alguien enlaza /login, Google puede listarla sin haberla leído.
+# `X-Robots-Tag: noindex` sí lo impide, y viaja en la cabecera, que es lo único
+# que se puede controlar en una SPA donde todas las rutas devuelven el mismo
+# HTML (el catch-all de `_redirects`).
+
+/login
+  X-Robots-Tag: noindex, nofollow
+
+/dashboard
+  X-Robots-Tag: noindex, nofollow

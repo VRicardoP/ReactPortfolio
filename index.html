@@ -3,7 +3,9 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <!-- DT-213: era /vite.svg, el logotipo de la herramienta de construcción, y
+       Google lo mostraba como icono del sitio en sus resultados móviles. -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <!-- viewport-fit=cover: la página llega hasta los bordes en móviles con
        muesca; los márgenes seguros los ponen env(safe-area-inset-*) en mobile.css -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -11,7 +13,34 @@
        CSS is bundled via MapWindow's import, so no external stylesheet host is used. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' http://127.0.0.1:8000 http://127.0.0.1:8001 ws://127.0.0.1:8000 ws://127.0.0.1:8001 %VITE_API_BASE_URL% %VITE_ADMIN_API_BASE_URL%; worker-src 'self' blob:; frame-ancestors 'none';" />
   <link rel="dns-prefetch" href="https://tile.openstreetmap.org" />
-  <title>Portfolio - Vicente R. Pau</title>
+
+  <!-- DT-213 (estudio SEO 2026-11-09). Estas etiquetas son lo ÚNICO que leen
+       LinkedIn, WhatsApp, Slack y los previsualizadores de correo: no ejecutan
+       JavaScript, así que del resto de la página no ven nada. Antes aquí solo
+       había un <title>, y el enlace compartido salía sin descripción y sin
+       imagen. Son estáticas a propósito: tienen que estar en el HTML servido,
+       no ponerlas React al montar.
+
+       Si cambia el dominio, cambian TRES sitios: canonical, og:url y
+       og:image (han de ser URL absolutas). -->
+  <title>Vicente Pau — Senior System Administrator &amp; AI Developer</title>
+  <meta name="description"
+    content="Portfolio interactivo de Vicente Ricardo Pau Valero: 20+ años como administrador de sistemas Linux y desarrollador de IA conversacional. Python, Docker, React y automatización." />
+  <link rel="canonical" href="https://vicentepau.is-a.dev/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://vicentepau.is-a.dev/" />
+  <meta property="og:title" content="Vicente Pau — Senior System Administrator &amp; AI Developer" />
+  <meta property="og:description"
+    content="Portfolio interactivo: 20+ años en administración de sistemas Linux y desarrollo de IA conversacional. Python, Docker, React y automatización." />
+  <meta property="og:image" content="https://vicentepau.is-a.dev/og-image.png" />
+  <meta property="og:locale" content="es_ES" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Vicente Pau — Senior System Administrator &amp; AI Developer" />
+  <meta name="twitter:description"
+    content="Portfolio interactivo: 20+ años en administración de sistemas Linux y desarrollo de IA conversacional." />
+  <meta name="twitter:image" content="https://vicentepau.is-a.dev/og-image.png" />
 </head>
 
 <body>

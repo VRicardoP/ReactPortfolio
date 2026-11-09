@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DT-214 (estudio SEO 2026-11-09). Una sola URL a propósito: el portfolio es
+     una única página; /login y /dashboard quedan fuera (ver robots.txt).
+     Si la fase 3 del estudio añade rutas por idioma (/es, /fr...), cada una
+     entra aquí con su <xhtml:link rel="alternate" hreflang="..."> -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://vicentepau.is-a.dev/</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

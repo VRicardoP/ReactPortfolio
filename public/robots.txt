@@ -1,0 +1,16 @@
+# DT-214 (estudio SEO 2026-11-09). Antes este fichero NO existía: el catch-all
+# de la SPA (`_redirects`: /* /index.html 200) lo respondía con el HTML de la
+# página y status 200, así que ningún rastreador encontraba reglas ni sitemap.
+# Cloudflare Pages sirve los ficheros reales de public/ ANTES que el catch-all,
+# de modo que basta con que exista.
+
+User-agent: *
+Allow: /
+
+# El panel de administración y su acceso no pintan nada en un buscador. No es
+# una medida de seguridad —de eso se encarga el perímetro de DT-203—, sino
+# higiene: evitan ruido de marca en los resultados.
+Disallow: /login
+Disallow: /dashboard
+
+Sitemap: https://vicentepau.is-a.dev/sitemap.xml
