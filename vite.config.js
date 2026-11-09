@@ -1,5 +1,7 @@
+import { readFileSync } from 'node:fs'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { seoPrerender } from './seo-prerender.js'
 
 // Build-only: harden the production CSP by dropping 'unsafe-inline' from style-src.
 // The dev server needs it (Vite HMR injects <style> tags), so it stays in the source
@@ -19,7 +21,14 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(Date.now().toString()),
   },
-  plugins: [react(), hardenCspOnBuild],
+  // DT-215: el CV se inyecta en el HTML servido durante el build. Se lee el
+  // JSON aquí, en cada build, para que una actualización del CV viaje sola
+  // (es el mismo fichero que sirve de respaldo al frontend, DT-209).
+  plugins: [
+    react(),
+    hardenCspOnBuild,
+    seoPrerender(() => JSON.parse(readFileSync('./public/portfolio-data.json', 'utf8'))),
+  ],
   server: {
     proxy: {
       '/api': {
