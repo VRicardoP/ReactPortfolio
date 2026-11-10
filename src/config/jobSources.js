@@ -1,5 +1,7 @@
 // Registro único de las fuentes de empleo y su conversión al contrato común.
 
+import { hrefSeguro } from '../utils/safeUrl';
+
 export const CORE_SOURCE_BY_KEY = Object.freeze({
   arbeitnow: 'arbeitnow',
   irishjobs: 'irishjobs',
@@ -52,7 +54,9 @@ const makeNormalizer = ({
     company: firstTruthy(job, companyFields),
     location: firstTruthy(job, locationFields, locationDefault),
     date: firstTruthy(job, dateFields),
-    url: firstTruthy(job, urlFields),
+    // DT-219: la URL es dato de un tercero (viene del scraping); aquí se
+    // filtra UNA vez para las 20 fuentes y para cualquier consumidor futuro.
+    url: hrefSeguro(firstTruthy(job, urlFields)),
     tags: firstTruthy(job, tagFields, []),
     remote,
     source: key,
@@ -169,7 +173,7 @@ export function normalizeJob(job, source) {
     company: job.company || '',
     location: job.location || '',
     date: job.date || '',
-    url: job.url || '',
+    url: hrefSeguro(job.url), // DT-219, mismo filtro que arriba
     tags: job.tags || [],
     remote: false,
     source,

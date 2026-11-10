@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { useAuth } from './AuthContext';
+import { hrefSeguro } from '../utils/safeUrl';
 
 const ApplicationsContext = createContext(null);
 
@@ -59,7 +60,10 @@ export const ApplicationsProvider = ({ children }) => {
     }, [register, savedIds]);
 
     const handleOpenOffer = useCallback(async (job) => {
-        if (job.url) window.open(job.url, '_blank', 'noopener,noreferrer');
+        // DT-219: `window.open('javascript:…')` ejecutaría en el contexto del
+        // abridor; la URL es dato scrapeado, así que solo http(s).
+        const enlace = hrefSeguro(job.url);
+        if (enlace) window.open(enlace, '_blank', 'noopener,noreferrer');
         if (!openedIds.has(job.id) && !savedIds.has(job.id) && await register(job, 'saved')) {
             setSavedIds(previous => new Set(previous).add(job.id));
         }

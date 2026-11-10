@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import FloatingWindow from '../Windows/FloatingWindow';
 import { WINDOW_SIZES } from '../../config/windowSizes';
+import { hrefSeguro } from '../../utils/safeUrl';
 import '../../styles/dashboard-schools.css';
 
 const PUSH_THRESHOLD = 70;
@@ -56,7 +57,9 @@ const buildEmailLink = (email, subject) => email
     : null;
 
 // Da la URL de la página de ofertas de un colegio (o de su portal general).
-const getJobsPage = (school) => school?.jobs_page_url || school?.portal_url || null;
+// DT-219: las URL de colegios también las trae el núcleo de fuera; solo http(s).
+const getJobsPage = (school) =>
+    hrefSeguro(school?.jobs_page_url) || hrefSeguro(school?.portal_url) || null;
 
 const SchoolJobsWindow = memo(({ initialPosition, schoolData, defaultExpanded }) => {
     const { t } = useTranslation();
@@ -150,7 +153,8 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData, defaultExpanded })
                                 {jobs.map((job) => {
                                     const school = schoolsById[job.school_id];
                                     const rscore = roleScoreNum(job.role_score);
-                                    const jobsPage = job.url ? null : getJobsPage(school);
+                                    const enlaceOferta = hrefSeguro(job.url);
+                                    const jobsPage = enlaceOferta ? null : getJobsPage(school);
                                     const emailLink = buildEmailLink(school?.contact_email, t('dashboard.schoolJobs.emailSubject'));
                                     return (
                                         <tr
@@ -188,8 +192,8 @@ const SchoolJobsWindow = memo(({ initialPosition, schoolData, defaultExpanded })
                                             </td>
                                             <td>{new Date(job.date_detected).toLocaleString()}</td>
                                             <td>
-                                                {job.url && (
-                                                    <a href={job.url} target="_blank" rel="noopener noreferrer" className="school-action-link">
+                                                {enlaceOferta && (
+                                                    <a href={enlaceOferta} target="_blank" rel="noopener noreferrer" className="school-action-link">
                                                         {t('dashboard.schoolJobs.viewOffer')}
                                                     </a>
                                                 )}

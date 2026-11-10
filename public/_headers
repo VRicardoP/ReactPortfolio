@@ -1,10 +1,24 @@
-# Cabeceras de Cloudflare Pages (DT-214, estudio SEO 2026-11-09).
+# Cabeceras de Cloudflare Pages.
 #
-# `robots.txt` pide no rastrear estas rutas, pero un Disallow no impide
-# indexar: si alguien enlaza /login, Google puede listarla sin haberla leído.
-# `X-Robots-Tag: noindex` sí lo impide, y viaja en la cabecera, que es lo único
-# que se puede controlar en una SPA donde todas las rutas devuelven el mismo
-# HTML (el catch-all de `_redirects`).
+# DT-220 (auditoría de seguridad 2026-11-10): el CSP de index.html va en un
+# <meta http-equiv>, y la especificación IGNORA `frame-ancestors` por esa vía —
+# el frontend era enmarcable (clickjacking) aunque el <meta> dijera lo
+# contrario. Estas directivas solo valen como cabecera HTTP, y Pages las sirve
+# desde aquí. HSTS tampoco venía: la primera visita quedaba sin protección
+# frente a un downgrade. La política CSP de esta cabecera lleva SOLO
+# frame-ancestors a propósito: se combina con la del <meta> (todas tienen que
+# cumplirse), así que no relaja ni duplica script-src.
+/*
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# DT-214 (estudio SEO 2026-11-09): `robots.txt` pide no rastrear estas rutas,
+# pero un Disallow no impide indexar: si alguien enlaza /login, Google puede
+# listarla sin haberla leído. `X-Robots-Tag: noindex` sí lo impide, y viaja en
+# la cabecera, que es lo único que se puede controlar en una SPA donde todas
+# las rutas devuelven el mismo HTML (el catch-all de `_redirects`).
 
 /login
   X-Robots-Tag: noindex, nofollow

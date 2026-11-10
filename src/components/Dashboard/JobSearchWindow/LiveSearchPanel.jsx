@@ -5,6 +5,7 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import JobCard from '../JobCard';
+import { hrefSeguro } from '../../../utils/safeUrl';
 
 // Live JSearch tab — real-time job search with cooldown (formerly JSearchLiveWindow).
 // Purely presentational: all state/logic lives in the useJSearchLive hook, passed in as `live`.
@@ -109,7 +110,8 @@ const LiveSearchPanel = memo(({ live }) => {
                     </div>
                 )}
                 {results.map((job, idx) => {
-                    const applyLink = job.job_apply_link || job.apply_link;
+                    // DT-219: resultado de JSearch sin normalizar — dato de tercero.
+                    const applyLink = hrefSeguro(job.job_apply_link || job.apply_link);
                     return (
                         <JobCard
                             key={job.job_id || idx}

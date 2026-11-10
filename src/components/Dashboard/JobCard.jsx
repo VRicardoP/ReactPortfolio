@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import { CompanyResearchName, JobBadges, JobDate, JobSummary } from './JobCardExtras';
+import { hrefSeguro } from '../../utils/safeUrl';
 
 const Tags = ({ tags = [] }) => tags.length > 0 && (
     <div className="jobboard-skills">
@@ -96,11 +97,15 @@ const JobCard = memo(({
         const employmentType = job.job_employment_type || job.employment_type;
         const publisher = job.job_publisher || job.publisher;
         const salary = formatSalary(job);
+        // DT-219: el logo lo da el portal de terceros. Solo http(s), y sin
+        // Referer: cargarlo ya le dice al tercero CUÁNDO y desde qué IP abre el
+        // panel el administrador; el Referer le diría además desde qué página.
+        const logo = hrefSeguro(job.employer_logo);
         return (
             <article className="jobboard-card jsearch-card">
                 <div className="jobboard-card-header">
                     <div className="jsearch-title-row">
-                        {job.employer_logo && <img src={job.employer_logo} alt={company} className="jsearch-logo" onError={event => { event.currentTarget.style.display = 'none'; }} />}
+                        {logo && <img src={logo} alt={company} className="jsearch-logo" referrerPolicy="no-referrer" onError={event => { event.currentTarget.style.display = 'none'; }} />}
                         <h3 className="jobboard-title">{title}</h3>
                     </div>
                     <span className={`jobboard-type ${remote ? 'jsearch-remote' : 'jsearch-onsite'}`}>
@@ -145,13 +150,16 @@ const JobCard = memo(({
         );
     }
     const title = job.title_en || job.title;
+    // DT-219: `job.url` viene del scraping; el normalizador ya la filtra, pero
+    // esta tarjeta también recibe ofertas sin normalizar (búsqueda en vivo).
+    const enlace = hrefSeguro(job.url);
 
     return (
         <article className="jobboard-card">
             <div className="jobboard-card-header">
                 <h3 className="jobboard-title">
-                    {job.url ? (
-                        <a href={job.url} target="_blank" rel="noopener noreferrer"
+                    {enlace ? (
+                        <a href={enlace} target="_blank" rel="noopener noreferrer"
                             className="jobboard-title-link" title={job.title_en ? job.title : undefined}>
                             {title}
                         </a>

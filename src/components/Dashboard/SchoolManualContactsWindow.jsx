@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 
 import FloatingWindow from '../Windows/FloatingWindow';
 import { WINDOW_SIZES } from '../../config/windowSizes';
+import { hrefSeguro } from '../../utils/safeUrl';
 import '../../styles/dashboard-schools.css';
 
 // Políticas que admiten candidatura por correo. `portal_only` queda fuera a
@@ -32,7 +33,8 @@ const POLITICAS_CONTACTO_DIRECTO = Object.freeze([
 const noSeCosecha = (s) => s.monitoring_mode === 'manual_only';
 
 // La página de ofertas es el enlace útil; la raíz del portal es el respaldo.
-const enlaceDe = (s) => s.jobs_page_url || s.portal_url || null;
+// DT-219: dato del núcleo (scrapeado), así que solo http(s) llega al href.
+const enlaceDe = (s) => hrefSeguro(s.jobs_page_url) || hrefSeguro(s.portal_url) || null;
 
 const SchoolManualContactsWindow = memo(({ initialPosition, schoolData }) => {
     const { t } = useTranslation();

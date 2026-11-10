@@ -21,8 +21,12 @@ const FIXTURE = {
   country: 'Country', location: 'Location', locationRestrictions: ['EU', 'UK'],
   job_city: 'City', city: 'Fallback City', date: 'Date', created_at: 'Created',
   job_posted_at: 'Posted', posted_at: 'Posted fallback', pubDate: 'Pub Date',
-  url: 'Url', job_apply_link: 'Job Apply', apply_link: 'Apply',
-  apply_url: 'Apply Url', applicationLink: 'Application',
+  // DT-219: los campos de URL llevan URLs http(s) de verdad porque el
+  // normalizador ahora descarta cualquier otro esquema; lo que este fixture
+  // sigue probando es QUÉ campo alimenta `url` en cada fuente, y para eso cada
+  // una se distingue por su ruta.
+  url: 'https://x/url', job_apply_link: 'https://x/job-apply', apply_link: 'https://x/apply',
+  apply_url: 'https://x/apply-url', applicationLink: 'https://x/application',
   skills: ['skills'], tags: ['tags'], categories: ['categories'],
   type: 'Type', job_type: 'Job Type', job_types: ['Full', 'Part'],
   job_employment_type: 'Job Employment', employment_type: 'Employment',
@@ -35,7 +39,7 @@ const FIXTURE = {
 
 const legacyExpected = (key) => ({
   id: `${key}-id`, title: 'Title', company: 'Company', location: 'Location',
-  date: 'Date', url: 'Url', tags: ['tags'], remote: true, source: key,
+  date: 'Date', url: 'https://x/url', tags: ['tags'], remote: true, source: key,
   employmentType: 'Employment',
 })
 
@@ -45,12 +49,12 @@ const LEGACY_OVERRIDES = {
   arbeitnow: { id: 'arbeitnow-slug', date: 'Created', employmentType: 'Full, Part' },
   jsearch: {
     id: 'jsearch-job-id', title: 'Job Title', company: 'Employer Name',
-    location: 'City', date: 'Posted', url: 'Job Apply', tags: [], remote: false,
+    location: 'City', date: 'Posted', url: 'https://x/job-apply', tags: [], remote: false,
     employmentType: 'Job Employment',
   },
-  remoteok: { title: 'Position', url: 'Apply Url', employmentType: '' },
+  remoteok: { title: 'Position', url: 'https://x/apply-url', employmentType: '' },
   himalayas: {
-    company: 'Company Name', date: 'Pub Date', url: 'Application',
+    company: 'Company Name', date: 'Pub Date', url: 'https://x/application',
     tags: ['categories'], employmentType: 'Employment Type',
   },
   adzuna: { employmentType: 'Contract' },

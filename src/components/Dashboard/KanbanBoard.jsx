@@ -8,6 +8,7 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import useKanban from '../../hooks/useKanban';
+import { hrefSeguro } from '../../utils/safeUrl';
 import '../../styles/kanban.css';
 import { KANBAN_COLUMNS as COLUMNS } from '../../config/kanbanColumns';
 
@@ -141,6 +142,9 @@ const KanbanBoard = memo(({
                             const hasDocs = !!documentMap?.[app.id];
                             const isGenerating = generatingIds?.has(app.id);
                             const isDragged = draggedId === app.id;
+                            // DT-219: la URL se guardó desde una oferta scrapeada, así
+                            // que sigue siendo dato de un tercero aunque venga de la BD.
+                            const enlace = hrefSeguro(app.url);
 
                             return (
                                 <div
@@ -234,15 +238,15 @@ const KanbanBoard = memo(({
                                         </button>
                                         {/* 3. Open URL (does NOT move to applied) */}
                                         <a
-                                            href={app.url || '#'}
+                                            href={enlace || '#'}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className={`kanban-icon-btn${!app.url ? ' disabled' : ''}`}
+                                            className={`kanban-icon-btn${!enlace ? ' disabled' : ''}`}
                                             aria-label={t('dashboard.kanban.openUrl')}
                                             title={t('dashboard.kanban.openUrl')}
-                                            aria-disabled={!app.url}
-                                            tabIndex={app.url ? 0 : -1}
-                                            onClick={(e) => { e.stopPropagation(); if (!app.url) e.preventDefault(); }}
+                                            aria-disabled={!enlace}
+                                            tabIndex={enlace ? 0 : -1}
+                                            onClick={(e) => { e.stopPropagation(); if (!enlace) e.preventDefault(); }}
                                         >
                                             URL
                                         </a>
