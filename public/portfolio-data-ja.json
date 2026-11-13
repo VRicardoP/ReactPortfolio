@@ -198,8 +198,8 @@
         },
         {
             "title": "Photoloop — NAS ストリーミング対応のデジタルフォトフレーム",
-            "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
-            "description": "任意のスマートフォン・タブレット・Android TV をデジタルフォトフレーム化する Flutter Android アプリ。SMB 対応 NAS からゼロ設定でサブネット検出とスライディングキャッシュを用いた写真ストリーミングに対応。ローカルストレージ読み込みも可能。3種のトランジション、向き判定、再生中の Wakelock、SMB 認証情報の Android Keystore による安全な保管を提供。",
+            "tech": ["Flutter", "Dart", "dart:ffi", "NFS", "SMB", "SQLite", "Android TV"],
+            "description": "任意のスマートフォン・タブレット・Android TV をデジタルフォトフレーム化する Flutter Android アプリ。NFS または SMB で NAS から直接写真をストリーミングし、ローカルストレージからの読み込みにも対応。設定不要のサブネット検出と、回線が切れても自力で復旧する通信層を備える。Dart には NFS ライブラリが存在しないため、NFS クライアントはクロスコンパイルした libnfs を永続 isolate から dart:ffi で呼び出して実装。デコード済みの写真は常に3枚までにメモリを制限し、テストで保証している。Material 3、英語・スペイン語の UI、80 件のテスト、アナライザー警告ゼロ。",
             "gitlab": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
             "status": "completed"

@@ -198,8 +198,8 @@
         },
         {
             "title": "Photoloop — Marco de fotos digital con streaming desde NAS",
-            "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
-            "description": "App Flutter para Android que convierte cualquier móvil, tablet o Android TV en un marco de fotos digital. Stream desde NAS por SMB con descubrimiento automático de la subred y caché deslizante, o lectura desde almacenamiento local. Tres estilos de transición, filtro por orientación, wakelock durante la reproducción y credenciales SMB guardadas en el Android Keystore.",
+            "tech": ["Flutter", "Dart", "dart:ffi", "NFS", "SMB", "SQLite", "Android TV"],
+            "description": "App Flutter para Android que convierte cualquier móvil, tablet o Android TV en un marco de fotos digital. Reproduce las fotos directamente desde un NAS por NFS o SMB —o desde el almacenamiento local— con descubrimiento de la subred sin configuración y un transporte pensado para sobrevivir a un enlace que se cae. El cliente NFS es libnfs compilado de forma cruzada y enlazado con dart:ffi desde un isolate persistente, porque no existe ninguna librería NFS para Dart; la memoria se mantiene acotada a tres fotos decodificadas, con un test que lo verifica. Material 3, interfaz bilingüe, 80 tests y cero avisos del analizador.",
             "gitlab": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
             "status": "completed"

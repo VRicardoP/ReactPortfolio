@@ -198,8 +198,8 @@
         },
         {
             "title": "Photoloop — Cornice digitale con streaming da NAS",
-            "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
-            "description": "App Flutter per Android che trasforma qualsiasi telefono, tablet o Android TV in una cornice digitale. Stream delle foto da NAS via SMB con scoperta automatica della sottorete e cache scorrevole, oppure lettura dallo spazio di archiviazione locale. Tre stili di transizione, filtro per orientamento, wakelock durante la riproduzione e archiviazione sicura delle credenziali SMB nell'Android Keystore.",
+            "tech": ["Flutter", "Dart", "dart:ffi", "NFS", "SMB", "SQLite", "Android TV"],
+            "description": "App Flutter per Android che trasforma qualsiasi telefono, tablet o Android TV in una cornice digitale. Riproduce le foto direttamente da un NAS via NFS o SMB — o dallo spazio di archiviazione locale — con scoperta della sottorete senza configurazione e un trasporto pensato per sopravvivere a un collegamento che cade. Il client NFS è un libnfs compilato in cross, collegato con dart:ffi da un isolate persistente, perché non esiste alcuna libreria NFS per Dart; la memoria resta limitata a tre foto decodificate, come verifica un test. Material 3, interfaccia bilingue, 80 test, zero avvisi dell'analizzatore.",
             "gitlab": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
             "status": "completed"

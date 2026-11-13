@@ -198,8 +198,8 @@
         },
         {
             "title": "Photoloop — Cadre photo numérique avec streaming NAS",
-            "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
-            "description": "Application Flutter Android qui transforme tout téléphone, tablette ou Android TV en cadre photo numérique. Streaming depuis un NAS SMB avec découverte automatique du sous-réseau et cache glissant, ou lecture depuis le stockage local. Trois styles de transition, filtre d'orientation, wakelock pendant la lecture et stockage sécurisé des identifiants SMB via l'Android Keystore.",
+            "tech": ["Flutter", "Dart", "dart:ffi", "NFS", "SMB", "SQLite", "Android TV"],
+            "description": "Application Flutter Android qui transforme tout téléphone, tablette ou Android TV en cadre photo numérique. Diffuse les photos directement depuis un NAS en NFS ou SMB — ou depuis le stockage local — avec découverte du sous-réseau sans configuration et un transport conçu pour survivre à une liaison qui tombe. Le client NFS est un libnfs cross-compilé, relié par dart:ffi depuis un isolate persistant, faute de bibliothèque NFS pour Dart ; la mémoire reste bornée à trois photos décodées, ce qu'un test vérifie. Material 3, interface bilingue, 80 tests, zéro avertissement de l'analyseur.",
             "gitlab": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
             "status": "completed"

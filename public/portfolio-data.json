@@ -198,8 +198,8 @@
         },
         {
             "title": "Photoloop — NAS-Streaming Digital Photo Frame",
-            "tech": ["Flutter", "Dart", "SMB", "go_router", "Android TV"],
-            "description": "Flutter Android app that turns any phone, tablet or Android TV into a digital photo frame. Streams photos from a SMB-enabled NAS with zero-config subnet discovery and a sliding cache, or reads from local storage. Three transition styles, orientation filtering, wakelock during playback and secure credential storage via the Android Keystore.",
+            "tech": ["Flutter", "Dart", "dart:ffi", "NFS", "SMB", "SQLite", "Android TV"],
+            "description": "Flutter Android app that turns any phone, tablet or Android TV into a digital photo frame. Streams photos straight from a NAS over NFS or SMB — or from local storage — with zero-config subnet discovery and a transport built to survive a link that drops. The NFS client is a cross-compiled libnfs bound with dart:ffi from a persistent worker isolate, since no Dart NFS library exists; memory stays bounded to three decoded photos, asserted by a test. Material 3, bilingual UI, 80 tests, zero analyzer warnings.",
             "gitlab": "https://gitlab.com/lotharsan/photoloop",
             "demo": "",
             "status": "completed"
