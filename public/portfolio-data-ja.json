@@ -173,12 +173,20 @@
     },
     "portfolio": [
         {
+            "title": "CapsuleVoicePlatform — マルチテナント音声 AI SaaS",
+            "tech": ["FastAPI", "PostgreSQL", "Redis", "ARQ", "React 19", "TypeScript", "Tailwind", "Ultravox"],
+            "description": "医療・不動産・旅行・通信の実顧客向けに私が設計・保守している本番マルチテナント SaaS プラットフォームの、機密情報を除去した抜粋版。FastAPI + 非同期 SQLAlchemy + PostgreSQL + Redis + ARQ のバックエンドに、きめ細かな RBAC（ロール＋ユーザー単位の許可・拒否）、不透明クッキーと double-submit CSRF による BFF セッション、スコープ付き API トークン、GDPR/LOPDGDD 準拠機能、Ultravox AI 音声エージェント向けの HMAC 署名付き Webhook を実装。WhatsApp Business の完全なモジュール（SSE 受信箱、A/B キャンペーン、自動化フロー、SLA 追跡）と、フィーチャー単位構成と権限ゲートを備えた React 19 + TypeScript + Tailwind のダッシュボードを含みます。",
+            "github": "https://github.com/VRicardoP/CapsuleVoicePlatform",
+            "demo": "",
+            "status": "completed"
+        },
+        {
             "title": "CookCode System — レストラン・厨房統合管理スイート",
             "tech": ["PHP 8.2", "MySQL 8", "WordPress", "WooCommerce", "Python", "PySide6", "Docker", "MQTT"],
             "description": "中央厨房、店舗POS、ECサイトを単一の信頼できる情報源として統合するエンドツーエンドのガストロノミー基盤。WordPress製ショップ＋独自WooCommerce API、ロット追跡とQRラベルを備えた厨房アプリ、MQTTスキャナ連携の店舗POS、そして音声アシスタント MiniChef（PySide6 + Vosk + Coqui TTS + Gemini）の4サービスを、6コンテナの単一 docker-compose で統合運用。",
             "gitlab": "https://gitlab.com/lotharsan/cookcodesystem",
             "demo": "",
-            "status": "completed"
+            "status": "in-progress"
         },
         {
             "title": "ポートフォリオ・フロントエンド — vicentepau.is-a.dev",
@@ -194,7 +202,7 @@
             "description": "Budgie デスクトップのパネル用アプレット。KDE Connect 経由で Android 端末を Linux のワークフローに統合する。アイコンをクリックすると、端末状態・バッテリー残量・直近10件の通知・端末位置確認・SFTP ファイルブラウザを表示。すべて KDE Connect デーモンの D-Bus シグナルで駆動し、ポーリングやバックグラウンドサービスは不要。",
             "gitlab": "https://gitlab.com/lotharsan/parakeet",
             "demo": "",
-            "status": "in-progress"
+            "status": "completed"
         },
         {
             "title": "Photoloop — NAS ストリーミング対応のデジタルフォトフレーム",
@@ -217,6 +225,22 @@
             "tech": ["React 18", "Vite", "React Router 6", "Axios", "Vitest"],
             "description": "React 18 + Vite で構築した The Movie Database（TMDB）を閲覧するシングルページアプリケーション。30分のセッション有効期限を持つ認証、localStorage による永続化お気に入り、AbortController によるキャンセル可能なデバウンス検索、増分ページネーション、スケルトンローダー、保護ルート、テストで網羅されたビジネスロジック層を実装。",
             "gitlab": "https://gitlab.com/lotharsan/movies-react",
+            "demo": "",
+            "status": "in-progress"
+        },
+        {
+            "title": "Novafeed — AI フィルター搭載のセルフホスト RSS リーダー",
+            "tech": ["FastAPI", "PostgreSQL", "Redis", "Flutter", "Riverpod", "Drift", "Gemini", "Docker"],
+            "description": "自宅 NAS で動く Inoreader Pro のセルフホスト代替。FastAPI の API がフィード・記事・既読状態をデバイス間で同期し、キーワードまたは LLM による意味ベースの自動化ルールを適用します（Gemini、フォールバックに Groq、fail-open）。フィード取得には本番レベルの SSRF 対策（DNS リバインディング耐性、リダイレクトごとの再検証、サイズ・時間制限）、キーセット・ページネーション、重複排除付きの並行更新を実装。クライアントは Android・Web・Linux 向け Flutter アプリ（Riverpod、Drift によるオフラインキャッシュ）。pytest テスト 262 件。",
+            "gitlab": "",
+            "demo": "",
+            "status": "in-progress"
+        },
+        {
+            "title": "Filex — Android TV 向け NFS ファイルマネージャー",
+            "tech": ["Kotlin", "Java", "Android TV", "NFSv4", "libnfs", "JNI", "NDK"],
+            "description": "ネイティブ NFSv4 クライアントとローカルメディアストリーミングを備えた Android TV 向けファイルマネージャー。Material Files（GPL-3.0）のフォークで、どの Android アプリにもなかった機能を追加：カーネルモジュール不要で自宅 NAS へ本物の NFS アクセス（クロスコンパイルした libnfs を java.nio.file.spi プロバイダーで提供）、さらにローカル HTTP Range サーバーにより VLC や mpv が動画をコピーせずに再生でき、すべて TV リモコンで操作可能。実機で検証済み：ABI ごとに 84 件の計装テスト（ARMv7・arm64・x86_64）、8 時間の耐久試験、FTPS・SFTP の TLS/SSH 信頼性チェック。",
+            "gitlab": "https://gitlab.com/lotharsan/filex",
             "demo": "",
             "status": "completed"
         }

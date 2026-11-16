@@ -173,12 +173,20 @@
     },
     "portfolio": [
         {
+            "title": "CapsuleVoicePlatform — SaaS multi-tenant de IA de voz",
+            "tech": ["FastAPI", "PostgreSQL", "Redis", "ARQ", "React 19", "TypeScript", "Tailwind", "Ultravox"],
+            "description": "Extracción saneada de una plataforma SaaS multi-tenant en producción que diseñé y mantengo para clientes reales de sanidad, inmobiliaria, viajes y telecomunicaciones. Backend FastAPI + SQLAlchemy async + PostgreSQL + Redis + ARQ con RBAC granular (roles más permisos y denegaciones por usuario), sesiones BFF con cookie opaca y CSRF double-submit, tokens de API con scopes, cumplimiento RGPD/LOPDGDD integrado y webhooks firmados con HMAC para un agente de voz IA de Ultravox. Incluye un módulo completo de WhatsApp Business (bandeja SSE, campañas A/B, flujos de automatización, seguimiento de SLA) y un dashboard React 19 + TypeScript + Tailwind con arquitectura por features y control de permisos.",
+            "github": "https://github.com/VRicardoP/CapsuleVoicePlatform",
+            "demo": "",
+            "status": "completed"
+        },
+        {
             "title": "CookCode System — Gestión integral de restaurante y cocina",
             "tech": ["PHP 8.2", "MySQL 8", "WordPress", "WooCommerce", "Python", "PySide6", "Docker", "MQTT"],
             "description": "Plataforma gastronómica integral que unifica cocina central, TPV de restaurante y tienda online bajo una misma fuente de verdad. Cuatro servicios interconectados — tienda WordPress con APIs propias para WooCommerce, app de cocina con trazabilidad por lotes y etiquetas QR, TPV de restaurante con escáner por MQTT, y el asistente por voz MiniChef (PySide6 + Vosk + Coqui TTS + Gemini) — orquestados con un único docker-compose de seis contenedores.",
             "gitlab": "https://gitlab.com/lotharsan/cookcodesystem",
             "demo": "",
-            "status": "completed"
+            "status": "in-progress"
         },
         {
             "title": "Portfolio Frontend — vicentepau.is-a.dev",
@@ -194,7 +202,7 @@
             "description": "Applet para el panel del escritorio Budgie que integra un teléfono Android en el flujo de trabajo de Linux a través de KDE Connect. Un clic muestra el estado del dispositivo, batería, últimas diez notificaciones, función «find my phone» y explorador de archivos por SFTP — todo dirigido por señales D-Bus del demonio KDE Connect, sin polling ni servicios en segundo plano.",
             "gitlab": "https://gitlab.com/lotharsan/parakeet",
             "demo": "",
-            "status": "in-progress"
+            "status": "completed"
         },
         {
             "title": "Photoloop — Marco de fotos digital con streaming desde NAS",
@@ -217,6 +225,22 @@
             "tech": ["React 18", "Vite", "React Router 6", "Axios", "Vitest"],
             "description": "Aplicación single-page con React 18 + Vite que consulta The Movie Database (TMDB). Autenticación con sesión de 30 minutos, favoritos persistidos en localStorage, búsqueda con debounce y peticiones cancelables vía AbortController, paginación incremental, skeleton loaders, rutas protegidas y capa de negocio cubierta con tests.",
             "gitlab": "https://gitlab.com/lotharsan/movies-react",
+            "demo": "",
+            "status": "in-progress"
+        },
+        {
+            "title": "Novafeed — Lector RSS self-hosted con filtros por IA",
+            "tech": ["FastAPI", "PostgreSQL", "Redis", "Flutter", "Riverpod", "Drift", "Gemini", "Docker"],
+            "description": "Alternativa self-hosted a Inoreader Pro que corre en un NAS doméstico. API FastAPI que sincroniza feeds, artículos y estado de lectura entre dispositivos y aplica reglas de automatización por palabra clave o por significado mediante un LLM (Gemini con fallback a Groq, fail-open). Endurecimiento SSRF de nivel producción en la descarga de feeds (a prueba de DNS rebinding, revalidación en cada redirect, límites de tamaño y tiempo), paginación keyset y refresco concurrente con deduplicación. Cliente Flutter para Android, Web y Linux con Riverpod y caché offline en Drift. 262 tests pytest.",
+            "gitlab": "",
+            "demo": "",
+            "status": "in-progress"
+        },
+        {
+            "title": "Filex — Gestor de archivos NFS para Android TV",
+            "tech": ["Kotlin", "Java", "Android TV", "NFSv4", "libnfs", "JNI", "NDK"],
+            "description": "Gestor de archivos Android con cliente NFSv4 nativo y streaming local de medios, pensado para Android TV. Fork de Material Files (GPL-3.0) que añade lo que ninguna app Android ofrecía: acceso NFS real a un NAS doméstico sin módulo del kernel, mediante libnfs compilada en cruzado tras un provider java.nio.file.spi, y un servidor HTTP Range local para que VLC o mpv reproduzcan vídeos sin copiarlos antes, todo navegable con el mando de la TV. Validado en hardware real: 84 tests instrumentados por ABI (ARMv7, arm64, x86_64), prueba de resistencia de ocho horas y verificación de confianza TLS/SSH en FTPS y SFTP.",
+            "gitlab": "https://gitlab.com/lotharsan/filex",
             "demo": "",
             "status": "completed"
         }

@@ -98,7 +98,7 @@ export function construirHtmlEstatico(d) {
 
   const proyectos = lista(d.portfolio)
     .map((p) => {
-      const enlace = p.gitlab || p.demo;
+      const enlace = p.gitlab || p.github || p.demo;
       const titulo = enlace
         ? `<a href="${esc(enlace)}" rel="noopener">${esc(p.title)}</a>`
         : esc(p.title);
